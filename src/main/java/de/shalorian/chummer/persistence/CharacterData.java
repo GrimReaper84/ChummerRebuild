@@ -10,6 +10,7 @@ import java.util.Map;
 public class CharacterData {
     public @Nullable String name;
     public @Nullable String metatype;
+    public boolean          created  = false;
     public Map<String, Integer> attributes      = new HashMap<>();
     public Map<String, Integer> skills          = new HashMap<>(); // name → rating (nur > 0)
     public List<String>         decoupledGroups = new ArrayList<>();

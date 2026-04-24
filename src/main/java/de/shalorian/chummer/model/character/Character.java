@@ -16,6 +16,7 @@ public class Character {
     private final Set<String> decoupledGroups;       // Gruppen die aufgebrochen wurden
     private final List<LogEntry> karmaLog = new ArrayList<>();
     private final List<LogEntry> nuyenLog = new ArrayList<>();
+    private boolean created = false;
 
     public Character(String name, MetatypeData metatype) {
         this.name             = name;
@@ -136,6 +137,9 @@ public class Character {
     }
 
     // --- Karma & Nuyen Log ---
+
+    public boolean isCreated()            { return created; }
+    public void    setCreated(boolean v)  { this.created = v; }
 
     public void addKarmaEntry(LogEntry entry) { karmaLog.add(entry); }
     public void addNuyenEntry(LogEntry entry) { nuyenLog.add(entry); }

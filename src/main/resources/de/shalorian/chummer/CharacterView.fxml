@@ -7,14 +7,19 @@
             fx:controller="de.shalorian.chummer.view.CharacterViewController"
             styleClass="character-view">
     <top>
-        <HBox styleClass="char-header" spacing="20" alignment="CENTER_LEFT">
-            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
-            <Label fx:id="nameLabel"        styleClass="char-name"/>
-            <ComboBox fx:id="metatypeBox"   styleClass="char-metatype-box"/>
+        <HBox styleClass="char-header" spacing="16" alignment="CENTER_LEFT">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="nameLabel"           styleClass="char-name"/>
+            <ComboBox fx:id="metatypeBox"      styleClass="char-metatype-box"/>
+            <Label fx:id="metatypeLabelCareer" styleClass="char-metatype" visible="false" managed="false"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label text="Verbleibende BP:"  styleClass="bp-label"/>
-            <Label fx:id="remainingBpLabel" styleClass="bp-value"/>
-            <Label text="/ 400"             styleClass="bp-total"/>
+            <HBox fx:id="bpBox" spacing="8" alignment="CENTER_LEFT">
+                <Label text="Verbleibende BP:"  styleClass="bp-label"/>
+                <Label fx:id="remainingBpLabel" styleClass="bp-value"/>
+                <Label text="/ 400"             styleClass="bp-total"/>
+            </HBox>
+            <Button fx:id="finalizeBtn" text="Charakter abschließen" onAction="#onFinalize"
+                    styleClass="btn-finalize"/>
         </HBox>
     </top>
     <center>

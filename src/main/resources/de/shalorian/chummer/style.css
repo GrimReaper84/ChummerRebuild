@@ -383,3 +383,125 @@
     -fx-text-fill: #555555;
     -fx-padding: 0 0 0 4;
 }
+
+/* ── Karrieremodus-Button ────────────────────────────── */
+
+.btn-finalize {
+    -fx-background-color: #16825d;
+    -fx-text-fill: white;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
+    -fx-padding: 6 16 6 16;
+    -fx-font-weight: bold;
+}
+
+.btn-finalize:hover {
+    -fx-background-color: #1a9a70;
+}
+
+/* ── Metatyp-ComboBox im Header ──────────────────────── */
+
+.char-metatype-box {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+}
+
+.char-metatype-box .list-cell {
+    -fx-text-fill: #888888;
+    -fx-background-color: transparent;
+}
+
+.char-metatype-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.char-metatype-box .arrow {
+    -fx-background-color: #555555;
+}
+
+/* ── Statusleiste (unten) ────────────────────────────── */
+
+.status-bar {
+    -fx-background-color: #252526;
+    -fx-border-color: #3c3c3c;
+    -fx-border-width: 1 0 0 0;
+}
+
+.status-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #888888;
+}
+
+.status-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #cccccc;
+}
+
+/* ── Log-Tab ─────────────────────────────────────────── */
+
+.log-container {
+    -fx-background-color: #1e1e1e;
+}
+
+.log-section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #cccccc;
+}
+
+/* ── TableView (Dark Theme) ──────────────────────────── */
+
+.table-view {
+    -fx-background-color: #252526;
+    -fx-border-color: #3c3c3c;
+    -fx-border-width: 1;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2d2d2d;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: transparent #3c3c3c transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 28;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #888888;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 4 0 4;
+}
+
+.table-row-cell {
+    -fx-background-color: #252526;
+    -fx-border-color: transparent transparent #2d2d2d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 28px;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #232323;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #094771;
+}
+
+.table-row-cell .table-cell {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+    -fx-padding: 0 4 0 4;
+    -fx-border-color: transparent;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: #555555;
+}

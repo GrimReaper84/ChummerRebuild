@@ -33,4 +33,7 @@ public class CharacterAttribute {
     public int getBpCost() {
         return (value - min) * BP_PER_POINT;
     }
+
+    /** Karma-Kosten um dieses Attribut um 1 zu erhöhen (neuer Wert × 5). */
+    public int getKarmaCost() { return (value + 1) * 5; }
 }

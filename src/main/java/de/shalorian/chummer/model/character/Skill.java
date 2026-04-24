@@ -36,4 +36,7 @@ public class Skill {
     }
 
     public int getBpCost() { return rating * BP_PER_RATING; }
+
+    /** Karma-Kosten um diesen Skill um 1 zu erhöhen (neuer Rating × 2). */
+    public int getKarmaCost() { return (rating + 1) * 2; }
 }

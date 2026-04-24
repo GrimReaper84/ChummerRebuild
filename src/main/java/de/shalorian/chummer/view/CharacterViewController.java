@@ -26,6 +26,7 @@ import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Optional;
@@ -38,6 +39,9 @@ public class CharacterViewController {
     @FXML private GridPane                attributeGrid;
     @FXML private VBox                    skillsContainer;
 
+    @FXML private Button                  finalizeBtn;
+    @FXML private HBox                    bpBox;
+    @FXML private Label                   metatypeLabelCareer;
     @FXML private TableView<LogEntry>     karmaTable;
     @FXML private TableView<LogEntry>     nuyenTable;
     @FXML private Label                   karmaTotalLabel;
@@ -80,10 +84,9 @@ public class CharacterViewController {
         this.character = character;
         nameLabel.setText(character.getName());
         metatypeBox.setValue(character.getMetatype());
-        buildAttributeGrid();
-        buildSkillsTab();
         updateBpDisplay();
         updateLogDisplay();
+        updateModeDisplay();
     }
 
     // ── Attribute-Tab ─────────────────────────────────────────
@@ -102,7 +105,9 @@ public class CharacterViewController {
             attributeGrid.getColumnConstraints().add(cc);
         }
 
-        String[] headers = {"Attribut", "", "", "Wert", "", "Bereich", "BP-Kosten"};
+        boolean career = character.isCreated();
+        String[] headers = {"Attribut", "", "", "Wert", "", "Bereich",
+                            career ? "Karma" : "BP-Kosten"};
         for (int i = 0; i < headers.length; i++) {
             if (!headers[i].isEmpty()) {
                 Label h = new Label(headers[i]);
@@ -134,29 +139,58 @@ public class CharacterViewController {
         rangeLabel.getStyleClass().add("attr-range");
         bpLabel.getStyleClass().add("attr-bp");
 
-        Runnable refresh = () -> {
-            int val = attr.getValue();
-            valueLabel.setText(String.valueOf(val));
-            bpLabel.setText(attr.getBpCost() + " BP");
-            minus.setDisable(val <= attr.getMin());
-            plus.setDisable(val >= attr.getMax() || character.getRemainingBP() < 10);
-        };
-        attrRefreshers.add(refresh);
+        boolean career = character.isCreated();
+        Runnable refresh;
 
-        minus.setOnAction(e -> {
-            if (attr.getValue() > attr.getMin()) {
-                attr.setValue(attr.getValue() - 1);
-                refreshAllRows();
-                updateBpDisplay();
-            }
-        });
-        plus.setOnAction(e -> {
-            if (attr.getValue() < attr.getMax() && character.getRemainingBP() >= 10) {
-                attr.setValue(attr.getValue() + 1);
-                refreshAllRows();
-                updateBpDisplay();
-            }
-        });
+        if (career) {
+            minus.setVisible(false);
+            minus.setManaged(false);
+            refresh = () -> {
+                int val       = attr.getValue();
+                int karmaCost = attr.getKarmaCost();
+                valueLabel.setText(String.valueOf(val));
+                bpLabel.setText(val >= attr.getMax() ? "–" : karmaCost + " Karma");
+                plus.setDisable(val >= attr.getMax() || character.getKarmaTotal() < karmaCost);
+            };
+            attrRefreshers.add(refresh);
+
+            plus.setOnAction(e -> {
+                int val       = attr.getValue();
+                int karmaCost = attr.getKarmaCost();
+                String label  = type.getDisplayName() + " " + val + " → " + (val + 1);
+                if (val < attr.getMax() && character.getKarmaTotal() >= karmaCost
+                        && confirmKarmaSpend(label, karmaCost)) {
+                    character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
+                    attr.setValue(val + 1);
+                    refreshAllRows();
+                    updateLogDisplay();
+                }
+            });
+        } else {
+            refresh = () -> {
+                int val = attr.getValue();
+                valueLabel.setText(String.valueOf(val));
+                bpLabel.setText(attr.getBpCost() + " BP");
+                minus.setDisable(val <= attr.getMin());
+                plus.setDisable(val >= attr.getMax() || character.getRemainingBP() < 10);
+            };
+            attrRefreshers.add(refresh);
+
+            minus.setOnAction(e -> {
+                if (attr.getValue() > attr.getMin()) {
+                    attr.setValue(attr.getValue() - 1);
+                    refreshAllRows();
+                    updateBpDisplay();
+                }
+            });
+            plus.setOnAction(e -> {
+                if (attr.getValue() < attr.getMax() && character.getRemainingBP() >= 10) {
+                    attr.setValue(attr.getValue() + 1);
+                    refreshAllRows();
+                    updateBpDisplay();
+                }
+            });
+        }
 
         refresh.run();
 
@@ -285,30 +319,59 @@ public class CharacterViewController {
             plus.getStyleClass().add("attr-btn");
             bpLabel.getStyleClass().add("attr-bp");
 
-            Runnable refresh = () -> {
-                int rating = character.getGroupRating(groupName);
-                ratingLabel.setText(String.valueOf(rating));
-                bpLabel.setText(rating == 0 ? "–" : (rating * 10) + " BP");
-                minus.setDisable(rating <= 0);
-                plus.setDisable(rating >= Skill.MAX_RATING || character.getRemainingBP() < 10);
-            };
-            skillRefreshers.add(refresh);
+            boolean career = character.isCreated();
 
-            minus.setOnAction(e -> {
-                if (character.getGroupRating(groupName) > 0) {
-                    character.lowerGroup(groupName);
-                    refreshAllRows();
-                    updateBpDisplay();
-                }
-            });
-            plus.setOnAction(e -> {
-                if (character.getGroupRating(groupName) < Skill.MAX_RATING
-                        && character.getRemainingBP() >= 10) {
-                    character.raiseGroup(groupName);
-                    refreshAllRows();
-                    updateBpDisplay();
-                }
-            });
+            Runnable refresh;
+            if (career) {
+                minus.setVisible(false);
+                minus.setManaged(false);
+                refresh = () -> {
+                    int rating    = character.getGroupRating(groupName);
+                    int karmaCost = (rating + 1) * 5;
+                    ratingLabel.setText(String.valueOf(rating));
+                    bpLabel.setText(rating >= Skill.MAX_RATING ? "–" : karmaCost + " Karma");
+                    plus.setDisable(rating >= Skill.MAX_RATING || character.getKarmaTotal() < karmaCost);
+                };
+                skillRefreshers.add(refresh);
+
+                plus.setOnAction(e -> {
+                    int rating    = character.getGroupRating(groupName);
+                    int karmaCost = (rating + 1) * 5;
+                    String label  = groupName + " " + rating + " → " + (rating + 1);
+                    if (rating < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
+                            && confirmKarmaSpend(label, karmaCost)) {
+                        character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
+                        character.raiseGroup(groupName);
+                        refreshAllRows();
+                        updateLogDisplay();
+                    }
+                });
+            } else {
+                refresh = () -> {
+                    int rating = character.getGroupRating(groupName);
+                    ratingLabel.setText(String.valueOf(rating));
+                    bpLabel.setText(rating == 0 ? "–" : (rating * 10) + " BP");
+                    minus.setDisable(rating <= 0);
+                    plus.setDisable(rating >= Skill.MAX_RATING || character.getRemainingBP() < 10);
+                };
+                skillRefreshers.add(refresh);
+
+                minus.setOnAction(e -> {
+                    if (character.getGroupRating(groupName) > 0) {
+                        character.lowerGroup(groupName);
+                        refreshAllRows();
+                        updateBpDisplay();
+                    }
+                });
+                plus.setOnAction(e -> {
+                    if (character.getGroupRating(groupName) < Skill.MAX_RATING
+                            && character.getRemainingBP() >= 10) {
+                        character.raiseGroup(groupName);
+                        refreshAllRows();
+                        updateBpDisplay();
+                    }
+                });
+            }
 
             refresh.run();
 
@@ -336,7 +399,13 @@ public class CharacterViewController {
         plus.getStyleClass().add("attr-btn");
         bpLabel.getStyleClass().add("attr-bp");
 
+        boolean career = character.isCreated();
+
         if (coupled) {
+            if (career) {
+                minus.setVisible(false);
+                minus.setManaged(false);
+            }
             Runnable refresh = () -> {
                 ratingLabel.setText(String.valueOf(skill.getRating()));
                 bpLabel.setText("");
@@ -344,6 +413,32 @@ public class CharacterViewController {
                 plus.setDisable(true);
             };
             skillRefreshers.add(refresh);
+            refresh.run();
+        } else if (career) {
+            minus.setVisible(false);
+            minus.setManaged(false);
+            Runnable refresh = () -> {
+                int val       = skill.getRating();
+                int karmaCost = skill.getKarmaCost();
+                ratingLabel.setText(String.valueOf(val));
+                bpLabel.setText(val >= Skill.MAX_RATING ? "–" : karmaCost + " Karma");
+                plus.setDisable(val >= Skill.MAX_RATING || character.getKarmaTotal() < karmaCost);
+            };
+            skillRefreshers.add(refresh);
+
+            plus.setOnAction(e -> {
+                int val       = skill.getRating();
+                int karmaCost = skill.getKarmaCost();
+                String label  = skill.getName() + " " + val + " → " + (val + 1);
+                if (val < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
+                        && confirmKarmaSpend(label, karmaCost)) {
+                    character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
+                    skill.setRating(val + 1);
+                    refreshAllRows();
+                    updateLogDisplay();
+                }
+            });
+
             refresh.run();
         } else {
             Runnable refresh = () -> {
@@ -383,6 +478,16 @@ public class CharacterViewController {
 
     // ── Gemeinsam ─────────────────────────────────────────────
 
+    private boolean confirmKarmaSpend(String label, int karmaCost) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Karma ausgeben");
+        confirm.setHeaderText(label);
+        confirm.setContentText(karmaCost + " Karma ausgeben?\n\nVerbleibendes Karma danach: "
+            + (character.getKarmaTotal() - karmaCost));
+        confirm.initOwner(nameLabel.getScene().getWindow());
+        return confirm.showAndWait().filter(btn -> btn == ButtonType.OK).isPresent();
+    }
+
     private void refreshAllRows() {
         attrRefreshers.forEach(Runnable::run);
         skillRefreshers.forEach(Runnable::run);
@@ -393,6 +498,54 @@ public class CharacterViewController {
         remainingBpLabel.setText(String.valueOf(remaining));
         remainingBpLabel.getStyleClass().remove("bp-value-warn");
         if (remaining < 0) remainingBpLabel.getStyleClass().add("bp-value-warn");
+    }
+
+    // ── Karrieremodus-Transition ──────────────────────────────
+
+    @FXML
+    private void onFinalize() {
+        if (character == null) return;
+        int remainingBp    = character.getRemainingBP();
+        int conversionNuyen = remainingBp * 2_000;
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Charakter abschließen");
+        confirm.setHeaderText("Charakter in den Karrieremodus überführen?");
+        String bpInfo = remainingBp > 0
+            ? remainingBp + " verbleibende BP werden umgerechnet in " + conversionNuyen + " ¥.\n\n"
+            : "";
+        confirm.setContentText(bpInfo + "Dieser Schritt kann nicht rückgängig gemacht werden.");
+        confirm.initOwner(nameLabel.getScene().getWindow());
+
+        confirm.showAndWait()
+            .filter(btn -> btn == ButtonType.OK)
+            .ifPresent(btn -> {
+                if (remainingBp > 0) {
+                    character.addNuyenEntry(new LogEntry(
+                        "Startkapital (BP-Konvertierung)", conversionNuyen, LocalDate.now()));
+                }
+                character.setCreated(true);
+                updateModeDisplay();
+                updateLogDisplay();
+            });
+    }
+
+    private void updateModeDisplay() {
+        if (character == null) return;
+        boolean career = character.isCreated();
+
+        finalizeBtn.setVisible(!career);
+        finalizeBtn.setManaged(!career);
+        bpBox.setVisible(!career);
+        bpBox.setManaged(!career);
+        metatypeBox.setVisible(!career);
+        metatypeBox.setManaged(!career);
+        metatypeLabelCareer.setVisible(career);
+        metatypeLabelCareer.setManaged(career);
+        if (career) metatypeLabelCareer.setText(character.getMetatype().name());
+
+        buildAttributeGrid();
+        buildSkillsTab();
     }
 
     // ── Log-Tab ───────────────────────────────────────────────
@@ -441,6 +594,7 @@ public class CharacterViewController {
         openLogEntryDialog("Karma-Eintrag hinzufügen").ifPresent(entry -> {
             character.addKarmaEntry(entry);
             updateLogDisplay();
+            refreshAllRows();
         });
     }
 

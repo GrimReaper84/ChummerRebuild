@@ -45,6 +45,7 @@ public class CharacterStore {
                 data.skills.put(skill.getName(), skill.getRating());
             }
         }
+        data.created         = character.isCreated();
         data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
         data.karmaLog = character.getKarmaLog().stream()
             .map(e -> new CharacterData.LogEntryData(e.description(), e.amount(), e.date().toString()))
@@ -71,6 +72,7 @@ public class CharacterStore {
                 if (skill != null) skill.setRating(e.getValue());
             }
         }
+        character.setCreated(data.created);
         if (data.decoupledGroups != null) {
             data.decoupledGroups.forEach(character::markGroupDecoupled);
         }
