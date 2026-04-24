@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.shalorian.chummer.view.CharacterViewController"
+            styleClass="character-view">
+    <top>
+        <HBox styleClass="char-header" spacing="20" alignment="CENTER_LEFT">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <Label fx:id="nameLabel"        styleClass="char-name"/>
+            <ComboBox fx:id="metatypeBox"   styleClass="char-metatype-box"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Verbleibende BP:"  styleClass="bp-label"/>
+            <Label fx:id="remainingBpLabel" styleClass="bp-value"/>
+            <Label text="/ 400"             styleClass="bp-total"/>
+        </HBox>
+    </top>
+    <center>
+        <TabPane styleClass="main-tabs" tabClosingPolicy="UNAVAILABLE">
+
+            <Tab text="Attribute">
+                <content>
+                    <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+                        <content>
+                            <VBox styleClass="attr-container" spacing="0">
+                                <padding><Insets top="20" right="36" bottom="20" left="36"/></padding>
+                                <Label text="Attribute" styleClass="section-title"/>
+                                <GridPane fx:id="attributeGrid" hgap="10" vgap="6" styleClass="attr-grid">
+                                    <padding><Insets top="10"/></padding>
+                                </GridPane>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </content>
+            </Tab>
+
+            <Tab text="Skills">
+                <content>
+                    <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+                        <content>
+                            <VBox fx:id="skillsContainer" styleClass="attr-container" spacing="0">
+                                <padding><Insets top="20" right="36" bottom="20" left="36"/></padding>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </content>
+            </Tab>
+
+            <Tab text="Log">
+                <content>
+                    <HBox styleClass="log-container" spacing="0">
+                        <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+                        <!-- Karma -->
+                        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Karma" styleClass="log-section-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="Gesamt:" styleClass="bp-label"/>
+                                <Label fx:id="karmaTotalLabel" styleClass="bp-value" text="0"/>
+                                <Button fx:id="addKarmaBtn" text="+ Eintrag" onAction="#onAddKarma"
+                                        styleClass="btn-secondary"/>
+                            </HBox>
+                            <TableView fx:id="karmaTable" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+
+                        <Separator orientation="VERTICAL">
+                            <VBox.margin><Insets left="16" right="16"/></VBox.margin>
+                        </Separator>
+
+                        <!-- Nuyen -->
+                        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Nuyen" styleClass="log-section-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="Gesamt:" styleClass="bp-label"/>
+                                <Label fx:id="nuyenTotalLabel" styleClass="bp-value" text="0 ¥"/>
+                                <Button fx:id="addNuyenBtn" text="+ Eintrag" onAction="#onAddNuyen"
+                                        styleClass="btn-secondary"/>
+                            </HBox>
+                            <TableView fx:id="nuyenTable" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+
+                    </HBox>
+                </content>
+            </Tab>
+
+        </TabPane>
+    </center>
+    <bottom>
+        <HBox styleClass="status-bar" spacing="16" alignment="CENTER_RIGHT">
+            <padding><Insets top="5" right="20" bottom="5" left="20"/></padding>
+            <Label text="Karma:" styleClass="status-label"/>
+            <Label fx:id="karmaStatusLabel" styleClass="status-value" text="0"/>
+            <Separator orientation="VERTICAL" prefHeight="14"/>
+            <Label text="Nuyen:" styleClass="status-label"/>
+            <Label fx:id="nuyenStatusLabel" styleClass="status-value" text="0 ¥"/>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.shalorian.chummer.view.LogEntryDialogController"
+      spacing="20" styleClass="dialog-pane">
+    <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
+
+    <GridPane hgap="14" vgap="12">
+        <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="110"/>
+            <ColumnConstraints minWidth="200" prefWidth="220" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Datum:"       styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <DatePicker fx:id="datePicker" maxWidth="Infinity"  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Typ:"         styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="typeBox"  maxWidth="Infinity"      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Menge:"       styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="amountField" promptText="z.B. 5" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Bezeichnung:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="descriptionField" promptText="Beschreibung"
+                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Abbrechen"  onAction="#onCancel" styleClass="btn-secondary"/>
+        <Button fx:id="addButton" text="Hinzufügen" onAction="#onAdd"
+                defaultButton="true" styleClass="btn-primary"/>
+    </HBox>
+</VBox>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skills>
+
+    <!-- ── KAMPF ──────────────────────────────────────────── -->
+
+    <group name="Nahkampf" category="COMBAT">
+        <skill name="Klingen"           attribute="AGI"/>
+        <skill name="Knüppel"           attribute="AGI"/>
+        <skill name="Waffenloser Kampf" attribute="AGI"/>
+    </group>
+
+    <group name="Schusswaffen" category="COMBAT">
+        <skill name="Automatikwaffen" attribute="AGI"/>
+        <skill name="Langwaffen"      attribute="AGI"/>
+        <skill name="Pistolen"        attribute="AGI"/>
+        <skill name="Schrotflinten"   attribute="AGI"/>
+    </group>
+
+    <skill name="Bogenschießen"            attribute="AGI" category="COMBAT"/>
+    <skill name="Exotische Fernkampfwaffe" attribute="AGI" category="COMBAT"/>
+    <skill name="Exotische Nahkampfwaffe"  attribute="AGI" category="COMBAT"/>
+    <skill name="Sprengstoff"              attribute="LOG" category="COMBAT"/>
+    <skill name="Wurfwaffen"               attribute="AGI" category="COMBAT"/>
+
+    <!-- ── KÖRPERLICH ─────────────────────────────────────── -->
+
+    <group name="Athletik" category="PHYSICAL">
+        <skill name="Gymnastik" attribute="AGI"/>
+        <skill name="Laufen"    attribute="STR"/>
+        <skill name="Schwimmen" attribute="STR"/>
+    </group>
+
+    <group name="Heimlichkeit" category="PHYSICAL">
+        <skill name="Schleichen"       attribute="AGI"/>
+        <skill name="Taschendiebstahl" attribute="AGI"/>
+        <skill name="Verkleiden"       attribute="INT"/>
+    </group>
+
+    <group name="Natur" category="PHYSICAL">
+        <skill name="Navigation"  attribute="INT"/>
+        <skill name="Spurensuche" attribute="INT"/>
+        <skill name="Überleben"   attribute="WIL"/>
+    </group>
+
+    <skill name="Freifall"    attribute="AGI" category="PHYSICAL"/>
+    <skill name="Klettern"    attribute="STR" category="PHYSICAL"/>
+    <skill name="Wahrnehmung" attribute="INT" category="PHYSICAL"/>
+
+    <!-- ── SOZIAL ─────────────────────────────────────────── -->
+
+    <skill name="Einschüchterung" attribute="CHA" category="SOCIAL"/>
+    <skill name="Etikette"        attribute="CHA" category="SOCIAL"/>
+    <skill name="Führung"         attribute="CHA" category="SOCIAL"/>
+    <skill name="Imitieren"       attribute="CHA" category="SOCIAL"/>
+    <skill name="Schauspielen"    attribute="CHA" category="SOCIAL"/>
+    <skill name="Täuschung"       attribute="CHA" category="SOCIAL"/>
+    <skill name="Verhandeln"      attribute="CHA" category="SOCIAL"/>
+
+    <!-- ── TECHNISCH ──────────────────────────────────────── -->
+
+    <group name="Biotechnik" category="TECHNICAL">
+        <skill name="Cyberchirurgie" attribute="LOG"/>
+        <skill name="Erste Hilfe"    attribute="LOG"/>
+        <skill name="Medizin"        attribute="LOG"/>
+    </group>
+
+    <group name="Elektronik" category="TECHNICAL">
+        <skill name="Computer"       attribute="LOG"/>
+        <skill name="Datenbanksuche" attribute="LOG"/>
+        <skill name="Hardware"       attribute="LOG"/>
+        <skill name="Software"       attribute="LOG"/>
+    </group>
+
+    <group name="Ingenieurwesen" category="TECHNICAL">
+        <skill name="Kfz-Technik"                attribute="LOG"/>
+        <skill name="Industrietechnik"           attribute="LOG"/>
+        <skill name="Luft- und Raumfahrttechnik" attribute="LOG"/>
+        <skill name="Meerestechnik"              attribute="LOG"/>
+    </group>
+
+    <group name="Knacken" category="TECHNICAL">
+        <skill name="Cyberkampf"                  attribute="LOG"/>
+        <skill name="Elektronische Kriegsführung" attribute="LOG"/>
+        <skill name="Hacken"                      attribute="LOG"/>
+    </group>
+
+    <skill name="Chemie"            attribute="LOG" category="TECHNICAL"/>
+    <skill name="Schlösser knacken" attribute="AGI" category="TECHNICAL"/>
+    <skill name="Waffenmeister"     attribute="LOG" category="TECHNICAL"/>
+
+    <!-- ── FAHRZEUGE ──────────────────────────────────────── -->
+
+    <group name="Pilotieren" category="VEHICLE">
+        <skill name="Bodenfahrzeug steuern"  attribute="REA"/>
+        <skill name="Flugzeug steuern"       attribute="REA"/>
+        <skill name="Wasserfahrzeug steuern" attribute="REA"/>
+    </group>
+
+    <skill name="Geschütze"        attribute="LOG" category="VEHICLE"/>
+    <skill name="Motorrad steuern" attribute="REA" category="VEHICLE"/>
+
+</skills>

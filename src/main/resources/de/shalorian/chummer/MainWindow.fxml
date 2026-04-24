@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="borderPane"
+            fx:controller="de.shalorian.chummer.view.MainWindowController"
+            styleClass="root-pane">
+    <top>
+        <MenuBar styleClass="menu-bar">
+            <Menu text="Datei">
+                <MenuItem fx:id="menuNew"    text="Neu"               onAction="#onNew"/>
+                <SeparatorMenuItem/>
+                <MenuItem fx:id="menuOpen"   text="Öffnen …"          onAction="#onOpen"/>
+                <SeparatorMenuItem/>
+                <MenuItem fx:id="menuSave"   text="Speichern"         onAction="#onSave"/>
+                <MenuItem fx:id="menuSaveAs" text="Speichern unter …" onAction="#onSaveAs"/>
+                <SeparatorMenuItem/>
+                <MenuItem fx:id="menuExit"   text="Beenden"           onAction="#onExit"/>
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="12" styleClass="welcome-pane">
+            <Label text="Willkommen bei Chummer" styleClass="welcome-title"/>
+            <Label text="Datei → Neu um einen Charakter zu erstellen" styleClass="welcome-hint"/>
+        </VBox>
+    </center>
+</BorderPane>
