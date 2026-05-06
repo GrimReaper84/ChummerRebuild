@@ -30,6 +30,7 @@ javafx {
 dependencies {
     implementation("org.jspecify:jspecify:1.0.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    implementation("org.controlsfx:controlsfx:11.2.1")
 
     // JavaFX native JARs für alle Plattformen – damit distZip auf Windows, Mac und Linux läuft
     listOf("win", "linux", "mac", "mac-aarch64").forEach { platform ->

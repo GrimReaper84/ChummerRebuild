@@ -69,6 +69,55 @@ class CharacterTest {
     }
 
     @Test
+    void groupKarmaCostIsNewRatingTimesFive() {
+        Character c = mensch("Test");
+        c.raiseGroup("Nahkampf"); // Rating 0 → 1
+        assertEquals(10, c.getGroupKarmaCost("Nahkampf")); // (1 + 1) * 5 = 10
+        c.raiseGroup("Nahkampf"); // Rating 1 → 2
+        assertEquals(15, c.getGroupKarmaCost("Nahkampf")); // (2 + 1) * 5 = 15
+    }
+
+    @Test
+    void spentBpIncludesSkillRating() {
+        Character c = mensch("Test");
+        c.getSkill("Bogenschießen").setRating(3); // 3 × 4 BP = 12 BP
+        assertEquals(12, c.getSpentBP());
+    }
+
+    @Test
+    void groupSkillUsesGroupPrice() {
+        Character c = mensch("Test");
+        c.raiseGroup("Nahkampf"); // Rating 1, 3 Skills in Gruppe → 1 × 10 BP
+        assertEquals(10, c.getSpentBP());
+    }
+
+    @Test
+    void decouplingChangesGroupToIndividualPrice() {
+        Character c = mensch("Test");
+        c.raiseGroup("Nahkampf"); // Rating 1 → 10 BP als Gruppe
+        c.decoupleGroup("Nahkampf");
+        // 3 Skills × Rating 1 × 4 BP = 12 BP
+        assertEquals(12, c.getSpentBP());
+    }
+
+    @Test
+    void karmaAndNuyenTotalSumAllEntries() {
+        Character c = mensch("Test");
+        c.addKarmaEntry(new LogEntry("Missionserfolg", 10, java.time.LocalDate.now()));
+        c.addKarmaEntry(new LogEntry("Attribut erhöht", -5, java.time.LocalDate.now()));
+        c.addNuyenEntry(new LogEntry("Startkapital", 6000, java.time.LocalDate.now()));
+        c.addNuyenEntry(new LogEntry("Ausrüstung", -2000, java.time.LocalDate.now()));
+        assertEquals(5, c.getKarmaTotal());
+        assertEquals(4000, c.getNuyenTotal());
+    }
+
+    @Test
+    void findUnknownMetatypeThrowsException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> MetatypeDataLoader.find("GibtsNicht"));
+    }
+
+    @Test
     void remainingBpDecreasesWithAttributeSpending() {
         Character c = mensch("Test");
         c.getAttribute(BOD).setValue(3);  // 2 Punkte × 10 BP = 20 BP

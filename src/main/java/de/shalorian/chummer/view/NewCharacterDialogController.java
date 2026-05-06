@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
 public class NewCharacterDialogController {
@@ -30,20 +29,7 @@ public class NewCharacterDialogController {
     @FXML
     public void initialize() {
         metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
-        metatypeBox.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(@Nullable MetatypeData m) {
-                if (m == null) return "";
-                String prefix = m.isVariant() ? "  " : "";
-                String bp = m.bpCost() > 0 ? "  (" + m.bpCost() + " BP)" : "";
-                return prefix + m.name() + bp;
-            }
-
-            @Override
-            public @Nullable MetatypeData fromString(String s) {
-                return null;
-            }
-        });
+        metatypeBox.setConverter(new MetatypeStringConverter());
         metatypeBox.setValue(MetatypeDataLoader.find("Mensch"));
         createButton.disableProperty().bind(
                 Bindings.createBooleanBinding(
