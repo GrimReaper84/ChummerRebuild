@@ -1,5 +1,7 @@
 package de.shalorian.chummer.model.character;
 
+import org.jspecify.annotations.NonNull;
+
 public enum AttributeType {
   BOD("Körper", "BOD"),
   AGI("Geschicklichkeit", "AGI"),
@@ -10,19 +12,19 @@ public enum AttributeType {
   LOG("Logik", "LOG"),
   WIL("Willenskraft", "WIL");
 
-  private final String displayName;
-  private final String abbreviation;
+  private final @NonNull String displayName;
+  private final @NonNull String abbreviation;
 
-  AttributeType(String displayName, String abbreviation) {
+  AttributeType(@NonNull String displayName, @NonNull String abbreviation) {
     this.displayName = displayName;
     this.abbreviation = abbreviation;
   }
 
-  public String getDisplayName() {
+  public @NonNull String getDisplayName() {
     return displayName;
   }
 
-  public String getAbbreviation() {
+  public @NonNull String getAbbreviation() {
     return abbreviation;
   }
 }

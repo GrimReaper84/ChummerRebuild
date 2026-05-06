@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class LogEntryDialogController {
@@ -28,7 +29,7 @@ public class LogEntryDialogController {
   private @Nullable Stage stage;
   private @Nullable LogEntry result;
 
-  public void setStage(Stage stage) {
+  public void setStage(@NonNull Stage stage) {
     this.stage = stage;
   }
 
@@ -77,7 +78,7 @@ public class LogEntryDialogController {
     }
   }
 
-  public Optional<LogEntry> getResult() {
+  public @NonNull Optional<LogEntry> getResult() {
     return Optional.ofNullable(result);
   }
 }

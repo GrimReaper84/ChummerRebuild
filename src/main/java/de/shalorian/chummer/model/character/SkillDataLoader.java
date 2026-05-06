@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -15,7 +16,7 @@ public class SkillDataLoader {
 
   private static @Nullable List<Skill> cache;
 
-  public static synchronized List<Skill> createFreshSkills() {
+  public static synchronized @NonNull List<Skill> createFreshSkills() {
     if (cache == null) {
       cache = Collections.unmodifiableList(loadFromXml());
     }
@@ -24,7 +25,7 @@ public class SkillDataLoader {
         .toList();
   }
 
-  private static List<Skill> loadFromXml() {
+  private static @NonNull List<Skill> loadFromXml() {
     try (InputStream in = SkillDataLoader.class.getResourceAsStream(
         "/de/shalorian/chummer/data/skills.xml")) {
       if (in == null) {
@@ -62,7 +63,7 @@ public class SkillDataLoader {
     }
   }
 
-  private static Skill parseSkill(Element el, SkillCategory category, @Nullable String groupName) {
+  private static @NonNull Skill parseSkill(@NonNull Element el, @NonNull SkillCategory category, @Nullable String groupName) {
     return new Skill(el.getAttribute("name"), AttributeType.valueOf(el.getAttribute("attribute")),
         category, groupName);
   }

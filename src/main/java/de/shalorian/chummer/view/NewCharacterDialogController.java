@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class NewCharacterDialogController {
@@ -22,7 +23,7 @@ public class NewCharacterDialogController {
   private @Nullable Stage stage;
   private boolean confirmed = false;
 
-  public void setStage(Stage stage) {
+  public void setStage(@NonNull Stage stage) {
     this.stage = stage;
   }
 
@@ -42,23 +43,23 @@ public class NewCharacterDialogController {
   @FXML
   private void onCreate() {
     confirmed = true;
-    stage.close();
+    if (stage != null) stage.close();
   }
 
   @FXML
   private void onCancel() {
-    stage.close();
+    if (stage != null) stage.close();
   }
 
   public boolean isConfirmed() {
     return confirmed;
   }
 
-  public String getCharacterName() {
+  public @NonNull String getCharacterName() {
     return nameField.getText().trim();
   }
 
-  public MetatypeData getSelectedMetatype() {
+  public @NonNull MetatypeData getSelectedMetatype() {
     return metatypeBox.getValue();
   }
 }

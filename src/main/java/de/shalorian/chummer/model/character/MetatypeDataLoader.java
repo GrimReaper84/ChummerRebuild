@@ -7,6 +7,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,21 +18,21 @@ public class MetatypeDataLoader {
 
   private static @Nullable List<MetatypeData> cache;
 
-  public static synchronized List<MetatypeData> getAllMetatypes() {
+  public static synchronized @NonNull List<MetatypeData> getAllMetatypes() {
     if (cache == null) {
       cache = Collections.unmodifiableList(loadFromXml());
     }
     return cache;
   }
 
-  public static MetatypeData find(String name) {
+  public static @NonNull MetatypeData find(@NonNull String name) {
     return getAllMetatypes().stream()
         .filter(m -> m.name().equals(name))
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Unbekannter Metatyp: \"" + name + "\""));
   }
 
-  private static List<MetatypeData> loadFromXml() {
+  private static @NonNull List<MetatypeData> loadFromXml() {
     try (InputStream in = MetatypeDataLoader.class.getResourceAsStream(
         "/de/shalorian/chummer/data/metatypes.xml")) {
       if (in == null) {
@@ -69,7 +70,7 @@ public class MetatypeDataLoader {
     }
   }
 
-  private static MetatypeData parseEntry(Element el, boolean isVariant) {
+  private static @NonNull MetatypeData parseEntry(@NonNull Element el, boolean isVariant) {
     String name = el.getAttribute("name");
     int bp = Integer.parseInt(el.getAttribute("bp"));
     Map<AttributeType, AttributeRange> ranges = new EnumMap<>(AttributeType.class);

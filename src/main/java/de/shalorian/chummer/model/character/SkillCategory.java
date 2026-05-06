@@ -1,5 +1,7 @@
 package de.shalorian.chummer.model.character;
 
+import org.jspecify.annotations.NonNull;
+
 public enum SkillCategory {
   COMBAT("Kampf"),
   PHYSICAL("Körperlich"),
@@ -7,13 +9,13 @@ public enum SkillCategory {
   TECHNICAL("Technisch"),
   VEHICLE("Fahrzeuge");
 
-  private final String displayName;
+  private final @NonNull String displayName;
 
-  SkillCategory(String displayName) {
+  SkillCategory(@NonNull String displayName) {
     this.displayName = displayName;
   }
 
-  public String getDisplayName() {
+  public @NonNull String getDisplayName() {
     return displayName;
   }
 }

@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 
@@ -15,15 +17,15 @@ public class Character {
 
   public static final int TOTAL_BP = 400;
   private final Map<AttributeType, CharacterAttribute> attributes;
-  private final Map<String, Skill> skills;        // LinkedHashMap – behält XML-Reihenfolge
-  private final Set<String> decoupledGroups;       // Gruppen die aufgebrochen wurden
+  private final Map<String, Skill> skills;
+  private final Set<String> decoupledGroups;
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
-  private String name;
-  private MetatypeData metatype;
+  private @NonNull String name;
+  private @NonNull MetatypeData metatype;
   private boolean created = false;
 
-  public Character(String name, MetatypeData metatype) {
+  public Character(@NonNull String name, @NonNull MetatypeData metatype) {
     this.name = name;
     this.metatype = metatype;
     this.attributes = new EnumMap<>(AttributeType.class);
@@ -35,7 +37,7 @@ public class Character {
     }
   }
 
-  private void initAttributes(MetatypeData metatype) {
+  private void initAttributes(@NonNull MetatypeData metatype) {
     attributes.clear();
     for (AttributeType type : AttributeType.values()) {
       attributes.put(type, new CharacterAttribute(type, metatype.getRangeFor(type)));
@@ -44,38 +46,38 @@ public class Character {
 
   // --- Attribute ---
 
-  public String getName() {
+  public @NonNull String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  public void setName(@NonNull String name) {
     this.name = name;
   }
 
-  public MetatypeData getMetatype() {
+  public @NonNull MetatypeData getMetatype() {
     return metatype;
   }
 
-  public void setMetatype(MetatypeData metatype) {
+  public void setMetatype(@NonNull MetatypeData metatype) {
     this.metatype = metatype;
     initAttributes(metatype);
   }
 
-  public Map<AttributeType, CharacterAttribute> getAttributes() {
+  public @NonNull Map<AttributeType, CharacterAttribute> getAttributes() {
     return Collections.unmodifiableMap(attributes);
   }
 
-  public CharacterAttribute getAttribute(AttributeType type) {
-    return attributes.get(type);
+  public @NonNull CharacterAttribute getAttribute(@NonNull AttributeType type) {
+    return Objects.requireNonNull(attributes.get(type));
   }
 
   // --- Skills ---
 
-  public List<Skill> getSkills() {
+  public @NonNull List<Skill> getSkills() {
     return List.copyOf(skills.values());
   }
 
-  public @Nullable Skill getSkill(String name) {
+  public @Nullable Skill getSkill(@NonNull String name) {
     return skills.get(name);
   }
 
@@ -84,46 +86,46 @@ public class Character {
   /**
    * Liefert true, solange die Gruppe noch nicht aufgebrochen wurde.
    */
-  public boolean isGroupCoupled(String groupName) {
+  public boolean isGroupCoupled(@NonNull String groupName) {
     return !decoupledGroups.contains(groupName);
   }
 
   /**
    * Das aktuelle Rating einer gekoppelten Gruppe (Minimum aller Skills).
    */
-  public int getGroupRating(String groupName) {
+  public int getGroupRating(@NonNull String groupName) {
     return skills.values().stream()
         .filter(s -> groupName.equals(s.getGroupName()))
         .mapToInt(Skill::getRating)
         .min().orElse(0);
   }
 
-  public void raiseGroup(String groupName) {
+  public void raiseGroup(@NonNull String groupName) {
     int newRating = getGroupRating(groupName) + 1;
     skills.values().stream()
         .filter(s -> groupName.equals(s.getGroupName()))
         .forEach(s -> s.setRating(newRating));
   }
 
-  public void lowerGroup(String groupName) {
+  public void lowerGroup(@NonNull String groupName) {
     int newRating = Math.max(0, getGroupRating(groupName) - 1);
     skills.values().stream()
         .filter(s -> groupName.equals(s.getGroupName()))
         .forEach(s -> s.setRating(newRating));
   }
 
-  public int getGroupKarmaCost(String groupName) {
+  public int getGroupKarmaCost(@NonNull String groupName) {
     return (getGroupRating(groupName) + 1) * 5;
   }
 
   /**
    * Bricht die Gruppe auf – Skills behalten ihre Ratings, werden ab jetzt einzeln bepreist.
    */
-  public void decoupleGroup(String groupName) {
+  public void decoupleGroup(@NonNull String groupName) {
     decoupledGroups.add(groupName);
   }
 
-  public Set<String> getDecoupledGroups() {
+  public @NonNull Set<String> getDecoupledGroups() {
     return Collections.unmodifiableSet(decoupledGroups);
   }
 
@@ -163,19 +165,19 @@ public class Character {
     this.created = v;
   }
 
-  public void addKarmaEntry(LogEntry entry) {
+  public void addKarmaEntry(@NonNull LogEntry entry) {
     karmaLog.add(entry);
   }
 
-  public void addNuyenEntry(LogEntry entry) {
+  public void addNuyenEntry(@NonNull LogEntry entry) {
     nuyenLog.add(entry);
   }
 
-  public List<LogEntry> getKarmaLog() {
+  public @NonNull List<LogEntry> getKarmaLog() {
     return Collections.unmodifiableList(karmaLog);
   }
 
-  public List<LogEntry> getNuyenLog() {
+  public @NonNull List<LogEntry> getNuyenLog() {
     return Collections.unmodifiableList(nuyenLog);
   }
 

@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class Skill {
@@ -7,30 +8,30 @@ public class Skill {
   public static final int MAX_RATING = 6;
   private static final int BP_PER_RATING = 4;
 
-  private final String name;
-  private final AttributeType linkedAttribute;
-  private final SkillCategory category;
+  private final @NonNull String name;
+  private final @NonNull AttributeType linkedAttribute;
+  private final @NonNull SkillCategory category;
   private final @Nullable String groupName; // null wenn keine Gruppe
 
   private int rating = 0;
 
-  public Skill(String name, AttributeType linkedAttribute,
-      SkillCategory category, @Nullable String groupName) {
+  public Skill(@NonNull String name, @NonNull AttributeType linkedAttribute,
+      @NonNull SkillCategory category, @Nullable String groupName) {
     this.name = name;
     this.linkedAttribute = linkedAttribute;
     this.category = category;
     this.groupName = groupName;
   }
 
-  public String getName() {
+  public @NonNull String getName() {
     return name;
   }
 
-  public AttributeType getLinkedAttribute() {
+  public @NonNull AttributeType getLinkedAttribute() {
     return linkedAttribute;
   }
 
-  public SkillCategory getCategory() {
+  public @NonNull SkillCategory getCategory() {
     return category;
   }
 

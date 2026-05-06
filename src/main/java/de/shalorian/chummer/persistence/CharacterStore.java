@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 import java.util.stream.Collectors;
 
 public class CharacterStore {
@@ -21,15 +22,15 @@ public class CharacterStore {
   private static final ObjectMapper MAPPER =
       new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-  public static void save(Character character, File file) throws IOException {
+  public static void save(@NonNull Character character, @NonNull File file) throws IOException {
     MAPPER.writeValue(file, toData(character));
   }
 
-  public static Character load(File file) throws IOException {
+  public static @NonNull Character load(@NonNull File file) throws IOException {
     return fromData(MAPPER.readValue(file, CharacterData.class));
   }
 
-  private static CharacterData toData(Character character) {
+  private static @NonNull CharacterData toData(@NonNull Character character) {
     CharacterData data = new CharacterData();
     data.name = character.getName();
     data.metatype = character.getMetatype().name(); // MetatypeData.name() Accessor
@@ -54,7 +55,7 @@ public class CharacterStore {
     return data;
   }
 
-  private static Character fromData(CharacterData data) {
+  private static @NonNull Character fromData(@NonNull CharacterData data) {
     String charName = Objects.requireNonNull(data.name, "Name fehlt in Speicherdatei");
     String metatypeName = Objects.requireNonNull(data.metatype, "Metatyp fehlt in Speicherdatei");
     MetatypeData metatype = MetatypeDataLoader.find(metatypeName);

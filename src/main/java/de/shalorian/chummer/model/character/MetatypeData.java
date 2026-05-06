@@ -1,15 +1,16 @@
 package de.shalorian.chummer.model.character;
 
 import java.util.Map;
+import org.jspecify.annotations.NonNull;
 
 public record MetatypeData(
-    String name,
+    @NonNull String name,
     int bpCost,
     boolean isVariant,
-    Map<AttributeType, AttributeRange> ranges
+    @NonNull Map<AttributeType, AttributeRange> ranges
 ) {
 
-  public AttributeRange getRangeFor(AttributeType type) {
+  public @NonNull AttributeRange getRangeFor(@NonNull AttributeType type) {
     AttributeRange range = ranges.get(type);
     if (range == null) {
       throw new IllegalStateException(

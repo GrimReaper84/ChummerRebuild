@@ -1,7 +1,6 @@
 package de.shalorian.chummer.view;
 
 import de.shalorian.chummer.App;
-import org.controlsfx.control.Notifications;
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterAttribute;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -39,6 +39,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -46,8 +47,8 @@ public class CharacterViewController {
 
   private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
   // Attribute-Refresher bleiben stabil; Skill-Refresher werden beim Entkoppeln neu aufgebaut
-  private final List<Runnable> attrRefreshers = new ArrayList<>();
-  private final List<Runnable> skillRefreshers = new ArrayList<>();
+  private final @NonNull List<Runnable> attrRefreshers = new ArrayList<>();
+  private final @NonNull List<Runnable> skillRefreshers = new ArrayList<>();
   @FXML
   private Label nameLabel;
   @FXML
@@ -107,6 +108,10 @@ public class CharacterViewController {
   // ── Attribute-Tab ─────────────────────────────────────────
 
   private void buildAttributeGrid() {
+    if (character == null) {
+      return;
+    }
+
     attributeGrid.getChildren().clear();
     attributeGrid.getColumnConstraints().clear();
     attrRefreshers.clear();
@@ -133,12 +138,12 @@ public class CharacterViewController {
 
     int row = 1;
     for (AttributeType type : AttributeType.values()) {
-      addAttributeRow(row++, type, character.getAttribute(type));
+      addAttributeRow(row++, type, character.getAttribute(type), character);
     }
   }
 
   private void addAttributeRow(int row, @NonNull AttributeType type,
-      @NonNull CharacterAttribute attr) {
+      @NonNull CharacterAttribute attr, @NonNull Character character) {
     Label nameLabel = new Label(type.getDisplayName());
     Label abbrLabel = new Label(type.getAbbreviation());
     Button minus = new Button("−");
@@ -175,7 +180,7 @@ public class CharacterViewController {
         int karmaCost = attr.getKarmaCost();
         String label = type.getDisplayName() + " " + val + " → " + (val + 1);
         if (val < attr.getMax() && character.getKarmaTotal() >= karmaCost
-            && confirmKarmaSpend(label, karmaCost)) {
+            && confirmKarmaSpend(label, karmaCost, character)) {
           character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
           attr.setValue(val + 1);
           refreshAllRows();
@@ -222,6 +227,10 @@ public class CharacterViewController {
   // ── Skills-Tab ────────────────────────────────────────────
 
   private void buildSkillsTab() {
+    if (character == null) {
+      return;
+    }
+
     skillsContainer.getChildren().clear();
     skillRefreshers.clear();
 
@@ -232,7 +241,8 @@ public class CharacterViewController {
     }
     for (Skill skill : character.getSkills()) {
       String key = skill.getGroupName() != null ? skill.getGroupName() : "";
-      grouped.get(skill.getCategory()).computeIfAbsent(key, k -> new ArrayList<>()).add(skill);
+      Objects.requireNonNull(grouped.get(skill.getCategory()))
+          .computeIfAbsent(key, k -> new ArrayList<>()).add(skill);
     }
 
     boolean firstSection = true;
@@ -255,13 +265,13 @@ public class CharacterViewController {
         String groupName = groupEntry.getKey();
         if (!groupName.isEmpty()) {
           boolean coupled = character.isGroupCoupled(groupName);
-          row = addGroupHeaderRow(grid, row, groupName, coupled);
+          row = addGroupHeaderRow(grid, row, groupName, coupled, character);
           for (Skill skill : groupEntry.getValue()) {
-            addSkillRow(grid, row++, skill, coupled);
+            addSkillRow(grid, row++, skill, coupled, character);
           }
         } else {
           for (Skill skill : groupEntry.getValue()) {
-            addSkillRow(grid, row++, skill, false);
+            addSkillRow(grid, row++, skill, false, character);
           }
         }
       }
@@ -277,7 +287,7 @@ public class CharacterViewController {
     updateBpDisplay();
   }
 
-  private GridPane buildSkillGrid() {
+  private @NonNull GridPane buildSkillGrid() {
     GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(5);
@@ -297,7 +307,8 @@ public class CharacterViewController {
   /**
    * Fügt eine Gruppen-Kopfzeile mit +/−-Buttons und Auskoppeln-Button ein.
    */
-  private int addGroupHeaderRow(GridPane grid, int row, String groupName, boolean coupled) {
+  private int addGroupHeaderRow(@NonNull GridPane grid, int row, @NonNull String groupName,
+      boolean coupled, @NonNull Character character) {
     HBox nameBox = new HBox(8);
     nameBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -363,7 +374,7 @@ public class CharacterViewController {
           int karmaCost = character.getGroupKarmaCost(groupName);
           String label = groupName + " " + rating + " → " + (rating + 1);
           if (rating < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
-              && confirmKarmaSpend(label, karmaCost)) {
+              && confirmKarmaSpend(label, karmaCost, character)) {
             character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
             character.raiseGroup(groupName);
             refreshAllRows();
@@ -408,7 +419,8 @@ public class CharacterViewController {
     return row + 1;
   }
 
-  private void addSkillRow(@NonNull GridPane grid, int row, Skill skill, boolean coupled) {
+  private void addSkillRow(@NonNull GridPane grid, int row, @NonNull Skill skill, boolean coupled,
+      @NonNull Character character) {
     Label nameLabel = new Label(skill.getName());
     Label attrLabel = new Label(skill.getLinkedAttribute().getAbbreviation());
     Button minus = new Button("−");
@@ -455,7 +467,7 @@ public class CharacterViewController {
         int karmaCost = skill.getKarmaCost();
         String label = skill.getName() + " " + val + " → " + (val + 1);
         if (val < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
-            && confirmKarmaSpend(label, karmaCost)) {
+            && confirmKarmaSpend(label, karmaCost, character)) {
           character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
           skill.setRating(val + 1);
           refreshAllRows();
@@ -502,7 +514,8 @@ public class CharacterViewController {
 
   // ── Gemeinsam ─────────────────────────────────────────────
 
-  private boolean confirmKarmaSpend(String label, int karmaCost) {
+  private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
+      @NonNull Character character) {
     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
     confirm.setTitle("Karma ausgeben");
     confirm.setHeaderText(label);
@@ -518,6 +531,9 @@ public class CharacterViewController {
   }
 
   private void updateBpDisplay() {
+    if (character == null) {
+      return;
+    }
     int remaining = character.getRemainingBP();
     remainingBpLabel.setText(String.valueOf(remaining));
     remainingBpLabel.getStyleClass().remove("bp-value-warn");
@@ -545,17 +561,17 @@ public class CharacterViewController {
     confirm.setContentText(bpInfo + "Dieser Schritt kann nicht rückgängig gemacht werden.");
     confirm.initOwner(nameLabel.getScene().getWindow());
 
-    confirm.showAndWait()
-        .filter(btn -> btn == ButtonType.OK)
-        .ifPresent(btn -> {
-          if (remainingBp > 0) {
-            character.addNuyenEntry(new LogEntry(
-                "Startkapital (BP-Konvertierung)", conversionNuyen, LocalDate.now()));
-          }
-          character.setCreated(true);
-          updateModeDisplay();
-          updateLogDisplay();
-        });
+    Optional<ButtonType> result = confirm.showAndWait();
+    if (result.isEmpty() || result.get() != ButtonType.OK) {
+      return;
+    }
+    if (remainingBp > 0) {
+      character.addNuyenEntry(new LogEntry(
+          "Startkapital (BP-Konvertierung)", conversionNuyen, LocalDate.now()));
+    }
+    character.setCreated(true);
+    updateModeDisplay();
+    updateLogDisplay();
   }
 
   private void updateModeDisplay() {
@@ -583,7 +599,7 @@ public class CharacterViewController {
   // ── Log-Tab ───────────────────────────────────────────────
 
   @SuppressWarnings("unchecked")
-  private void buildLogTable(TableView<LogEntry> table) {
+  private void buildLogTable(@NonNull TableView<LogEntry> table) {
     TableColumn<LogEntry, String> dateCol = new TableColumn<>("Datum");
     dateCol.setCellValueFactory(c ->
         new SimpleStringProperty(c.getValue().date().format(DATE_FMT)));
@@ -625,24 +641,35 @@ public class CharacterViewController {
 
   @FXML
   private void onAddKarma() {
-    openLogEntryDialog("Karma-Eintrag hinzufügen").ifPresent(entry -> {
-      character.addKarmaEntry(entry);
-      updateLogDisplay();
-      refreshAllRows();
-    });
+    if (character == null) {
+      return;
+    }
+    Optional<LogEntry> result = openLogEntryDialog("Karma-Eintrag hinzufügen");
+    if (result.isEmpty()) {
+      return;
+    }
+    character.addKarmaEntry(result.get());
+    updateLogDisplay();
+    refreshAllRows();
   }
 
   @FXML
   private void onAddNuyen() {
-    openLogEntryDialog("Nuyen-Eintrag hinzufügen").ifPresent(entry -> {
-      character.addNuyenEntry(entry);
-      updateLogDisplay();
-    });
+    if (character == null) {
+      return;
+    }
+    Optional<LogEntry> result = openLogEntryDialog("Nuyen-Eintrag hinzufügen");
+    if (result.isEmpty()) {
+      return;
+    }
+    character.addNuyenEntry(result.get());
+    updateLogDisplay();
   }
 
-  private Optional<LogEntry> openLogEntryDialog(String title) {
+  private @NonNull Optional<LogEntry> openLogEntryDialog(@NonNull String title) {
     try {
-      FXMLLoader loader = new FXMLLoader(App.class.getResource("LogEntryDialog.fxml"));
+      FXMLLoader loader = new FXMLLoader(
+          Objects.requireNonNull(App.class.getResource("LogEntryDialog.fxml")));
       Parent root = loader.load();
       LogEntryDialogController ctrl = loader.getController();
 
@@ -652,7 +679,8 @@ public class CharacterViewController {
       dialogStage.initOwner(nameLabel.getScene().getWindow());
       dialogStage.setResizable(false);
       Scene scene = new Scene(root);
-      scene.getStylesheets().add(App.class.getResource("style.css").toExternalForm());
+      scene.getStylesheets()
+          .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
       dialogStage.setScene(scene);
 
       ctrl.setStage(dialogStage);

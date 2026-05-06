@@ -6,6 +6,7 @@ import de.shalorian.chummer.persistence.CharacterStore;
 import de.shalorian.chummer.utils.PersistenceUtils;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class MainWindowController {
@@ -41,7 +43,7 @@ public class MainWindowController {
   private @Nullable Character currentCharacter;
   private @Nullable File currentFile;
 
-  public void setStage(Stage stage) {
+  public void setStage(@NonNull Stage stage) {
     this.stage = stage;
   }
 
@@ -60,7 +62,7 @@ public class MainWindowController {
   @FXML
   private void onNew() {
     try {
-      FXMLLoader dialogLoader = new FXMLLoader(App.class.getResource("NewCharacterDialog.fxml"));
+      FXMLLoader dialogLoader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("NewCharacterDialog.fxml")));
       Parent dialogRoot = dialogLoader.load();
       NewCharacterDialogController dialogCtrl = dialogLoader.getController();
 
@@ -70,7 +72,7 @@ public class MainWindowController {
       dialogStage.setTitle("Neuer Charakter");
       dialogStage.setResizable(false);
       Scene dialogScene = new Scene(dialogRoot);
-      dialogScene.getStylesheets().add(App.class.getResource("style.css").toExternalForm());
+      dialogScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
       dialogStage.setScene(dialogScene);
 
       dialogCtrl.setStage(dialogStage);
@@ -138,8 +140,8 @@ public class MainWindowController {
 
   // ── Helpers ────────────────────────────────────────────
 
-  private void showCharacter(Character character) throws IOException {
-    FXMLLoader viewLoader = new FXMLLoader(App.class.getResource("CharacterView.fxml"));
+  private void showCharacter(@NonNull Character character) throws IOException {
+    FXMLLoader viewLoader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("CharacterView.fxml")));
     Parent charView = viewLoader.load();
     CharacterViewController charCtrl = viewLoader.getController();
     charCtrl.setCharacter(character);
@@ -151,7 +153,8 @@ public class MainWindowController {
     updateTitle();
   }
 
-  private void saveToFile(File file) {
+  private void saveToFile(@NonNull File file) {
+    if (currentCharacter == null) return;
     try {
       CharacterStore.save(currentCharacter, file);
       updateTitle();
@@ -161,12 +164,13 @@ public class MainWindowController {
   }
 
   private void updateTitle() {
+    if (stage == null) return;
     String name = currentCharacter != null ? currentCharacter.getName() : "";
     String file = currentFile != null ? "  [" + currentFile.getName() + "]" : "";
     stage.setTitle("Chummer – " + name + file);
   }
 
-  private FileChooser buildChooser(String title) {
+  private @NonNull FileChooser buildChooser(@NonNull String title) {
     FileChooser chooser = new FileChooser();
     chooser.setTitle(title);
     chooser.getExtensionFilters().add(
@@ -179,7 +183,7 @@ public class MainWindowController {
     return chooser;
   }
 
-  private void showError(String header, @Nullable String detail) {
+  private void showError(@NonNull String header, @Nullable String detail) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.setTitle("Fehler");
     alert.setHeaderText(header);

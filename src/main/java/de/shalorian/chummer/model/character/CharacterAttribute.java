@@ -1,22 +1,24 @@
 package de.shalorian.chummer.model.character;
 
+import org.jspecify.annotations.NonNull;
+
 public class CharacterAttribute {
 
   private static final int BP_PER_POINT = 10;
 
-  private final AttributeType type;
+  private final @NonNull AttributeType type;
   private final int min;
   private final int max;
   private int value;
 
-  public CharacterAttribute(AttributeType type, AttributeRange range) {
+  public CharacterAttribute(@NonNull AttributeType type, @NonNull AttributeRange range) {
     this.type = type;
     this.min = range.min();
     this.max = range.max();
     this.value = range.min();
   }
 
-  public AttributeType getType() {
+  public @NonNull AttributeType getType() {
     return type;
   }
 
