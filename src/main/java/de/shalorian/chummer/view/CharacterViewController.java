@@ -1,14 +1,8 @@
 package de.shalorian.chummer.view;
 
 import de.shalorian.chummer.App;
-import de.shalorian.chummer.model.character.AttributeType;
+import de.shalorian.chummer.model.character.*;
 import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.CharacterAttribute;
-import de.shalorian.chummer.model.character.LogEntry;
-import de.shalorian.chummer.model.character.MetatypeData;
-import de.shalorian.chummer.model.character.MetatypeDataLoader;
-import de.shalorian.chummer.model.character.Skill;
-import de.shalorian.chummer.model.character.SkillCategory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,56 +12,77 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.Optional;
 
 public class CharacterViewController {
 
-    @FXML private Label                   nameLabel;
-    @FXML private ComboBox<MetatypeData>  metatypeBox;
-    @FXML private Label                   remainingBpLabel;
-    @FXML private GridPane                attributeGrid;
-    @FXML private VBox                    skillsContainer;
+    @FXML
+    private Label nameLabel;
+    @FXML
+    private ComboBox<MetatypeData> metatypeBox;
+    @FXML
+    private Label remainingBpLabel;
+    @FXML
+    private GridPane attributeGrid;
+    @FXML
+    private VBox skillsContainer;
 
-    @FXML private Button                  finalizeBtn;
-    @FXML private HBox                    bpBox;
-    @FXML private Label                   metatypeLabelCareer;
-    @FXML private TableView<LogEntry>     karmaTable;
-    @FXML private TableView<LogEntry>     nuyenTable;
-    @FXML private Label                   karmaTotalLabel;
-    @FXML private Label                   nuyenTotalLabel;
-    @FXML private Label                   karmaStatusLabel;
-    @FXML private Label                   nuyenStatusLabel;
+    @FXML
+    private Button finalizeBtn;
+    @FXML
+    private HBox bpBox;
+    @FXML
+    private Label metatypeLabelCareer;
+    @FXML
+    private TableView<LogEntry> karmaTable;
+    @FXML
+    private TableView<LogEntry> nuyenTable;
+    @FXML
+    private Label karmaTotalLabel;
+    @FXML
+    private Label nuyenTotalLabel;
+    @FXML
+    private Label karmaStatusLabel;
+    @FXML
+    private Label nuyenStatusLabel;
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private @Nullable Character character;
 
     // Attribute-Refresher bleiben stabil; Skill-Refresher werden beim Entkoppeln neu aufgebaut
-    private final List<Runnable> attrRefreshers  = new ArrayList<>();
+    private final List<Runnable> attrRefreshers = new ArrayList<>();
     private final List<Runnable> skillRefreshers = new ArrayList<>();
 
     @FXML
     public void initialize() {
         metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
         metatypeBox.setConverter(new StringConverter<>() {
-            @Override public String toString(@Nullable MetatypeData m) {
+            @Override
+            public String toString(@Nullable MetatypeData m) {
                 if (m == null) return "";
                 String prefix = m.isVariant() ? "  " : "";
-                String bp     = m.bpCost() > 0 ? "  (" + m.bpCost() + " BP)" : "";
+                String bp = m.bpCost() > 0 ? "  (" + m.bpCost() + " BP)" : "";
                 return prefix + m.name() + bp;
             }
-            @Override public @Nullable MetatypeData fromString(String s) { return null; }
+
+            @Override
+            public @Nullable MetatypeData fromString(String s) {
+                return null;
+            }
         });
         metatypeBox.valueProperty().addListener((obs, old, newVal) -> {
             if (character == null || newVal == null || old == null) return;
@@ -80,7 +95,7 @@ public class CharacterViewController {
         buildLogTable(nuyenTable);
     }
 
-    public void setCharacter(Character character) {
+    public void setCharacter(@NonNull Character character) {
         this.character = character;
         nameLabel.setText(character.getName());
         metatypeBox.setValue(character.getMetatype());
@@ -96,9 +111,9 @@ public class CharacterViewController {
         attributeGrid.getColumnConstraints().clear();
         attrRefreshers.clear();
 
-        int[]  widths = {170, 46, 30, 46, 30, 90, 70};
+        int[] widths = {170, 46, 30, 46, 30, 90, 70};
         HPos[] aligns = {HPos.LEFT, HPos.CENTER, HPos.CENTER,
-                         HPos.CENTER, HPos.CENTER, HPos.LEFT, HPos.LEFT};
+                HPos.CENTER, HPos.CENTER, HPos.LEFT, HPos.LEFT};
         for (int i = 0; i < widths.length; i++) {
             ColumnConstraints cc = new ColumnConstraints(widths[i]);
             cc.setHalignment(aligns[i]);
@@ -107,7 +122,7 @@ public class CharacterViewController {
 
         boolean career = character.isCreated();
         String[] headers = {"Attribut", "", "", "Wert", "", "Bereich",
-                            career ? "Karma" : "BP-Kosten"};
+                career ? "Karma" : "BP-Kosten"};
         for (int i = 0; i < headers.length; i++) {
             if (!headers[i].isEmpty()) {
                 Label h = new Label(headers[i]);
@@ -122,14 +137,14 @@ public class CharacterViewController {
         }
     }
 
-    private void addAttributeRow(int row, AttributeType type, CharacterAttribute attr) {
-        Label  nameLabel  = new Label(type.getDisplayName());
-        Label  abbrLabel  = new Label(type.getAbbreviation());
-        Button minus      = new Button("−");
-        Label  valueLabel = new Label();
-        Button plus       = new Button("+");
-        Label  rangeLabel = new Label(attr.getMin() + " – " + attr.getMax());
-        Label  bpLabel    = new Label();
+    private void addAttributeRow(int row, @NonNull AttributeType type, @NonNull CharacterAttribute attr) {
+        Label nameLabel = new Label(type.getDisplayName());
+        Label abbrLabel = new Label(type.getAbbreviation());
+        Button minus = new Button("−");
+        Label valueLabel = new Label();
+        Button plus = new Button("+");
+        Label rangeLabel = new Label(attr.getMin() + " – " + attr.getMax());
+        Label bpLabel = new Label();
 
         nameLabel.getStyleClass().add("attr-name");
         abbrLabel.getStyleClass().add("attr-abbr");
@@ -146,7 +161,7 @@ public class CharacterViewController {
             minus.setVisible(false);
             minus.setManaged(false);
             refresh = () -> {
-                int val       = attr.getValue();
+                int val = attr.getValue();
                 int karmaCost = attr.getKarmaCost();
                 valueLabel.setText(String.valueOf(val));
                 bpLabel.setText(val >= attr.getMax() ? "–" : karmaCost + " Karma");
@@ -155,9 +170,9 @@ public class CharacterViewController {
             attrRefreshers.add(refresh);
 
             plus.setOnAction(e -> {
-                int val       = attr.getValue();
+                int val = attr.getValue();
                 int karmaCost = attr.getKarmaCost();
-                String label  = type.getDisplayName() + " " + val + " → " + (val + 1);
+                String label = type.getDisplayName() + " " + val + " → " + (val + 1);
                 if (val < attr.getMax() && character.getKarmaTotal() >= karmaCost
                         && confirmKarmaSpend(label, karmaCost)) {
                     character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
@@ -194,13 +209,13 @@ public class CharacterViewController {
 
         refresh.run();
 
-        attributeGrid.add(nameLabel,  0, row);
-        attributeGrid.add(abbrLabel,  1, row);
-        attributeGrid.add(minus,      2, row);
+        attributeGrid.add(nameLabel, 0, row);
+        attributeGrid.add(abbrLabel, 1, row);
+        attributeGrid.add(minus, 2, row);
         attributeGrid.add(valueLabel, 3, row);
-        attributeGrid.add(plus,       4, row);
+        attributeGrid.add(plus, 4, row);
         attributeGrid.add(rangeLabel, 5, row);
-        attributeGrid.add(bpLabel,    6, row);
+        attributeGrid.add(bpLabel, 6, row);
     }
 
     // ── Skills-Tab ────────────────────────────────────────────
@@ -248,7 +263,9 @@ public class CharacterViewController {
         }
     }
 
-    /** Baut den Skills-Tab neu auf, z.B. nach dem Entkoppeln einer Gruppe. */
+    /**
+     * Baut den Skills-Tab neu auf, z.B. nach dem Entkoppeln einer Gruppe.
+     */
     private void rebuildSkillsTab() {
         buildSkillsTab();
         attrRefreshers.forEach(Runnable::run);
@@ -261,9 +278,9 @@ public class CharacterViewController {
         grid.setVgap(5);
         grid.getStyleClass().add("attr-grid");
 
-        int[]  widths = {200, 46, 30, 46, 30, 70};
+        int[] widths = {200, 46, 30, 46, 30, 70};
         HPos[] aligns = {HPos.LEFT, HPos.CENTER, HPos.CENTER,
-                         HPos.CENTER, HPos.CENTER, HPos.LEFT};
+                HPos.CENTER, HPos.CENTER, HPos.LEFT};
         for (int i = 0; i < widths.length; i++) {
             ColumnConstraints cc = new ColumnConstraints(widths[i]);
             cc.setHalignment(aligns[i]);
@@ -272,7 +289,9 @@ public class CharacterViewController {
         return grid;
     }
 
-    /** Fügt eine Gruppen-Kopfzeile mit +/−-Buttons und Auskoppeln-Button ein. */
+    /**
+     * Fügt eine Gruppen-Kopfzeile mit +/−-Buttons und Auskoppeln-Button ein.
+     */
     private int addGroupHeaderRow(GridPane grid, int row, String groupName, boolean coupled) {
         HBox nameBox = new HBox(8);
         nameBox.setAlignment(Pos.CENTER_LEFT);
@@ -290,18 +309,18 @@ public class CharacterViewController {
                 confirm.setHeaderText("Skillgruppe \"" + groupName + "\" wirklich auskoppeln?");
                 int rating = character.getGroupRating(groupName);
                 String costInfo = rating > 0
-                    ? "\nAchtung: Die " + groupName + "-Skills werden ab jetzt einzeln bepreist "
-                      + "(je " + (rating * 4) + " BP statt " + (rating * 10) + " BP gesamt)."
-                    : "";
+                        ? "\nAchtung: Die " + groupName + "-Skills werden ab jetzt einzeln bepreist "
+                          + "(je " + (rating * 4) + " BP statt " + (rating * 10) + " BP gesamt)."
+                        : "";
                 confirm.setContentText(
-                    "Nach dem Auskoppeln können die Skills der Gruppe unabhängig voneinander "
-                    + "erhöht werden." + costInfo);
+                        "Nach dem Auskoppeln können die Skills der Gruppe unabhängig voneinander "
+                                + "erhöht werden." + costInfo);
                 confirm.showAndWait()
-                    .filter(btn -> btn == ButtonType.OK)
-                    .ifPresent(btn -> {
-                        character.decoupleGroup(groupName);
-                        rebuildSkillsTab();
-                    });
+                        .filter(btn -> btn == ButtonType.OK)
+                        .ifPresent(btn -> {
+                            character.decoupleGroup(groupName);
+                            rebuildSkillsTab();
+                        });
             });
             nameBox.getChildren().add(decoupleBtn);
         }
@@ -309,10 +328,10 @@ public class CharacterViewController {
         grid.add(nameBox, 0, row);
 
         if (coupled) {
-            Button minus       = new Button("−");
-            Label  ratingLabel = new Label();
-            Button plus        = new Button("+");
-            Label  bpLabel     = new Label();
+            Button minus = new Button("−");
+            Label ratingLabel = new Label();
+            Button plus = new Button("+");
+            Label bpLabel = new Label();
 
             minus.getStyleClass().add("attr-btn");
             ratingLabel.getStyleClass().add("attr-value");
@@ -326,7 +345,7 @@ public class CharacterViewController {
                 minus.setVisible(false);
                 minus.setManaged(false);
                 refresh = () -> {
-                    int rating    = character.getGroupRating(groupName);
+                    int rating = character.getGroupRating(groupName);
                     int karmaCost = (rating + 1) * 5;
                     ratingLabel.setText(String.valueOf(rating));
                     bpLabel.setText(rating >= Skill.MAX_RATING ? "–" : karmaCost + " Karma");
@@ -335,9 +354,9 @@ public class CharacterViewController {
                 skillRefreshers.add(refresh);
 
                 plus.setOnAction(e -> {
-                    int rating    = character.getGroupRating(groupName);
+                    int rating = character.getGroupRating(groupName);
                     int karmaCost = (rating + 1) * 5;
-                    String label  = groupName + " " + rating + " → " + (rating + 1);
+                    String label = groupName + " " + rating + " → " + (rating + 1);
                     if (rating < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
                             && confirmKarmaSpend(label, karmaCost)) {
                         character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
@@ -375,22 +394,22 @@ public class CharacterViewController {
 
             refresh.run();
 
-            grid.add(minus,       2, row);
+            grid.add(minus, 2, row);
             grid.add(ratingLabel, 3, row);
-            grid.add(plus,        4, row);
-            grid.add(bpLabel,     5, row);
+            grid.add(plus, 4, row);
+            grid.add(bpLabel, 5, row);
         }
 
         return row + 1;
     }
 
-    private void addSkillRow(GridPane grid, int row, Skill skill, boolean coupled) {
-        Label  nameLabel   = new Label(skill.getName());
-        Label  attrLabel   = new Label(skill.getLinkedAttribute().getAbbreviation());
-        Button minus       = new Button("−");
-        Label  ratingLabel = new Label();
-        Button plus        = new Button("+");
-        Label  bpLabel     = new Label();
+    private void addSkillRow(@NonNull GridPane grid, int row, Skill skill, boolean coupled) {
+        Label nameLabel = new Label(skill.getName());
+        Label attrLabel = new Label(skill.getLinkedAttribute().getAbbreviation());
+        Button minus = new Button("−");
+        Label ratingLabel = new Label();
+        Button plus = new Button("+");
+        Label bpLabel = new Label();
 
         nameLabel.getStyleClass().add(coupled ? "attr-name-coupled" : "attr-name");
         attrLabel.getStyleClass().add("attr-abbr");
@@ -418,7 +437,7 @@ public class CharacterViewController {
             minus.setVisible(false);
             minus.setManaged(false);
             Runnable refresh = () -> {
-                int val       = skill.getRating();
+                int val = skill.getRating();
                 int karmaCost = skill.getKarmaCost();
                 ratingLabel.setText(String.valueOf(val));
                 bpLabel.setText(val >= Skill.MAX_RATING ? "–" : karmaCost + " Karma");
@@ -427,9 +446,9 @@ public class CharacterViewController {
             skillRefreshers.add(refresh);
 
             plus.setOnAction(e -> {
-                int val       = skill.getRating();
+                int val = skill.getRating();
                 int karmaCost = skill.getKarmaCost();
-                String label  = skill.getName() + " " + val + " → " + (val + 1);
+                String label = skill.getName() + " " + val + " → " + (val + 1);
                 if (val < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
                         && confirmKarmaSpend(label, karmaCost)) {
                     character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
@@ -468,12 +487,12 @@ public class CharacterViewController {
             refresh.run();
         }
 
-        grid.add(nameLabel,   0, row);
-        grid.add(attrLabel,   1, row);
-        grid.add(minus,       2, row);
+        grid.add(nameLabel, 0, row);
+        grid.add(attrLabel, 1, row);
+        grid.add(minus, 2, row);
         grid.add(ratingLabel, 3, row);
-        grid.add(plus,        4, row);
-        grid.add(bpLabel,     5, row);
+        grid.add(plus, 4, row);
+        grid.add(bpLabel, 5, row);
     }
 
     // ── Gemeinsam ─────────────────────────────────────────────
@@ -483,7 +502,7 @@ public class CharacterViewController {
         confirm.setTitle("Karma ausgeben");
         confirm.setHeaderText(label);
         confirm.setContentText(karmaCost + " Karma ausgeben?\n\nVerbleibendes Karma danach: "
-            + (character.getKarmaTotal() - karmaCost));
+                + (character.getKarmaTotal() - karmaCost));
         confirm.initOwner(nameLabel.getScene().getWindow());
         return confirm.showAndWait().filter(btn -> btn == ButtonType.OK).isPresent();
     }
@@ -505,29 +524,29 @@ public class CharacterViewController {
     @FXML
     private void onFinalize() {
         if (character == null) return;
-        int remainingBp    = character.getRemainingBP();
+        int remainingBp = character.getRemainingBP();
         int conversionNuyen = remainingBp * 2_000;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Charakter abschließen");
         confirm.setHeaderText("Charakter in den Karrieremodus überführen?");
         String bpInfo = remainingBp > 0
-            ? remainingBp + " verbleibende BP werden umgerechnet in " + conversionNuyen + " ¥.\n\n"
-            : "";
+                ? remainingBp + " verbleibende BP werden umgerechnet in " + conversionNuyen + " ¥.\n\n"
+                : "";
         confirm.setContentText(bpInfo + "Dieser Schritt kann nicht rückgängig gemacht werden.");
         confirm.initOwner(nameLabel.getScene().getWindow());
 
         confirm.showAndWait()
-            .filter(btn -> btn == ButtonType.OK)
-            .ifPresent(btn -> {
-                if (remainingBp > 0) {
-                    character.addNuyenEntry(new LogEntry(
-                        "Startkapital (BP-Konvertierung)", conversionNuyen, LocalDate.now()));
-                }
-                character.setCreated(true);
-                updateModeDisplay();
-                updateLogDisplay();
-            });
+                .filter(btn -> btn == ButtonType.OK)
+                .ifPresent(btn -> {
+                    if (remainingBp > 0) {
+                        character.addNuyenEntry(new LogEntry(
+                                "Startkapital (BP-Konvertierung)", conversionNuyen, LocalDate.now()));
+                    }
+                    character.setCreated(true);
+                    updateModeDisplay();
+                    updateLogDisplay();
+                });
     }
 
     private void updateModeDisplay() {
@@ -554,12 +573,12 @@ public class CharacterViewController {
     private void buildLogTable(TableView<LogEntry> table) {
         TableColumn<LogEntry, String> dateCol = new TableColumn<>("Datum");
         dateCol.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().date().format(DATE_FMT)));
+                new SimpleStringProperty(c.getValue().date().format(DATE_FMT)));
         dateCol.setPrefWidth(90);
 
         TableColumn<LogEntry, String> descCol = new TableColumn<>("Bezeichnung");
         descCol.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().description()));
+                new SimpleStringProperty(c.getValue().description()));
 
         TableColumn<LogEntry, String> amountCol = new TableColumn<>("Menge");
         amountCol.setCellValueFactory(c -> {
