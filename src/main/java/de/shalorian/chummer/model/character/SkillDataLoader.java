@@ -31,8 +31,7 @@ public class SkillDataLoader {
         throw new IllegalStateException("skills.xml nicht gefunden");
       }
 
-      Document doc = DocumentBuilderFactory.newInstance()
-          .newDocumentBuilder().parse(in);
+      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
       doc.getDocumentElement().normalize();
 
       List<Skill> list = new ArrayList<>();
@@ -64,11 +63,7 @@ public class SkillDataLoader {
   }
 
   private static Skill parseSkill(Element el, SkillCategory category, @Nullable String groupName) {
-    return new Skill(
-        el.getAttribute("name"),
-        AttributeType.valueOf(el.getAttribute("attribute")),
-        category,
-        groupName
-    );
+    return new Skill(el.getAttribute("name"), AttributeType.valueOf(el.getAttribute("attribute")),
+        category, groupName);
   }
 }

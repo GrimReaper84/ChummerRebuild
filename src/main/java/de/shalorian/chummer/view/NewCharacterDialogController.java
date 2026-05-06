@@ -12,53 +12,53 @@ import org.jspecify.annotations.Nullable;
 
 public class NewCharacterDialogController {
 
-    @FXML
-    private TextField nameField;
-    @FXML
-    private ComboBox<MetatypeData> metatypeBox;
-    @FXML
-    private Button createButton;
+  @FXML
+  private TextField nameField;
+  @FXML
+  private ComboBox<MetatypeData> metatypeBox;
+  @FXML
+  private Button createButton;
 
-    private @Nullable Stage stage;
-    private boolean confirmed = false;
+  private @Nullable Stage stage;
+  private boolean confirmed = false;
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
+  public void setStage(Stage stage) {
+    this.stage = stage;
+  }
 
-    @FXML
-    public void initialize() {
-        metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
-        metatypeBox.setConverter(new MetatypeStringConverter());
-        metatypeBox.setValue(MetatypeDataLoader.find("Mensch"));
-        createButton.disableProperty().bind(
-                Bindings.createBooleanBinding(
-                        () -> nameField.getText().trim().isEmpty(),
-                        nameField.textProperty()
-                )
-        );
-    }
+  @FXML
+  public void initialize() {
+    metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
+    metatypeBox.setConverter(new MetatypeStringConverter());
+    metatypeBox.setValue(MetatypeDataLoader.find("Mensch"));
+    createButton.disableProperty().bind(
+        Bindings.createBooleanBinding(
+            () -> nameField.getText().trim().isEmpty(),
+            nameField.textProperty()
+        )
+    );
+  }
 
-    @FXML
-    private void onCreate() {
-        confirmed = true;
-        stage.close();
-    }
+  @FXML
+  private void onCreate() {
+    confirmed = true;
+    stage.close();
+  }
 
-    @FXML
-    private void onCancel() {
-        stage.close();
-    }
+  @FXML
+  private void onCancel() {
+    stage.close();
+  }
 
-    public boolean isConfirmed() {
-        return confirmed;
-    }
+  public boolean isConfirmed() {
+    return confirmed;
+  }
 
-    public String getCharacterName() {
-        return nameField.getText().trim();
-    }
+  public String getCharacterName() {
+    return nameField.getText().trim();
+  }
 
-    public MetatypeData getSelectedMetatype() {
-        return metatypeBox.getValue();
-    }
+  public MetatypeData getSelectedMetatype() {
+    return metatypeBox.getValue();
+  }
 }

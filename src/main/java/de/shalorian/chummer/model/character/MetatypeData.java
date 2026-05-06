@@ -8,10 +8,13 @@ public record MetatypeData(
     boolean isVariant,
     Map<AttributeType, AttributeRange> ranges
 ) {
-    public AttributeRange getRangeFor(AttributeType type) {
-        AttributeRange range = ranges.get(type);
-        if (range == null) throw new IllegalStateException(
-            "Kein Attributbereich für " + type + " in Metatyp \"" + name + "\"");
-        return range;
+
+  public AttributeRange getRangeFor(AttributeType type) {
+    AttributeRange range = ranges.get(type);
+    if (range == null) {
+      throw new IllegalStateException(
+          "Kein Attributbereich für " + type + " in Metatyp \"" + name + "\"");
     }
+    return range;
+  }
 }
