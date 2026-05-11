@@ -26,6 +26,14 @@
             <attribute name="INT" min="2" max="7"/>
             <attribute name="LOG" min="1" max="6"/>
             <attribute name="WIL" min="1" max="6"/>
+            <qualities>
+                <positive>
+                    <quality>Nachtsicht</quality>
+                </positive>
+                <negative>
+                    <quality>Unverkennbarer Stil</quality>
+                </negative>
+            </qualities>
         </variant>
     </metatype>
 
@@ -39,6 +47,11 @@
         <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="1" max="6"/>
+        <qualities>
+            <positive>
+                <quality>Nachtsicht</quality>
+            </positive>
+        </qualities>
 
         <variant name="Nachtelf" bp="60">
             <attribute name="BOD" min="1" max="6"/>
@@ -49,6 +62,14 @@
             <attribute name="INT" min="2" max="7"/>
             <attribute name="LOG" min="1" max="6"/>
             <attribute name="WIL" min="1" max="6"/>
+            <qualities>
+                <positive>
+                    <quality>Nachtsicht</quality>
+                </positive>
+                <negative>
+                    <quality>Unverkennbarer Stil</quality>
+                </negative>
+            </qualities>
         </variant>
     </metatype>
 
@@ -62,6 +83,11 @@
         <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="2" max="7"/>
+        <qualities>
+            <positive>
+                <quality>Wärmesicht</quality>
+            </positive>
+        </qualities>
 
         <variant name="Kobold" bp="25">
             <attribute name="BOD" min="2" max="7"/>
@@ -72,6 +98,16 @@
             <attribute name="INT" min="1" max="6"/>
             <attribute name="LOG" min="1" max="7"/>
             <attribute name="WIL" min="2" max="7"/>
+            <qualities>
+                <positive>
+                    <quality>Arkaner Dämpfer</quality>
+                    <quality>Wärmesicht</quality>
+                </positive>
+                <negative>
+                    <quality>Unverkennbarer Stil</quality>
+                    <quality>Neotenismus</quality>
+                </negative>
+            </qualities>
         </variant>
     </metatype>
 
@@ -85,6 +121,11 @@
         <attribute name="INT" min="1" max="5"/>
         <attribute name="LOG" min="1" max="5"/>
         <attribute name="WIL" min="1" max="6"/>
+        <qualities>
+            <positive>
+                <quality>Nachtsicht</quality>
+            </positive>
+        </qualities>
 
         <variant name="Hobgoblin" bp="30">
             <attribute name="BOD" min="3" max="8"/>
@@ -95,6 +136,16 @@
             <attribute name="INT" min="1" max="5"/>
             <attribute name="LOG" min="1" max="5"/>
             <attribute name="WIL" min="1" max="6"/>
+            <qualities>
+                <positive>
+                    <quality>Reißzähne</quality>
+                    <quality>Nachtsicht</quality>
+                </positive>
+                <negative>
+                    <quality>Unverkennbarer Stil</quality>
+                    <quality>Schlechte Selbstkontrolle (Rachsüchtig)</quality>
+                </negative>
+            </qualities>
         </variant>
     </metatype>
 
@@ -108,6 +159,11 @@
         <attribute name="INT" min="1" max="5"/>
         <attribute name="LOG" min="1" max="5"/>
         <attribute name="WIL" min="1" max="6"/>
+        <qualities>
+            <positive>
+                <quality>Wärmesicht</quality>
+            </positive>
+        </qualities>
 
         <variant name="Fomori" bp="50">
             <attribute name="BOD" min="5" max="10"/>
@@ -118,6 +174,15 @@
             <attribute name="INT" min="1" max="5"/>
             <attribute name="LOG" min="1" max="5"/>
             <attribute name="WIL" min="2" max="7"/>
+            <qualities>
+                <positive>
+                    <quality>Arkaner Dämpfer</quality>
+                    <quality>Wärmesicht</quality>
+                </positive>
+                <negative>
+                    <quality>Unverkennbarer Stil</quality>
+                </negative>
+            </qualities>
         </variant>
     </metatype>
 

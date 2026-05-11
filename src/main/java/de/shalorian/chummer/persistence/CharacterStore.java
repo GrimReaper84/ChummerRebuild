@@ -7,6 +7,9 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeData;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.QualityData;
+import de.shalorian.chummer.model.character.QualityDataLoader;
+import de.shalorian.chummer.model.character.QualitySource;
 import de.shalorian.chummer.model.character.Skill;
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +47,11 @@ public class CharacterStore {
       }
     }
     data.created = character.isCreated();
+    data.nuyenBP = character.getNuyenBP();
+    data.selectedQualities = character.getQualities().stream()
+        .filter(q -> q.source() == QualitySource.SELECTED)
+        .map(q -> new CharacterData.SelectedQualityEntry(q.data().name(), q.gratis()))
+        .collect(Collectors.toList());
     data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
     data.karmaLog = character.getKarmaLog().stream()
         .map(e -> new CharacterData.LogEntryData(e.description(), e.amount(), e.date().toString()))
@@ -73,6 +81,15 @@ public class CharacterStore {
       }
     }
     character.setCreated(data.created);
+    character.setNuyenBP(data.nuyenBP);
+    if (data.selectedQualities != null) {
+      for (CharacterData.SelectedQualityEntry entry : data.selectedQualities) {
+        QualityData qualityData = QualityDataLoader.findByName(entry.name);
+        if (qualityData != null) {
+          character.loadSelectedQuality(qualityData, entry.gratis);
+        }
+      }
+    }
     if (data.decoupledGroups != null) {
       data.decoupledGroups.forEach(character::decoupleGroup);
     }

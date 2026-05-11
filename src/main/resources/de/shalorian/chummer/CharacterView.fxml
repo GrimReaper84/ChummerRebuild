@@ -18,6 +18,12 @@
                 <Label fx:id="remainingBpLabel" styleClass="bp-value"/>
                 <Label text="/ 400"             styleClass="bp-total"/>
             </HBox>
+            <HBox fx:id="nuyenBpBox" spacing="8" alignment="CENTER_LEFT">
+                <Label text="Startkapital:" styleClass="bp-label"/>
+                <Button fx:id="nuyenBpMinusBtn" text="−" styleClass="attr-btn" onAction="#onNuyenBpMinus"/>
+                <Label fx:id="nuyenBpValueLabel" styleClass="bp-value" text="0 BP (0 ¥)"/>
+                <Button fx:id="nuyenBpPlusBtn" text="+" styleClass="attr-btn" onAction="#onNuyenBpPlus"/>
+            </HBox>
             <Button fx:id="finalizeBtn" text="Charakter abschließen" onAction="#onFinalize"
                     styleClass="btn-finalize"/>
         </HBox>
@@ -46,6 +52,18 @@
                     <ScrollPane fitToWidth="true" styleClass="attr-scroll">
                         <content>
                             <VBox fx:id="skillsContainer" styleClass="attr-container" spacing="0">
+                                <padding><Insets top="20" right="36" bottom="20" left="36"/></padding>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </content>
+            </Tab>
+
+            <Tab text="Gaben &amp; Handicaps">
+                <content>
+                    <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+                        <content>
+                            <VBox fx:id="qualitiesContainer" styleClass="attr-container" spacing="0">
                                 <padding><Insets top="20" right="36" bottom="20" left="36"/></padding>
                             </VBox>
                         </content>

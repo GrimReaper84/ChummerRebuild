@@ -26,8 +26,7 @@ public class SkillDataLoader {
   }
 
   private static @NonNull List<Skill> loadFromXml() {
-    try (InputStream in = SkillDataLoader.class.getResourceAsStream(
-        "/de/shalorian/chummer/data/skills.xml")) {
+    try (InputStream in = SkillDataLoader.class.getResourceAsStream(DataPaths.SKILLS_XML)) {
       if (in == null) {
         throw new IllegalStateException("skills.xml nicht gefunden");
       }

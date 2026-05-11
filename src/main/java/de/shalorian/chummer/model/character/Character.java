@@ -16,14 +16,21 @@ import org.jspecify.annotations.Nullable;
 public class Character {
 
   public static final int TOTAL_BP = 400;
+  public static final int MAX_NUYEN_BP = 50;
+  public static final int NUYEN_PER_BP = 5_000;
+  public static final int MAX_POSITIVE_QUALITY_BP = 35;
+  public static final int MAX_NEGATIVE_QUALITY_BP = 35;
+
   private final Map<AttributeType, CharacterAttribute> attributes;
   private final Map<String, Skill> skills;
   private final Set<String> decoupledGroups;
+  private final List<CharacterQuality> qualities = new ArrayList<>();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private @NonNull String name;
   private @NonNull MetatypeData metatype;
   private boolean created = false;
+  private int nuyenBP = 0;
 
   public Character(@NonNull String name, @NonNull MetatypeData metatype) {
     this.name = name;
@@ -31,6 +38,7 @@ public class Character {
     this.attributes = new EnumMap<>(AttributeType.class);
     this.decoupledGroups = new HashSet<>();
     initAttributes(metatype);
+    initMetatypeQualities(metatype);
     this.skills = new LinkedHashMap<>();
     for (Skill skill : SkillDataLoader.createFreshSkills()) {
       this.skills.put(skill.getName(), skill);
@@ -41,6 +49,22 @@ public class Character {
     attributes.clear();
     for (AttributeType type : AttributeType.values()) {
       attributes.put(type, new CharacterAttribute(type, metatype.getRangeFor(type)));
+    }
+  }
+
+  private void initMetatypeQualities(@NonNull MetatypeData metatype) {
+    qualities.removeIf(q -> q.source() == QualitySource.METATYPE);
+    for (String qName : metatype.grantedPositiveQualityNames()) {
+      QualityData data = QualityDataLoader.findByName(qName);
+      if (data != null) {
+        qualities.add(new CharacterQuality(data, QualitySource.METATYPE));
+      }
+    }
+    for (String qName : metatype.grantedNegativeQualityNames()) {
+      QualityData data = QualityDataLoader.findByName(qName);
+      if (data != null) {
+        qualities.add(new CharacterQuality(data, QualitySource.METATYPE));
+      }
     }
   }
 
@@ -61,6 +85,7 @@ public class Character {
   public void setMetatype(@NonNull MetatypeData metatype) {
     this.metatype = metatype;
     initAttributes(metatype);
+    initMetatypeQualities(metatype);
   }
 
   public @NonNull Map<AttributeType, CharacterAttribute> getAttributes() {
@@ -129,6 +154,89 @@ public class Character {
     return Collections.unmodifiableSet(decoupledGroups);
   }
 
+  public int getNuyenBP() {
+    return nuyenBP;
+  }
+
+  public void setNuyenBP(int bp) {
+    if (bp < 0 || bp > MAX_NUYEN_BP) {
+      throw new IllegalArgumentException(
+          "Nuyen-BP muss zwischen 0 und %d liegen".formatted(MAX_NUYEN_BP));
+    }
+    this.nuyenBP = bp;
+  }
+
+  // --- Qualities ---
+
+  public @NonNull List<CharacterQuality> getQualities() {
+    return Collections.unmodifiableList(qualities);
+  }
+
+  /**
+   * Fügt eine gewählte Quality hinzu. Gratis-Qualities umgehen das BP-Limit und kosten 0 BP.
+   *
+   * @param gratis wenn true, wird die Limit-Prüfung übersprungen und die Quality kostet 0 BP
+   */
+  public void addQuality(@NonNull QualityData data, boolean gratis) {
+    if (!created && !gratis && data.contributeToLimit()) {
+      if (data.type() == QualityType.POSITIVE
+          && getPositiveQualityBP() + data.bp() > MAX_POSITIVE_QUALITY_BP) {
+        throw new IllegalArgumentException(
+            "Positives Quality-Limit von %d BP überschritten".formatted(MAX_POSITIVE_QUALITY_BP));
+      }
+      if (data.type() == QualityType.NEGATIVE
+          && getNegativeQualityBP() + Math.abs(data.bp()) > MAX_NEGATIVE_QUALITY_BP) {
+        throw new IllegalArgumentException(
+            "Negatives Quality-Limit von %d BP überschritten".formatted(MAX_NEGATIVE_QUALITY_BP));
+      }
+    }
+    qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis));
+  }
+
+  /** Lädt eine gewählte Quality ohne Limit-Prüfung — nur für den Persistenz-Pfad. */
+  public void loadSelectedQuality(@NonNull QualityData data, boolean gratis) {
+    qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis));
+  }
+
+  public void removeQuality(@NonNull String name) {
+    qualities.removeIf(q -> q.source() == QualitySource.SELECTED && q.data().name().equals(name));
+  }
+
+  public int getPositiveQualityBP() {
+    return qualities.stream()
+        .filter(q -> q.source() == QualitySource.SELECTED
+            && q.data().type() == QualityType.POSITIVE
+            && q.data().contributeToLimit()
+            && !q.gratis())
+        .mapToInt(q -> q.data().bp())
+        .sum();
+  }
+
+  public int getNegativeQualityBP() {
+    return qualities.stream()
+        .filter(q -> q.source() == QualitySource.SELECTED
+            && q.data().type() == QualityType.NEGATIVE
+            && q.data().contributeToLimit()
+            && !q.gratis())
+        .mapToInt(q -> Math.abs(q.data().bp()))
+        .sum();
+  }
+
+  public boolean isUneducated() {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.UNEDUCATED));
+  }
+
+  public boolean isUncouth() {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.UNCOUTH));
+  }
+
+  public boolean isInfirm() {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.INFIRM));
+  }
+
   // --- BP ---
   public int getSpentBP() {
     int attrBP = attributes.values().stream().mapToInt(CharacterAttribute::getBpCost).sum();
@@ -148,7 +256,12 @@ public class Character {
       }
     }
 
-    return metatype.bpCost() + attrBP + skillBP;
+    int qualityBP = qualities.stream()
+        .filter(q -> q.source() == QualitySource.SELECTED && !q.gratis())
+        .mapToInt(q -> q.data().bp())
+        .sum();
+
+    return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP;
   }
 
   public int getRemainingBP() {

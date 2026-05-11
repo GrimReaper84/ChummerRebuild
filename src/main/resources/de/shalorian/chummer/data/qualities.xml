@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    SR4-Qualities (Gaben und Handicaps).
+    Quelle: Shadowrun 4th Edition Grundregelwerk (SR4) und Runner's Companion (RC).
+
+    Metatyp-Qualities (durch Rasse gewährt): werden nicht separat gekauft,
+    BP-Kosten sind bereits im Metatyp-Preis enthalten.
+-->
+<qualities>
+
+    <!-- ══════════════════════════════════════════════════════
+         POSITIVE QUALITIES (GABEN)
+         ══════════════════════════════════════════════════════ -->
+
+    <!-- ── Metatyp-Qualities (Positive) ──────────────────── -->
+
+    <quality>
+        <name>Nachtsicht</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Wärmesicht</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Reißzähne</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>RC</source>
+    </quality>
+
+    <quality>
+        <name>Arkaner Dämpfer</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>RC</source>
+    </quality>
+
+    <quality>
+        <name>Shiva-Arme</name>
+        <bp>20</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>RC</source>
+    </quality>
+
+    <!-- ── Wählbare Gaben (SR4 GRW) ───────────────────────── -->
+
+    <quality>
+        <name>Analytischer Verstand</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Beidhändig</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <limit>no</limit>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Erster Eindruck</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Glückspilz</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Hohe Schmerztoleranz 1</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Hohe Schmerztoleranz 2</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Hohe Schmerztoleranz 3</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Natürlicher Athlet</name>
+        <bp>7</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Natürliche Abhärtung</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Meisterhandwerker</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Adept</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Magier</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Mystischer Adept</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Technomant</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <!-- ══════════════════════════════════════════════════════
+         NEGATIVE QUALITIES (HANDICAPS)
+         ══════════════════════════════════════════════════════ -->
+
+    <!-- ── Metatyp-Qualities (Negative) ──────────────────── -->
+
+    <quality>
+        <name>Unverkennbarer Stil</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Auffällige Hautpigmentierung</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>RC</source>
+    </quality>
+
+    <quality>
+        <name>Schlechte Selbstkontrolle (Rachsüchtig)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>RC</source>
+    </quality>
+
+    <quality>
+        <name>Neotenismus</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>RC</source>
+    </quality>
+
+    <!-- ── Wählbare Handicaps (SR4 GRW) ───────────────────── -->
+
+    <quality>
+        <name>Gebrechlich</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <bonus>
+            <infirm/>
+        </bonus>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Ungehobelt</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <bonus>
+            <uncouth/>
+        </bonus>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Ungebildet</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <bonus>
+            <uneducated/>
+        </bonus>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Pechvogel</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Empfindliches System</name>
+        <bp>-15</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>SÜNder</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>SÜNder (National)</name>
+        <bp>-15</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>SÜNder (Global)</name>
+        <bp>-25</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Schwaches Immunsystem</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Abhängigkeit (Mild)</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Abhängigkeit (Mäßig)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Abhängigkeit (Stark)</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Allergie (Ungewöhnlich, Mild)</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Allergie (Ungewöhnlich, Schwer)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Allergie (Häufig, Mild)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Allergie (Häufig, Schwer)</name>
+        <bp>-15</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Allergie (Verbreitet, Mild)</name>
+        <bp>-15</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+    <quality>
+        <name>Allergie (Verbreitet, Schwer)</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <bonus/>
+        <source>SR4</source>
+    </quality>
+
+</qualities>

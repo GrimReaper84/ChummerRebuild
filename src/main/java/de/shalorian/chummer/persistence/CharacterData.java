@@ -12,6 +12,8 @@ public class CharacterData {
   public @Nullable String name;
   public @Nullable String metatype;
   public boolean created = false;
+  public int nuyenBP = 0;
+  public @NonNull List<SelectedQualityEntry> selectedQualities = new ArrayList<>();
   public @NonNull Map<String, Integer> attributes = new HashMap<>();
   public @NonNull Map<String, Integer> skills = new HashMap<>(); // name → rating (nur > 0)
   public @NonNull List<String> decoupledGroups = new ArrayList<>();
@@ -19,6 +21,20 @@ public class CharacterData {
   public @NonNull List<LogEntryData> nuyenLog = new ArrayList<>();
 
   public CharacterData() {
+  }
+
+  public static class SelectedQualityEntry {
+
+    public @NonNull String name = "";
+    public boolean gratis = false;
+
+    public SelectedQualityEntry() {
+    }
+
+    public SelectedQualityEntry(@NonNull String name, boolean gratis) {
+      this.name = name;
+      this.gratis = gratis;
+    }
   }
 
   public static class LogEntryData {

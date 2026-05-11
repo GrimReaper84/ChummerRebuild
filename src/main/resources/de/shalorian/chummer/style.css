@@ -243,6 +243,12 @@
     -fx-text-fill: #cccccc;
 }
 
+.quality-metatype {
+    -fx-font-size: 13px;
+    -fx-text-fill: #777777;
+    -fx-font-style: italic;
+}
+
 .attr-abbr {
     -fx-font-size: 12px;
     -fx-text-fill: #666666;

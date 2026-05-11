@@ -56,9 +56,9 @@ public class Skill {
   }
 
   /**
-   * Karma-Kosten um diesen Skill um 1 zu erhöhen (neuer Rating × 2).
+   * Karma-Kosten um diesen Skill um 1 zu erhöhen (4 Karma für neuen Skill, sonst neues Rating × 2).
    */
   public int getKarmaCost() {
-    return (rating + 1) * 2;
+    return rating == 0 ? 4 : (rating + 1) * 2;
   }
 }

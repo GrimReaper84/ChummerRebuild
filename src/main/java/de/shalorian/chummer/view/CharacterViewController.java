@@ -7,10 +7,14 @@ import de.shalorian.chummer.model.character.CharacterAttribute;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeData;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.CharacterQuality;
+import de.shalorian.chummer.model.character.QualitySource;
+import de.shalorian.chummer.model.character.QualityType;
 import de.shalorian.chummer.model.character.Skill;
 import de.shalorian.chummer.model.character.SkillCategory;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,11 +35,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -49,6 +56,7 @@ public class CharacterViewController {
   // Attribute-Refresher bleiben stabil; Skill-Refresher werden beim Entkoppeln neu aufgebaut
   private final @NonNull List<Runnable> attrRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> skillRefreshers = new ArrayList<>();
+  private final @NonNull List<Runnable> qualityRefreshers = new ArrayList<>();
   @FXML
   private Label nameLabel;
   @FXML
@@ -64,6 +72,14 @@ public class CharacterViewController {
   @FXML
   private HBox bpBox;
   @FXML
+  private HBox nuyenBpBox;
+  @FXML
+  private Label nuyenBpValueLabel;
+  @FXML
+  private Button nuyenBpMinusBtn;
+  @FXML
+  private Button nuyenBpPlusBtn;
+  @FXML
   private Label metatypeLabelCareer;
   @FXML
   private TableView<LogEntry> karmaTable;
@@ -77,6 +93,8 @@ public class CharacterViewController {
   private Label karmaStatusLabel;
   @FXML
   private Label nuyenStatusLabel;
+  @FXML
+  private VBox qualitiesContainer;
   private @Nullable Character character;
 
   @FXML
@@ -101,8 +119,10 @@ public class CharacterViewController {
     nameLabel.setText(character.getName());
     metatypeBox.setValue(character.getMetatype());
     updateBpDisplay();
+    updateNuyenBpDisplay();
     updateLogDisplay();
     updateModeDisplay();
+    buildQualitiesTab();
   }
 
   // ── Attribute-Tab ─────────────────────────────────────────
@@ -285,6 +305,198 @@ public class CharacterViewController {
     buildSkillsTab();
     attrRefreshers.forEach(Runnable::run);
     updateBpDisplay();
+  }
+
+  // ── Qualities-Tab ──────────────────────────────────────────
+
+  private void buildQualitiesTab() {
+    if (character == null) {
+      return;
+    }
+    qualitiesContainer.getChildren().clear();
+    qualityRefreshers.clear();
+
+    boolean career = character.isCreated();
+
+    buildQualitySection("Gaben", QualityType.POSITIVE, career);
+
+    Separator sep = new Separator();
+    VBox.setMargin(sep, new Insets(16, 0, 16, 0));
+    qualitiesContainer.getChildren().add(sep);
+
+    buildQualitySection("Handicaps", QualityType.NEGATIVE, career);
+  }
+
+  private void buildQualitySection(
+      @NonNull String title, @NonNull QualityType type, boolean career) {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+
+    Label sectionLabel = new Label(title);
+    sectionLabel.getStyleClass().add("section-title");
+
+    Label limitLabel = new Label();
+    limitLabel.getStyleClass().add("bp-label");
+
+    Button addBtn = new Button("Hinzufügen");
+    addBtn.getStyleClass().add("btn-secondary");
+    addBtn.setOnAction(e -> onAddQuality(type));
+
+    HBox header = new HBox(8);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.getChildren().add(sectionLabel);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().add(spacer);
+    if (!career) {
+      header.getChildren().add(limitLabel);
+    }
+    header.getChildren().add(addBtn);
+    VBox.setMargin(header, new Insets(0, 0, 6, 0));
+    qualitiesContainer.getChildren().add(header);
+
+    if (!career) {
+      Runnable limitRefresh = () -> {
+        int used = type == QualityType.POSITIVE
+            ? ch.getPositiveQualityBP()
+            : ch.getNegativeQualityBP();
+        limitLabel.setText(used + " / " + Character.MAX_POSITIVE_QUALITY_BP + " BP");
+      };
+      qualityRefreshers.add(limitRefresh);
+      limitRefresh.run();
+    }
+
+    GridPane grid = new GridPane();
+    grid.setHgap(10);
+    grid.setVgap(4);
+
+    int[] widths = {220, 90, 80, 90};
+    for (int width : widths) {
+      ColumnConstraints cc = new ColumnConstraints(width);
+      grid.getColumnConstraints().add(cc);
+    }
+
+    List<CharacterQuality> section = ch.getQualities().stream()
+        .filter(q -> q.data().type() == type)
+        .collect(Collectors.toList());
+
+    int row = 0;
+    for (CharacterQuality q : section) {
+      boolean isMetatype = q.source() == QualitySource.METATYPE;
+
+      Label nameLabel = new Label(q.data().name());
+      nameLabel.getStyleClass().add(isMetatype ? "quality-metatype" : "attr-name");
+
+      Label costLabel = new Label();
+      costLabel.getStyleClass().add("attr-bp");
+      if (q.gratis()) {
+        costLabel.setText("Gratis");
+      } else {
+        costLabel.setText(Math.abs(q.data().bp()) + " BP");
+      }
+
+      Label sourceLabel = new Label(isMetatype ? "(Metatyp)" : "");
+      sourceLabel.getStyleClass().add("attr-range");
+
+      grid.add(nameLabel, 0, row);
+      grid.add(costLabel, 1, row);
+      grid.add(sourceLabel, 2, row);
+
+      if (!isMetatype) {
+        Button removeBtn = new Button("Entfernen");
+        removeBtn.getStyleClass().add("btn-secondary");
+        String qualityName = q.data().name();
+        removeBtn.setOnAction(e -> {
+          Character c = this.character;
+          if (c != null) {
+            c.removeQuality(qualityName);
+            buildQualitiesTab();
+            updateBpDisplay();
+            refreshAllRows();
+          }
+        });
+        grid.add(removeBtn, 3, row);
+      }
+
+      row++;
+    }
+
+    if (row == 0) {
+      Label empty = new Label("Keine " + title + " gewählt");
+      empty.getStyleClass().add("attr-range");
+      grid.add(empty, 0, 0);
+    }
+
+    qualitiesContainer.getChildren().add(grid);
+  }
+
+  private void rebuildQualitiesTab() {
+    buildQualitiesTab();
+    refreshAllRows();
+  }
+
+  private void onAddQuality(@NonNull QualityType filter) {
+    openQualitySelectDialog(filter);
+  }
+
+  private void openQualitySelectDialog(@NonNull QualityType filter) {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    boolean again = true;
+    while (again) {
+      try {
+        FXMLLoader loader = new FXMLLoader(
+            Objects.requireNonNull(App.class.getResource("QualitySelectDialog.fxml")));
+        Parent root = loader.load();
+        QualitySelectDialogController ctrl = loader.getController();
+
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Quality hinzufügen");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(nameLabel.getScene().getWindow());
+        dialogStage.setResizable(false);
+        Scene scene = new Scene(root);
+        scene.getStylesheets()
+            .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
+        dialogStage.setScene(scene);
+
+        ctrl.setStage(dialogStage);
+        ctrl.setCharacter(ch);
+        ctrl.setFilter(filter);
+        dialogStage.showAndWait();
+
+        Optional<QualitySelectResult> result = ctrl.getResult();
+        if (result.isEmpty()) {
+          break;
+        }
+        QualitySelectResult r = result.get();
+        try {
+          ch.addQuality(r.data(), r.gratis());
+        } catch (IllegalArgumentException ex) {
+          Notifications.create()
+              .title("Limit erreicht")
+              .text(ex.getMessage())
+              .position(Pos.BOTTOM_RIGHT)
+              .owner(nameLabel.getScene().getWindow())
+              .showWarning();
+        }
+        rebuildQualitiesTab();
+        updateBpDisplay();
+        again = r.addAnother();
+      } catch (IOException e) {
+        Notifications.create()
+            .title("Fehler")
+            .text("Dialog konnte nicht geöffnet werden")
+            .position(Pos.BOTTOM_RIGHT)
+            .owner(nameLabel.getScene().getWindow())
+            .showError();
+        break;
+      }
+    }
   }
 
   private @NonNull GridPane buildSkillGrid() {
@@ -528,6 +740,7 @@ public class CharacterViewController {
   private void refreshAllRows() {
     attrRefreshers.forEach(Runnable::run);
     skillRefreshers.forEach(Runnable::run);
+    qualityRefreshers.forEach(Runnable::run);
   }
 
   private void updateBpDisplay() {
@@ -542,6 +755,38 @@ public class CharacterViewController {
     }
   }
 
+  private void updateNuyenBpDisplay() {
+    if (character == null) {
+      return;
+    }
+    int bp = character.getNuyenBP();
+    nuyenBpValueLabel.setText(bp + " BP (" + (bp * Character.NUYEN_PER_BP) + " ¥)");
+    nuyenBpMinusBtn.setDisable(bp <= 0);
+    nuyenBpPlusBtn.setDisable(bp >= Character.MAX_NUYEN_BP || character.getRemainingBP() <= 0);
+  }
+
+  @FXML
+  private void onNuyenBpMinus() {
+    if (character == null) {
+      return;
+    }
+    character.setNuyenBP(character.getNuyenBP() - 1);
+    updateNuyenBpDisplay();
+    updateBpDisplay();
+    refreshAllRows();
+  }
+
+  @FXML
+  private void onNuyenBpPlus() {
+    if (character == null) {
+      return;
+    }
+    character.setNuyenBP(character.getNuyenBP() + 1);
+    updateNuyenBpDisplay();
+    updateBpDisplay();
+    refreshAllRows();
+  }
+
   // ── Karrieremodus-Transition ──────────────────────────────
 
   @FXML
@@ -549,14 +794,14 @@ public class CharacterViewController {
     if (character == null) {
       return;
     }
-    int remainingBp = character.getRemainingBP();
-    int conversionNuyen = remainingBp * 2_000;
+    int nuyenBp = character.getNuyenBP();
+    int startNuyen = nuyenBp * Character.NUYEN_PER_BP;
 
     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
     confirm.setTitle("Charakter abschließen");
     confirm.setHeaderText("Charakter in den Karrieremodus überführen?");
-    String bpInfo = remainingBp > 0
-        ? remainingBp + " verbleibende BP werden umgerechnet in " + conversionNuyen + " ¥.\n\n"
+    String bpInfo = nuyenBp > 0
+        ? nuyenBp + " BP Startkapital werden umgerechnet in " + startNuyen + " ¥.\n\n"
         : "";
     confirm.setContentText(bpInfo + "Dieser Schritt kann nicht rückgängig gemacht werden.");
     confirm.initOwner(nameLabel.getScene().getWindow());
@@ -565,9 +810,10 @@ public class CharacterViewController {
     if (result.isEmpty() || result.get() != ButtonType.OK) {
       return;
     }
-    if (remainingBp > 0) {
+    if (nuyenBp > 0) {
       character.addNuyenEntry(new LogEntry(
-          "Startkapital (BP-Konvertierung)", conversionNuyen, LocalDate.now()));
+          "Startkapital (Charaktererstellung)", startNuyen, LocalDate.now()));
+      character.setNuyenBP(0);
     }
     character.setCreated(true);
     updateModeDisplay();
@@ -584,6 +830,8 @@ public class CharacterViewController {
     finalizeBtn.setManaged(!career);
     bpBox.setVisible(!career);
     bpBox.setManaged(!career);
+    nuyenBpBox.setVisible(!career);
+    nuyenBpBox.setManaged(!career);
     metatypeBox.setVisible(!career);
     metatypeBox.setManaged(!career);
     metatypeLabelCareer.setVisible(career);
@@ -594,6 +842,7 @@ public class CharacterViewController {
 
     buildAttributeGrid();
     buildSkillsTab();
+    buildQualitiesTab();
   }
 
   // ── Log-Tab ───────────────────────────────────────────────

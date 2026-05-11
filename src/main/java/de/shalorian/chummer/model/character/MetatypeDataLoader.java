@@ -33,14 +33,12 @@ public class MetatypeDataLoader {
   }
 
   private static @NonNull List<MetatypeData> loadFromXml() {
-    try (InputStream in = MetatypeDataLoader.class.getResourceAsStream(
-        "/de/shalorian/chummer/data/metatypes.xml")) {
+    try (InputStream in = MetatypeDataLoader.class.getResourceAsStream(DataPaths.METATYPES_XML)) {
       if (in == null) {
         throw new IllegalStateException("metatypes.xml nicht gefunden");
       }
 
-      Document doc = DocumentBuilderFactory.newInstance()
-          .newDocumentBuilder().parse(in);
+      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
       doc.getDocumentElement().normalize();
 
       List<MetatypeData> list = new ArrayList<>();
@@ -74,6 +72,8 @@ public class MetatypeDataLoader {
     String name = el.getAttribute("name");
     int bp = Integer.parseInt(el.getAttribute("bp"));
     Map<AttributeType, AttributeRange> ranges = new EnumMap<>(AttributeType.class);
+    List<String> positiveQualities = new ArrayList<>();
+    List<String> negativeQualities = new ArrayList<>();
 
     NodeList children = el.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
@@ -82,15 +82,36 @@ public class MetatypeDataLoader {
         continue;
       }
       Element childEl = (Element) child;
-      if (!"attribute".equals(childEl.getTagName())) {
-        continue;
+      switch (childEl.getTagName()) {
+        case "attribute" -> {
+          AttributeType type = AttributeType.valueOf(childEl.getAttribute("name"));
+          int min = Integer.parseInt(childEl.getAttribute("min"));
+          int max = Integer.parseInt(childEl.getAttribute("max"));
+          ranges.put(type, new AttributeRange(min, max));
+        }
+        case "qualities" -> {
+          NodeList posNodes = childEl.getElementsByTagName("positive");
+          if (posNodes.getLength() > 0) {
+            NodeList qNodes = ((Element) posNodes.item(0)).getElementsByTagName("quality");
+            for (int j = 0; j < qNodes.getLength(); j++) {
+              positiveQualities.add(qNodes.item(j).getTextContent().trim());
+            }
+          }
+          NodeList negNodes = childEl.getElementsByTagName("negative");
+          if (negNodes.getLength() > 0) {
+            NodeList qNodes = ((Element) negNodes.item(0)).getElementsByTagName("quality");
+            for (int j = 0; j < qNodes.getLength(); j++) {
+              negativeQualities.add(qNodes.item(j).getTextContent().trim());
+            }
+          }
+        }
+        default -> { /* ignoriert */ }
       }
-      AttributeType type = AttributeType.valueOf(childEl.getAttribute("name"));
-      int min = Integer.parseInt(childEl.getAttribute("min"));
-      int max = Integer.parseInt(childEl.getAttribute("max"));
-      ranges.put(type, new AttributeRange(min, max));
     }
 
-    return new MetatypeData(name, bp, isVariant, Collections.unmodifiableMap(ranges));
+    return new MetatypeData(name, bp, isVariant,
+        Collections.unmodifiableMap(ranges),
+        Collections.unmodifiableList(positiveQualities),
+        Collections.unmodifiableList(negativeQualities));
   }
 }
