@@ -51,14 +51,17 @@ public class Skill {
     this.rating = rating;
   }
 
-  public int getBpCost() {
-    return rating * BP_PER_RATING;
+  public int getBpCost(boolean doubled) {
+    int cost = rating * BP_PER_RATING;
+    return doubled ? cost * 2 : cost;
   }
 
-  /**
-   * Karma-Kosten um diesen Skill um 1 zu erhöhen (4 Karma für neuen Skill, sonst neues Rating × 2).
-   */
-  public int getKarmaCost() {
-    return rating == 0 ? 4 : (rating + 1) * 2;
+  public int getBpCostPerRating(boolean doubled) {
+    return doubled ? BP_PER_RATING * 2 : BP_PER_RATING;
+  }
+
+  public int getKarmaCost(boolean doubled) {
+    int cost = rating == 0 ? 4 : (rating + 1) * 2;
+    return doubled ? cost * 2 : cost;
   }
 }

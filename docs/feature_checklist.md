@@ -24,51 +24,51 @@
 
 ## 2. Metatypen
 
-| Feature                                                | Status | Anmerkung                                                                                   |
-|--------------------------------------------------------|--------|---------------------------------------------------------------------------------------------|
-| 5 Grundrassen (Mensch, Elf, Zwerg, Ork, Troll)         | ✅      |                                                                                             |
-| Metavarianten (aktuell 8)                              | ⚠️     | Vorhanden, aber Metavarianten-Qualities aufgeschoben bis Qualities-System implementiert ist |
-| Metatyp-BP-Kosten fließen in BP-Bilanz                 | ✅      |                                                                                             |
-| Bewegungsrate (Walking/Running)                        | ❌      | Nicht gespeichert, nicht angezeigt                                                          |
-| Metatyp-Kategorie (Metahuman, Shapeshifter, Critter …) | ❌      | Nicht modelliert                                                                            |
+| Feature                                                | Status | Anmerkung                                                               |
+|--------------------------------------------------------|--------|-------------------------------------------------------------------------|
+| 5 Grundrassen (Mensch, Elf, Zwerg, Ork, Troll)         | ✅      |                                                                         |
+| Metavarianten                                          | ✅      | Qualities je Metatyp in XML hinterlegt; Anzahl Varianten noch zu prüfen |
+| Metatyp-BP-Kosten fließen in BP-Bilanz                 | ✅      |                                                                         |
+| Bewegungsrate (Walking/Running)                        | ❌      | Nicht gespeichert, nicht angezeigt                                      |
+| Metatyp-Kategorie (Metahuman, Shapeshifter, Critter …) | ❌      | Nicht modelliert                                                        |
 
 ---
 
 ## 3. Attribute
 
-| Feature                                                                     | Status | Anmerkung                                          |
-|-----------------------------------------------------------------------------|--------|----------------------------------------------------|
-| 8 Grundattribute (BOD, AGI, REA, STR, CHA, INT, LOG, WIL) mit Rassengrenzen | ✅      |                                                    |
-| BP-Kosten Grundattribute: (Wert − Min) × 10                                 | ✅      |                                                    |
-| **+15 BP Bonus wenn Attribut auf Rassenmaximum**                            | ✅      | Korrigiert in `CharacterAttribute.getBpCost()`     |
-| Attribut-Minimum durch Rassengrenzen erzwingen                              | ✅      |                                                    |
-| Augmentiertes Maximum anzeigen (MetatypeMax + ⌊Max/2⌋)                      | ❌      | Weder berechnet noch angezeigt                     |
-| Sonderattribute: EDG (Edge)                                                 | ❌      | Nicht modelliert                                   |
-| Sonderattribute: MAG (Magie)                                                | ❌      | Nicht modelliert                                   |
-| Sonderattribute: RES (Resonanz)                                             | ❌      | Nicht modelliert                                   |
-| Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ❌      | Nicht modelliert                                   |
-| Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ❌      | Nicht modelliert                                   |
-| Karma-Steigerung Attribute: neue Stufe × 5 Karma                            | ✅      | `(value+1)×5` ist korrekt für den nächsten Schritt |
+| Feature                                                                     | Status | Anmerkung                                      |
+|-----------------------------------------------------------------------------|--------|------------------------------------------------|
+| 8 Grundattribute (BOD, AGI, REA, STR, CHA, INT, LOG, WIL) mit Rassengrenzen | ✅      |                                                |
+| BP-Kosten Grundattribute: (Wert − Min) × 10                                 | ✅      |                                                |
+| +15 BP Bonus wenn Attribut auf Rassenmaximum                                | ✅      | Korrigiert in `CharacterAttribute.getBpCost()` |
+| Attribut-Minimum durch Rassengrenzen erzwingen                              | ✅      |                                                |
+| Karma-Steigerung Attribute: neue Stufe × 5 Karma                            | ✅      |                                                |
+| Augmentiertes Maximum anzeigen (MetatypeMax + ⌊Max/2⌋)                      | ❌      | Weder berechnet noch angezeigt                 |
+| Sonderattribute: EDG (Edge)                                                 | ❌      | Nicht modelliert                               |
+| Sonderattribute: MAG (Magie)                                                | ❌      | Nicht modelliert                               |
+| Sonderattribute: RES (Resonanz)                                             | ❌      | Nicht modelliert                               |
+| Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ❌      | Nicht modelliert                               |
+| Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ❌      | Nicht modelliert                               |
 
 ---
 
 ## 4. Fertigkeiten (Aktive Skills)
 
-| Feature                                                              | Status | Anmerkung                                      |
-|----------------------------------------------------------------------|--------|------------------------------------------------|
-| Fertigkeiten mit Gruppen-Kopplung                                    | ✅      |                                                |
-| Gruppen-Entkopplung mit Kostenvergleich-Dialog                       | ✅      |                                                |
-| BP-Kosten Einzelfertigkeit: Rating × 4                               | ✅      |                                                |
-| BP-Kosten Gruppe: Rating × 10                                        | ✅      |                                                |
-| **Erste Karmapunkt einer neuen Fertigkeit kostet 4 Karma (nicht 2)** | ✅      | Korrigiert in `Skill.getKarmaCost()`           |
-| Spezialisierungen (+2 BP / +2 Karma)                                 | ❌      | Nicht modelliert                               |
-| Uneducated (Technical Active doppelt teuer)                          | ❌      | Qualität und Kostenlogik fehlen                |
-| Uncouth (Social Active doppelt teuer)                                | ❌      | Qualität und Kostenlogik fehlen                |
-| Infirm (Physical Active doppelt teuer)                               | ❌      | Qualität und Kostenlogik fehlen                |
-| Default-Flag (erlaubt Würfeln ohne Rating: Attribut − 1)             | ❌      | Flag im Modell fehlt, keine Würfelpool-Anzeige |
-| Würfelpool-Anzeige (Rating + Attribut + Modifikatoren)               | ❌      | Nicht vorhanden                                |
-| Exotische Fertigkeiten (Spez = Gegenstand, kein eigener Rating)      | ❌      |                                                |
-| Kategorie-Anzeige im UI                                              | ✅      | Gruppiert nach Kategorie sichtbar              |
+| Feature                                                          | Status | Anmerkung                                                                                    |
+|------------------------------------------------------------------|--------|----------------------------------------------------------------------------------------------|
+| Fertigkeiten mit Gruppen-Kopplung                                | ✅      |                                                                                              |
+| Gruppen-Entkopplung mit Kostenvergleich-Dialog                   | ✅      |                                                                                              |
+| BP-Kosten Einzelfertigkeit: Rating × 4                           | ✅      |                                                                                              |
+| BP-Kosten Gruppe: Rating × 10                                    | ✅      |                                                                                              |
+| Erste Karmapunkt einer neuen Fertigkeit kostet 4 Karma (nicht 2) | ✅      | Korrigiert in `Skill.getKarmaCost()`                                                         |
+| Kategorie-Anzeige im UI                                          | ✅      | Gruppiert nach Kategorie sichtbar                                                            |
+| Uneducated (Technical Active doppelt teuer)                      | ✅      | `Character.isSkillCostDoubled()`, `Skill.getBpCost()`/`getKarmaCost()` nehmen Doppel-Flag    |
+| Uncouth (Social Active doppelt teuer)                            | ✅      | s.o.                                                                                         |
+| Infirm (Physical Active doppelt teuer)                           | ✅      | s.o.                                                                                         |
+| Spezialisierungen (+2 BP / +2 Karma)                             | ❌      | Nicht modelliert                                                                             |
+| Default-Flag (erlaubt Würfeln ohne Rating: Attribut − 1)         | ❌      | Flag im Modell fehlt, keine Würfelpool-Anzeige                                               |
+| Würfelpool-Anzeige (Rating + Attribut + Modifikatoren)           | ❌      | Nicht vorhanden                                                                              |
+| Exotische Fertigkeiten (Spez = Gegenstand, kein eigener Rating)  | ❌      |                                                                                              |
 
 ---
 
@@ -83,16 +83,16 @@
 
 ---
 
-## 6. Qualities (Vorteile & Nachteile)
+## 6. Qualities (Gaben & Handicaps)
 
-| Feature                                                                | Status | Anmerkung                           |
-|------------------------------------------------------------------------|--------|-------------------------------------|
-| Positive Qualities kaufen                                              | ❌      | Komplett fehlend                    |
-| Negative Qualities nehmen                                              | ❌      |                                     |
-| BP-Kosten/Gewinn fließen in BP-Bilanz                                  | ❌      |                                     |
-| Limit: max. 25 BP positive / 25 BP negative Qualities (konfigurierbar) | ❌      |                                     |
-| Metatyp-Qualities (grau, nicht entfernbar)                             | ❌      | Besonders wichtig für Metavarianten |
-| Bonus-System (z.B. Uneducated, Uncouth setzt Flags)                    | ❌      |                                     |
+| Feature                                                             | Status | Anmerkung                                                                   |
+|---------------------------------------------------------------------|--------|-----------------------------------------------------------------------------|
+| Positive Qualities (Gaben) hinzufügen und entfernen                 | ✅      | Dialog mit Kategoriefilter, Suchfeld und Gratis-Override (GM)               |
+| Negative Qualities (Handicaps) hinzufügen und entfernen             | ✅      |                                                                             |
+| BP-Kosten/-Gewinn fließen in BP-Bilanz                              | ✅      |                                                                             |
+| Limit: max. 35 BP Gaben / 35 BP Handicaps (nur Charaktererstellung) | ✅      | Limit deaktiviert im Karrieremodus; Gratis-Qualities zählen nicht zum Limit |
+| Metatyp-Qualities (kursiv/grau, nicht entfernbar)                   | ✅      | Werden aus Metatyp-XML geladen, nicht in JSON gespeichert                   |
+| Bonus-Flags (Uneducated, Uncouth, Infirm)                           | ✅      | Flags gesetzt und Skill-Kostenverdopplung umgesetzt                         |
 
 ---
 
@@ -182,14 +182,15 @@
 
 ## 15. Karrieremodus
 
-| Feature                                                               | Status | Anmerkung                                                                                                                                                                                          |
-|-----------------------------------------------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Übergang Creation → Career (BP → Nuyen-Konvertierung)                 | ⚠️     | Konvertierung funktioniert, aber: alle verbleibenden BP werden in Nuyen gewandelt statt nur der explizit zugewiesenen. Kein expliziter Nuyen-BP-Slot in der Erstellung vorhanden (siehe Feature 1) |
-| ESS-Penalty-Korrektur bei Übergang (MAG/RES += EssenzPenalty)         | ❌      | Abhängig von fehlenden Sonderattributen                                                                                                                                                            |
-| Karma-Ausgaben für Attribute (neue Stufe × 5)                         | ✅      |                                                                                                                                                                                                    |
-| Karma-Ausgaben für Fertigkeiten (neue Stufe × 2, erste Stufe 4 Karma) | ⚠️     | Erste Stufe kostet falsch 2 statt 4 Karma                                                                                                                                                          |
-| Karma/Nuyen-Log mit Datum und Undo                                    | ⚠️     | Log vorhanden, Undo fehlt                                                                                                                                                                          |
-| Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ❌      | Alle Log-Einträge sind freie Texte, keine Typisierung                                                                                                                                              |
+| Feature                                                               | Status | Anmerkung                                                     |
+|-----------------------------------------------------------------------|--------|---------------------------------------------------------------|
+| Übergang Creation → Career (explizite Nuyen-Konvertierung)            | ✅      | Nur zugewiesene nuyenBP (max. 50) werden in Nuyen umgerechnet |
+| ESS-Penalty-Korrektur bei Übergang (MAG/RES += EssenzPenalty)         | ❌      | Abhängig von fehlenden Sonderattributen                       |
+| Karma-Ausgaben für Attribute (neue Stufe × 5 Karma)                   | ✅      |                                                               |
+| Karma-Ausgaben für Fertigkeiten (neue Stufe × 2, erste Stufe 4 Karma) | ✅      | Korrigiert in `Skill.getKarmaCost()`                          |
+| Karma/Nuyen-Log mit Datum                                             | ✅      |                                                               |
+| Undo für Log-Einträge                                                 | ❌      |                                                               |
+| Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ❌      | Alle Log-Einträge sind freie Texte, keine Typisierung         |
 
 ---
 
@@ -217,15 +218,16 @@
 
 ## 18. Persistenz (Speichern/Laden)
 
-| Feature                                                    | Status | Anmerkung                                            |
-|------------------------------------------------------------|--------|------------------------------------------------------|
-| JSON-Speicherung und -Laden (Grundstruktur)                | ✅      |                                                      |
-| Attribute werden korrekt gespeichert/geladen               | ⚠️     | Nur 8 Grundattribute; EDG, MAG, RES fehlen im Modell |
-| Skills werden korrekt gespeichert/geladen (nur Rating > 0) | ✅      |                                                      |
-| Entkoppelte Gruppen werden gespeichert/geladen             | ✅      |                                                      |
-| Karma/Nuyen-Log wird gespeichert/geladen mit Datum         | ✅      |                                                      |
-| Dateiendung `.json`                                        | ✅      |                                                      |
-| Vorgeschlagener Dateiname beim Speichern (charname.json)   | ✅      |                                                      |
+| Feature                                                    | Status | Anmerkung                                                                    |
+|------------------------------------------------------------|--------|------------------------------------------------------------------------------|
+| JSON-Speicherung und -Laden (Grundstruktur)                | ✅      |                                                                              |
+| Attribute werden korrekt gespeichert/geladen               | ⚠️     | Nur 8 Grundattribute; EDG, MAG, RES fehlen im Modell                         |
+| Skills werden korrekt gespeichert/geladen (nur Rating > 0) | ✅      |                                                                              |
+| Entkoppelte Gruppen werden gespeichert/geladen             | ✅      |                                                                              |
+| Qualities werden gespeichert/geladen (inkl. Gratis-Flag)   | ✅      | Metatyp-Qualities werden nicht gespeichert, sondern beim Laden rekonstruiert |
+| Karma/Nuyen-Log wird gespeichert/geladen mit Datum         | ✅      |                                                                              |
+| Dateiendung `.json`                                        | ✅      |                                                                              |
+| Vorgeschlagener Dateiname beim Speichern (charname.json)   | ✅      |                                                                              |
 
 ---
 
@@ -245,12 +247,12 @@
 
 | Bereich                | ✅ | ⚠️ | ❌ |
 |------------------------|---|----|---|
-| Erstellungsgrundgerüst | 2 | 0  | 4 |
-| Metatypen              | 2 | 1  | 2 |
-| Attribute              | 2 | 1  | 6 |
-| Aktive Fertigkeiten    | 4 | 1  | 5 |
+| Erstellungsgrundgerüst | 4 | 0  | 2 |
+| Metatypen              | 3 | 0  | 2 |
+| Attribute              | 5 | 0  | 6 |
+| Aktive Fertigkeiten    | 9 | 0  | 4 |
 | Wissensfertigkeiten    | 0 | 0  | 4 |
-| Qualities              | 0 | 0  | 5 |
+| Qualities              | 6 | 0  | 0 |
 | Kontakte               | 0 | 0  | 3 |
 | Magie                  | 0 | 0  | 6 |
 | Technomancer           | 0 | 0  | 4 |
@@ -259,44 +261,37 @@
 | Waffen                 | 0 | 0  | 2 |
 | Gear                   | 0 | 0  | 3 |
 | Fahrzeuge              | 0 | 0  | 1 |
-| Karrieremodus          | 2 | 2  | 2 |
+| Karrieremodus          | 4 | 0  | 3 |
 | Initiative             | 0 | 0  | 4 |
 | Condition Monitor      | 0 | 0  | 4 |
-| Persistenz             | 5 | 1  | 1 |
-| UI/Bedienbarkeit       | 5 | 0  | 1 |
+| Persistenz             | 7 | 1  | 0 |
+| UI/Bedienbarkeit       | 4 | 0  | 1 |
 
 ---
 
 ## Prioritisierte Reihenfolge für nächste Schritte
 
-**Stufe 1 – Bestehende Features fertigstellen (⚠️ → ✅)**
+**Stufe 1 – Fehlende Kernfeatures für einen vollständigen Charakter**
 
-1. **+15 BP Bonus** für Attribut auf Rassenmaximum in `CharacterAttribute.getBpCost()` korrigieren
-2. **Erster Fertigkeit-Karmapunkt** kostet 4 Karma statt 2 (in `Skill.getKarmaCost()`)
-3. **Nuyen-Budget in der Erstellung** (max. 50 BP → bis zu 250.000 ¥, explizite Zuweisung, nicht automatische Restkonvertierung)
-4. **Metavariant-Qualities** (gratis Positiv/Negativ-Qualities beim Metatyp)
+1. **Wissensfertigkeiten** (freier Pool INT×2, Kategorien, Überzug in BP)
+2. **Sonderattribute** EDG, MAG, RES + Essenz-Berechnung (Grundlage für alles weitere)
+3. **Spezialisierungen** (+2 BP / Karma)
+4. **Kontakte**
+5. **Charakter-Biografie** (alle Textfelder)
 
-**Stufe 2 – Fehlende Kernfeatures für einen vollständigen Charakter**
+**Stufe 2 – Erweiterte Features**
 
-5. **Qualities** (Vorteile/Nachteile mit BP-Kosten, Limit, Bonus-Flags wie Uneducated/Uncouth)
-6. **Wissensfertigkeiten** (freier Pool INT×2, Kategorien, Überzug in BP)
-7. **Sonderattribute** EDG, MAG, RES + Essenz-Berechnung (Grundlage für alles weitere)
-8. **Spezialisierungen** (+2 BP / Karma)
-9. **Kontakte**
-10. **Charakter-Biografie** (alle Textfelder)
+1. Magie (MAG-Aktivierung, Tradition, Zauber, Adeptenkräfte)
+2. Technomancer (RES-Aktivierung, Stream, Komplexe Formen)
+3. Cyberware/Bioware mit Essenz
+4. Rüstung mit Stacking-Regeln
+5. Waffen
+6. Gear
 
-**Stufe 3 – Erweiterte Features**
+**Stufe 3 – Abgeleitete Werte & Gameplay**
 
-11. Magie (MAG-Aktivierung, Tradition, Zauber, Adeptenkräfte)
-12. Technomancer (RES-Aktivierung, Stream, Komplexe Formen)
-13. Cyberware/Bioware mit Essenz
-14. Rüstung mit Stacking-Regeln
-15. Waffen
-16. Gear
-
-**Stufe 4 – Abgeleitete Werte & Gameplay**
-
-17. Initiative-Anzeige
-18. Condition Monitor
-19. Würfelpool-Anzeige für Skills
-20. Drucken / Export
+1. Initiative-Anzeige
+2. Condition Monitor
+3. Würfelpool-Anzeige für Skills
+4. Undo für Log-Einträge
+5. Drucken / Export

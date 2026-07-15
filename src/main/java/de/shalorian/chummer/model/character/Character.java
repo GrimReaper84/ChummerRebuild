@@ -237,6 +237,15 @@ public class Character {
         .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.INFIRM));
   }
 
+  public boolean isSkillCostDoubled(@NonNull SkillCategory category) {
+    return switch (category) {
+      case TECHNICAL -> isUneducated();
+      case SOCIAL -> isUncouth();
+      case PHYSICAL -> isInfirm();
+      default -> false;
+    };
+  }
+
   // --- BP ---
   public int getSpentBP() {
     int attrBP = attributes.values().stream().mapToInt(CharacterAttribute::getBpCost).sum();
@@ -252,7 +261,7 @@ public class Character {
         }
       } else {
         // Entkoppelt oder kein Gruppen-Skill: Einzelpreis (4 BP/Rating)
-        skillBP += skill.getBpCost();
+        skillBP += skill.getBpCost(isSkillCostDoubled(skill.getCategory()));
       }
     }
 

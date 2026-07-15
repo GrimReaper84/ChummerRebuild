@@ -4,17 +4,17 @@ import de.shalorian.chummer.App;
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterAttribute;
+import de.shalorian.chummer.model.character.CharacterQuality;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeData;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
-import de.shalorian.chummer.model.character.CharacterQuality;
 import de.shalorian.chummer.model.character.QualitySource;
 import de.shalorian.chummer.model.character.QualityType;
 import de.shalorian.chummer.model.character.Skill;
 import de.shalorian.chummer.model.character.SkillCategory;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.stream.Collectors;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,7 +25,6 @@ import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -49,10 +48,24 @@ import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.tbee.javafx.scene.layout.MigPane;
 
 public class CharacterViewController {
 
   private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+  private static final String STYLE_ATTR_NAME = "attr-name";
+  private static final String STYLE_ATTR_BTN = "attr-btn";
+  private static final String STYLE_ATTR_VALUE = "attr-value";
+  private static final String STYLE_ATTR_RANGE = "attr-range";
+  private static final String STYLE_ATTR_BP = "attr-bp";
+  private static final String KARMA_SUFFIX = " Karma";
+  private static final String CELL_COL_0 = "cell 0 ";
+  private static final String CELL_COL_1 = "cell 1 ";
+  private static final String CELL_COL_2 = "cell 2 ";
+  private static final String CELL_COL_3 = "cell 3 ";
+  private static final String CELL_COL_4 = "cell 4 ";
+  private static final String CELL_COL_5 = "cell 5 ";
+  private static final String CELL_COL_6 = "cell 6 ";
   // Attribute-Refresher bleiben stabil; Skill-Refresher werden beim Entkoppeln neu aufgebaut
   private final @NonNull List<Runnable> attrRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> skillRefreshers = new ArrayList<>();
@@ -64,7 +77,7 @@ public class CharacterViewController {
   @FXML
   private Label remainingBpLabel;
   @FXML
-  private GridPane attributeGrid;
+  private VBox attributeGridHost;
   @FXML
   private VBox skillsContainer;
   @FXML
@@ -132,18 +145,11 @@ public class CharacterViewController {
       return;
     }
 
-    attributeGrid.getChildren().clear();
-    attributeGrid.getColumnConstraints().clear();
+    attributeGridHost.getChildren().clear();
     attrRefreshers.clear();
 
-    int[] widths = {170, 46, 30, 46, 30, 90, 70};
-    HPos[] aligns = {HPos.LEFT, HPos.CENTER, HPos.CENTER,
-        HPos.CENTER, HPos.CENTER, HPos.LEFT, HPos.LEFT};
-    for (int i = 0; i < widths.length; i++) {
-      ColumnConstraints cc = new ColumnConstraints(widths[i]);
-      cc.setHalignment(aligns[i]);
-      attributeGrid.getColumnConstraints().add(cc);
-    }
+    MigPane grid = new MigPane("hidemode 3",
+        "[170!][46!,center][30!,center][46!,center][30!,center][90!][70!]");
 
     boolean career = character.isCreated();
     String[] headers = {"Attribut", "", "", "Wert", "", "Bereich",
@@ -152,19 +158,21 @@ public class CharacterViewController {
       if (!headers[i].isEmpty()) {
         Label h = new Label(headers[i]);
         h.getStyleClass().add("attr-header");
-        attributeGrid.add(h, i, 0);
+        grid.add(h, "cell " + i + " 0");
       }
     }
 
     int row = 1;
     for (AttributeType type : AttributeType.values()) {
-      addAttributeRow(row++, type, character.getAttribute(type), character);
+      addAttributeRow(grid, row++, type, character.getAttribute(type), character);
     }
+
+    attributeGridHost.getChildren().add(grid);
   }
 
-  private void addAttributeRow(int row, @NonNull AttributeType type,
+  private void addAttributeRow(@NonNull MigPane grid, int row, @NonNull AttributeType type,
       @NonNull CharacterAttribute attr, @NonNull Character character) {
-    Label nameLabel = new Label(type.getDisplayName());
+    Label attrNameLabel = new Label(type.getDisplayName());
     Label abbrLabel = new Label(type.getAbbreviation());
     Button minus = new Button("−");
     Label valueLabel = new Label();
@@ -172,76 +180,69 @@ public class CharacterViewController {
     Label rangeLabel = new Label(attr.getMin() + " – " + attr.getMax());
     Label bpLabel = new Label();
 
-    nameLabel.getStyleClass().add("attr-name");
+    attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
     abbrLabel.getStyleClass().add("attr-abbr");
-    minus.getStyleClass().add("attr-btn");
-    valueLabel.getStyleClass().add("attr-value");
-    plus.getStyleClass().add("attr-btn");
-    rangeLabel.getStyleClass().add("attr-range");
-    bpLabel.getStyleClass().add("attr-bp");
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    valueLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
+    bpLabel.getStyleClass().add(STYLE_ATTR_BP);
 
-    boolean career = character.isCreated();
-    Runnable refresh;
+    wireIncrementable(attrRefreshers, new RowControls(valueLabel, bpLabel, minus, plus),
+        character.isCreated(), new RowModel() {
+          @Override
+          public int value() {
+            return attr.getValue();
+          }
 
-    if (career) {
-      minus.setVisible(false);
-      minus.setManaged(false);
-      refresh = () -> {
-        int val = attr.getValue();
-        int karmaCost = attr.getKarmaCost();
-        valueLabel.setText(String.valueOf(val));
-        bpLabel.setText(val >= attr.getMax() ? "–" : karmaCost + " Karma");
-        plus.setDisable(val >= attr.getMax() || character.getKarmaTotal() < karmaCost);
-      };
-      attrRefreshers.add(refresh);
+          @Override
+          public int min() {
+            return attr.getMin();
+          }
 
-      plus.setOnAction(e -> {
-        int val = attr.getValue();
-        int karmaCost = attr.getKarmaCost();
-        String label = type.getDisplayName() + " " + val + " → " + (val + 1);
-        if (val < attr.getMax() && character.getKarmaTotal() >= karmaCost
-            && confirmKarmaSpend(label, karmaCost, character)) {
-          character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
-          attr.setValue(val + 1);
-          refreshAllRows();
-          updateLogDisplay();
-        }
-      });
-    } else {
-      refresh = () -> {
-        int val = attr.getValue();
-        valueLabel.setText(String.valueOf(val));
-        bpLabel.setText(attr.getBpCost() + " BP");
-        minus.setDisable(val <= attr.getMin());
-        plus.setDisable(val >= attr.getMax() || character.getRemainingBP() < 10);
-      };
-      attrRefreshers.add(refresh);
+          @Override
+          public int max() {
+            return attr.getMax();
+          }
 
-      minus.setOnAction(e -> {
-        if (attr.getValue() > attr.getMin()) {
-          attr.setValue(attr.getValue() - 1);
-          refreshAllRows();
-          updateBpDisplay();
-        }
-      });
-      plus.setOnAction(e -> {
-        if (attr.getValue() < attr.getMax() && character.getRemainingBP() >= 10) {
-          attr.setValue(attr.getValue() + 1);
-          refreshAllRows();
-          updateBpDisplay();
-        }
-      });
-    }
+          @Override
+          public int bpStepCost() {
+            return 10;
+          }
 
-    refresh.run();
+          @Override
+          public @NonNull String bpDisplayText() {
+            return attr.getBpCost() + " BP";
+          }
 
-    attributeGrid.add(nameLabel, 0, row);
-    attributeGrid.add(abbrLabel, 1, row);
-    attributeGrid.add(minus, 2, row);
-    attributeGrid.add(valueLabel, 3, row);
-    attributeGrid.add(plus, 4, row);
-    attributeGrid.add(rangeLabel, 5, row);
-    attributeGrid.add(bpLabel, 6, row);
+          @Override
+          public int karmaStepCost() {
+            return attr.getKarmaCost();
+          }
+
+          @Override
+          public void increment() {
+            attr.setValue(attr.getValue() + 1);
+          }
+
+          @Override
+          public void decrement() {
+            attr.setValue(attr.getValue() - 1);
+          }
+
+          @Override
+          public @NonNull String actionLabel(int from, int to) {
+            return type.getDisplayName() + " " + from + " → " + to;
+          }
+        }, character);
+
+    grid.add(attrNameLabel, CELL_COL_0 + row);
+    grid.add(abbrLabel, CELL_COL_1 + row);
+    grid.add(minus, CELL_COL_2 + row);
+    grid.add(valueLabel, CELL_COL_3 + row);
+    grid.add(plus, CELL_COL_4 + row);
+    grid.add(rangeLabel, CELL_COL_5 + row);
+    grid.add(bpLabel, CELL_COL_6 + row);
   }
 
   // ── Skills-Tab ────────────────────────────────────────────
@@ -254,16 +255,7 @@ public class CharacterViewController {
     skillsContainer.getChildren().clear();
     skillRefreshers.clear();
 
-    // Gruppe: Kategorie → (Gruppenname|"" → Skills)
-    Map<SkillCategory, Map<String, List<Skill>>> grouped = new LinkedHashMap<>();
-    for (SkillCategory cat : SkillCategory.values()) {
-      grouped.put(cat, new LinkedHashMap<>());
-    }
-    for (Skill skill : character.getSkills()) {
-      String key = skill.getGroupName() != null ? skill.getGroupName() : "";
-      Objects.requireNonNull(grouped.get(skill.getCategory()))
-          .computeIfAbsent(key, k -> new ArrayList<>()).add(skill);
-    }
+    Map<SkillCategory, Map<String, List<Skill>>> grouped = groupSkillsByCategory(character);
 
     boolean firstSection = true;
     for (Map.Entry<SkillCategory, Map<String, List<Skill>>> catEntry : grouped.entrySet()) {
@@ -277,25 +269,54 @@ public class CharacterViewController {
       skillsContainer.getChildren().add(catLabel);
       firstSection = false;
 
-      GridPane grid = buildSkillGrid();
+      MigPane grid = buildSkillGrid();
       skillsContainer.getChildren().add(grid);
 
       int row = 0;
       for (Map.Entry<String, List<Skill>> groupEntry : catEntry.getValue().entrySet()) {
-        String groupName = groupEntry.getKey();
-        if (!groupName.isEmpty()) {
-          boolean coupled = character.isGroupCoupled(groupName);
-          row = addGroupHeaderRow(grid, row, groupName, coupled, character);
-          for (Skill skill : groupEntry.getValue()) {
-            addSkillRow(grid, row++, skill, coupled, character);
-          }
-        } else {
-          for (Skill skill : groupEntry.getValue()) {
-            addSkillRow(grid, row++, skill, false, character);
-          }
-        }
+        row = addSkillGroupRows(grid, row, groupEntry.getKey(), groupEntry.getValue(), character);
       }
     }
+  }
+
+  /**
+   * Gruppiert die Fertigkeiten des Charakters nach Kategorie und innerhalb der Kategorie nach
+   * Gruppenname ({@code ""} für ungruppierte Fertigkeiten).
+   */
+  private @NonNull Map<SkillCategory, Map<String, List<Skill>>> groupSkillsByCategory(
+      @NonNull Character character) {
+    Map<SkillCategory, Map<String, List<Skill>>> grouped = new LinkedHashMap<>();
+    for (SkillCategory cat : SkillCategory.values()) {
+      grouped.put(cat, new LinkedHashMap<>());
+    }
+    for (Skill skill : character.getSkills()) {
+      String key = skill.getGroupName() != null ? skill.getGroupName() : "";
+      Objects.requireNonNull(grouped.get(skill.getCategory()))
+          .computeIfAbsent(key, k -> new ArrayList<>()).add(skill);
+    }
+    return grouped;
+  }
+
+  /**
+   * Fügt die Zeilen einer Gruppe (bzw. der ungruppierten Fertigkeiten, wenn {@code groupName}
+   * leer ist) in den Skill-Grid ein.
+   *
+   * @return die Zeilennummer nach den eingefügten Zeilen
+   */
+  private int addSkillGroupRows(@NonNull MigPane grid, int row, @NonNull String groupName,
+      @NonNull List<Skill> skills, @NonNull Character character) {
+    if (groupName.isEmpty()) {
+      for (Skill skill : skills) {
+        addSkillRow(grid, row++, skill, false, character);
+      }
+      return row;
+    }
+    boolean coupled = character.isGroupCoupled(groupName);
+    row = addGroupHeaderRow(grid, row, groupName, coupled, character);
+    for (Skill skill : skills) {
+      addSkillRow(grid, row++, skill, coupled, character);
+    }
+    return row;
   }
 
   /**
@@ -334,6 +355,38 @@ public class CharacterViewController {
       return;
     }
 
+    qualitiesContainer.getChildren().add(buildQualitySectionHeader(title, type, career, ch));
+
+    GridPane grid = new GridPane();
+    grid.setHgap(10);
+    grid.setVgap(4);
+
+    int[] widths = {220, 90, 80, 90};
+    for (int width : widths) {
+      ColumnConstraints cc = new ColumnConstraints(width);
+      grid.getColumnConstraints().add(cc);
+    }
+
+    List<CharacterQuality> section = ch.getQualities().stream()
+        .filter(q -> q.data().type() == type)
+        .toList();
+
+    int row = 0;
+    for (CharacterQuality q : section) {
+      addQualityRow(grid, row++, q);
+    }
+
+    if (row == 0) {
+      Label empty = new Label("Keine " + title + " gewählt");
+      empty.getStyleClass().add(STYLE_ATTR_RANGE);
+      grid.add(empty, 0, 0);
+    }
+
+    qualitiesContainer.getChildren().add(grid);
+  }
+
+  private @NonNull HBox buildQualitySectionHeader(@NonNull String title,
+      @NonNull QualityType type, boolean career, @NonNull Character ch) {
     Label sectionLabel = new Label(title);
     sectionLabel.getStyleClass().add("section-title");
 
@@ -355,7 +408,6 @@ public class CharacterViewController {
     }
     header.getChildren().add(addBtn);
     VBox.setMargin(header, new Insets(0, 0, 6, 0));
-    qualitiesContainer.getChildren().add(header);
 
     if (!career) {
       Runnable limitRefresh = () -> {
@@ -368,68 +420,45 @@ public class CharacterViewController {
       limitRefresh.run();
     }
 
-    GridPane grid = new GridPane();
-    grid.setHgap(10);
-    grid.setVgap(4);
+    return header;
+  }
 
-    int[] widths = {220, 90, 80, 90};
-    for (int width : widths) {
-      ColumnConstraints cc = new ColumnConstraints(width);
-      grid.getColumnConstraints().add(cc);
+  private void addQualityRow(@NonNull GridPane grid, int row, @NonNull CharacterQuality q) {
+    boolean isMetatype = q.source() == QualitySource.METATYPE;
+
+    Label qualityNameLabel = new Label(q.data().name());
+    qualityNameLabel.getStyleClass().add(isMetatype ? "quality-metatype" : STYLE_ATTR_NAME);
+
+    Label costLabel = new Label();
+    costLabel.getStyleClass().add(STYLE_ATTR_BP);
+    if (q.gratis()) {
+      costLabel.setText("Gratis");
+    } else {
+      costLabel.setText(Math.abs(q.data().bp()) + " BP");
     }
 
-    List<CharacterQuality> section = ch.getQualities().stream()
-        .filter(q -> q.data().type() == type)
-        .collect(Collectors.toList());
+    Label sourceLabel = new Label(isMetatype ? "(Metatyp)" : "");
+    sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
 
-    int row = 0;
-    for (CharacterQuality q : section) {
-      boolean isMetatype = q.source() == QualitySource.METATYPE;
+    grid.add(qualityNameLabel, 0, row);
+    grid.add(costLabel, 1, row);
+    grid.add(sourceLabel, 2, row);
 
-      Label nameLabel = new Label(q.data().name());
-      nameLabel.getStyleClass().add(isMetatype ? "quality-metatype" : "attr-name");
-
-      Label costLabel = new Label();
-      costLabel.getStyleClass().add("attr-bp");
-      if (q.gratis()) {
-        costLabel.setText("Gratis");
-      } else {
-        costLabel.setText(Math.abs(q.data().bp()) + " BP");
-      }
-
-      Label sourceLabel = new Label(isMetatype ? "(Metatyp)" : "");
-      sourceLabel.getStyleClass().add("attr-range");
-
-      grid.add(nameLabel, 0, row);
-      grid.add(costLabel, 1, row);
-      grid.add(sourceLabel, 2, row);
-
-      if (!isMetatype) {
-        Button removeBtn = new Button("Entfernen");
-        removeBtn.getStyleClass().add("btn-secondary");
-        String qualityName = q.data().name();
-        removeBtn.setOnAction(e -> {
-          Character c = this.character;
-          if (c != null) {
-            c.removeQuality(qualityName);
-            buildQualitiesTab();
-            updateBpDisplay();
-            refreshAllRows();
-          }
-        });
-        grid.add(removeBtn, 3, row);
-      }
-
-      row++;
+    if (!isMetatype) {
+      Button removeBtn = new Button("Entfernen");
+      removeBtn.getStyleClass().add("btn-secondary");
+      String qualityName = q.data().name();
+      removeBtn.setOnAction(e -> {
+        Character c = this.character;
+        if (c != null) {
+          c.removeQuality(qualityName);
+          buildQualitiesTab();
+          updateBpDisplay();
+          refreshAllRows();
+        }
+      });
+      grid.add(removeBtn, 3, row);
     }
-
-    if (row == 0) {
-      Label empty = new Label("Keine " + title + " gewählt");
-      empty.getStyleClass().add("attr-range");
-      grid.add(empty, 0, 0);
-    }
-
-    qualitiesContainer.getChildren().add(grid);
   }
 
   private void rebuildQualitiesTab() {
@@ -448,78 +477,64 @@ public class CharacterViewController {
     }
     boolean again = true;
     while (again) {
-      try {
-        FXMLLoader loader = new FXMLLoader(
-            Objects.requireNonNull(App.class.getResource("QualitySelectDialog.fxml")));
-        Parent root = loader.load();
-        QualitySelectDialogController ctrl = loader.getController();
-
-        Stage dialogStage = new Stage();
-        dialogStage.setTitle("Quality hinzufügen");
-        dialogStage.initModality(Modality.WINDOW_MODAL);
-        dialogStage.initOwner(nameLabel.getScene().getWindow());
-        dialogStage.setResizable(false);
-        Scene scene = new Scene(root);
-        scene.getStylesheets()
-            .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
-        dialogStage.setScene(scene);
-
-        ctrl.setStage(dialogStage);
-        ctrl.setCharacter(ch);
-        ctrl.setFilter(filter);
-        dialogStage.showAndWait();
-
-        Optional<QualitySelectResult> result = ctrl.getResult();
-        if (result.isEmpty()) {
-          break;
-        }
-        QualitySelectResult r = result.get();
-        try {
-          ch.addQuality(r.data(), r.gratis());
-        } catch (IllegalArgumentException ex) {
-          Notifications.create()
-              .title("Limit erreicht")
-              .text(ex.getMessage())
-              .position(Pos.BOTTOM_RIGHT)
-              .owner(nameLabel.getScene().getWindow())
-              .showWarning();
-        }
-        rebuildQualitiesTab();
-        updateBpDisplay();
-        again = r.addAnother();
-      } catch (IOException e) {
-        Notifications.create()
-            .title("Fehler")
-            .text("Dialog konnte nicht geöffnet werden")
-            .position(Pos.BOTTOM_RIGHT)
-            .owner(nameLabel.getScene().getWindow())
-            .showError();
-        break;
-      }
+      again = openQualitySelectDialogOnce(ch, filter);
     }
   }
 
-  private @NonNull GridPane buildSkillGrid() {
-    GridPane grid = new GridPane();
-    grid.setHgap(10);
-    grid.setVgap(5);
-    grid.getStyleClass().add("attr-grid");
+  /**
+   * Öffnet den Quality-Auswahl-Dialog einmal und wertet das Ergebnis aus.
+   *
+   * @return ob der Dialog erneut geöffnet werden soll ({@code r.addAnother()})
+   */
+  private boolean openQualitySelectDialogOnce(@NonNull Character ch,
+      @NonNull QualityType filter) {
+    try {
+      DialogHandle dialog = openDialog("QualitySelectDialog.fxml", "Quality hinzufügen");
+      QualitySelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(ch);
+      ctrl.setFilter(filter);
+      dialog.stage().showAndWait();
 
-    int[] widths = {200, 46, 30, 46, 30, 70};
-    HPos[] aligns = {HPos.LEFT, HPos.CENTER, HPos.CENTER,
-        HPos.CENTER, HPos.CENTER, HPos.LEFT};
-    for (int i = 0; i < widths.length; i++) {
-      ColumnConstraints cc = new ColumnConstraints(widths[i]);
-      cc.setHalignment(aligns[i]);
-      grid.getColumnConstraints().add(cc);
+      Optional<QualitySelectResult> result = ctrl.getResult();
+      if (result.isEmpty()) {
+        return false;
+      }
+      QualitySelectResult r = result.get();
+      tryAddQuality(ch, r);
+      rebuildQualitiesTab();
+      updateBpDisplay();
+      return r.addAnother();
+    } catch (IOException e) {
+      showDialogLoadError();
+      return false;
     }
+  }
+
+  private void tryAddQuality(@NonNull Character ch, @NonNull QualitySelectResult r) {
+    try {
+      ch.addQuality(r.data(), r.gratis());
+    } catch (IllegalArgumentException ex) {
+      Notifications.create()
+          .title("Limit erreicht")
+          .text(ex.getMessage())
+          .position(Pos.BOTTOM_RIGHT)
+          .owner(nameLabel.getScene().getWindow())
+          .showWarning();
+    }
+  }
+
+  private @NonNull MigPane buildSkillGrid() {
+    MigPane grid = new MigPane("hidemode 3",
+        "[200!][46!,center][30!,center][46!,center][30!,center][70!]");
+    grid.getStyleClass().add("attr-grid");
     return grid;
   }
 
   /**
    * Fügt eine Gruppen-Kopfzeile mit +/−-Buttons und Auskoppeln-Button ein.
    */
-  private int addGroupHeaderRow(@NonNull GridPane grid, int row, @NonNull String groupName,
+  private int addGroupHeaderRow(@NonNull MigPane grid, int row, @NonNull String groupName,
       boolean coupled, @NonNull Character character) {
     HBox nameBox = new HBox(8);
     nameBox.setAlignment(Pos.CENTER_LEFT);
@@ -529,31 +544,10 @@ public class CharacterViewController {
     nameBox.getChildren().add(groupLabel);
 
     if (coupled) {
-      Button decoupleBtn = new Button("Auskoppeln");
-      decoupleBtn.getStyleClass().add("btn-decouple");
-      decoupleBtn.setOnAction(e -> {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Gruppe auskoppeln");
-        confirm.setHeaderText("Skillgruppe \"" + groupName + "\" wirklich auskoppeln?");
-        int rating = character.getGroupRating(groupName);
-        String costInfo = rating > 0
-            ? "\nAchtung: Die " + groupName + "-Skills werden ab jetzt einzeln bepreist "
-              + "(je " + (rating * 4) + " BP statt " + (rating * 10) + " BP gesamt)."
-            : "";
-        confirm.setContentText(
-            "Nach dem Auskoppeln können die Skills der Gruppe unabhängig voneinander "
-                + "erhöht werden." + costInfo);
-        confirm.showAndWait()
-            .filter(btn -> btn == ButtonType.OK)
-            .ifPresent(btn -> {
-              character.decoupleGroup(groupName);
-              rebuildSkillsTab();
-            });
-      });
-      nameBox.getChildren().add(decoupleBtn);
+      nameBox.getChildren().add(buildDecoupleButton(groupName, character));
     }
 
-    grid.add(nameBox, 0, row);
+    grid.add(nameBox, CELL_COL_0 + row);
 
     if (coupled) {
       Button minus = new Button("−");
@@ -561,98 +555,116 @@ public class CharacterViewController {
       Button plus = new Button("+");
       Label bpLabel = new Label();
 
-      minus.getStyleClass().add("attr-btn");
-      ratingLabel.getStyleClass().add("attr-value");
-      plus.getStyleClass().add("attr-btn");
-      bpLabel.getStyleClass().add("attr-bp");
+      minus.getStyleClass().add(STYLE_ATTR_BTN);
+      ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+      plus.getStyleClass().add(STYLE_ATTR_BTN);
+      bpLabel.getStyleClass().add(STYLE_ATTR_BP);
 
-      boolean career = character.isCreated();
+      wireIncrementable(skillRefreshers, new RowControls(ratingLabel, bpLabel, minus, plus),
+          character.isCreated(), new RowModel() {
+            @Override
+            public int value() {
+              return character.getGroupRating(groupName);
+            }
 
-      Runnable refresh;
-      if (career) {
-        minus.setVisible(false);
-        minus.setManaged(false);
-        refresh = () -> {
-          int rating = character.getGroupRating(groupName);
-          int karmaCost = character.getGroupKarmaCost(groupName);
-          ratingLabel.setText(String.valueOf(rating));
-          bpLabel.setText(rating >= Skill.MAX_RATING ? "–" : karmaCost + " Karma");
-          plus.setDisable(rating >= Skill.MAX_RATING || character.getKarmaTotal() < karmaCost);
-        };
-        skillRefreshers.add(refresh);
+            @Override
+            public int min() {
+              return 0;
+            }
 
-        plus.setOnAction(e -> {
-          int rating = character.getGroupRating(groupName);
-          int karmaCost = character.getGroupKarmaCost(groupName);
-          String label = groupName + " " + rating + " → " + (rating + 1);
-          if (rating < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
-              && confirmKarmaSpend(label, karmaCost, character)) {
-            character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
-            character.raiseGroup(groupName);
-            refreshAllRows();
-            updateLogDisplay();
-          }
-        });
-      } else {
-        refresh = () -> {
-          int rating = character.getGroupRating(groupName);
-          ratingLabel.setText(String.valueOf(rating));
-          bpLabel.setText(rating == 0 ? "–" : (rating * 10) + " BP");
-          minus.setDisable(rating <= 0);
-          plus.setDisable(rating >= Skill.MAX_RATING || character.getRemainingBP() < 10);
-        };
-        skillRefreshers.add(refresh);
+            @Override
+            public int max() {
+              return Skill.MAX_RATING;
+            }
 
-        minus.setOnAction(e -> {
-          if (character.getGroupRating(groupName) > 0) {
-            character.lowerGroup(groupName);
-            refreshAllRows();
-            updateBpDisplay();
-          }
-        });
-        plus.setOnAction(e -> {
-          if (character.getGroupRating(groupName) < Skill.MAX_RATING
-              && character.getRemainingBP() >= 10) {
-            character.raiseGroup(groupName);
-            refreshAllRows();
-            updateBpDisplay();
-          }
-        });
-      }
+            @Override
+            public int bpStepCost() {
+              return 10;
+            }
 
-      refresh.run();
+            @Override
+            public @NonNull String bpDisplayText() {
+              int rating = character.getGroupRating(groupName);
+              return rating == 0 ? "–" : (rating * 10) + " BP";
+            }
 
-      grid.add(minus, 2, row);
-      grid.add(ratingLabel, 3, row);
-      grid.add(plus, 4, row);
-      grid.add(bpLabel, 5, row);
+            @Override
+            public int karmaStepCost() {
+              return character.getGroupKarmaCost(groupName);
+            }
+
+            @Override
+            public void increment() {
+              character.raiseGroup(groupName);
+            }
+
+            @Override
+            public void decrement() {
+              character.lowerGroup(groupName);
+            }
+
+            @Override
+            public @NonNull String actionLabel(int from, int to) {
+              return groupName + " " + from + " → " + to;
+            }
+          }, character);
+
+      grid.add(minus, CELL_COL_2 + row);
+      grid.add(ratingLabel, CELL_COL_3 + row);
+      grid.add(plus, CELL_COL_4 + row);
+      grid.add(bpLabel, CELL_COL_5 + row);
     }
 
     return row + 1;
   }
 
-  private void addSkillRow(@NonNull GridPane grid, int row, @NonNull Skill skill, boolean coupled,
+  private @NonNull Button buildDecoupleButton(@NonNull String groupName,
       @NonNull Character character) {
-    Label nameLabel = new Label(skill.getName());
+    Button decoupleBtn = new Button("Auskoppeln");
+    decoupleBtn.getStyleClass().add("btn-decouple");
+    decoupleBtn.setOnAction(e -> {
+      Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+      confirm.setTitle("Gruppe auskoppeln");
+      confirm.setHeaderText("Skillgruppe \"" + groupName + "\" wirklich auskoppeln?");
+      int rating = character.getGroupRating(groupName);
+      String costInfo = rating > 0
+          ? "\nAchtung: Die " + groupName + "-Skills werden ab jetzt einzeln bepreist "
+            + "(je " + (rating * 4) + " BP statt " + (rating * 10) + " BP gesamt)."
+          : "";
+      confirm.setContentText(
+          "Nach dem Auskoppeln können die Skills der Gruppe unabhängig voneinander "
+              + "erhöht werden." + costInfo);
+      confirm.showAndWait()
+          .filter(btn -> btn == ButtonType.OK)
+          .ifPresent(btn -> {
+            character.decoupleGroup(groupName);
+            rebuildSkillsTab();
+          });
+    });
+    return decoupleBtn;
+  }
+
+  private void addSkillRow(@NonNull MigPane grid, int row, @NonNull Skill skill, boolean coupled,
+      @NonNull Character character) {
+    Label skillNameLabel = new Label(skill.getName());
     Label attrLabel = new Label(skill.getLinkedAttribute().getAbbreviation());
     Button minus = new Button("−");
     Label ratingLabel = new Label();
     Button plus = new Button("+");
     Label bpLabel = new Label();
 
-    nameLabel.getStyleClass().add(coupled ? "attr-name-coupled" : "attr-name");
+    skillNameLabel.getStyleClass().add(coupled ? "attr-name-coupled" : STYLE_ATTR_NAME);
     attrLabel.getStyleClass().add("attr-abbr");
-    minus.getStyleClass().add("attr-btn");
-    ratingLabel.getStyleClass().add("attr-value");
-    plus.getStyleClass().add("attr-btn");
-    bpLabel.getStyleClass().add("attr-bp");
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    bpLabel.getStyleClass().add(STYLE_ATTR_BP);
 
     boolean career = character.isCreated();
 
     if (coupled) {
       if (career) {
         minus.setVisible(false);
-        minus.setManaged(false);
       }
       Runnable refresh = () -> {
         ratingLabel.setText(String.valueOf(skill.getRating()));
@@ -662,69 +674,218 @@ public class CharacterViewController {
       };
       skillRefreshers.add(refresh);
       refresh.run();
-    } else if (career) {
-      minus.setVisible(false);
-      minus.setManaged(false);
-      Runnable refresh = () -> {
-        int val = skill.getRating();
-        int karmaCost = skill.getKarmaCost();
-        ratingLabel.setText(String.valueOf(val));
-        bpLabel.setText(val >= Skill.MAX_RATING ? "–" : karmaCost + " Karma");
-        plus.setDisable(val >= Skill.MAX_RATING || character.getKarmaTotal() < karmaCost);
-      };
-      skillRefreshers.add(refresh);
-
-      plus.setOnAction(e -> {
-        int val = skill.getRating();
-        int karmaCost = skill.getKarmaCost();
-        String label = skill.getName() + " " + val + " → " + (val + 1);
-        if (val < Skill.MAX_RATING && character.getKarmaTotal() >= karmaCost
-            && confirmKarmaSpend(label, karmaCost, character)) {
-          character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now()));
-          skill.setRating(val + 1);
-          refreshAllRows();
-          updateLogDisplay();
-        }
-      });
-
-      refresh.run();
     } else {
-      Runnable refresh = () -> {
-        int val = skill.getRating();
-        ratingLabel.setText(String.valueOf(val));
-        bpLabel.setText(val == 0 ? "–" : skill.getBpCost() + " BP");
-        minus.setDisable(val <= 0);
-        plus.setDisable(val >= Skill.MAX_RATING || character.getRemainingBP() < 4);
-      };
-      skillRefreshers.add(refresh);
+      wireIncrementable(skillRefreshers, new RowControls(ratingLabel, bpLabel, minus, plus),
+          career, new RowModel() {
+            @Override
+            public int value() {
+              return skill.getRating();
+            }
 
-      minus.setOnAction(e -> {
-        if (skill.getRating() > 0) {
-          skill.setRating(skill.getRating() - 1);
-          refreshAllRows();
-          updateBpDisplay();
-        }
-      });
-      plus.setOnAction(e -> {
-        if (skill.getRating() < Skill.MAX_RATING && character.getRemainingBP() >= 4) {
-          skill.setRating(skill.getRating() + 1);
-          refreshAllRows();
-          updateBpDisplay();
-        }
-      });
+            @Override
+            public int min() {
+              return 0;
+            }
 
-      refresh.run();
+            @Override
+            public int max() {
+              return Skill.MAX_RATING;
+            }
+
+            @Override
+            public int bpStepCost() {
+              return skill.getBpCostPerRating(character.isSkillCostDoubled(skill.getCategory()));
+            }
+
+            @Override
+            public @NonNull String bpDisplayText() {
+              boolean doubled = character.isSkillCostDoubled(skill.getCategory());
+              return skill.getRating() == 0 ? "–" : skill.getBpCost(doubled) + " BP";
+            }
+
+            @Override
+            public int karmaStepCost() {
+              return skill.getKarmaCost(character.isSkillCostDoubled(skill.getCategory()));
+            }
+
+            @Override
+            public void increment() {
+              skill.setRating(skill.getRating() + 1);
+            }
+
+            @Override
+            public void decrement() {
+              skill.setRating(skill.getRating() - 1);
+            }
+
+            @Override
+            public @NonNull String actionLabel(int from, int to) {
+              return skill.getName() + " " + from + " → " + to;
+            }
+          }, character);
     }
 
-    grid.add(nameLabel, 0, row);
-    grid.add(attrLabel, 1, row);
-    grid.add(minus, 2, row);
-    grid.add(ratingLabel, 3, row);
-    grid.add(plus, 4, row);
-    grid.add(bpLabel, 5, row);
+    grid.add(skillNameLabel, CELL_COL_0 + row);
+    grid.add(attrLabel, CELL_COL_1 + row);
+    grid.add(minus, CELL_COL_2 + row);
+    grid.add(ratingLabel, CELL_COL_3 + row);
+    grid.add(plus, CELL_COL_4 + row);
+    grid.add(bpLabel, CELL_COL_5 + row);
   }
 
   // ── Gemeinsam ─────────────────────────────────────────────
+
+  /**
+   * Lädt ein Dialog-FXML und richtet die zugehörige modale Stage (Titel, Modality, Stylesheet) ein. Der Aufrufer holt sich den Controller über
+   * {@code dialog.loader().getController()}, verdrahtet ihn und ruft {@code dialog.stage().showAndWait()} auf.
+   */
+  private @NonNull DialogHandle openDialog(@NonNull String fxmlName, @NonNull String title)
+      throws IOException {
+    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(App.class.getResource(fxmlName)));
+    Parent root = loader.load();
+
+    Stage dialogStage = new Stage();
+    dialogStage.setTitle(title);
+    dialogStage.initModality(Modality.WINDOW_MODAL);
+    dialogStage.initOwner(nameLabel.getScene().getWindow());
+    dialogStage.setResizable(false);
+    Scene scene = new Scene(root);
+    scene.getStylesheets()
+        .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
+    dialogStage.setScene(scene);
+
+    return new DialogHandle(loader, dialogStage);
+  }
+
+  private void showDialogLoadError() {
+    Notifications.create()
+        .title("Fehler")
+        .text("Dialog konnte nicht geöffnet werden")
+        .position(Pos.BOTTOM_RIGHT)
+        .owner(nameLabel.getScene().getWindow())
+        .showError();
+  }
+
+  /**
+   * Zugriff auf einen einzelnen erhöh-/senkbaren Wert (Attribut, Skillgruppen-Rating oder
+   * Skill-Rating), den {@link #wireIncrementable} unabhängig vom fachlichen Hintergrund verdrahten
+   * kann.
+   */
+  private interface RowModel {
+
+    int value();
+
+    int min();
+
+    int max();
+
+    /** Kosten für den nächsten BP-Erhöhungsschritt in der Charaktererstellung. */
+    int bpStepCost();
+
+    /** Anzeigetext für die BP-Kosten-Spalte in der Charaktererstellung. */
+    @NonNull String bpDisplayText();
+
+    /** Kosten für den nächsten Karma-Erhöhungsschritt im Karrieremodus. */
+    int karmaStepCost();
+
+    void increment();
+
+    void decrement();
+
+    @NonNull String actionLabel(int from, int to);
+  }
+
+  /**
+   * Die vier UI-Elemente einer +/−-Zeile, wie sie {@link #wireIncrementable} verdrahtet.
+   */
+  private record RowControls(
+      @NonNull Label valueLabel, @NonNull Label costLabel, @NonNull Button minus,
+      @NonNull Button plus) {}
+
+  /**
+   * Verdrahtet eine +/−-Zeile (Refresh-Runnable, Klick-Handler, BP- bzw. Karma-Kostenprüfung inkl.
+   * Bestätigungsdialog im Karrieremodus) für {@code addAttributeRow}, {@code addGroupHeaderRow} und
+   * {@code addSkillRow} einheitlich. Das Ausblenden von {@code minus} im Karrieremodus verlässt sich
+   * auf {@code hidemode 3} des umgebenden {@link MigPane} — ein zusätzliches {@code setManaged(false)}
+   * ist dafür nicht nötig.
+   */
+  private void wireIncrementable(@NonNull List<Runnable> refresherList,
+      @NonNull RowControls controls, boolean career, @NonNull RowModel model,
+      @NonNull Character character) {
+    if (career) {
+      wireCareerIncrementable(refresherList, controls, model, character);
+    } else {
+      wireCreationIncrementable(refresherList, controls, model, character);
+    }
+  }
+
+  private void wireCareerIncrementable(@NonNull List<Runnable> refresherList,
+      @NonNull RowControls controls, @NonNull RowModel model, @NonNull Character character) {
+    Label valueLabel = controls.valueLabel();
+    Label costLabel = controls.costLabel();
+    Button minus = controls.minus();
+    Button plus = controls.plus();
+
+    minus.setVisible(false);
+    Runnable refresh = () -> {
+      int val = model.value();
+      int karmaCost = model.karmaStepCost();
+      valueLabel.setText(String.valueOf(val));
+      costLabel.setText(val >= model.max() ? "–" : karmaCost + KARMA_SUFFIX);
+      plus.setDisable(val >= model.max() || character.getKarmaTotal() < karmaCost);
+    };
+    refresherList.add(refresh);
+
+    plus.setOnAction(e -> {
+      int val = model.value();
+      int karmaCost = model.karmaStepCost();
+      String label = model.actionLabel(val, val + 1);
+      if (val < model.max() && character.getKarmaTotal() >= karmaCost
+          && confirmKarmaSpend(label, karmaCost, character)) {
+        character.addKarmaEntry(
+            new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+        model.increment();
+        refreshAllRows();
+        updateLogDisplay();
+      }
+    });
+
+    refresh.run();
+  }
+
+  private void wireCreationIncrementable(@NonNull List<Runnable> refresherList,
+      @NonNull RowControls controls, @NonNull RowModel model, @NonNull Character character) {
+    Label valueLabel = controls.valueLabel();
+    Label costLabel = controls.costLabel();
+    Button minus = controls.minus();
+    Button plus = controls.plus();
+
+    Runnable refresh = () -> {
+      int val = model.value();
+      valueLabel.setText(String.valueOf(val));
+      costLabel.setText(model.bpDisplayText());
+      minus.setDisable(val <= model.min());
+      plus.setDisable(val >= model.max() || character.getRemainingBP() < model.bpStepCost());
+    };
+    refresherList.add(refresh);
+
+    minus.setOnAction(e -> {
+      if (model.value() > model.min()) {
+        model.decrement();
+        refreshAllRows();
+        updateBpDisplay();
+      }
+    });
+    plus.setOnAction(e -> {
+      if (model.value() < model.max() && character.getRemainingBP() >= model.bpStepCost()) {
+        model.increment();
+        refreshAllRows();
+        updateBpDisplay();
+      }
+    });
+
+    refresh.run();
+  }
 
   private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
       @NonNull Character character) {
@@ -787,8 +948,6 @@ public class CharacterViewController {
     refreshAllRows();
   }
 
-  // ── Karrieremodus-Transition ──────────────────────────────
-
   @FXML
   private void onFinalize() {
     if (character == null) {
@@ -812,13 +971,15 @@ public class CharacterViewController {
     }
     if (nuyenBp > 0) {
       character.addNuyenEntry(new LogEntry(
-          "Startkapital (Charaktererstellung)", startNuyen, LocalDate.now()));
+          "Startkapital (Charaktererstellung)", startNuyen, LocalDate.now(ZoneId.systemDefault())));
       character.setNuyenBP(0);
     }
     character.setCreated(true);
     updateModeDisplay();
     updateLogDisplay();
   }
+
+  // ── Karrieremodus-Transition ──────────────────────────────
 
   private void updateModeDisplay() {
     if (character == null) {
@@ -845,8 +1006,6 @@ public class CharacterViewController {
     buildQualitiesTab();
   }
 
-  // ── Log-Tab ───────────────────────────────────────────────
-
   @SuppressWarnings("unchecked")
   private void buildLogTable(@NonNull TableView<LogEntry> table) {
     TableColumn<LogEntry, String> dateCol = new TableColumn<>("Datum");
@@ -870,6 +1029,8 @@ public class CharacterViewController {
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     table.setPlaceholder(new Label("Keine Einträge"));
   }
+
+  // ── Log-Tab ───────────────────────────────────────────────
 
   private void updateLogDisplay() {
     if (character == null) {
@@ -917,32 +1078,18 @@ public class CharacterViewController {
 
   private @NonNull Optional<LogEntry> openLogEntryDialog(@NonNull String title) {
     try {
-      FXMLLoader loader = new FXMLLoader(
-          Objects.requireNonNull(App.class.getResource("LogEntryDialog.fxml")));
-      Parent root = loader.load();
-      LogEntryDialogController ctrl = loader.getController();
-
-      Stage dialogStage = new Stage();
-      dialogStage.setTitle(title);
-      dialogStage.initModality(Modality.WINDOW_MODAL);
-      dialogStage.initOwner(nameLabel.getScene().getWindow());
-      dialogStage.setResizable(false);
-      Scene scene = new Scene(root);
-      scene.getStylesheets()
-          .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
-      dialogStage.setScene(scene);
-
-      ctrl.setStage(dialogStage);
-      dialogStage.showAndWait();
+      DialogHandle dialog = openDialog("LogEntryDialog.fxml", title);
+      LogEntryDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      dialog.stage().showAndWait();
       return ctrl.getResult();
     } catch (IOException e) {
-      Notifications.create()
-          .title("Fehler")
-          .text("Dialog konnte nicht geöffnet werden")
-          .position(Pos.BOTTOM_RIGHT)
-          .owner(nameLabel.getScene().getWindow())
-          .showError();
+      showDialogLoadError();
       return Optional.empty();
     }
+  }
+
+  private record DialogHandle(@NonNull FXMLLoader loader, @NonNull Stage stage) {
+
   }
 }

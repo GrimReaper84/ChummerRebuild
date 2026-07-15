@@ -3,8 +3,8 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
     id("java")
     id("application")
-    id("org.openjfx.javafxplugin") version "0.1.0"
-    id("net.ltgt.errorprone") version "4.0.1"
+    alias(libs.plugins.javafx)
+    alias(libs.plugins.errorprone)
 }
 
 group = "de.shalorian"
@@ -26,28 +26,30 @@ application {
 }
 
 javafx {
-    version = "21"
+    version = libs.versions.javafx.runtime.get()
     modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 dependencies {
-    implementation("org.jspecify:jspecify:1.0.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    implementation("org.controlsfx:controlsfx:11.2.1")
+    implementation(libs.jspecify)
+    implementation(libs.jackson.databind)
+    implementation(libs.controlsfx)
+    implementation(libs.miglayout.javafx)
 
     // JavaFX native JARs für alle Plattformen – damit distZip auf Windows, Mac und Linux läuft
+    val javafxVersion = libs.versions.javafx.runtime.get()
     listOf("win", "linux", "mac", "mac-aarch64").forEach { platform ->
         listOf("base", "controls", "fxml", "graphics").forEach { module ->
-            runtimeOnly("org.openjfx:javafx-$module:21:$platform")
+            runtimeOnly("org.openjfx:javafx-$module:$javafxVersion:$platform")
         }
     }
 
-    errorprone("com.google.errorprone:error_prone_core:2.26.1")
-    errorprone("com.uber.nullaway:nullaway:0.10.22")
+    errorprone(libs.errorprone.core)
+    errorprone(libs.nullaway)
 
-    testImplementation(platform("org.junit:junit-bom:6.0.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.withType<JavaCompile>().configureEach {
