@@ -28,7 +28,7 @@ class CharacterKnowledgeSkillTest {
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
 
         assertThrows(IllegalArgumentException.class,
-                () -> c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.INTEREST));
+                () -> c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.HOBBY));
     }
 
     @Test
@@ -118,7 +118,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(LOG).setValue(1); // Pool = 6
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
         c.getKnowledgeSkills().get(0).setRating(6); // Pool exakt ausgeschöpft
-        c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.INTEREST);
+        c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.HOBBY);
 
         assertEquals(2, c.getKnowledgeSkillIncrementBP(c.getKnowledgeSkills().get(1)));
     }
@@ -178,5 +178,127 @@ class CharacterKnowledgeSkillTest {
         Character c = mensch("Test");
 
         assertNull(c.getNativeLanguage());
+    }
+
+    // --- Erstellungs-Cap: 1x6 ODER 2x5, Rest max. 4 (GRW S. 109/155) ---
+
+    @Test
+    void raisingUpToFourIsAlwaysAllowed() {
+        Character c = mensch("Test");
+        c.getAttribute(INT).setValue(6);
+        c.getAttribute(LOG).setValue(6); // großer Pool, damit die Verdopplungs-Grenze nicht stört
+        c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        skill.setRating(3);
+
+        assertTrue(c.canRaiseKnowledgeSkillAtCreation(skill));
+    }
+
+    @Test
+    void secondKnowledgeSkillMayNotAlsoReachSix() {
+        Character c = mensch("Test");
+        c.getAttribute(INT).setValue(6);
+        c.getAttribute(LOG).setValue(6);
+        c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+        c.getKnowledgeSkills().get(0).setRating(6);
+        c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
+        KnowledgeSkill firmenkunde = c.getKnowledgeSkills().get(1);
+        firmenkunde.setRating(5);
+
+        assertFalse(c.canRaiseKnowledgeSkillAtCreation(firmenkunde));
+    }
+
+    @Test
+    void twoKnowledgeSkillsMayReachFive() {
+        Character c = mensch("Test");
+        c.getAttribute(INT).setValue(6);
+        c.getAttribute(LOG).setValue(6);
+        c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+        c.getKnowledgeSkills().get(0).setRating(5);
+        c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
+        KnowledgeSkill firmenkunde = c.getKnowledgeSkills().get(1);
+        firmenkunde.setRating(4);
+
+        assertTrue(c.canRaiseKnowledgeSkillAtCreation(firmenkunde));
+    }
+
+    @Test
+    void nativeLanguageIsExemptFromRatingCap() {
+        Character c = mensch("Test");
+        c.setNativeLanguage("Deutsch");
+
+        assertTrue(c.canRaiseKnowledgeSkillAtCreation(c.getNativeLanguage()));
+    }
+
+    @Test
+    void ratingCapDoesNotApplyInCareerMode() {
+        Character c = mensch("Test");
+        c.getAttribute(INT).setValue(6);
+        c.getAttribute(LOG).setValue(6);
+        c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+        c.getKnowledgeSkills().get(0).setRating(6);
+        c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
+        KnowledgeSkill firmenkunde = c.getKnowledgeSkills().get(1);
+        firmenkunde.setRating(5);
+        c.setCreated(true);
+
+        assertTrue(c.canRaiseKnowledgeSkillAtCreation(firmenkunde));
+    }
+
+    // --- Erstellungs-Cap: max. Pool-Verdopplung für Zusatzpunkte (GRW S. 110) ---
+    // Alle Ratings bleiben hier bei <= 4, damit ausschließlich der Punkte-Cap getestet wird
+    // und nicht der separate 1x6/2x5-Verteilungs-Cap (siehe Tests oben) mit hineinspielt.
+
+    @Test
+    void totalPointsUsedMayNotExceedDoublePool() {
+        Character c = mensch("Test");
+        c.getAttribute(INT).setValue(1);
+        c.getAttribute(LOG).setValue(1); // Pool = 6, Obergrenze = 12
+        c.addKnowledgeSkill("A", KnowledgeSkillCategory.STREET);
+        c.addKnowledgeSkill("B", KnowledgeSkillCategory.STREET);
+        c.addKnowledgeSkill("C", KnowledgeSkillCategory.STREET);
+        c.getKnowledgeSkills().get(0).setRating(4);
+        c.getKnowledgeSkills().get(1).setRating(4);
+        KnowledgeSkill dritte = c.getKnowledgeSkills().get(2);
+        dritte.setRating(3); // Summe bislang 11, Obergrenze 12
+
+        assertTrue(c.canRaiseKnowledgeSkillAtCreation(dritte)); // 11 + 1 = 12, noch erlaubt
+        dritte.setRating(4);
+        assertEquals(12, c.getKnowledgeSkillPointsUsed());
+    }
+
+    @Test
+    void pointCapBlocksExceedingDoublePool() {
+        Character c = mensch("Test");
+        c.getAttribute(INT).setValue(1);
+        c.getAttribute(LOG).setValue(1); // Pool = 6, Obergrenze = 12
+        c.addKnowledgeSkill("A", KnowledgeSkillCategory.STREET);
+        c.addKnowledgeSkill("B", KnowledgeSkillCategory.STREET);
+        c.addKnowledgeSkill("C", KnowledgeSkillCategory.STREET);
+        c.getKnowledgeSkills().get(0).setRating(4);
+        c.getKnowledgeSkills().get(1).setRating(4);
+        c.getKnowledgeSkills().get(2).setRating(4); // Summe bereits 12 (Maximum)
+        c.addKnowledgeSkill("D", KnowledgeSkillCategory.ACADEMIC);
+        KnowledgeSkill vierte = c.getKnowledgeSkills().get(3);
+
+        assertFalse(c.canRaiseKnowledgeSkillAtCreation(vierte)); // 12 + 1 = 13 > 12
+    }
+
+    @Test
+    void pointCapDoesNotApplyInCareerMode() {
+        Character c = mensch("Test");
+        c.getAttribute(INT).setValue(1);
+        c.getAttribute(LOG).setValue(1);
+        c.addKnowledgeSkill("A", KnowledgeSkillCategory.STREET);
+        c.addKnowledgeSkill("B", KnowledgeSkillCategory.STREET);
+        c.addKnowledgeSkill("C", KnowledgeSkillCategory.STREET);
+        c.getKnowledgeSkills().get(0).setRating(4);
+        c.getKnowledgeSkills().get(1).setRating(4);
+        c.getKnowledgeSkills().get(2).setRating(4);
+        c.addKnowledgeSkill("D", KnowledgeSkillCategory.ACADEMIC);
+        KnowledgeSkill vierte = c.getKnowledgeSkills().get(3);
+        c.setCreated(true);
+
+        assertTrue(c.canRaiseKnowledgeSkillAtCreation(vierte));
     }
 }

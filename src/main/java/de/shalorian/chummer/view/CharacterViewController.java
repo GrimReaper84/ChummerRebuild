@@ -475,6 +475,11 @@ public class CharacterViewController {
           }
 
           @Override
+          public boolean canIncrement() {
+            return character.canRaiseKnowledgeSkillAtCreation(skill);
+          }
+
+          @Override
           public int bpStepCost() {
             return character.getKnowledgeSkillIncrementBP(skill);
           }
@@ -667,18 +672,57 @@ public class CharacterViewController {
     if (!isMetatype) {
       Button removeBtn = new Button("Entfernen");
       removeBtn.getStyleClass().add("btn-secondary");
-      String qualityName = q.data().name();
-      removeBtn.setOnAction(e -> {
-        Character c = this.character;
-        if (c != null) {
-          c.removeQuality(qualityName);
-          buildQualitiesTab();
-          updateBpDisplay();
-          refreshAllRows();
-        }
-      });
+      removeBtn.setOnAction(e -> onRemoveQuality(q));
       grid.add(removeBtn, 3, row);
     }
+  }
+
+  /**
+   * Entfernt eine gewählte Quality. Handicaps im Karrieremodus loswerden kostet die doppelten
+   * GP-Kosten in Karma (siehe {@link Character#getQualityKarmaCost}); alle anderen Fälle
+   * (Erstellungsmodus, Gaben, Gratis-Qualities) bleiben unverändert kostenlos.
+   */
+  private void onRemoveQuality(@NonNull CharacterQuality q) {
+    Character c = this.character;
+    if (c == null) {
+      return;
+    }
+    String qualityName = q.data().name();
+    if (c.isCreated() && q.data().type() == QualityType.NEGATIVE && !q.gratis()) {
+      int karmaCost = c.getQualityKarmaCost(q.data());
+      if (!chargeQualityKarma(c, "%s loswerden".formatted(qualityName), karmaCost)) {
+        return;
+      }
+    }
+    c.removeQuality(qualityName);
+    buildQualitiesTab();
+    updateBpDisplay();
+    refreshAllRows();
+  }
+
+  /**
+   * Prüft Karma-Verfügbarkeit, holt eine Bestätigung ein und verbucht den Karma-Log-Eintrag für
+   * den Erwerb einer Gabe bzw. das Loswerden eines Handicaps im Karrieremodus (siehe
+   * {@link Character#getQualityKarmaCost}).
+   *
+   * @return true, wenn das Karma verbucht wurde und die eigentliche Aktion fortgesetzt werden darf
+   */
+  private boolean chargeQualityKarma(@NonNull Character c, @NonNull String label, int karmaCost) {
+    if (c.getKarmaTotal() < karmaCost) {
+      Notifications.create()
+          .title("Nicht genug Karma")
+          .text("Benötigt: " + karmaCost + KARMA_SUFFIX)
+          .position(Pos.BOTTOM_RIGHT)
+          .owner(nameLabel.getScene().getWindow())
+          .showWarning();
+      return false;
+    }
+    if (!confirmKarmaSpend(label, karmaCost, c)) {
+      return false;
+    }
+    c.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+    updateLogDisplay();
+    return true;
   }
 
   private void rebuildQualitiesTab() {
@@ -732,6 +776,13 @@ public class CharacterViewController {
   }
 
   private void tryAddQuality(@NonNull Character ch, @NonNull QualitySelectResult r) {
+    // Eine Gabe im Karrieremodus erwerben kostet die doppelten GP-Kosten in Karma.
+    if (ch.isCreated() && r.data().type() == QualityType.POSITIVE && !r.gratis()) {
+      int karmaCost = ch.getQualityKarmaCost(r.data());
+      if (!chargeQualityKarma(ch, "%s erwerben".formatted(r.data().name()), karmaCost)) {
+        return;
+      }
+    }
     try {
       ch.addQuality(r.data(), r.gratis());
     } catch (IllegalArgumentException ex) {
@@ -763,7 +814,8 @@ public class CharacterViewController {
     groupLabel.getStyleClass().add(coupled ? "skill-group-header-coupled" : "skill-group-header");
     nameBox.getChildren().add(groupLabel);
 
-    if (coupled) {
+    // GRW S. 109: Fertigkeitsgruppen dürfen während der Erstellung nicht aufgelöst werden.
+    if (coupled && character.isCreated()) {
       nameBox.getChildren().add(buildDecoupleButton(groupName, character));
     }
 
@@ -795,6 +847,11 @@ public class CharacterViewController {
             @Override
             public int max() {
               return Skill.MAX_RATING;
+            }
+
+            @Override
+            public boolean canIncrement() {
+              return character.canRaiseGroupAtCreation(groupName);
             }
 
             @Override
@@ -910,6 +967,11 @@ public class CharacterViewController {
             @Override
             public int max() {
               return Skill.MAX_RATING;
+            }
+
+            @Override
+            public boolean canIncrement() {
+              return character.canRaiseSkillAtCreation(skill);
             }
 
             @Override

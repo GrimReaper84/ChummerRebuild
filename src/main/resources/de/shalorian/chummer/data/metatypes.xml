@@ -75,7 +75,7 @@
 
     <!-- ── ZWERG ──────────────────────────────────────────── -->
     <metatype name="Zwerg" bp="25">
-        <attribute name="BOD" min="3" max="8"/>
+        <attribute name="BOD" min="2" max="7"/>
         <attribute name="AGI" min="1" max="6"/>
         <attribute name="REA" min="1" max="5"/>
         <attribute name="STR" min="3" max="8"/>
@@ -118,7 +118,7 @@
         <attribute name="REA" min="1" max="6"/>
         <attribute name="STR" min="3" max="8"/>
         <attribute name="CHA" min="1" max="5"/>
-        <attribute name="INT" min="1" max="5"/>
+        <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="5"/>
         <attribute name="WIL" min="1" max="6"/>
         <qualities>

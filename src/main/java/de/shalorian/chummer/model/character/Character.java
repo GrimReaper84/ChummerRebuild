@@ -21,6 +21,8 @@ public class Character {
   public static final int MAX_POSITIVE_QUALITY_BP = 35;
   public static final int MAX_NEGATIVE_QUALITY_BP = 35;
   public static final int MAX_ATTRIBUTE_BP = TOTAL_BP / 2;
+  public static final int MAX_GROUP_RATING_AT_CREATION = 4;
+  private static final int KARMA_NEW_SKILL_GROUP = 10;
   private static final int KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT = 2;
   private static final int KNOWLEDGE_SKILL_KARMA_NEW = 2;
   private static final int KNOWLEDGE_SKILL_KARMA_PER_RATING = 1;
@@ -150,6 +152,39 @@ public class Character {
     return skills.get(name);
   }
 
+  /**
+   * Prüft, ob eine Steigerung dieser aktiven Fertigkeit um 1 während der Charaktererschaffung
+   * regelkonform wäre: entweder maximal eine Fertigkeit auf Wert 6, oder maximal zwei
+   * Fertigkeiten auf Wert 5 — alle übrigen Fertigkeiten bleiben auf maximal 4 begrenzt, und
+   * beide Sonderfälle schließen sich gegenseitig aus. Gekoppelte Gruppen-Skills (die gemeinsam
+   * über {@link #raiseGroup(String)} gesteigert werden) zählen dabei nicht mit, da für Gruppen
+   * ein eigener Cap gilt. Im Karrieremodus gilt dieser Erstellungs-Cap nicht.
+   */
+  public boolean canRaiseSkillAtCreation(@NonNull Skill skill) {
+    if (created) {
+      return true;
+    }
+    int newValue = skill.getRating() + 1;
+    if (newValue <= 4) {
+      return true;
+    }
+    long count6 = skills.values().stream()
+        .filter(s -> s != skill && !isCoupledGroupMember(s) && s.getRating() == 6)
+        .count();
+    long count5 = skills.values().stream()
+        .filter(s -> s != skill && !isCoupledGroupMember(s) && s.getRating() == 5)
+        .count();
+    if (newValue == 5) {
+      return count6 == 0 && count5 < 2;
+    }
+    return count5 == 0 && count6 < 1; // newValue == 6
+  }
+
+  private boolean isCoupledGroupMember(@NonNull Skill s) {
+    String g = s.getGroupName();
+    return g != null && !decoupledGroups.contains(g);
+  }
+
   // --- Skillgruppen ---
 
   /**
@@ -183,8 +218,25 @@ public class Character {
         .forEach(s -> s.setRating(newRating));
   }
 
+  /**
+   * Prüft, ob eine Steigerung dieser Fertigkeitsgruppe um 1 während der Charaktererschaffung
+   * regelkonform wäre: "Bei der Charaktererschaffung beträgt der Maximalwert für
+   * Fertigkeitsgruppen 4." Im Karrieremodus gilt dieser Erstellungs-Cap nicht (dort bis
+   * {@link Skill#MAX_RATING}).
+   */
+  public boolean canRaiseGroupAtCreation(@NonNull String groupName) {
+    return created || getGroupRating(groupName) < MAX_GROUP_RATING_AT_CREATION;
+  }
+
+  /**
+   * Karma-Kosten im Karrieremodus, um diese Fertigkeitsgruppe um 1 zu steigern. Eine komplett
+   * neue Gruppe (Rating 0 → 1) kostet pauschal 10 Karma, danach gilt die Steigerungs-Formel
+   * (neue Stufe × 5) — analog zum Muster bei einzelnen aktiven Fertigkeiten (neu = 4, sonst
+   * (neue Stufe) × 2).
+   */
   public int getGroupKarmaCost(@NonNull String groupName) {
-    return (getGroupRating(groupName) + 1) * 5;
+    int rating = getGroupRating(groupName);
+    return rating == 0 ? KARMA_NEW_SKILL_GROUP : (rating + 1) * 5;
   }
 
   /**
@@ -244,6 +296,16 @@ public class Character {
 
   public void removeQuality(@NonNull String name) {
     qualities.removeIf(q -> q.source() == QualitySource.SELECTED && q.data().name().equals(name));
+  }
+
+  /**
+   * Karma-Kosten im Karrieremodus, um eine neue Quality zu erwerben bzw. ein bestehendes
+   * Handicap wieder loszuwerden: die doppelten GP-Kosten der Quality ("der Charakter muss
+   * Karmapunkte in Höhe der doppelten Generierungspunkte der Gabe zahlen" / "durch die
+   * Bezahlung der doppelten Generierungspunkte des Handicaps").
+   */
+  public int getQualityKarmaCost(@NonNull QualityData data) {
+    return Math.abs(data.bp()) * 2;
   }
 
   public int getPositiveQualityBP() {
@@ -394,6 +456,41 @@ public class Character {
     int overflowAfter =
         Math.max(0, pointsUsed + contribution - pool) * KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT;
     return overflowAfter - overflowBefore;
+  }
+
+  /**
+   * Prüft, ob eine Steigerung dieser Wissensfertigkeit um 1 während der Charaktererschaffung
+   * regelkonform wäre: die Gesamtpunktzahl (Pool + Zusatzpunkte) darf den freien Pool höchstens
+   * verdoppeln ("Ein Charakter kann die Gesamtzahl an Wissensfertigkeitspunkten zu Beginn des
+   * Spiels maximal verdoppeln"), und wie bei aktiven Fertigkeiten gilt entweder maximal eine
+   * Wissensfertigkeit auf Wert 6 oder maximal zwei auf Wert 5 (übrige max. 4). Die Muttersprache
+   * ist von beiden Regeln ausgenommen. Im Karrieremodus gilt dieser Erstellungs-Cap nicht.
+   */
+  public boolean canRaiseKnowledgeSkillAtCreation(@NonNull KnowledgeSkill skill) {
+    if (created || skill.isNativeLanguage()) {
+      return true;
+    }
+    int newValue = skill.getRating() + 1;
+    if (newValue > KnowledgeSkill.MAX_RATING) {
+      return false;
+    }
+    int contribution = isKnowledgeSkillCostDoubled(skill.getCategory()) ? 2 : 1;
+    if (getKnowledgeSkillPointsUsed() + contribution > getKnowledgeSkillPointPool() * 2) {
+      return false;
+    }
+    if (newValue <= 4) {
+      return true;
+    }
+    long count6 = knowledgeSkills.stream()
+        .filter(k -> k != skill && !k.isNativeLanguage() && k.getRating() == 6)
+        .count();
+    long count5 = knowledgeSkills.stream()
+        .filter(k -> k != skill && !k.isNativeLanguage() && k.getRating() == 5)
+        .count();
+    if (newValue == 5) {
+      return count6 == 0 && count5 < 2;
+    }
+    return count5 == 0 && count6 < 1; // newValue == 6
   }
 
   /**

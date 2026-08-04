@@ -53,6 +53,22 @@ class CharacterTest {
     }
 
     @Test
+    void zwergBodyRangeMatchesRulebookTable() {
+        // GRW-Tabelle "Metatyp-Attribute" S. 105: Zwerg KON = 2-7, nicht 3-8.
+        Character zwerg = new Character("Test", MetatypeDataLoader.find("Zwerg"));
+        assertEquals(2, zwerg.getAttribute(BOD).getMin());
+        assertEquals(7, zwerg.getAttribute(BOD).getMax());
+    }
+
+    @Test
+    void orkIntuitionRangeMatchesRulebookTable() {
+        // GRW-Tabelle "Metatyp-Attribute" S. 105: Ork INT = 1-6, nicht 1-5.
+        Character ork = new Character("Test", MetatypeDataLoader.find("Ork"));
+        assertEquals(1, ork.getAttribute(INT).getMin());
+        assertEquals(6, ork.getAttribute(INT).getMax());
+    }
+
+    @Test
     void totalBpIs400() {
         Character c = mensch("Test");
         assertEquals(400, c.getRemainingBP()); // Mensch 0 BP, Attribute alle auf Min

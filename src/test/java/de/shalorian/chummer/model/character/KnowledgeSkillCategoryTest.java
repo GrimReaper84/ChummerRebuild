@@ -13,9 +13,9 @@ class KnowledgeSkillCategoryTest {
     }
 
     @Test
-    void streetInterestAndLanguageAreLinkedToInt() {
+    void streetHobbyAndLanguageAreLinkedToInt() {
         assertEquals(AttributeType.INT, KnowledgeSkillCategory.STREET.getLinkedAttribute());
-        assertEquals(AttributeType.INT, KnowledgeSkillCategory.INTEREST.getLinkedAttribute());
+        assertEquals(AttributeType.INT, KnowledgeSkillCategory.HOBBY.getLinkedAttribute());
         assertEquals(AttributeType.INT, KnowledgeSkillCategory.LANGUAGE.getLinkedAttribute());
     }
 }
