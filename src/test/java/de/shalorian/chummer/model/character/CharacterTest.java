@@ -45,6 +45,14 @@ class CharacterTest {
     }
 
     @Test
+    void zwergCostsTwentyFiveBp() {
+        // SR4-Grundregelwerk S. 105/106: Metatyp-Attribute-Tabelle und durchgerechnetes
+        // Beispiel ("Ein Zwerg kostet 25 GP") bestätigen 25, nicht 40.
+        Character zwerg = new Character("Test", MetatypeDataLoader.find("Zwerg"));
+        assertEquals(25, zwerg.getSpentBP());
+    }
+
+    @Test
     void totalBpIs400() {
         Character c = mensch("Test");
         assertEquals(400, c.getRemainingBP()); // Mensch 0 BP, Attribute alle auf Min

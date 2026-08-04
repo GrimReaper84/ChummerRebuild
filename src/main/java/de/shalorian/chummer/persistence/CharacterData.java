@@ -16,6 +16,7 @@ public class CharacterData {
   public @NonNull List<SelectedQualityEntry> selectedQualities = new ArrayList<>();
   public @NonNull Map<String, Integer> attributes = new HashMap<>();
   public @NonNull Map<String, Integer> skills = new HashMap<>(); // name → rating (nur > 0)
+  public @NonNull List<KnowledgeSkillEntry> knowledgeSkills = new ArrayList<>();
   public @NonNull List<String> decoupledGroups = new ArrayList<>();
   public @NonNull List<LogEntryData> karmaLog = new ArrayList<>();
   public @NonNull List<LogEntryData> nuyenLog = new ArrayList<>();
@@ -34,6 +35,25 @@ public class CharacterData {
     public SelectedQualityEntry(@NonNull String name, boolean gratis) {
       this.name = name;
       this.gratis = gratis;
+    }
+  }
+
+  public static class KnowledgeSkillEntry {
+
+    public @NonNull String name = "";
+    public @NonNull String category = "";
+    public int rating = 0;
+    public boolean nativeLanguage = false;
+
+    public KnowledgeSkillEntry() {
+    }
+
+    public KnowledgeSkillEntry(@NonNull String name, @NonNull String category, int rating,
+        boolean nativeLanguage) {
+      this.name = name;
+      this.category = category;
+      this.rating = rating;
+      this.nativeLanguage = nativeLanguage;
     }
   }
 

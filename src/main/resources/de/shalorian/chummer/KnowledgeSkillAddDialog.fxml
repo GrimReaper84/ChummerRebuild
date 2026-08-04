@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.shalorian.chummer.view.KnowledgeSkillAddDialogController"
+      spacing="14" styleClass="dialog-pane" prefWidth="360">
+    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+    <GridPane hgap="14" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints minWidth="80" prefWidth="90"/>
+            <ColumnConstraints minWidth="180" prefWidth="220" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label text="Name:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="nameField" promptText="z.B. Straßenkultur"
+               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="Kategorie:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="categoryBox" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </GridPane>
+
+    <Label fx:id="errorLabel" styleClass="bp-value-warn" wrapText="true"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Abbrechen" onAction="#onCancel" styleClass="btn-secondary"/>
+        <Button text="OK" onAction="#onOk"
+                defaultButton="true" styleClass="btn-primary"/>
+    </HBox>
+</VBox>

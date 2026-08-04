@@ -46,8 +46,16 @@ public class CharacterAttribute {
    * BP-Kosten für dieses Attribut (Punkte über Rassenminimum × 10, +15 BP auf Rassenmaximum).
    */
   public int getBpCost() {
-    int cost = (value - min) * BP_PER_POINT;
-    if (value == max && min != max) {
+    return getBpCostForValue(value);
+  }
+
+  /**
+   * BP-Kosten, die dieses Attribut bei einem hypothetischen Wert hätte — für eine
+   * Budget-Vorschau vor einer tatsächlichen Erhöhung (siehe {@link Character#canRaiseAttributeAtCreation}).
+   */
+  public int getBpCostForValue(int hypotheticalValue) {
+    int cost = (hypotheticalValue - min) * BP_PER_POINT;
+    if (hypotheticalValue == max && min != max) {
       cost += 15;
     }
     return cost;

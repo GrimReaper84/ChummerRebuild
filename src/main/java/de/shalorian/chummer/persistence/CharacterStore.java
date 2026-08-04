@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeData;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
@@ -18,12 +19,14 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 import org.jspecify.annotations.NonNull;
-import java.util.stream.Collectors;
 
 public class CharacterStore {
 
   private static final ObjectMapper MAPPER =
       new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+  private CharacterStore() {
+  }
 
   public static void save(@NonNull Character character, @NonNull File file) throws IOException {
     MAPPER.writeValue(file, toData(character));
@@ -51,14 +54,18 @@ public class CharacterStore {
     data.selectedQualities = character.getQualities().stream()
         .filter(q -> q.source() == QualitySource.SELECTED)
         .map(q -> new CharacterData.SelectedQualityEntry(q.data().name(), q.gratis()))
-        .collect(Collectors.toList());
+        .toList();
+    data.knowledgeSkills = character.getKnowledgeSkills().stream()
+        .map(k -> new CharacterData.KnowledgeSkillEntry(
+            k.getName(), k.getCategory().name(), k.getRating(), k.isNativeLanguage()))
+        .toList();
     data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
     data.karmaLog = character.getKarmaLog().stream()
         .map(e -> new CharacterData.LogEntryData(e.description(), e.amount(), e.date().toString()))
-        .collect(Collectors.toList());
+        .toList();
     data.nuyenLog = character.getNuyenLog().stream()
         .map(e -> new CharacterData.LogEntryData(e.description(), e.amount(), e.date().toString()))
-        .collect(Collectors.toList());
+        .toList();
 
     return data;
   }
@@ -88,6 +95,19 @@ public class CharacterStore {
         if (qualityData != null) {
           character.loadSelectedQuality(qualityData, entry.gratis);
         }
+      }
+    }
+    if (data.knowledgeSkills != null) {
+      for (CharacterData.KnowledgeSkillEntry entry : data.knowledgeSkills) {
+        if (entry.nativeLanguage) {
+          character.setNativeLanguage(entry.name);
+          continue;
+        }
+        character.addKnowledgeSkill(entry.name, KnowledgeSkillCategory.valueOf(entry.category));
+        character.getKnowledgeSkills().stream()
+            .filter(k -> k.getName().equals(entry.name))
+            .findFirst()
+            .ifPresent(k -> k.setRating(entry.rating));
       }
     }
     if (data.decoupledGroups != null) {

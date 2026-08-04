@@ -28,7 +28,7 @@
 |--------------------------------------------------------|--------|-------------------------------------------------------------------------|
 | 5 Grundrassen (Mensch, Elf, Zwerg, Ork, Troll)         | ✅      |                                                                         |
 | Metavarianten                                          | ✅      | Qualities je Metatyp in XML hinterlegt; Anzahl Varianten noch zu prüfen |
-| Metatyp-BP-Kosten fließen in BP-Bilanz                 | ✅      |                                                                         |
+| Metatyp-BP-Kosten fließen in BP-Bilanz                 | ✅      | Zwerg-Kosten am 2026-08-04 korrigiert (25 statt 40 GP, gegen GRW S. 105/106 verifiziert) |
 | Bewegungsrate (Walking/Running)                        | ❌      | Nicht gespeichert, nicht angezeigt                                      |
 | Metatyp-Kategorie (Metahuman, Shapeshifter, Critter …) | ❌      | Nicht modelliert                                                        |
 
@@ -43,6 +43,8 @@
 | +15 BP Bonus wenn Attribut auf Rassenmaximum                                | ✅      | Korrigiert in `CharacterAttribute.getBpCost()` |
 | Attribut-Minimum durch Rassengrenzen erzwingen                              | ✅      |                                                |
 | Karma-Steigerung Attribute: neue Stufe × 5 Karma                            | ✅      |                                                |
+| Max. 50% des Gesamtbudgets für Attribute (Erstellung)                       | ✅      | GRW S. 106 verifiziert, `Character.canRaiseAttributeAtCreation()`, 2026-08-04 |
+| Nur 1 Attribut auf Rassenmaximum steigerbar (Erstellung)                    | ✅      | GRW S. 106 verifiziert, s.o., 2026-08-04       |
 | Augmentiertes Maximum anzeigen (MetatypeMax + ⌊Max/2⌋)                      | ❌      | Weder berechnet noch angezeigt                 |
 | Sonderattribute: EDG (Edge)                                                 | ❌      | Nicht modelliert                               |
 | Sonderattribute: MAG (Magie)                                                | ❌      | Nicht modelliert                               |
@@ -76,10 +78,13 @@
 
 | Feature                                                       | Status | Anmerkung        |
 |---------------------------------------------------------------|--------|------------------|
-| Wissensfertigkeiten-Pool (INT × 2 freie Punkte)               | ❌      | Komplett fehlend |
-| Hinzufügen/Entfernen von Wissensfertigkeiten                  | ❌      |                  |
-| Kategorie (Akademisch, Interesse, Sprache, Beruflich, Straße) | ❌      |                  |
-| BP-Kosten: 2 BP/Punkt (nur wenn Pool überschritten)           | ❌      |                  |
+| Wissensfertigkeiten-Pool ((INT + LOG) × 3 freie Punkte)       | ✅      | Korrigierte Formel (nicht INT×2, siehe `docs/wissensfertigkeiten_analyse.md`) |
+| Hinzufügen/Entfernen von Wissensfertigkeiten                  | ✅      | Freitext-Name, Dialog mit Kategorie-Auswahl, Duplikat-Prüfung |
+| Kategorie (Akademisch, Interesse, Sprache, Beruflich, Straße) | ✅      | `KnowledgeSkillCategory`-Enum mit Attribut-Zuordnung |
+| BP-Kosten: 2 BP/Punkt (nur wenn Pool überschritten)           | ✅      | Gemeinsamer Pool über alle Wissensfertigkeiten, Uneducated verdoppelt Poolverbrauch |
+| Karrieremodus-Karma-Kosten                                    | ✅      | Neue Fertigkeit 2 Karma, Steigerung Rating×1 Karma; Uneducated verdoppelt Endpreis |
+| Muttersprache ("M"), separates Konzept außerhalb des Pools    | ✅      | Am 2026-08-04 korrigiert: gegen GRW S. 109/110 verifiziert — Symbol ist "M" nicht "N", eigenes `nativeLanguage`-Flag statt Rating-0-Eintrag, kostet keine Wissensfertigkeitspunkte |
+| Spezialisierungen bei Wissensfertigkeiten                     | ❌      | Bewusst ausgeklammert, gemeinsam mit Spezialisierungen aktiver Fertigkeiten geplant |
 
 ---
 
@@ -225,6 +230,7 @@
 | Skills werden korrekt gespeichert/geladen (nur Rating > 0) | ✅      |                                                                              |
 | Entkoppelte Gruppen werden gespeichert/geladen             | ✅      |                                                                              |
 | Qualities werden gespeichert/geladen (inkl. Gratis-Flag)   | ✅      | Metatyp-Qualities werden nicht gespeichert, sondern beim Laden rekonstruiert |
+| Wissensfertigkeiten werden gespeichert/geladen             | ✅      | Freitext-Name, Kategorie, Rating (inkl. Sonderzeichen)                       |
 | Karma/Nuyen-Log wird gespeichert/geladen mit Datum         | ✅      |                                                                              |
 | Dateiendung `.json`                                        | ✅      |                                                                              |
 | Vorgeschlagener Dateiname beim Speichern (charname.json)   | ✅      |                                                                              |
@@ -251,7 +257,7 @@
 | Metatypen              | 3 | 0  | 2 |
 | Attribute              | 5 | 0  | 6 |
 | Aktive Fertigkeiten    | 9 | 0  | 4 |
-| Wissensfertigkeiten    | 0 | 0  | 4 |
+| Wissensfertigkeiten    | 6 | 0  | 1 |
 | Qualities              | 6 | 0  | 0 |
 | Kontakte               | 0 | 0  | 3 |
 | Magie                  | 0 | 0  | 6 |
@@ -264,7 +270,7 @@
 | Karrieremodus          | 4 | 0  | 3 |
 | Initiative             | 0 | 0  | 4 |
 | Condition Monitor      | 0 | 0  | 4 |
-| Persistenz             | 7 | 1  | 0 |
+| Persistenz             | 8 | 1  | 0 |
 | UI/Bedienbarkeit       | 4 | 0  | 1 |
 
 ---
@@ -273,9 +279,9 @@
 
 **Stufe 1 – Fehlende Kernfeatures für einen vollständigen Charakter**
 
-1. **Wissensfertigkeiten** (freier Pool INT×2, Kategorien, Überzug in BP)
+1. ~~**Wissensfertigkeiten**~~ ✅ umgesetzt (freier Pool (INT+LOG)×3, Kategorien, Überzug in BP, Karrieremodus-Karma)
 2. **Sonderattribute** EDG, MAG, RES + Essenz-Berechnung (Grundlage für alles weitere)
-3. **Spezialisierungen** (+2 BP / Karma)
+3. **Spezialisierungen** (+2 BP / Karma) — inkl. Wissensfertigkeiten-Spezialisierungen (bewusst zurückgestellt bei Schritt 1)
 4. **Kontakte**
 5. **Charakter-Biografie** (alle Textfelder)
 

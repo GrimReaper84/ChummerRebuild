@@ -1,93 +1,126 @@
 package de.shalorian.chummer.persistence;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.KnowledgeSkill;
+import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.Month;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class CharacterStoreTest {
 
-    @TempDir
-    File tempDir;
+  @TempDir
+  File tempDir;
 
-    private File tempFile() {
-        return new File(tempDir, "charakter.json");
-    }
+  private static Character mensch(String name) {
+    return new Character(name, MetatypeDataLoader.find("Mensch"));
+  }
 
-    private static Character mensch(String name) {
-        return new Character(name, MetatypeDataLoader.find("Mensch"));
-    }
+  private File tempFile() {
+    return new File(tempDir, "charakter.json");
+  }
 
-    @Test
-    void roundtripPreservesBasicFields() throws IOException {
-        Character original = mensch("Razorwing");
-        original.setCreated(true);
+  @Test
+  void roundtripPreservesBasicFields() throws IOException {
+    Character original = mensch("Razorwing");
+    original.setCreated(true);
 
-        CharacterStore.save(original, tempFile());
-        Character loaded = CharacterStore.load(tempFile());
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
 
-        assertEquals("Razorwing", loaded.getName());
-        assertEquals("Mensch", loaded.getMetatype().name());
-        assertTrue(loaded.isCreated());
-    }
+    assertEquals("Razorwing", loaded.getName());
+    assertEquals("Mensch", loaded.getMetatype().name());
+    assertTrue(loaded.isCreated());
+  }
 
-    @Test
-    void roundtripPreservesAttributeValues() throws IOException {
-        Character original = mensch("Test");
-        original.getAttribute(AttributeType.BOD).setValue(4);
-        original.getAttribute(AttributeType.LOG).setValue(5);
+  @Test
+  void roundtripPreservesAttributeValues() throws IOException {
+    Character original = mensch("Test");
+    original.getAttribute(AttributeType.BOD).setValue(4);
+    original.getAttribute(AttributeType.LOG).setValue(5);
 
-        CharacterStore.save(original, tempFile());
-        Character loaded = CharacterStore.load(tempFile());
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
 
-        assertEquals(4, loaded.getAttribute(AttributeType.BOD).getValue());
-        assertEquals(5, loaded.getAttribute(AttributeType.LOG).getValue());
-    }
+    assertEquals(4, loaded.getAttribute(AttributeType.BOD).getValue());
+    assertEquals(5, loaded.getAttribute(AttributeType.LOG).getValue());
+  }
 
-    @Test
-    void roundtripPreservesSkillRatings() throws IOException {
-        Character original = mensch("Test");
-        original.getSkill("Bogenschießen").setRating(3);
+  @Test
+  void roundtripPreservesSkillRatings() throws IOException {
+    Character original = mensch("Test");
+    original.getSkill("Bogenschießen").setRating(3);
 
-        CharacterStore.save(original, tempFile());
-        Character loaded = CharacterStore.load(tempFile());
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
 
-        assertEquals(3, loaded.getSkill("Bogenschießen").getRating());
-    }
+    assertEquals(3, loaded.getSkill("Bogenschießen").getRating());
+  }
 
-    @Test
-    void roundtripPreservesDecoupledGroups() throws IOException {
-        Character original = mensch("Test");
-        original.raiseGroup("Nahkampf");
-        original.decoupleGroup("Nahkampf");
+  @Test
+  void roundtripPreservesDecoupledGroups() throws IOException {
+    Character original = mensch("Test");
+    original.raiseGroup("Nahkampf");
+    original.decoupleGroup("Nahkampf");
 
-        CharacterStore.save(original, tempFile());
-        Character loaded = CharacterStore.load(tempFile());
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
 
-        assertFalse(loaded.isGroupCoupled("Nahkampf"));
-    }
+    assertFalse(loaded.isGroupCoupled("Nahkampf"));
+  }
 
-    @Test
-    void roundtripPreservesLogs() throws IOException {
-        Character original = mensch("Test");
-        original.addKarmaEntry(new LogEntry("Mission", 10, LocalDate.of(2026, 1, 15)));
-        original.addKarmaEntry(new LogEntry("Attribut", -6, LocalDate.of(2026, 2, 1)));
-        original.addNuyenEntry(new LogEntry("Startkapital", 8000, LocalDate.of(2026, 1, 15)));
+  @Test
+  void roundtripPreservesKnowledgeSkills() throws IOException {
+    Character original = mensch("Test");
+    original.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+    original.getKnowledgeSkills().get(0).setRating(3);
 
-        CharacterStore.save(original, tempFile());
-        Character loaded = CharacterStore.load(tempFile());
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
 
-        assertEquals(2, loaded.getKarmaLog().size());
-        assertEquals(4, loaded.getKarmaTotal());
-        assertEquals(1, loaded.getNuyenLog().size());
-        assertEquals(8000, loaded.getNuyenTotal());
-    }
+    assertEquals(1, loaded.getKnowledgeSkills().size());
+    KnowledgeSkill loadedSkill = loaded.getKnowledgeSkills().get(0);
+    assertEquals("Straßenkultur", loadedSkill.getName());
+    assertEquals(KnowledgeSkillCategory.STREET, loadedSkill.getCategory());
+    assertEquals(3, loadedSkill.getRating());
+  }
+
+  @Test
+  void roundtripPreservesNativeLanguage() throws IOException {
+    Character original = mensch("Test");
+    original.setNativeLanguage("Deutsch");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals("Deutsch", loaded.getNativeLanguage().getName());
+    assertTrue(loaded.getNativeLanguage().isNativeLanguage());
+    assertEquals(0, loaded.getKnowledgeSkillPointsUsed());
+  }
+
+  @Test
+  void roundtripPreservesLogs() throws IOException {
+    Character original = mensch("Test");
+    original.addKarmaEntry(new LogEntry("Mission", 10, LocalDate.of(2026, Month.JANUARY, 15)));
+    original.addKarmaEntry(new LogEntry("Attribut", -6, LocalDate.of(2026, Month.FEBRUARY, 1)));
+    original.addNuyenEntry(new LogEntry("Startkapital", 8000, LocalDate.of(2026, Month.JANUARY, 15)));
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(2, loaded.getKarmaLog().size());
+    assertEquals(4, loaded.getKarmaTotal());
+    assertEquals(1, loaded.getNuyenLog().size());
+    assertEquals(8000, loaded.getNuyenTotal());
+  }
 }

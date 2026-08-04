@@ -20,11 +20,16 @@ public class Character {
   public static final int NUYEN_PER_BP = 5_000;
   public static final int MAX_POSITIVE_QUALITY_BP = 35;
   public static final int MAX_NEGATIVE_QUALITY_BP = 35;
+  public static final int MAX_ATTRIBUTE_BP = TOTAL_BP / 2;
+  private static final int KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT = 2;
+  private static final int KNOWLEDGE_SKILL_KARMA_NEW = 2;
+  private static final int KNOWLEDGE_SKILL_KARMA_PER_RATING = 1;
 
   private final Map<AttributeType, CharacterAttribute> attributes;
   private final Map<String, Skill> skills;
   private final Set<String> decoupledGroups;
   private final List<CharacterQuality> qualities = new ArrayList<>();
+  private final List<KnowledgeSkill> knowledgeSkills = new ArrayList<>();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private @NonNull String name;
@@ -94,6 +99,45 @@ public class Character {
 
   public @NonNull CharacterAttribute getAttribute(@NonNull AttributeType type) {
     return Objects.requireNonNull(attributes.get(type));
+  }
+
+  /**
+   * Summe der BP-Kosten aller Körperlichen und Geistigen Attribute.
+   */
+  public int getAttributeBP() {
+    return attributes.values().stream().mapToInt(CharacterAttribute::getBpCost).sum();
+  }
+
+  /**
+   * Anzahl der Attribute, die aktuell auf ihr natürliches (Rassen-)Maximum gesteigert sind.
+   */
+  public long getMaximizedAttributeCount() {
+    return attributes.values().stream()
+        .filter(a -> a.getMin() != a.getMax() && a.getValue() == a.getMax())
+        .count();
+  }
+
+  /**
+   * Prüft, ob eine Steigerung des angegebenen Attributs um 1 während der Charaktererschaffung
+   * regelkonform wäre: max. {@link #MAX_ATTRIBUTE_BP} (die Hälfte des Gesamtbudgets) für
+   * Körperliche/Geistige Attribute in Summe, und höchstens ein Attribut darf auf das natürliche
+   * Maximum gesteigert werden. Im Karrieremodus gelten diese Erstellungs-Caps nicht.
+   */
+  public boolean canRaiseAttributeAtCreation(@NonNull AttributeType type) {
+    if (created) {
+      return true;
+    }
+    CharacterAttribute attr = getAttribute(type);
+    int newValue = attr.getValue() + 1;
+    if (newValue > attr.getMax()) {
+      return false;
+    }
+    int projectedAttributeBP = getAttributeBP() - attr.getBpCost() + attr.getBpCostForValue(newValue);
+    if (projectedAttributeBP > MAX_ATTRIBUTE_BP) {
+      return false;
+    }
+    boolean wouldMaximize = attr.getMin() != attr.getMax() && newValue == attr.getMax();
+    return !wouldMaximize || getMaximizedAttributeCount() == 0;
   }
 
   // --- Skills ---
@@ -246,9 +290,128 @@ public class Character {
     };
   }
 
+  // --- Wissensfertigkeiten ---
+
+  public @NonNull List<KnowledgeSkill> getKnowledgeSkills() {
+    return Collections.unmodifiableList(knowledgeSkills);
+  }
+
+  /**
+   * Fügt eine neue, mit Rating 0 startende Wissensfertigkeit hinzu.
+   *
+   * @throws IllegalArgumentException wenn bereits eine Wissensfertigkeit mit demselben Namen existiert
+   */
+  public void addKnowledgeSkill(@NonNull String name, @NonNull KnowledgeSkillCategory category) {
+    boolean duplicate = knowledgeSkills.stream().anyMatch(k -> k.getName().equals(name));
+    if (duplicate) {
+      throw new IllegalArgumentException(
+          "Wissensfertigkeit \"%s\" existiert bereits".formatted(name));
+    }
+    knowledgeSkills.add(new KnowledgeSkill(name, category));
+  }
+
+  public void removeKnowledgeSkill(@NonNull String name) {
+    knowledgeSkills.removeIf(k -> k.getName().equals(name));
+  }
+
+  /**
+   * Liefert die deklarierte Muttersprache, falls gesetzt. Die Muttersprache ist laut SR4-Regeln
+   * kostenlos und kein regulärer Wissensfertigkeitspunkte-Verbrauch (siehe {@link
+   * KnowledgeSkill#isNativeLanguage()}).
+   */
+  public @Nullable KnowledgeSkill getNativeLanguage() {
+    return knowledgeSkills.stream().filter(KnowledgeSkill::isNativeLanguage).findFirst()
+        .orElse(null);
+  }
+
+  /**
+   * Setzt (bzw. ersetzt) die Muttersprache des Charakters. Anders als {@link
+   * #addKnowledgeSkill(String, KnowledgeSkillCategory)} kostet dies keine Wissensfertigkeitspunkte
+   * und es kann immer nur eine Muttersprache geben — ein vorheriger Eintrag wird ersetzt.
+   */
+  public void setNativeLanguage(@NonNull String name) {
+    knowledgeSkills.removeIf(KnowledgeSkill::isNativeLanguage);
+    knowledgeSkills.add(new KnowledgeSkill(name, KnowledgeSkillCategory.LANGUAGE, true));
+  }
+
+  /**
+   * Der freie Wissensfertigkeitspunkte-Pool zur Charaktererstellung: (INT + LOG) × 3.
+   */
+  public int getKnowledgeSkillPointPool() {
+    return (getAttribute(AttributeType.INT).getValue()
+        + getAttribute(AttributeType.LOG).getValue()) * 3;
+  }
+
+  /**
+   * Verdoppelt bei Kategorien Academic/Professional, wenn der Charakter Uneducated ist — Original
+   * verdoppelt hier bewusst den Pool-Verbrauch (BP-Modus), nicht direkt den Karma-Preis wie im
+   * Karrieremodus (siehe {@link #getKnowledgeSkillKarmaCost(KnowledgeSkill)}).
+   */
+  public boolean isKnowledgeSkillCostDoubled(@NonNull KnowledgeSkillCategory category) {
+    return (category == KnowledgeSkillCategory.ACADEMIC
+        || category == KnowledgeSkillCategory.PROFESSIONAL) && isUneducated();
+  }
+
+  /**
+   * Summe der verbrauchten Wissensfertigkeitspunkte. Ratings in den Kategorien Academic/
+   * Professional zählen bei Uneducated doppelt in diese Summe ein. Die Muttersprache ({@link
+   * KnowledgeSkill#isNativeLanguage()}) ist kostenlos und zählt nicht mit.
+   */
+  public int getKnowledgeSkillPointsUsed() {
+    int used = 0;
+    for (KnowledgeSkill skill : knowledgeSkills) {
+      if (skill.isNativeLanguage()) {
+        continue;
+      }
+      int contribution = skill.getRating();
+      if (isKnowledgeSkillCostDoubled(skill.getCategory())) {
+        contribution *= 2;
+      }
+      used += contribution;
+    }
+    return used;
+  }
+
+  /**
+   * BP-Kosten für Wissensfertigkeitspunkte über dem freien Pool — flacher Preis pro Punkt, nicht
+   * gestaffelt wie bei aktiven Fertigkeiten.
+   */
+  public int getKnowledgeSkillOverflowBP() {
+    int overflow = getKnowledgeSkillPointsUsed() - getKnowledgeSkillPointPool();
+    return Math.max(0, overflow) * KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT;
+  }
+
+  /**
+   * BP-Kosten, die eine Ratingsteigerung dieser einen Wissensfertigkeit um 1 zusätzlich auslöst.
+   * Da der Pool gemeinsam über alle Wissensfertigkeiten verrechnet wird, ist dies keine feste
+   * Pro-Fertigkeit-Konstante, sondern hängt vom bereits verbrauchten Gesamtpool ab.
+   */
+  public int getKnowledgeSkillIncrementBP(@NonNull KnowledgeSkill skill) {
+    int pointsUsed = getKnowledgeSkillPointsUsed();
+    int pool = getKnowledgeSkillPointPool();
+    int contribution = isKnowledgeSkillCostDoubled(skill.getCategory()) ? 2 : 1;
+    int overflowBefore = Math.max(0, pointsUsed - pool) * KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT;
+    int overflowAfter =
+        Math.max(0, pointsUsed + contribution - pool) * KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT;
+    return overflowAfter - overflowBefore;
+  }
+
+  /**
+   * Karma-Kosten für eine Ratingsteigerung im Karrieremodus. Anders als im BP-Modus verdoppelt
+   * Uneducated hier den Karma-Endpreis direkt, nicht den Poolverbrauch (es existiert kein Pool
+   * mehr im Karrieremodus).
+   */
+  public int getKnowledgeSkillKarmaCost(@NonNull KnowledgeSkill skill) {
+    int rating = skill.getRating();
+    int cost = rating == 0
+        ? KNOWLEDGE_SKILL_KARMA_NEW
+        : (rating + 1) * KNOWLEDGE_SKILL_KARMA_PER_RATING;
+    return isKnowledgeSkillCostDoubled(skill.getCategory()) ? cost * 2 : cost;
+  }
+
   // --- BP ---
   public int getSpentBP() {
-    int attrBP = attributes.values().stream().mapToInt(CharacterAttribute::getBpCost).sum();
+    int attrBP = getAttributeBP();
 
     int skillBP = 0;
     Set<String> counted = new HashSet<>();
@@ -270,7 +433,8 @@ public class Character {
         .mapToInt(q -> q.data().bp())
         .sum();
 
-    return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP;
+    return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
+        + getKnowledgeSkillOverflowBP();
   }
 
   public int getRemainingBP() {

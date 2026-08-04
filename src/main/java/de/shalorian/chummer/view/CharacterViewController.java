@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterAttribute;
 import de.shalorian.chummer.model.character.CharacterQuality;
+import de.shalorian.chummer.model.character.KnowledgeSkill;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeData;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
@@ -37,6 +38,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -69,6 +71,7 @@ public class CharacterViewController {
   // Attribute-Refresher bleiben stabil; Skill-Refresher werden beim Entkoppeln neu aufgebaut
   private final @NonNull List<Runnable> attrRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> skillRefreshers = new ArrayList<>();
+  private final @NonNull List<Runnable> knowledgeSkillRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> qualityRefreshers = new ArrayList<>();
   @FXML
   private Label nameLabel;
@@ -206,6 +209,11 @@ public class CharacterViewController {
           }
 
           @Override
+          public boolean canIncrement() {
+            return character.canRaiseAttributeAtCreation(type);
+          }
+
+          @Override
           public int bpStepCost() {
             return 10;
           }
@@ -277,11 +285,13 @@ public class CharacterViewController {
         row = addSkillGroupRows(grid, row, groupEntry.getKey(), groupEntry.getValue(), character);
       }
     }
+
+    buildKnowledgeSkillSection();
   }
 
   /**
-   * Gruppiert die Fertigkeiten des Charakters nach Kategorie und innerhalb der Kategorie nach
-   * Gruppenname ({@code ""} für ungruppierte Fertigkeiten).
+   * Gruppiert die Fertigkeiten des Charakters nach Kategorie und innerhalb der Kategorie nach Gruppenname ({@code ""} für ungruppierte
+   * Fertigkeiten).
    */
   private @NonNull Map<SkillCategory, Map<String, List<Skill>>> groupSkillsByCategory(
       @NonNull Character character) {
@@ -298,8 +308,7 @@ public class CharacterViewController {
   }
 
   /**
-   * Fügt die Zeilen einer Gruppe (bzw. der ungruppierten Fertigkeiten, wenn {@code groupName}
-   * leer ist) in den Skill-Grid ein.
+   * Fügt die Zeilen einer Gruppe (bzw. der ungruppierten Fertigkeiten, wenn {@code groupName} leer ist) in den Skill-Grid ein.
    *
    * @return die Zeilennummer nach den eingefügten Zeilen
    */
@@ -326,6 +335,217 @@ public class CharacterViewController {
     buildSkillsTab();
     attrRefreshers.forEach(Runnable::run);
     updateBpDisplay();
+  }
+
+  // ── Wissensfertigkeiten (Teil des Skills-Tabs) ─────────────
+
+  private void buildKnowledgeSkillSection() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    knowledgeSkillRefreshers.clear();
+
+    Label sectionLabel = new Label("Wissensfertigkeiten");
+    sectionLabel.getStyleClass().add("section-title");
+    VBox.setMargin(sectionLabel, new Insets(20, 0, 4, 0));
+
+    Label poolLabel = new Label();
+    poolLabel.getStyleClass().add("bp-label");
+
+    Button addBtn = new Button("Hinzufügen");
+    addBtn.getStyleClass().add("btn-secondary");
+    addBtn.setOnAction(e -> onAddKnowledgeSkill());
+
+    HBox header = new HBox(8);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.getChildren().add(sectionLabel);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().add(spacer);
+    if (!ch.isCreated()) {
+      header.getChildren().add(poolLabel);
+    }
+    header.getChildren().add(addBtn);
+    skillsContainer.getChildren().add(header);
+
+    if (!ch.isCreated()) {
+      Runnable poolRefresh = () -> poolLabel.setText(
+          ch.getKnowledgeSkillPointsUsed() + " / " + ch.getKnowledgeSkillPointPool()
+              + " Punkte" + (ch.getKnowledgeSkillOverflowBP() > 0
+              ? " (" + ch.getKnowledgeSkillOverflowBP() + " BP über Pool)" : ""));
+      knowledgeSkillRefreshers.add(poolRefresh);
+      poolRefresh.run();
+    }
+
+    skillsContainer.getChildren().add(buildNativeLanguageRow(ch));
+
+    MigPane grid = buildKnowledgeSkillGrid();
+    skillsContainer.getChildren().add(grid);
+
+    int row = 0;
+    for (KnowledgeSkill skill : ch.getKnowledgeSkills()) {
+      if (skill.isNativeLanguage()) {
+        continue;
+      }
+      addKnowledgeSkillRow(grid, row++, skill, ch);
+    }
+  }
+
+  /**
+   * Zeile für die Muttersprache — kostenlos, kein Rating, außerhalb des Wissensfertigkeiten- Punktepools (siehe
+   * {@link KnowledgeSkill#isNativeLanguage()}).
+   */
+  private @NonNull HBox buildNativeLanguageRow(@NonNull Character ch) {
+    Label label = new Label();
+    label.getStyleClass().add(STYLE_ATTR_NAME);
+
+    Button editBtn = new Button("Ändern");
+    editBtn.getStyleClass().add("btn-secondary");
+
+    Runnable refresh = () -> {
+      KnowledgeSkill nativeLanguage = ch.getNativeLanguage();
+      label.setText(
+          "Muttersprache: " + (nativeLanguage != null ? nativeLanguage.getName() + " (M)" : "–"));
+    };
+    knowledgeSkillRefreshers.add(refresh);
+    refresh.run();
+
+    editBtn.setOnAction(e -> {
+      KnowledgeSkill current = ch.getNativeLanguage();
+      TextInputDialog dialog = new TextInputDialog(current != null ? current.getName() : "");
+      dialog.setTitle("Muttersprache");
+      dialog.setHeaderText("Muttersprache des Charakters");
+      dialog.setContentText("Sprache:");
+      dialog.showAndWait()
+          .map(String::trim)
+          .filter(s -> !s.isEmpty())
+          .ifPresent(name -> {
+            ch.setNativeLanguage(name);
+            refreshAllRows();
+          });
+    });
+
+    HBox row = new HBox(8, label, editBtn);
+    row.setAlignment(Pos.CENTER_LEFT);
+    VBox.setMargin(row, new Insets(0, 0, 8, 0));
+    return row;
+  }
+
+  private @NonNull MigPane buildKnowledgeSkillGrid() {
+    MigPane grid = new MigPane("hidemode 3",
+        "[200!][90!][30!,center][30!,center][30!,center][70!][90!]");
+    grid.getStyleClass().add("attr-grid");
+    return grid;
+  }
+
+  private void addKnowledgeSkillRow(@NonNull MigPane grid, int row,
+      @NonNull KnowledgeSkill skill, @NonNull Character character) {
+    Label nameLabelDummy = new Label(skill.getName());
+    Label categoryLabel = new Label(skill.getCategory().getDisplayName());
+    Button minus = new Button("−");
+    Label ratingLabel = new Label();
+    Button plus = new Button("+");
+    Label costLabel = new Label();
+    Button removeBtn = new Button("Entfernen");
+
+    nameLabelDummy.getStyleClass().add(STYLE_ATTR_NAME);
+    categoryLabel.getStyleClass().add("attr-abbr");
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    costLabel.getStyleClass().add(STYLE_ATTR_BP);
+    removeBtn.getStyleClass().add("btn-secondary");
+
+    wireIncrementable(knowledgeSkillRefreshers, new RowControls(ratingLabel, costLabel, minus, plus),
+        character.isCreated(), new RowModel() {
+          @Override
+          public int value() {
+            return skill.getRating();
+          }
+
+          @Override
+          public int min() {
+            return 0;
+          }
+
+          @Override
+          public int max() {
+            return KnowledgeSkill.MAX_RATING;
+          }
+
+          @Override
+          public int bpStepCost() {
+            return character.getKnowledgeSkillIncrementBP(skill);
+          }
+
+          @Override
+          public @NonNull String bpDisplayText() {
+            if (skill.getRating() >= KnowledgeSkill.MAX_RATING) {
+              return "–";
+            }
+            int stepCost = character.getKnowledgeSkillIncrementBP(skill);
+            return stepCost == 0 ? "frei" : stepCost + " BP";
+          }
+
+          @Override
+          public int karmaStepCost() {
+            return character.getKnowledgeSkillKarmaCost(skill);
+          }
+
+          @Override
+          public void increment() {
+            skill.setRating(skill.getRating() + 1);
+          }
+
+          @Override
+          public void decrement() {
+            skill.setRating(skill.getRating() - 1);
+          }
+
+          @Override
+          public @NonNull String actionLabel(int from, int to) {
+            return skill.getName() + " " + from + " → " + to;
+          }
+        }, character);
+
+    removeBtn.setOnAction(e -> {
+      character.removeKnowledgeSkill(skill.getName());
+      buildSkillsTab();
+      updateBpDisplay();
+      refreshAllRows();
+    });
+
+    grid.add(nameLabelDummy, CELL_COL_0 + row);
+    grid.add(categoryLabel, CELL_COL_1 + row);
+    grid.add(minus, CELL_COL_2 + row);
+    grid.add(ratingLabel, CELL_COL_3 + row);
+    grid.add(plus, CELL_COL_4 + row);
+    grid.add(costLabel, CELL_COL_5 + row);
+    grid.add(removeBtn, CELL_COL_6 + row);
+  }
+
+  private void onAddKnowledgeSkill() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    try {
+      DialogHandle dialog = openDialog("KnowledgeSkillAddDialog.fxml", "Wissensfertigkeit hinzufügen");
+      KnowledgeSkillAddDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(ch);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(r -> {
+        ch.addKnowledgeSkill(r.name(), r.category());
+        buildSkillsTab();
+        updateBpDisplay();
+        refreshAllRows();
+      });
+    } catch (IOException e) {
+      showDialogLoadError();
+    }
   }
 
   // ── Qualities-Tab ──────────────────────────────────────────
@@ -767,47 +987,9 @@ public class CharacterViewController {
   }
 
   /**
-   * Zugriff auf einen einzelnen erhöh-/senkbaren Wert (Attribut, Skillgruppen-Rating oder
-   * Skill-Rating), den {@link #wireIncrementable} unabhängig vom fachlichen Hintergrund verdrahten
-   * kann.
-   */
-  private interface RowModel {
-
-    int value();
-
-    int min();
-
-    int max();
-
-    /** Kosten für den nächsten BP-Erhöhungsschritt in der Charaktererstellung. */
-    int bpStepCost();
-
-    /** Anzeigetext für die BP-Kosten-Spalte in der Charaktererstellung. */
-    @NonNull String bpDisplayText();
-
-    /** Kosten für den nächsten Karma-Erhöhungsschritt im Karrieremodus. */
-    int karmaStepCost();
-
-    void increment();
-
-    void decrement();
-
-    @NonNull String actionLabel(int from, int to);
-  }
-
-  /**
-   * Die vier UI-Elemente einer +/−-Zeile, wie sie {@link #wireIncrementable} verdrahtet.
-   */
-  private record RowControls(
-      @NonNull Label valueLabel, @NonNull Label costLabel, @NonNull Button minus,
-      @NonNull Button plus) {}
-
-  /**
-   * Verdrahtet eine +/−-Zeile (Refresh-Runnable, Klick-Handler, BP- bzw. Karma-Kostenprüfung inkl.
-   * Bestätigungsdialog im Karrieremodus) für {@code addAttributeRow}, {@code addGroupHeaderRow} und
-   * {@code addSkillRow} einheitlich. Das Ausblenden von {@code minus} im Karrieremodus verlässt sich
-   * auf {@code hidemode 3} des umgebenden {@link MigPane} — ein zusätzliches {@code setManaged(false)}
-   * ist dafür nicht nötig.
+   * Verdrahtet eine +/−-Zeile (Refresh-Runnable, Klick-Handler, BP- bzw. Karma-Kostenprüfung inkl. Bestätigungsdialog im Karrieremodus) für
+   * {@code addAttributeRow}, {@code addGroupHeaderRow} und {@code addSkillRow} einheitlich. Das Ausblenden von {@code minus} im Karrieremodus
+   * verlässt sich auf {@code hidemode 3} des umgebenden {@link MigPane} — ein zusätzliches {@code setManaged(false)} ist dafür nicht nötig.
    */
   private void wireIncrementable(@NonNull List<Runnable> refresherList,
       @NonNull RowControls controls, boolean career, @NonNull RowModel model,
@@ -830,7 +1012,7 @@ public class CharacterViewController {
     Runnable refresh = () -> {
       int val = model.value();
       int karmaCost = model.karmaStepCost();
-      valueLabel.setText(String.valueOf(val));
+      valueLabel.setText(model.valueDisplayText());
       costLabel.setText(val >= model.max() ? "–" : karmaCost + KARMA_SUFFIX);
       plus.setDisable(val >= model.max() || character.getKarmaTotal() < karmaCost);
     };
@@ -862,10 +1044,11 @@ public class CharacterViewController {
 
     Runnable refresh = () -> {
       int val = model.value();
-      valueLabel.setText(String.valueOf(val));
+      valueLabel.setText(model.valueDisplayText());
       costLabel.setText(model.bpDisplayText());
       minus.setDisable(val <= model.min());
-      plus.setDisable(val >= model.max() || character.getRemainingBP() < model.bpStepCost());
+      plus.setDisable(val >= model.max() || character.getRemainingBP() < model.bpStepCost()
+          || !model.canIncrement());
     };
     refresherList.add(refresh);
 
@@ -877,7 +1060,8 @@ public class CharacterViewController {
       }
     });
     plus.setOnAction(e -> {
-      if (model.value() < model.max() && character.getRemainingBP() >= model.bpStepCost()) {
+      if (model.value() < model.max() && character.getRemainingBP() >= model.bpStepCost()
+          && model.canIncrement()) {
         model.increment();
         refreshAllRows();
         updateBpDisplay();
@@ -901,6 +1085,7 @@ public class CharacterViewController {
   private void refreshAllRows() {
     attrRefreshers.forEach(Runnable::run);
     skillRefreshers.forEach(Runnable::run);
+    knowledgeSkillRefreshers.forEach(Runnable::run);
     qualityRefreshers.forEach(Runnable::run);
   }
 
@@ -979,8 +1164,6 @@ public class CharacterViewController {
     updateLogDisplay();
   }
 
-  // ── Karrieremodus-Transition ──────────────────────────────
-
   private void updateModeDisplay() {
     if (character == null) {
       return;
@@ -1030,7 +1213,7 @@ public class CharacterViewController {
     table.setPlaceholder(new Label("Keine Einträge"));
   }
 
-  // ── Log-Tab ───────────────────────────────────────────────
+  // ── Karrieremodus-Transition ──────────────────────────────
 
   private void updateLogDisplay() {
     if (character == null) {
@@ -1063,6 +1246,8 @@ public class CharacterViewController {
     refreshAllRows();
   }
 
+  // ── Log-Tab ───────────────────────────────────────────────
+
   @FXML
   private void onAddNuyen() {
     if (character == null) {
@@ -1087,6 +1272,64 @@ public class CharacterViewController {
       showDialogLoadError();
       return Optional.empty();
     }
+  }
+
+  /**
+   * Zugriff auf einen einzelnen erhöh-/senkbaren Wert (Attribut, Skillgruppen-Rating oder Skill-Rating), den {@link #wireIncrementable} unabhängig
+   * vom fachlichen Hintergrund verdrahten kann.
+   */
+  private interface RowModel {
+
+    int value();
+
+    /**
+     * Anzeigetext für den aktuellen Wert; standardmäßig die Zahl selbst.
+     */
+    default @NonNull String valueDisplayText() {
+      return String.valueOf(value());
+    }
+
+    int min();
+
+    int max();
+
+    /**
+     * Zusätzliche regelspezifische Sperre über die reine BP-Verfügbarkeit hinaus (z.B. Erstellungs-Caps, die nicht allein über {@code max()}
+     * abbildbar sind). Standardmäßig immer erlaubt.
+     */
+    default boolean canIncrement() {
+      return true;
+    }
+
+    /**
+     * Kosten für den nächsten BP-Erhöhungsschritt in der Charaktererstellung.
+     */
+    int bpStepCost();
+
+    /**
+     * Anzeigetext für die BP-Kosten-Spalte in der Charaktererstellung.
+     */
+    @NonNull String bpDisplayText();
+
+    /**
+     * Kosten für den nächsten Karma-Erhöhungsschritt im Karrieremodus.
+     */
+    int karmaStepCost();
+
+    void increment();
+
+    void decrement();
+
+    @NonNull String actionLabel(int from, int to);
+  }
+
+  /**
+   * Die vier UI-Elemente einer +/−-Zeile, wie sie {@link #wireIncrementable} verdrahtet.
+   */
+  private record RowControls(
+      @NonNull Label valueLabel, @NonNull Label costLabel, @NonNull Button minus,
+      @NonNull Button plus) {
+
   }
 
   private record DialogHandle(@NonNull FXMLLoader loader, @NonNull Stage stage) {
