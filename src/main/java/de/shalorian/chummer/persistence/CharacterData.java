@@ -15,6 +15,10 @@ public class CharacterData {
   public int nuyenBP = 0;
   public @NonNull List<SelectedQualityEntry> selectedQualities = new ArrayList<>();
   public @NonNull Map<String, Integer> attributes = new HashMap<>();
+  public int edge = 0;
+  /** Wert des freigeschalteten Magic- oder Resonance-Attributs, oder null wenn nicht freigeschaltet. */
+  public @Nullable Integer magic = null;
+  public @Nullable Integer resonance = null;
   public @NonNull Map<String, Integer> skills = new HashMap<>(); // name → rating (nur > 0)
   public @NonNull List<KnowledgeSkillEntry> knowledgeSkills = new ArrayList<>();
   public @NonNull List<String> decoupledGroups = new ArrayList<>();

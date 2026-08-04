@@ -77,6 +77,12 @@ public class QualityDataLoader {
         if (bonusEl.getElementsByTagName("infirm").getLength() > 0) {
           bonuses.add(QualityBonusType.INFIRM);
         }
+        if (bonusEl.getElementsByTagName("grantsmagic").getLength() > 0) {
+          bonuses.add(QualityBonusType.GRANTS_MAGIC);
+        }
+        if (bonusEl.getElementsByTagName("grantsresonance").getLength() > 0) {
+          bonuses.add(QualityBonusType.GRANTS_RESONANCE);
+        }
       }
     }
 

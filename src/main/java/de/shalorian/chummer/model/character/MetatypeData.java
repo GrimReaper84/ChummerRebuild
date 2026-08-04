@@ -9,6 +9,7 @@ public record MetatypeData(
     int bpCost,
     boolean isVariant,
     @NonNull Map<AttributeType, AttributeRange> ranges,
+    @NonNull AttributeRange edgeRange,
     @NonNull List<String> grantedPositiveQualityNames,
     @NonNull List<String> grantedNegativeQualityNames
 ) {

@@ -74,6 +74,7 @@ public class MetatypeDataLoader {
     Map<AttributeType, AttributeRange> ranges = new EnumMap<>(AttributeType.class);
     List<String> positiveQualities = new ArrayList<>();
     List<String> negativeQualities = new ArrayList<>();
+    AttributeRange edgeRange = null;
 
     NodeList children = el.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
@@ -88,6 +89,11 @@ public class MetatypeDataLoader {
           int min = Integer.parseInt(childEl.getAttribute("min"));
           int max = Integer.parseInt(childEl.getAttribute("max"));
           ranges.put(type, new AttributeRange(min, max));
+        }
+        case "edge" -> {
+          int min = Integer.parseInt(childEl.getAttribute("min"));
+          int max = Integer.parseInt(childEl.getAttribute("max"));
+          edgeRange = new AttributeRange(min, max);
         }
         case "qualities" -> {
           NodeList posNodes = childEl.getElementsByTagName("positive");
@@ -109,8 +115,13 @@ public class MetatypeDataLoader {
       }
     }
 
+    if (edgeRange == null) {
+      throw new IllegalStateException("Kein <edge>-Bereich für Metatyp \"" + name + "\"");
+    }
+
     return new MetatypeData(name, bp, isVariant,
         Collections.unmodifiableMap(ranges),
+        edgeRange,
         Collections.unmodifiableList(positiveQualities),
         Collections.unmodifiableList(negativeQualities));
   }

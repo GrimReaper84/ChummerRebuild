@@ -16,6 +16,8 @@
         <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="1" max="6"/>
+        <!-- GRW S. 105: "Besondere Fähigkeiten: +1 Edge" — einziger Metatyp-Bonus des Menschen -->
+        <edge min="2" max="7"/>
 
         <variant name="Nachtmensch" bp="40">
             <attribute name="BOD" min="1" max="6"/>
@@ -26,6 +28,7 @@
             <attribute name="INT" min="2" max="7"/>
             <attribute name="LOG" min="1" max="6"/>
             <attribute name="WIL" min="1" max="6"/>
+            <edge min="2" max="7"/>
             <qualities>
                 <positive>
                     <quality>Nachtsicht</quality>
@@ -47,6 +50,7 @@
         <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="1" max="6"/>
+        <edge min="1" max="6"/>
         <qualities>
             <positive>
                 <quality>Nachtsicht</quality>
@@ -62,6 +66,7 @@
             <attribute name="INT" min="2" max="7"/>
             <attribute name="LOG" min="1" max="6"/>
             <attribute name="WIL" min="1" max="6"/>
+            <edge min="1" max="6"/>
             <qualities>
                 <positive>
                     <quality>Nachtsicht</quality>
@@ -83,6 +88,7 @@
         <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="2" max="7"/>
+        <edge min="1" max="6"/>
         <qualities>
             <positive>
                 <quality>Wärmesicht</quality>
@@ -98,6 +104,7 @@
             <attribute name="INT" min="1" max="6"/>
             <attribute name="LOG" min="1" max="7"/>
             <attribute name="WIL" min="2" max="7"/>
+            <edge min="1" max="6"/>
             <qualities>
                 <positive>
                     <quality>Arkaner Dämpfer</quality>
@@ -121,6 +128,7 @@
         <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="5"/>
         <attribute name="WIL" min="1" max="6"/>
+        <edge min="1" max="6"/>
         <qualities>
             <positive>
                 <quality>Nachtsicht</quality>
@@ -136,6 +144,7 @@
             <attribute name="INT" min="1" max="5"/>
             <attribute name="LOG" min="1" max="5"/>
             <attribute name="WIL" min="1" max="6"/>
+            <edge min="1" max="6"/>
             <qualities>
                 <positive>
                     <quality>Reißzähne</quality>
@@ -159,6 +168,7 @@
         <attribute name="INT" min="1" max="5"/>
         <attribute name="LOG" min="1" max="5"/>
         <attribute name="WIL" min="1" max="6"/>
+        <edge min="1" max="6"/>
         <qualities>
             <positive>
                 <quality>Wärmesicht</quality>
@@ -174,6 +184,7 @@
             <attribute name="INT" min="1" max="5"/>
             <attribute name="LOG" min="1" max="5"/>
             <attribute name="WIL" min="2" max="7"/>
+            <edge min="1" max="6"/>
             <qualities>
                 <positive>
                     <quality>Arkaner Dämpfer</quality>

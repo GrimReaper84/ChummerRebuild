@@ -44,6 +44,12 @@ public class CharacterStore {
     for (AttributeType type : AttributeType.values()) {
       data.attributes.put(type.name(), character.getAttribute(type).getValue());
     }
+    data.edge = character.getEdge().getValue();
+    if (character.hasMagic()) {
+      data.magic = Objects.requireNonNull(character.getMagicOrResonance()).getValue();
+    } else if (character.hasResonance()) {
+      data.resonance = Objects.requireNonNull(character.getMagicOrResonance()).getValue();
+    }
     for (Skill skill : character.getSkills()) {
       if (skill.getRating() > 0) {
         data.skills.put(skill.getName(), skill.getRating());
@@ -79,6 +85,9 @@ public class CharacterStore {
     for (Map.Entry<String, Integer> e : data.attributes.entrySet()) {
       character.getAttribute(AttributeType.valueOf(e.getKey())).setValue(e.getValue());
     }
+    if (data.edge > 0) {
+      character.getEdge().setValue(data.edge);
+    }
     if (data.skills != null) {
       for (Map.Entry<String, Integer> e : data.skills.entrySet()) {
         Skill skill = character.getSkill(e.getKey());
@@ -96,6 +105,11 @@ public class CharacterStore {
           character.loadSelectedQuality(qualityData, entry.gratis);
         }
       }
+    }
+    if (data.magic != null && character.hasMagic()) {
+      Objects.requireNonNull(character.getMagicOrResonance()).setValue(data.magic);
+    } else if (data.resonance != null && character.hasResonance()) {
+      Objects.requireNonNull(character.getMagicOrResonance()).setValue(data.resonance);
     }
     if (data.knowledgeSkills != null) {
       for (CharacterData.KnowledgeSkillEntry entry : data.knowledgeSkills) {

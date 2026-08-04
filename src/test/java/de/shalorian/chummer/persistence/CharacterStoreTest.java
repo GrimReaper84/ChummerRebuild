@@ -10,6 +10,8 @@ import de.shalorian.chummer.model.character.KnowledgeSkill;
 import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.QualityData;
+import de.shalorian.chummer.model.character.QualityDataLoader;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -106,6 +108,44 @@ class CharacterStoreTest {
     assertEquals("Deutsch", loaded.getNativeLanguage().getName());
     assertTrue(loaded.getNativeLanguage().isNativeLanguage());
     assertEquals(0, loaded.getKnowledgeSkillPointsUsed());
+  }
+
+  @Test
+  void roundtripPreservesEdgeValue() throws IOException {
+    Character original = mensch("Test");
+    original.getEdge().setValue(5);
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(5, loaded.getEdge().getValue());
+  }
+
+  @Test
+  void roundtripPreservesUnlockedMagic() throws IOException {
+    Character original = mensch("Test");
+    QualityData magier = QualityDataLoader.findByName("Magier");
+    assertTrue(magier != null);
+    original.addQuality(magier, false);
+    original.getMagicOrResonance().setValue(4);
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertTrue(loaded.hasMagic());
+    assertFalse(loaded.hasResonance());
+    assertEquals(4, loaded.getMagicOrResonance().getValue());
+  }
+
+  @Test
+  void roundtripOmitsMagicWhenNotUnlocked() throws IOException {
+    Character original = mensch("Test");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertFalse(loaded.hasMagic());
+    assertFalse(loaded.hasResonance());
   }
 
   @Test

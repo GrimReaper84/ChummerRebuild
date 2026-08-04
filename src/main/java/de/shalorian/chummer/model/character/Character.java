@@ -27,6 +27,8 @@ public class Character {
   private static final int KNOWLEDGE_SKILL_KARMA_NEW = 2;
   private static final int KNOWLEDGE_SKILL_KARMA_PER_RATING = 1;
 
+  private static final double BASE_ESSENCE = 6.0;
+
   private final Map<AttributeType, CharacterAttribute> attributes;
   private final Map<String, Skill> skills;
   private final Set<String> decoupledGroups;
@@ -36,6 +38,8 @@ public class Character {
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private @NonNull String name;
   private @NonNull MetatypeData metatype;
+  private @NonNull SpecialAttribute edge;
+  private @Nullable SpecialAttribute magicOrResonance;
   private boolean created = false;
   private int nuyenBP = 0;
 
@@ -45,6 +49,7 @@ public class Character {
     this.attributes = new EnumMap<>(AttributeType.class);
     this.decoupledGroups = new HashSet<>();
     initAttributes(metatype);
+    this.edge = initEdge(metatype);
     initMetatypeQualities(metatype);
     this.skills = new LinkedHashMap<>();
     for (Skill skill : SkillDataLoader.createFreshSkills()) {
@@ -57,6 +62,11 @@ public class Character {
     for (AttributeType type : AttributeType.values()) {
       attributes.put(type, new CharacterAttribute(type, metatype.getRangeFor(type)));
     }
+  }
+
+  private static @NonNull SpecialAttribute initEdge(@NonNull MetatypeData metatype) {
+    AttributeRange range = metatype.edgeRange();
+    return new SpecialAttribute(SpecialAttributeType.EDGE, range.min(), range.max(), false);
   }
 
   private void initMetatypeQualities(@NonNull MetatypeData metatype) {
@@ -73,6 +83,7 @@ public class Character {
         qualities.add(new CharacterQuality(data, QualitySource.METATYPE));
       }
     }
+    syncMagicOrResonance();
   }
 
   // --- Attribute ---
@@ -92,6 +103,7 @@ public class Character {
   public void setMetatype(@NonNull MetatypeData metatype) {
     this.metatype = metatype;
     initAttributes(metatype);
+    this.edge = initEdge(metatype);
     initMetatypeQualities(metatype);
   }
 
@@ -140,6 +152,85 @@ public class Character {
     }
     boolean wouldMaximize = attr.getMin() != attr.getMax() && newValue == attr.getMax();
     return !wouldMaximize || getMaximizedAttributeCount() == 0;
+  }
+
+  // --- Sonderattribute (Edge/Magic/Resonance) & Essenz ---
+
+  public @NonNull SpecialAttribute getEdge() {
+    return edge;
+  }
+
+  /**
+   * Liefert das freigeschaltete Magic- oder Resonance-Sonderattribut, oder {@code null}, wenn der
+   * Charakter keine entsprechende Quality besitzt (siehe {@link #hasMagic()}/{@link
+   * #hasResonance()}). SR4-Grundregelwerk: "Magie und Resonanz sind Attribute, die sich
+   * gegenseitig ausschließen" — ein Charakter kann nie beide gleichzeitig besitzen.
+   */
+  public @Nullable SpecialAttribute getMagicOrResonance() {
+    return magicOrResonance;
+  }
+
+  public boolean hasMagic() {
+    return magicOrResonance != null && magicOrResonance.getType() == SpecialAttributeType.MAGIC;
+  }
+
+  public boolean hasResonance() {
+    return magicOrResonance != null
+        && magicOrResonance.getType() == SpecialAttributeType.RESONANCE;
+  }
+
+  /**
+   * Essenz des Charakters. Aktuell ein fixer Wert (SR4-Grundregelwerk: "Alle Charaktere beginnen
+   * mit einer Essenz von 6"), ohne Cyberware-/Bioware-Abzug — dieses Subsystem existiert noch
+   * nicht (bewusster Scope-Cut). Sobald Cyberware/Bioware modelliert sind, muss dieser Wert aus
+   * der tatsächlichen Implantatliste berechnet werden.
+   */
+  public double getEssence() {
+    return BASE_ESSENCE;
+  }
+
+  /**
+   * Summe der BP-Kosten für Edge sowie — falls freigeschaltet — Magic/Resonance. Bewusst getrennt
+   * von {@link #getAttributeBP()}: Sonderattribute zählen nicht in den {@link #MAX_ATTRIBUTE_BP}-
+   * Deckel für Körperliche/Geistige Attribute.
+   */
+  public int getSpecialAttributeBP() {
+    int cost = edge.getBpCost();
+    if (magicOrResonance != null) {
+      cost += magicOrResonance.getBpCost();
+    }
+    return cost;
+  }
+
+  private boolean grantsMagic() {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_MAGIC));
+  }
+
+  private boolean grantsResonance() {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_RESONANCE));
+  }
+
+  /**
+   * Schaltet Magic/Resonance frei bzw. setzt es zurück, je nachdem ob nach der letzten
+   * Quality-Änderung noch eine freischaltende Quality vorhanden ist. GRW: Charaktere mit der
+   * entsprechenden Gabe "erhalten automatisch einen Magiewert von 1" bzw. "einen Resonanzwert von
+   * 1" — daher Startwert 1, nicht 0. Der Reset auf {@code null} verwirft automatisch die BP-Kosten
+   * des Sonderattributs (siehe {@link #getSpecialAttributeBP()}): In der Erschaffungsphase
+   * entspricht das einer Rückerstattung der ausgegebenen Punkte, im Karrieremodus bleibt bereits
+   * verbuchtes Karma dagegen unrückerstattet (siehe {@link #getKarmaLog()}).
+   */
+  private void syncMagicOrResonance() {
+    boolean magic = grantsMagic();
+    boolean resonance = grantsResonance();
+    if (magic && magicOrResonance == null) {
+      magicOrResonance = new SpecialAttribute(SpecialAttributeType.MAGIC, 1, 6, true);
+    } else if (resonance && magicOrResonance == null) {
+      magicOrResonance = new SpecialAttribute(SpecialAttributeType.RESONANCE, 1, 6, true);
+    } else if (!magic && !resonance) {
+      magicOrResonance = null;
+    }
   }
 
   // --- Skills ---
@@ -286,16 +377,33 @@ public class Character {
             "Negatives Quality-Limit von %d BP überschritten".formatted(MAX_NEGATIVE_QUALITY_BP));
       }
     }
+    if (data.bonuses().contains(QualityBonusType.GRANTS_MAGIC) && grantsResonance()) {
+      throw new IllegalArgumentException(
+          "Magie und Resonanz schließen sich gegenseitig aus (SR4-Grundregelwerk)");
+    }
+    if (data.bonuses().contains(QualityBonusType.GRANTS_RESONANCE) && grantsMagic()) {
+      throw new IllegalArgumentException(
+          "Magie und Resonanz schließen sich gegenseitig aus (SR4-Grundregelwerk)");
+    }
     qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis));
+    syncMagicOrResonance();
   }
 
   /** Lädt eine gewählte Quality ohne Limit-Prüfung — nur für den Persistenz-Pfad. */
   public void loadSelectedQuality(@NonNull QualityData data, boolean gratis) {
     qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis));
+    syncMagicOrResonance();
   }
 
+  /**
+   * Entfernt eine gewählte Quality. Falls dies die letzte Quality war, die Magic bzw. Resonance
+   * freigeschaltet hat, wird das Sonderattribut zurückgesetzt (siehe {@link
+   * #syncMagicOrResonance()}) — in der Erschaffungsphase entspricht das einer automatischen
+   * Rückerstattung der dafür ausgegebenen BP, im Karrieremodus gibt es keine Karma-Rückerstattung.
+   */
   public void removeQuality(@NonNull String name) {
     qualities.removeIf(q -> q.source() == QualitySource.SELECTED && q.data().name().equals(name));
+    syncMagicOrResonance();
   }
 
   /**
@@ -531,7 +639,7 @@ public class Character {
         .sum();
 
     return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
-        + getKnowledgeSkillOverflowBP();
+        + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP();
   }
 
   public int getRemainingBP() {

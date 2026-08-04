@@ -141,7 +141,7 @@
         <name>Adept</name>
         <bp>5</bp>
         <category>Positive</category>
-        <bonus/>
+        <bonus><grantsmagic/></bonus>
         <source>SR4</source>
     </quality>
 
@@ -149,7 +149,7 @@
         <name>Magier</name>
         <bp>5</bp>
         <category>Positive</category>
-        <bonus/>
+        <bonus><grantsmagic/></bonus>
         <source>SR4</source>
     </quality>
 
@@ -157,7 +157,7 @@
         <name>Mystischer Adept</name>
         <bp>10</bp>
         <category>Positive</category>
-        <bonus/>
+        <bonus><grantsmagic/></bonus>
         <source>SR4</source>
     </quality>
 
@@ -165,7 +165,7 @@
         <name>Technomant</name>
         <bp>5</bp>
         <category>Positive</category>
-        <bonus/>
+        <bonus><grantsresonance/></bonus>
         <source>SR4</source>
     </quality>
 

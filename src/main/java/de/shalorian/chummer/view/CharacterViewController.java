@@ -13,6 +13,8 @@ import de.shalorian.chummer.model.character.QualitySource;
 import de.shalorian.chummer.model.character.QualityType;
 import de.shalorian.chummer.model.character.Skill;
 import de.shalorian.chummer.model.character.SkillCategory;
+import de.shalorian.chummer.model.character.SpecialAttribute;
+import de.shalorian.chummer.model.character.SpecialAttributeType;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -70,6 +72,7 @@ public class CharacterViewController {
   private static final String CELL_COL_6 = "cell 6 ";
   // Attribute-Refresher bleiben stabil; Skill-Refresher werden beim Entkoppeln neu aufgebaut
   private final @NonNull List<Runnable> attrRefreshers = new ArrayList<>();
+  private final @NonNull List<Runnable> specialAttrRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> skillRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> knowledgeSkillRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> qualityRefreshers = new ArrayList<>();
@@ -171,6 +174,116 @@ public class CharacterViewController {
     }
 
     attributeGridHost.getChildren().add(grid);
+
+    buildSpecialAttributeSection();
+  }
+
+  /**
+   * Baut die Sektion für die Sonderattribute Edge/Magic/Resonance unterhalb des
+   * Standardattribut-Grids. Edge ist immer sichtbar; Magic bzw. Resonance werden nur gerendert,
+   * wenn der Charakter eine entsprechende Quality besitzt (siehe {@link Character#hasMagic()}/
+   * {@link Character#hasResonance()}) — analog zum Verbergen im Original, siehe
+   * SR4-Regelwerksabgleich.
+   */
+  private void buildSpecialAttributeSection() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    specialAttrRefreshers.clear();
+
+    Label sectionLabel = new Label("Sonderattribute");
+    sectionLabel.getStyleClass().add("section-title");
+    VBox.setMargin(sectionLabel, new Insets(12, 0, 6, 0));
+    attributeGridHost.getChildren().add(sectionLabel);
+
+    MigPane grid = new MigPane("hidemode 3",
+        "[170!][46!,center][30!,center][46!,center][30!,center][90!][70!]");
+
+    addSpecialAttributeRow(grid, 0, ch.getEdge(), ch);
+
+    SpecialAttribute magicOrResonance = ch.getMagicOrResonance();
+    if (magicOrResonance != null) {
+      addSpecialAttributeRow(grid, 1, magicOrResonance, ch);
+    }
+
+    attributeGridHost.getChildren().add(grid);
+  }
+
+  private void addSpecialAttributeRow(@NonNull MigPane grid, int row,
+      @NonNull SpecialAttribute attr, @NonNull Character character) {
+    SpecialAttributeType type = attr.getType();
+    Label attrNameLabel = new Label(type.getDisplayName());
+    Label abbrLabel = new Label(type.getAbbreviation());
+    Button minus = new Button("−");
+    Label valueLabel = new Label();
+    Button plus = new Button("+");
+    Label rangeLabel = new Label(attr.getMin() + " – " + attr.getMax());
+    Label bpLabel = new Label();
+
+    attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    abbrLabel.getStyleClass().add("attr-abbr");
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    valueLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
+    bpLabel.getStyleClass().add(STYLE_ATTR_BP);
+
+    wireIncrementable(specialAttrRefreshers, new RowControls(valueLabel, bpLabel, minus, plus),
+        character.isCreated(), new RowModel() {
+          @Override
+          public int value() {
+            return attr.getValue();
+          }
+
+          @Override
+          public int min() {
+            return attr.getMin();
+          }
+
+          @Override
+          public int max() {
+            return attr.getMax();
+          }
+
+          @Override
+          public int bpStepCost() {
+            return 10;
+          }
+
+          @Override
+          public @NonNull String bpDisplayText() {
+            return attr.getBpCost() + " BP";
+          }
+
+          @Override
+          public int karmaStepCost() {
+            return attr.getKarmaCost();
+          }
+
+          @Override
+          public void increment() {
+            attr.setValue(attr.getValue() + 1);
+          }
+
+          @Override
+          public void decrement() {
+            attr.setValue(attr.getValue() - 1);
+          }
+
+          @Override
+          public @NonNull String actionLabel(int from, int to) {
+            return type.getDisplayName() + " " + from + " → " + to;
+          }
+        }, character);
+
+    grid.add(attrNameLabel, CELL_COL_0 + row);
+    grid.add(abbrLabel, CELL_COL_1 + row);
+    grid.add(minus, CELL_COL_2 + row);
+    grid.add(valueLabel, CELL_COL_3 + row);
+    grid.add(plus, CELL_COL_4 + row);
+    grid.add(rangeLabel, CELL_COL_5 + row);
+    grid.add(bpLabel, CELL_COL_6 + row);
   }
 
   private void addAttributeRow(@NonNull MigPane grid, int row, @NonNull AttributeType type,
@@ -696,6 +809,7 @@ public class CharacterViewController {
     }
     c.removeQuality(qualityName);
     buildQualitiesTab();
+    buildAttributeGrid();
     updateBpDisplay();
     refreshAllRows();
   }
@@ -727,6 +841,7 @@ public class CharacterViewController {
 
   private void rebuildQualitiesTab() {
     buildQualitiesTab();
+    buildAttributeGrid();
     refreshAllRows();
   }
 
@@ -1146,6 +1261,7 @@ public class CharacterViewController {
 
   private void refreshAllRows() {
     attrRefreshers.forEach(Runnable::run);
+    specialAttrRefreshers.forEach(Runnable::run);
     skillRefreshers.forEach(Runnable::run);
     knowledgeSkillRefreshers.forEach(Runnable::run);
     qualityRefreshers.forEach(Runnable::run);
