@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class KnowledgeSkill {
 
@@ -11,6 +12,7 @@ public class KnowledgeSkill {
   private final boolean nativeLanguage;
 
   private int rating = 0;
+  private @Nullable String specialization;
 
   public KnowledgeSkill(@NonNull String name, @NonNull KnowledgeSkillCategory category) {
     this(name, category, false);
@@ -51,5 +53,25 @@ public class KnowledgeSkill {
           "%s: Rating %d liegt außerhalb [0/%d]".formatted(name, rating, MAX_RATING));
     }
     this.rating = rating;
+  }
+
+  /**
+   * Freitext-Spezialisierung dieser Wissensfertigkeit, oder {@code null} wenn keine gesetzt ist.
+   * Maximal eine Spezialisierung pro Fertigkeit (siehe {@link Skill#getSpecialization()} für die
+   * identische Regel bei aktiven Fertigkeiten). Für die Muttersprache ({@link #isNativeLanguage()})
+   * ist dieses Feld nicht vorgesehen.
+   */
+  public @Nullable String getSpecialization() {
+    return specialization;
+  }
+
+  /**
+   * Setzt die Spezialisierung. Ein leerer oder nur aus Leerzeichen bestehender Wert wird als
+   * "keine Spezialisierung" ({@code null}) normalisiert.
+   */
+  public void setSpecialization(@Nullable String specialization) {
+    this.specialization = (specialization == null || specialization.isBlank())
+        ? null
+        : specialization.trim();
   }
 }

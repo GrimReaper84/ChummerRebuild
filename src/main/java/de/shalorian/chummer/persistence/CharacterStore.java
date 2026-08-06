@@ -52,11 +52,10 @@ public class CharacterStore {
     } else if (character.hasResonance()) {
       data.resonance = Objects.requireNonNull(character.getMagicOrResonance()).getValue();
     }
-    for (Skill skill : character.getSkills()) {
-      if (skill.getRating() > 0) {
-        data.skills.put(skill.getName(), skill.getRating());
-      }
-    }
+    data.skills = character.getSkills().stream()
+        .filter(s -> s.getRating() > 0 || s.getSpecialization() != null)
+        .map(s -> new SkillEntry(s.getName(), s.getRating(), s.getSpecialization()))
+        .toList();
     data.created = character.isCreated();
     data.nuyenBP = character.getNuyenBP();
     data.selectedQualities = character.getQualities().stream()
@@ -64,8 +63,8 @@ public class CharacterStore {
         .map(q -> new SelectedQualityEntry(q.data().name(), q.gratis()))
         .toList();
     data.knowledgeSkills = character.getKnowledgeSkills().stream()
-        .map(k -> new KnowledgeSkillEntry(
-            k.getName(), k.getCategory().name(), k.getRating(), k.isNativeLanguage()))
+        .map(k -> new KnowledgeSkillEntry(k.getName(), k.getCategory().name(), k.getRating(),
+            k.isNativeLanguage(), k.getSpecialization()))
         .toList();
     data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
     data.karmaLog = character.getKarmaLog().stream()
@@ -108,10 +107,11 @@ public class CharacterStore {
   }
 
   private static void applySkills(@NonNull Character character, @NonNull CharacterData data) {
-    for (Map.Entry<String, Integer> e : data.skills.entrySet()) {
-      Skill skill = character.getSkill(e.getKey());
+    for (SkillEntry entry : data.skills) {
+      Skill skill = character.getSkill(entry.name);
       if (skill != null) {
-        skill.setRating(e.getValue());
+        skill.setRating(entry.rating);
+        skill.setSpecialization(entry.specialization);
       }
     }
   }
@@ -146,7 +146,10 @@ public class CharacterStore {
       character.getKnowledgeSkills().stream()
           .filter(k -> k.getName().equals(entry.name))
           .findFirst()
-          .ifPresent(k -> k.setRating(entry.rating));
+          .ifPresent(k -> {
+            k.setRating(entry.rating);
+            k.setSpecialization(entry.specialization);
+          });
     }
   }
 

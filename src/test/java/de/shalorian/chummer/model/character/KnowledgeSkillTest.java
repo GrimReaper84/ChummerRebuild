@@ -42,4 +42,30 @@ class KnowledgeSkillTest {
 
         assertTrue(skill.isNativeLanguage());
     }
+
+    @Test
+    void specializationIsInitiallyAbsent() {
+        KnowledgeSkill skill = new KnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+
+        assertNull(skill.getSpecialization());
+    }
+
+    @Test
+    void blankSpecializationIsNormalizedToNull() {
+        KnowledgeSkill skill = new KnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+        skill.setSpecialization("   ");
+
+        assertNull(skill.getSpecialization());
+    }
+
+    @Test
+    void specializationIsTrimmedAndOverwritable() {
+        KnowledgeSkill skill = new KnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+        skill.setSpecialization("  Bandenkriminalität  ");
+
+        assertEquals("Bandenkriminalität", skill.getSpecialization());
+
+        skill.setSpecialization("Gangs");
+        assertEquals("Gangs", skill.getSpecialization()); // max. 1 Spezialisierung, wird ersetzt
+    }
 }

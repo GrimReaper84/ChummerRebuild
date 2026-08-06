@@ -14,6 +14,7 @@ public class Skill {
   private final @Nullable String groupName; // null wenn keine Gruppe
 
   private int rating = 0;
+  private @Nullable String specialization;
 
   public Skill(@NonNull String name, @NonNull AttributeType linkedAttribute,
       @NonNull SkillCategory category, @Nullable String groupName) {
@@ -63,5 +64,26 @@ public class Skill {
   public int getKarmaCost(boolean doubled) {
     int cost = rating == 0 ? 4 : (rating + 1) * 2;
     return doubled ? cost * 2 : cost;
+  }
+
+  /**
+   * Freitext-Spezialisierung dieser Fertigkeit, oder {@code null} wenn keine gesetzt ist. Es gibt
+   * maximal eine Spezialisierung pro Fertigkeit (SR4-Grundregelwerk S. 312: "Ein Charakter darf
+   * nur eine Spezialisierung pro Fertigkeit besitzen") — ein neuer Wert überschreibt einen
+   * vorhandenen. Für gruppierte, noch gekoppelte Fertigkeiten prüft {@link
+   * Character#canSpecializeSkill(Skill)} die Zulässigkeit; dieses Feld selbst erzwingt das nicht.
+   */
+  public @Nullable String getSpecialization() {
+    return specialization;
+  }
+
+  /**
+   * Setzt die Spezialisierung. Ein leerer oder nur aus Leerzeichen bestehender Wert wird als
+   * "keine Spezialisierung" ({@code null}) normalisiert.
+   */
+  public void setSpecialization(@Nullable String specialization) {
+    this.specialization = (specialization == null || specialization.isBlank())
+        ? null
+        : specialization.trim();
   }
 }

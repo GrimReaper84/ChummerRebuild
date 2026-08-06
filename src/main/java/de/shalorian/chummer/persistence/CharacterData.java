@@ -21,7 +21,7 @@ public class CharacterData {
    */
   public @Nullable Integer magic = null;
   public @Nullable Integer resonance = null;
-  public @NonNull Map<String, Integer> skills = new HashMap<>(); // name → rating (nur > 0)
+  public @NonNull List<SkillEntry> skills = new ArrayList<>(); // nur Fertigkeiten mit Rating > 0 oder Spezialisierung
   public @NonNull List<KnowledgeSkillEntry> knowledgeSkills = new ArrayList<>();
   public @NonNull List<String> decoupledGroups = new ArrayList<>();
   public @NonNull List<LogEntryData> karmaLog = new ArrayList<>();

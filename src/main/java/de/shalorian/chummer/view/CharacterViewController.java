@@ -546,7 +546,7 @@ public class CharacterViewController {
 
   private @NonNull MigPane buildKnowledgeSkillGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[200!][90!][30!,center][30!,center][30!,center][70!][90!]");
+        "[200!][90!][30!,center][30!,center][30!,center][70!][130!][70!][90!]");
     grid.getStyleClass().add("attr-grid");
     return grid;
   }
@@ -559,6 +559,8 @@ public class CharacterViewController {
     Label ratingLabel = new Label();
     Button plus = new Button("+");
     Label costLabel = new Label();
+    Label specLabel = new Label();
+    Button specBtn = new Button("Spez.");
     Button removeBtn = new Button("Entfernen");
 
     nameLabelDummy.getStyleClass().add(STYLE_ATTR_NAME);
@@ -567,7 +569,23 @@ public class CharacterViewController {
     ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
     costLabel.getStyleClass().add(STYLE_ATTR_BP);
+    specLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    specBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+
+    boolean careerMode = character.isCreated();
+    Runnable specRefresh = () -> {
+      String spec = skill.getSpecialization();
+      specLabel.setText(spec != null ? spec : "–");
+      boolean eligible = character.canSpecializeKnowledgeSkill(skill);
+      boolean affordable = careerMode
+          ? character.getKarmaTotal() >= character.getSpecializationKarmaCost()
+          : spec != null || character.getRemainingBP() >= character.getKnowledgeSkillSpecializationBP();
+      specBtn.setDisable(!eligible || !affordable);
+    };
+    knowledgeSkillRefreshers.add(specRefresh);
+    specRefresh.run();
+    specBtn.setOnAction(e -> onEditKnowledgeSkillSpecialization(skill, character));
 
     wireIncrementable(knowledgeSkillRefreshers, new RowControls(ratingLabel, costLabel, minus, plus),
         character.isCreated(), new RowModel() {
@@ -634,7 +652,7 @@ public class CharacterViewController {
     });
 
     addRowCells(grid, row, nameLabelDummy, categoryLabel, minus, ratingLabel, plus, costLabel,
-        removeBtn);
+        specLabel, specBtn, removeBtn);
   }
 
   private void onAddKnowledgeSkill() {
@@ -908,7 +926,7 @@ public class CharacterViewController {
 
   private @NonNull MigPane buildSkillGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[200!][46!,center][30!,center][46!,center][30!,center][70!]");
+        "[200!][46!,center][30!,center][46!,center][30!,center][70!][130!][70!]");
     grid.getStyleClass().add("attr-grid");
     return grid;
   }
@@ -1040,6 +1058,8 @@ public class CharacterViewController {
     Label ratingLabel = new Label();
     Button plus = new Button("+");
     Label bpLabel = new Label();
+    Label specLabel = new Label();
+    Button specBtn = new Button("Spez.");
 
     skillNameLabel.getStyleClass().add(coupled ? "attr-name-coupled" : STYLE_ATTR_NAME);
     attrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
@@ -1047,8 +1067,23 @@ public class CharacterViewController {
     ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
     bpLabel.getStyleClass().add(STYLE_ATTR_BP);
+    specLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    specBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
 
     boolean career = character.isCreated();
+
+    Runnable specRefresh = () -> {
+      String spec = skill.getSpecialization();
+      specLabel.setText(spec != null ? spec : "–");
+      boolean eligible = character.canSpecializeSkill(skill);
+      boolean affordable = career
+          ? character.getKarmaTotal() >= character.getSpecializationKarmaCost()
+          : spec != null || character.getRemainingBP() >= character.getActiveSkillSpecializationBpCost();
+      specBtn.setDisable(!eligible || !affordable);
+    };
+    skillRefreshers.add(specRefresh);
+    specRefresh.run();
+    specBtn.setOnAction(e -> onEditSkillSpecialization(skill, character));
 
     if (coupled) {
       if (career) {
@@ -1118,7 +1153,8 @@ public class CharacterViewController {
           }, character);
     }
 
-    addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, bpLabel);
+    addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, bpLabel, specLabel,
+        specBtn);
   }
 
   // ── Gemeinsam ─────────────────────────────────────────────
@@ -1241,13 +1277,164 @@ public class CharacterViewController {
 
   private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
       @NonNull Character character) {
+    return confirmKarmaSpend(label, karmaCost, character, null);
+  }
+
+  /**
+   * Wie {@link #confirmKarmaSpend(String, int, Character)}, aber mit einem optionalen
+   * Zusatzhinweis (z.B. Gruppenauflösungs-Warnung), der vor dem eigentlichen Kostentext
+   * eingeblendet wird — ein einziger kombinierter Dialog statt zweier verschachtelter
+   * Bestätigungen.
+   */
+  private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
+      @NonNull Character character, @Nullable String extraWarning) {
     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
     confirm.setTitle("Karma ausgeben");
     confirm.setHeaderText(label);
-    confirm.setContentText(karmaCost + " Karma ausgeben?\n\nVerbleibendes Karma danach: "
-        + (character.getKarmaTotal() - karmaCost));
+    String content = karmaCost + " Karma ausgeben?\n\nVerbleibendes Karma danach: "
+        + (character.getKarmaTotal() - karmaCost);
+    if (extraWarning != null) {
+      content = extraWarning + "\n\n" + content;
+    }
+    confirm.setContentText(content);
     confirm.initOwner(nameLabel.getScene().getWindow());
     return confirm.showAndWait().filter(btn -> btn == ButtonType.OK).isPresent();
+  }
+
+  /**
+   * Öffnet den Freitext-Dialog zum Setzen/Ändern der Spezialisierung einer aktiven Fertigkeit
+   * (analog {@link #buildNativeLanguageRow}). Im Erstellungsmodus wird direkt gesetzt (kostet nur
+   * beim erstmaligen Setzen den Fixpreis aus {@link Character#getActiveSkillSpecializationBpCost()},
+   * ein späteres Umbenennen ist kostenlos). Im Karrieremodus kostet jedes Setzen/Ändern erneut
+   * Karma (SR4-Grundregelwerk S. 312); ist die Fertigkeit noch Teil einer gekoppelten
+   * Fertigkeitsgruppe, wird das Auflösen der Gruppe im selben Bestätigungsdialog mit angekündigt.
+   */
+  private void onEditSkillSpecialization(@NonNull Skill skill, @NonNull Character character) {
+    if (!character.canSpecializeSkill(skill)) {
+      return;
+    }
+    TextInputDialog dialog = new TextInputDialog(
+        skill.getSpecialization() != null ? skill.getSpecialization() : "");
+    dialog.setTitle("Spezialisierung");
+    dialog.setHeaderText(skill.getName() + " – Spezialisierung");
+    dialog.setContentText("Spezialisierung:");
+    dialog.showAndWait().map(String::trim)
+        .ifPresent(value -> applySkillSpecialization(skill, character, value.isBlank() ? null : value));
+  }
+
+  private void applySkillSpecialization(@NonNull Skill skill, @NonNull Character character,
+      @Nullable String newSpec) {
+    if (character.isCreated()) {
+      applySkillSpecializationInCareerMode(skill, character, newSpec);
+    } else {
+      applySkillSpecializationInCreationMode(skill, character, newSpec);
+    }
+  }
+
+  /**
+   * Karrieremodus-Zweig von {@link #applySkillSpecialization}: Karma-Bestätigung (kombiniert mit
+   * einem Gruppenauflösungs-Hinweis, falls die Fertigkeit noch gekoppelt ist), dann Buchung.
+   */
+  private void applySkillSpecializationInCareerMode(@NonNull Skill skill,
+      @NonNull Character character, @Nullable String newSpec) {
+    int karmaCost = character.getSpecializationKarmaCost();
+    if (character.getKarmaTotal() < karmaCost) {
+      return;
+    }
+    String groupName = skill.getGroupName();
+    String warning = groupName != null && character.isGroupCoupled(groupName)
+        ? "Dies löst die Fertigkeitsgruppe \"" + groupName + "\" auf. Die Mitglieder "
+            + "behalten ihr aktuelles Rating, können danach aber einzeln gesteigert werden."
+        : null;
+    String label = skill.getName() + ": Spezialisierung \"" + (newSpec == null ? "–" : newSpec) + "\"";
+    if (confirmKarmaSpend(label, karmaCost, character, warning)) {
+      character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+      character.setSkillSpecialization(skill, newSpec);
+      refreshAllRows();
+      updateLogDisplay();
+    }
+  }
+
+  /**
+   * Erstellungsmodus-Zweig von {@link #applySkillSpecialization}: erstmaliges Setzen kostet den
+   * Fixpreis aus {@link Character#getActiveSkillSpecializationBpCost()}, ein späteres Umbenennen
+   * oder Löschen ist kostenlos.
+   */
+  private void applySkillSpecializationInCreationMode(@NonNull Skill skill,
+      @NonNull Character character, @Nullable String newSpec) {
+    boolean affordable = newSpec == null || skill.getSpecialization() != null
+        || character.getRemainingBP() >= character.getActiveSkillSpecializationBpCost();
+    if (!affordable) {
+      return;
+    }
+    character.setSkillSpecialization(skill, newSpec);
+    refreshAllRows();
+    updateBpDisplay();
+  }
+
+  /**
+   * Öffnet den Freitext-Dialog zum Setzen/Ändern der Spezialisierung einer Wissensfertigkeit.
+   * Im Erstellungsmodus zählt eine neue Spezialisierung als +1 Punkt zum Wissensfertigkeitspunkte-
+   * Pool ({@link Character#getKnowledgeSkillSpecializationBP()}); im Karrieremodus
+   * kostet jedes Setzen/Ändern erneut Karma (SR4-Grundregelwerk S. 312). Wissensfertigkeiten haben
+   * keine Gruppen, daher entfällt der Gruppenauflösungs-Hinweis aus {@link
+   * #onEditSkillSpecialization}.
+   */
+  private void onEditKnowledgeSkillSpecialization(@NonNull KnowledgeSkill skill,
+      @NonNull Character character) {
+    if (!character.canSpecializeKnowledgeSkill(skill)) {
+      return;
+    }
+    TextInputDialog dialog = new TextInputDialog(
+        skill.getSpecialization() != null ? skill.getSpecialization() : "");
+    dialog.setTitle("Spezialisierung");
+    dialog.setHeaderText(skill.getName() + " – Spezialisierung");
+    dialog.setContentText("Spezialisierung:");
+    dialog.showAndWait().map(String::trim)
+        .ifPresent(value -> applyKnowledgeSkillSpecialization(skill, character,
+            value.isBlank() ? null : value));
+  }
+
+  private void applyKnowledgeSkillSpecialization(@NonNull KnowledgeSkill skill,
+      @NonNull Character character, @Nullable String newSpec) {
+    if (character.isCreated()) {
+      applyKnowledgeSkillSpecializationInCareerMode(skill, character, newSpec);
+    } else {
+      applyKnowledgeSkillSpecializationInCreationMode(skill, character, newSpec);
+    }
+  }
+
+  private void applyKnowledgeSkillSpecializationInCareerMode(@NonNull KnowledgeSkill skill,
+      @NonNull Character character, @Nullable String newSpec) {
+    int karmaCost = character.getSpecializationKarmaCost();
+    if (character.getKarmaTotal() < karmaCost) {
+      return;
+    }
+    String label = skill.getName() + ": Spezialisierung \"" + (newSpec == null ? "–" : newSpec) + "\"";
+    if (confirmKarmaSpend(label, karmaCost, character)) {
+      character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+      character.setKnowledgeSkillSpecialization(skill, newSpec);
+      refreshAllRows();
+      updateLogDisplay();
+    }
+  }
+
+  /**
+   * Erstellungsmodus-Zweig von {@link #applyKnowledgeSkillSpecialization}: erstmaliges Setzen
+   * kostet ggf. BP, falls es den Wissensfertigkeitspunkte-Pool überschreitet (siehe {@link
+   * Character#getKnowledgeSkillSpecializationBP()}), ein späteres Umbenennen oder Löschen ist
+   * kostenlos.
+   */
+  private void applyKnowledgeSkillSpecializationInCreationMode(@NonNull KnowledgeSkill skill,
+      @NonNull Character character, @Nullable String newSpec) {
+    boolean affordable = newSpec == null || skill.getSpecialization() != null
+        || character.getRemainingBP() >= character.getKnowledgeSkillSpecializationBP();
+    if (!affordable) {
+      return;
+    }
+    character.setKnowledgeSkillSpecialization(skill, newSpec);
+    refreshAllRows();
+    updateBpDisplay();
   }
 
   private void refreshAllRows() {

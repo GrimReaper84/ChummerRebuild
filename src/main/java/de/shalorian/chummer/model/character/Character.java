@@ -26,6 +26,9 @@ public class Character {
   private static final int KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT = 2;
   private static final int KNOWLEDGE_SKILL_KARMA_NEW = 2;
   private static final int KNOWLEDGE_SKILL_KARMA_PER_RATING = 1;
+  private static final int ACTIVE_SKILL_SPECIALIZATION_BP = 2;
+  private static final int SPECIALIZATION_KARMA_COST = 2;
+  private static final int MIN_RATING_FOR_SPECIALIZATION = 1;
 
   private static final double BASE_ESSENCE = 6.0;
 
@@ -276,6 +279,54 @@ public class Character {
     return g != null && !decoupledGroups.contains(g);
   }
 
+  /**
+   * Summe der BP-Kosten aller spezialisierten aktiven Fertigkeiten: fixer Preis
+   * {@value #ACTIVE_SKILL_SPECIALIZATION_BP} BP pro Spezialisierung (SR4-Grundregelwerk S. 109),
+   * unabhängig vom Rating der Fertigkeit. Gekoppelte Gruppen-Skills tragen nie bei, da sie laut
+   * {@link #canSpecializeSkill(Skill)} während der Erstellung ohnehin nicht spezialisierbar sind.
+   */
+  public int getActiveSkillSpecializationBP() {
+    return (int) skills.values().stream()
+        .filter(s -> s.getSpecialization() != null)
+        .count() * ACTIVE_SKILL_SPECIALIZATION_BP;
+  }
+
+  /**
+   * Fixpreis in BP, um einer noch nicht spezialisierten aktiven Fertigkeit während der
+   * Charaktererschaffung eine Spezialisierung zu geben (SR4-Grundregelwerk S. 109).
+   */
+  public int getActiveSkillSpecializationBpCost() {
+    return ACTIVE_SKILL_SPECIALIZATION_BP;
+  }
+
+  /**
+   * Prüft, ob diese aktive Fertigkeit spezialisiert werden darf: Mindestrating
+   * {@value #MIN_RATING_FOR_SPECIALIZATION} (SR4-Grundregelwerk: Spezialisierung setzt voraus,
+   * dass der Charakter die Fertigkeit bereits besitzt), und während der Charaktererschaffung darf
+   * die Fertigkeit nicht Teil einer noch gekoppelten Fertigkeitsgruppe sein (Fertigkeitsgruppen
+   * selbst sind nicht spezialisierbar). Im Karrieremodus ist eine gekoppelte Fertigkeit dagegen
+   * spezialisierbar — das bricht die Gruppe auf (siehe {@link #setSkillSpecialization(Skill,
+   * String)}).
+   */
+  public boolean canSpecializeSkill(@NonNull Skill skill) {
+    return skill.getRating() >= MIN_RATING_FOR_SPECIALIZATION
+        && (created || !isCoupledGroupMember(skill));
+  }
+
+  /**
+   * Setzt die Spezialisierung einer aktiven Fertigkeit. Ist die Fertigkeit im Karrieremodus noch
+   * Teil einer gekoppelten Fertigkeitsgruppe, wird die Gruppe dabei aufgebrochen (siehe {@link
+   * #decoupleGroup(String)}) — die Mitglieder behalten ihr aktuelles Gruppen-Rating als
+   * Einzelrating.
+   */
+  public void setSkillSpecialization(@NonNull Skill skill, @Nullable String specialization) {
+    skill.setSpecialization(specialization);
+    String groupName = skill.getGroupName();
+    if (created && groupName != null && isCoupledGroupMember(skill)) {
+      decoupleGroup(groupName);
+    }
+  }
+
   // --- Skillgruppen ---
 
   /**
@@ -524,8 +575,11 @@ public class Character {
 
   /**
    * Summe der verbrauchten Wissensfertigkeitspunkte. Ratings in den Kategorien Academic/
-   * Professional zählen bei Uneducated doppelt in diese Summe ein. Die Muttersprache ({@link
-   * KnowledgeSkill#isNativeLanguage()}) ist kostenlos und zählt nicht mit.
+   * Professional zählen bei Uneducated doppelt in diese Summe ein. Eine gesetzte Spezialisierung
+   * trägt zusätzlich flach mit +1 Punkt bei (SR4-Grundregelwerk S. 109/154: "Jede Spezialisierung
+   * einer Wissensfertigkeit kostet 1 Wissens-Fertigkeitspunkt") — dieser Beitrag ist bewusst
+   * **nicht** von der Uneducated-Verdopplung betroffen, anders als der Rating-Beitrag. Die
+   * Muttersprache ({@link KnowledgeSkill#isNativeLanguage()}) ist kostenlos und zählt nicht mit.
    */
   public int getKnowledgeSkillPointsUsed() {
     int used = 0;
@@ -536,6 +590,9 @@ public class Character {
       int contribution = skill.getRating();
       if (isKnowledgeSkillCostDoubled(skill.getCategory())) {
         contribution *= 2;
+      }
+      if (skill.getSpecialization() != null) {
+        contribution += 1;
       }
       used += contribution;
     }
@@ -602,6 +659,63 @@ public class Character {
   }
 
   /**
+   * BP-Kosten, die das Setzen einer weiteren Wissensfertigkeiten-Spezialisierung gerade jetzt
+   * zusätzlich auslösen würde. Der Spezialisierungs-Beitrag zum Pool ist stets flach +1 (siehe
+   * {@link #getKnowledgeSkillPointsUsed()}) und — anders als {@link
+   * #getKnowledgeSkillIncrementBP(KnowledgeSkill)} für Rating-Steigerungen — unabhängig davon,
+   * welche Wissensfertigkeit oder Kategorie betroffen ist; daher ohne Skill-Parameter.
+   */
+  public int getKnowledgeSkillSpecializationBP() {
+    int pointsUsed = getKnowledgeSkillPointsUsed();
+    int pool = getKnowledgeSkillPointPool();
+    int overflowBefore = Math.max(0, pointsUsed - pool) * KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT;
+    int overflowAfter = Math.max(0, pointsUsed + 1 - pool) * KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT;
+    return overflowAfter - overflowBefore;
+  }
+
+  /**
+   * Prüft, ob diese Wissensfertigkeit spezialisiert werden darf: Mindestrating
+   * {@value #MIN_RATING_FOR_SPECIALIZATION} (SR4-Grundregelwerk S. 109: "Genau wie bei den
+   * Aktionsfertigkeiten kann sich ein Charakter auch bei Wissensfertigkeiten spezialisieren" —
+   * dieselbe Mindestrating-Voraussetzung wie bei aktiven Fertigkeiten, siehe {@link
+   * #canSpecializeSkill(Skill)}), keine Spezialisierung für die Muttersprache. Während der
+   * Charaktererschaffung darf der Spezialisierungs-Beitrag den Pool nicht über die
+   * Verdopplungsgrenze hinaus belasten (analog zu {@link
+   * #canRaiseKnowledgeSkillAtCreation(KnowledgeSkill)}). Im Karrieremodus gilt dieser
+   * Erstellungs-Cap nicht.
+   */
+  public boolean canSpecializeKnowledgeSkill(@NonNull KnowledgeSkill skill) {
+    if (skill.isNativeLanguage() || skill.getRating() < MIN_RATING_FOR_SPECIALIZATION) {
+      return false;
+    }
+    if (created) {
+      return true;
+    }
+    return getKnowledgeSkillPointsUsed() + 1 <= getKnowledgeSkillPointPool() * 2;
+  }
+
+  /**
+   * Setzt die Spezialisierung einer Wissensfertigkeit. Anders als bei aktiven Fertigkeiten gibt es
+   * hier keinen Gruppenauflösungs-Seiteneffekt (Wissensfertigkeiten kennen keine Gruppen).
+   */
+  public void setKnowledgeSkillSpecialization(@NonNull KnowledgeSkill skill,
+      @Nullable String specialization) {
+    skill.setSpecialization(specialization);
+  }
+
+  /**
+   * Karrieremodus-Kosten, um eine Spezialisierung (aktive Fertigkeit oder Wissensfertigkeit) neu
+   * zu setzen oder zu ändern. SR4-Grundregelwerk S. 312: "Eine Spezialisierung zu erwerben kostet
+   * 2 Karmapunkte" — gilt identisch für beide Fertigkeitsarten. Bewusst unabhängig von
+   * Uneducated/Uncouth/Infirm und daher **nicht** über {@link Skill#getKarmaCost(boolean)} bzw.
+   * {@link #getKnowledgeSkillKarmaCost(KnowledgeSkill)} zu berechnen — jene Methoden verdoppeln bei
+   * Rating-Steigerungen, das GRW nennt für Spezialisierungen aber keine solche Sonderregel.
+   */
+  public int getSpecializationKarmaCost() {
+    return SPECIALIZATION_KARMA_COST;
+  }
+
+  /**
    * Karma-Kosten für eine Ratingsteigerung im Karrieremodus. Anders als im BP-Modus verdoppelt
    * Uneducated hier den Karma-Endpreis direkt, nicht den Poolverbrauch (es existiert kein Pool
    * mehr im Karrieremodus).
@@ -639,7 +753,8 @@ public class Character {
         .sum();
 
     return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
-        + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP();
+        + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP()
+        + getActiveSkillSpecializationBP();
   }
 
   public int getRemainingBP() {

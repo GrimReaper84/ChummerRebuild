@@ -47,11 +47,11 @@
 | Max. 50% des Gesamtbudgets für Attribute (Erstellung)                       | ✅      | GRW S. 106 verifiziert, `Character.canRaiseAttributeAtCreation()`, 2026-08-04 |
 | Nur 1 Attribut auf Rassenmaximum steigerbar (Erstellung)                    | ✅      | GRW S. 106 verifiziert, s.o., 2026-08-04       |
 | Augmentiertes Maximum anzeigen (MetatypeMax + ⌊Max/2⌋)                      | ❌      | Weder berechnet noch angezeigt                 |
-| Sonderattribute: EDG (Edge)                                                 | ❌      | Nicht modelliert                               |
-| Sonderattribute: MAG (Magie)                                                | ❌      | Nicht modelliert                               |
-| Sonderattribute: RES (Resonanz)                                             | ❌      | Nicht modelliert                               |
+| Sonderattribute: EDG (Edge)                                                 | ✅      | `SpecialAttribute`/`SpecialAttributeType`, BP/Karma-Kosten, UI-Sektion, Persistenz; immer sichtbar |
+| Sonderattribute: MAG (Magie)                                                | ✅      | Wie EDG, aber nur sichtbar/freigeschaltet wenn Quality mit `GRANTS_MAGIC` vorhanden (`Character.hasMagic()`) |
+| Sonderattribute: RES (Resonanz)                                             | ✅      | Analog MAG, über `GRANTS_RESONANCE` (`Character.hasResonance()`)                              |
 | Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ❌      | Nicht modelliert                               |
-| Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ❌      | Nicht modelliert                               |
+| Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ⚠️     | `Character.getEssence()` liefert fixen Wert 6.0; Cyberware-/Bioware-Abzug fehlt noch (Subsystem selbst nicht implementiert) |
 
 ---
 
@@ -294,7 +294,7 @@
 **Stufe 1 – Fehlende Kernfeatures für einen vollständigen Charakter**
 
 1. ~~**Wissensfertigkeiten**~~ ✅ umgesetzt (freier Pool (INT+LOG)×3, Kategorien, Überzug in BP, Karrieremodus-Karma)
-2. **Sonderattribute** EDG, MAG, RES + Essenz-Berechnung (Grundlage für alles weitere) — GRW S. 106/107 vollständig bestätigt
+2. ~~**Sonderattribute** EDG, MAG, RES~~ ✅ umgesetzt (`SpecialAttribute`, BP/Karma-Kosten, UI-Sektion, Persistenz, MAG/RES-Freischaltung via Quality) — **Essenz-Berechnung bleibt offen** (aktuell fixer Wert 6.0, echter Abzug erst mit Cyberware/Bioware in Stufe 2 möglich)
 3. **Spezialisierungen** (+2 BP / Karma) — inkl. Wissensfertigkeiten-Spezialisierungen (bewusst zurückgestellt bei Schritt 1); GRW bestätigt
 4. **Kontakte** — GRW bestätigt, aber "CHA×2 freie Punkte"-Annahme widerlegt (s. Abschnitt 7 oben), Formel vor Umsetzung anpassen
 5. **Charakter-Biografie** (alle Textfelder) — kein Regelwerk-Bezug, reine Textfelder

@@ -2,6 +2,8 @@ package de.shalorian.chummer.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.AttributeType;
@@ -125,7 +127,7 @@ class CharacterStoreTest {
   void roundtripPreservesUnlockedMagic() throws IOException {
     Character original = mensch("Test");
     QualityData magier = QualityDataLoader.findByName("Magier");
-    assertTrue(magier != null);
+    assertNotNull(magier);
     original.addQuality(magier, false);
     original.getMagicOrResonance().setValue(4);
 
@@ -146,6 +148,43 @@ class CharacterStoreTest {
 
     assertFalse(loaded.hasMagic());
     assertFalse(loaded.hasResonance());
+  }
+
+  @Test
+  void roundtripPreservesActiveSkillSpecialization() throws IOException {
+    Character original = mensch("Test");
+    original.getSkill("Bogenschießen").setRating(1);
+    original.setSkillSpecialization(original.getSkill("Bogenschießen"), "Langbögen (Öko-Kunststoff)");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals("Langbögen (Öko-Kunststoff)", loaded.getSkill("Bogenschießen").getSpecialization());
+  }
+
+  @Test
+  void roundtripOmitsSpecializationWhenUnset() throws IOException {
+    Character original = mensch("Test");
+    original.getSkill("Bogenschießen").setRating(1);
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertNull(loaded.getSkill("Bogenschießen").getSpecialization());
+  }
+
+  @Test
+  void roundtripPreservesKnowledgeSkillSpecialization() throws IOException {
+    Character original = mensch("Test");
+    original.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
+    KnowledgeSkill skill = original.getKnowledgeSkills().get(0);
+    skill.setRating(2);
+    original.setKnowledgeSkillSpecialization(skill, "Bandenkriminalität");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals("Bandenkriminalität", loaded.getKnowledgeSkills().get(0).getSpecialization());
   }
 
   @Test
