@@ -61,18 +61,18 @@ public class CharacterStore {
     data.nuyenBP = character.getNuyenBP();
     data.selectedQualities = character.getQualities().stream()
         .filter(q -> q.source() == QualitySource.SELECTED)
-        .map(q -> new CharacterData.SelectedQualityEntry(q.data().name(), q.gratis()))
+        .map(q -> new SelectedQualityEntry(q.data().name(), q.gratis()))
         .toList();
     data.knowledgeSkills = character.getKnowledgeSkills().stream()
-        .map(k -> new CharacterData.KnowledgeSkillEntry(
+        .map(k -> new KnowledgeSkillEntry(
             k.getName(), k.getCategory().name(), k.getRating(), k.isNativeLanguage()))
         .toList();
     data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
     data.karmaLog = character.getKarmaLog().stream()
-        .map(e -> new CharacterData.LogEntryData(e.description(), e.amount(), e.date().toString()))
+        .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString()))
         .toList();
     data.nuyenLog = character.getNuyenLog().stream()
-        .map(e -> new CharacterData.LogEntryData(e.description(), e.amount(), e.date().toString()))
+        .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString()))
         .toList();
 
     return data;
@@ -118,7 +118,7 @@ public class CharacterStore {
 
   private static void applySelectedQualities(@NonNull Character character,
       @NonNull CharacterData data) {
-    for (CharacterData.SelectedQualityEntry entry : data.selectedQualities) {
+    for (SelectedQualityEntry entry : data.selectedQualities) {
       QualityData qualityData = QualityDataLoader.findByName(entry.name);
       if (qualityData != null) {
         character.loadSelectedQuality(qualityData, entry.gratis);
@@ -137,7 +137,7 @@ public class CharacterStore {
 
   private static void applyKnowledgeSkills(@NonNull Character character,
       @NonNull CharacterData data) {
-    for (CharacterData.KnowledgeSkillEntry entry : data.knowledgeSkills) {
+    for (KnowledgeSkillEntry entry : data.knowledgeSkills) {
       if (entry.nativeLanguage) {
         character.setNativeLanguage(entry.name);
         continue;
@@ -150,9 +150,9 @@ public class CharacterStore {
     }
   }
 
-  private static void applyLog(@NonNull List<CharacterData.LogEntryData> entries,
+  private static void applyLog(@NonNull List<LogEntryData> entries,
       @NonNull Consumer<LogEntry> sink) {
-    for (CharacterData.LogEntryData e : entries) {
+    for (LogEntryData e : entries) {
       if (!e.date.isEmpty()) {
         sink.accept(new LogEntry(e.description, e.amount, LocalDate.parse(e.date)));
       }
