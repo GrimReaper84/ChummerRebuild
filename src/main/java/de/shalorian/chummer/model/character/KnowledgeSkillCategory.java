@@ -3,15 +3,11 @@ package de.shalorian.chummer.model.character;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Kategorien für Wissensfertigkeiten. Das SR4-Grundregelwerk (S. 109/144) kennt genau **vier**
- * echte Wissensfertigkeiten-Kategorien — ACADEMIC, PROFESSIONAL, STREET und HOBBY —, jede fest
- * mit einem Attribut verknüpft (Straße/Hobby → INT, Akademisch/Beruf → LOG). Sprachfertigkeiten
- * sind laut Regeltext keine eigene, gleichrangige Kategorie, sondern ein separates Konzept, das
- * lediglich denselben Wissensfertigkeitspunkte-Pool anzapft ("Sprachfertigkeiten gelten bei der
- * Charaktererschaffung als Wissensfertigkeiten, und die Fertigkeitspunkte zum Erwerb dieser
- * Fertigkeiten stammen aus demselben Pool"). LANGUAGE ist hier dennoch als fünfter Wert
- * modelliert — als pragmatische Vereinfachung, um zusätzlich gekaufte Sprachen (jenseits der
- * kostenlosen Muttersprache, siehe {@link KnowledgeSkill#isNativeLanguage()}) im selben
+ * Das SR4-Grundregelwerk (S. 109/144) kennt genau 4 echte Wissensfertigkeiten-Kategorien (ACADEMIC, PROFESSIONAL, STREET, HOBBY)
+ * jede fest mit einem Attribut verknüpft (Straße/Hobby → INT, Akademisch/Beruf → LOG).
+ * Sprachfertigkeiten sind laut Regeltext keine eigene, gleichrangige Kategorie, sondern ein separates Konzept, das
+ * lediglich denselben Wissensfertigkeitspunkte-Pool anzapft. LANGUAGE ist hier dennoch als fünfter Wert
+ * modelliert als pragmatische Vereinfachung, um zusätzlich zur Muttersprache gekaufte Sprachen im selben
  * Datenmodell abzubilden, ohne eine eigene Struktur nur für Sprachen einzuführen.
  */
 public enum KnowledgeSkillCategory {

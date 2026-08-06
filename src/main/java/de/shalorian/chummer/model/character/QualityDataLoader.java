@@ -16,6 +16,9 @@ import org.w3c.dom.NodeList;
 
 public class QualityDataLoader {
 
+  private QualityDataLoader() {
+  }
+
   private static @Nullable Map<String, QualityData> cache;
 
   public static synchronized @NonNull Map<String, QualityData> getAllQualities() {
@@ -35,7 +38,9 @@ public class QualityDataLoader {
         throw new IllegalStateException("qualities.xml nicht gefunden");
       }
 
-      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      Document doc = factory.newDocumentBuilder().parse(in);
       doc.getDocumentElement().normalize();
 
       Map<String, QualityData> map = new LinkedHashMap<>();
@@ -63,31 +68,30 @@ public class QualityDataLoader {
 
     boolean contributeToLimit = !"no".equals(childText(el, "limit"));
 
+    return new QualityData(name, bp, type, contributeToLimit,
+        Collections.unmodifiableSet(parseBonuses(el)));
+  }
+
+  private static final @NonNull Map<String, QualityBonusType> BONUS_TAGS = Map.of(
+      "uneducated", QualityBonusType.UNEDUCATED,
+      "uncouth", QualityBonusType.UNCOUTH,
+      "infirm", QualityBonusType.INFIRM,
+      "grantsmagic", QualityBonusType.GRANTS_MAGIC,
+      "grantsresonance", QualityBonusType.GRANTS_RESONANCE);
+
+  private static @NonNull Set<QualityBonusType> parseBonuses(@NonNull Element el) {
     Set<QualityBonusType> bonuses = EnumSet.noneOf(QualityBonusType.class);
     NodeList bonusNodes = el.getElementsByTagName("bonus");
-    if (bonusNodes.getLength() > 0) {
-      Element bonusEl = (Element) bonusNodes.item(0);
-      if (bonusEl != null) {
-        if (bonusEl.getElementsByTagName("uneducated").getLength() > 0) {
-          bonuses.add(QualityBonusType.UNEDUCATED);
-        }
-        if (bonusEl.getElementsByTagName("uncouth").getLength() > 0) {
-          bonuses.add(QualityBonusType.UNCOUTH);
-        }
-        if (bonusEl.getElementsByTagName("infirm").getLength() > 0) {
-          bonuses.add(QualityBonusType.INFIRM);
-        }
-        if (bonusEl.getElementsByTagName("grantsmagic").getLength() > 0) {
-          bonuses.add(QualityBonusType.GRANTS_MAGIC);
-        }
-        if (bonusEl.getElementsByTagName("grantsresonance").getLength() > 0) {
-          bonuses.add(QualityBonusType.GRANTS_RESONANCE);
-        }
+    if (bonusNodes.getLength() == 0) {
+      return bonuses;
+    }
+    Element bonusEl = (Element) bonusNodes.item(0);
+    for (Map.Entry<String, QualityBonusType> entry : BONUS_TAGS.entrySet()) {
+      if (bonusEl.getElementsByTagName(entry.getKey()).getLength() > 0) {
+        bonuses.add(entry.getValue());
       }
     }
-
-    return new QualityData(name, bp, type, contributeToLimit,
-        Collections.unmodifiableSet(bonuses));
+    return bonuses;
   }
 
   private static @NonNull String childText(@NonNull Element parent, @NonNull String tag) {

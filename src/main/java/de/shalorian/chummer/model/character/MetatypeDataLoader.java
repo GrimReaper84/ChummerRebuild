@@ -18,6 +18,10 @@ public class MetatypeDataLoader {
 
   private static @Nullable List<MetatypeData> cache;
 
+
+  private MetatypeDataLoader() {
+  }
+
   public static synchronized @NonNull List<MetatypeData> getAllMetatypes() {
     if (cache == null) {
       cache = Collections.unmodifiableList(loadFromXml());
@@ -38,7 +42,9 @@ public class MetatypeDataLoader {
         throw new IllegalStateException("metatypes.xml nicht gefunden");
       }
 
-      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      Document doc = factory.newDocumentBuilder().parse(in);
       doc.getDocumentElement().normalize();
 
       List<MetatypeData> list = new ArrayList<>();
@@ -96,20 +102,8 @@ public class MetatypeDataLoader {
           edgeRange = new AttributeRange(min, max);
         }
         case "qualities" -> {
-          NodeList posNodes = childEl.getElementsByTagName("positive");
-          if (posNodes.getLength() > 0) {
-            NodeList qNodes = ((Element) posNodes.item(0)).getElementsByTagName("quality");
-            for (int j = 0; j < qNodes.getLength(); j++) {
-              positiveQualities.add(qNodes.item(j).getTextContent().trim());
-            }
-          }
-          NodeList negNodes = childEl.getElementsByTagName("negative");
-          if (negNodes.getLength() > 0) {
-            NodeList qNodes = ((Element) negNodes.item(0)).getElementsByTagName("quality");
-            for (int j = 0; j < qNodes.getLength(); j++) {
-              negativeQualities.add(qNodes.item(j).getTextContent().trim());
-            }
-          }
+          positiveQualities.addAll(extractQualityNames(childEl, "positive"));
+          negativeQualities.addAll(extractQualityNames(childEl, "negative"));
         }
         default -> { /* ignoriert */ }
       }
@@ -124,5 +118,19 @@ public class MetatypeDataLoader {
         edgeRange,
         Collections.unmodifiableList(positiveQualities),
         Collections.unmodifiableList(negativeQualities));
+  }
+
+  private static @NonNull List<String> extractQualityNames(@NonNull Element qualitiesEl,
+      @NonNull String tagName) {
+    NodeList tagNodes = qualitiesEl.getElementsByTagName(tagName);
+    if (tagNodes.getLength() == 0) {
+      return List.of();
+    }
+    NodeList qNodes = ((Element) tagNodes.item(0)).getElementsByTagName("quality");
+    List<String> names = new ArrayList<>();
+    for (int i = 0; i < qNodes.getLength(); i++) {
+      names.add(qNodes.item(i).getTextContent().trim());
+    }
+    return names;
   }
 }

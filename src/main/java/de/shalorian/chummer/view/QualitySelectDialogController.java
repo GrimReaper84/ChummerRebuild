@@ -1,7 +1,6 @@
 package de.shalorian.chummer.view;
 
 import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.CharacterQuality;
 import de.shalorian.chummer.model.character.QualityData;
 import de.shalorian.chummer.model.character.QualityDataLoader;
 import de.shalorian.chummer.model.character.QualitySource;
@@ -108,7 +107,7 @@ public class QualitySelectDialogController {
         .filter(q -> search.isEmpty() || q.name().toLowerCase(Locale.ROOT).contains(search))
         .filter(q -> !onlySelectable || isSelectable(q, alreadySelected))
         .sorted(Comparator.comparing(QualityData::name))
-        .collect(Collectors.toList());
+        .toList();
 
     QualityData selected = qualityListView.getSelectionModel().getSelectedItem();
     qualityListView.getItems().setAll(filtered);

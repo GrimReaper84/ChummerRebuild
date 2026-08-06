@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import org.jspecify.annotations.NonNull;
 
 public class CharacterStore {
@@ -82,62 +84,78 @@ public class CharacterStore {
     MetatypeData metatype = MetatypeDataLoader.find(metatypeName);
     Character character = new Character(charName, metatype);
 
+    applyAttributes(character, data);
+    applySkills(character, data);
+    character.setCreated(data.created);
+    character.setNuyenBP(data.nuyenBP);
+    applySelectedQualities(character, data);
+    applyMagicOrResonance(character, data);
+    applyKnowledgeSkills(character, data);
+    data.decoupledGroups.forEach(character::decoupleGroup);
+    applyLog(data.karmaLog, character::addKarmaEntry);
+    applyLog(data.nuyenLog, character::addNuyenEntry);
+
+    return character;
+  }
+
+  private static void applyAttributes(@NonNull Character character, @NonNull CharacterData data) {
     for (Map.Entry<String, Integer> e : data.attributes.entrySet()) {
       character.getAttribute(AttributeType.valueOf(e.getKey())).setValue(e.getValue());
     }
     if (data.edge > 0) {
       character.getEdge().setValue(data.edge);
     }
-    if (data.skills != null) {
-      for (Map.Entry<String, Integer> e : data.skills.entrySet()) {
-        Skill skill = character.getSkill(e.getKey());
-        if (skill != null) {
-          skill.setRating(e.getValue());
-        }
+  }
+
+  private static void applySkills(@NonNull Character character, @NonNull CharacterData data) {
+    for (Map.Entry<String, Integer> e : data.skills.entrySet()) {
+      Skill skill = character.getSkill(e.getKey());
+      if (skill != null) {
+        skill.setRating(e.getValue());
       }
     }
-    character.setCreated(data.created);
-    character.setNuyenBP(data.nuyenBP);
-    if (data.selectedQualities != null) {
-      for (CharacterData.SelectedQualityEntry entry : data.selectedQualities) {
-        QualityData qualityData = QualityDataLoader.findByName(entry.name);
-        if (qualityData != null) {
-          character.loadSelectedQuality(qualityData, entry.gratis);
-        }
+  }
+
+  private static void applySelectedQualities(@NonNull Character character,
+      @NonNull CharacterData data) {
+    for (CharacterData.SelectedQualityEntry entry : data.selectedQualities) {
+      QualityData qualityData = QualityDataLoader.findByName(entry.name);
+      if (qualityData != null) {
+        character.loadSelectedQuality(qualityData, entry.gratis);
       }
     }
+  }
+
+  private static void applyMagicOrResonance(@NonNull Character character,
+      @NonNull CharacterData data) {
     if (data.magic != null && character.hasMagic()) {
       Objects.requireNonNull(character.getMagicOrResonance()).setValue(data.magic);
     } else if (data.resonance != null && character.hasResonance()) {
       Objects.requireNonNull(character.getMagicOrResonance()).setValue(data.resonance);
     }
-    if (data.knowledgeSkills != null) {
-      for (CharacterData.KnowledgeSkillEntry entry : data.knowledgeSkills) {
-        if (entry.nativeLanguage) {
-          character.setNativeLanguage(entry.name);
-          continue;
-        }
-        character.addKnowledgeSkill(entry.name, KnowledgeSkillCategory.valueOf(entry.category));
-        character.getKnowledgeSkills().stream()
-            .filter(k -> k.getName().equals(entry.name))
-            .findFirst()
-            .ifPresent(k -> k.setRating(entry.rating));
-      }
-    }
-    if (data.decoupledGroups != null) {
-      data.decoupledGroups.forEach(character::decoupleGroup);
-    }
-    for (CharacterData.LogEntryData e : data.karmaLog) {
-      if (!e.date.isEmpty()) {
-        character.addKarmaEntry(new LogEntry(e.description, e.amount, LocalDate.parse(e.date)));
-      }
-    }
-    for (CharacterData.LogEntryData e : data.nuyenLog) {
-      if (!e.date.isEmpty()) {
-        character.addNuyenEntry(new LogEntry(e.description, e.amount, LocalDate.parse(e.date)));
-      }
-    }
+  }
 
-    return character;
+  private static void applyKnowledgeSkills(@NonNull Character character,
+      @NonNull CharacterData data) {
+    for (CharacterData.KnowledgeSkillEntry entry : data.knowledgeSkills) {
+      if (entry.nativeLanguage) {
+        character.setNativeLanguage(entry.name);
+        continue;
+      }
+      character.addKnowledgeSkill(entry.name, KnowledgeSkillCategory.valueOf(entry.category));
+      character.getKnowledgeSkills().stream()
+          .filter(k -> k.getName().equals(entry.name))
+          .findFirst()
+          .ifPresent(k -> k.setRating(entry.rating));
+    }
+  }
+
+  private static void applyLog(@NonNull List<CharacterData.LogEntryData> entries,
+      @NonNull Consumer<LogEntry> sink) {
+    for (CharacterData.LogEntryData e : entries) {
+      if (!e.date.isEmpty()) {
+        sink.accept(new LogEntry(e.description, e.amount, LocalDate.parse(e.date)));
+      }
+    }
   }
 }

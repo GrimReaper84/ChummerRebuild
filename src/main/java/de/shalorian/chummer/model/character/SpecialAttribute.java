@@ -2,16 +2,6 @@ package de.shalorian.chummer.model.character;
 
 import org.jspecify.annotations.NonNull;
 
-/**
- * Ein Sonderattribut (Edge, Magic oder Resonance). Nutzt bewusst nicht {@link CharacterAttribute},
- * da die BP-Kostenformel je nach Sonderattribut abweicht: Edge ist vom Rassenmaximum-Bonus
- * ausgenommen (SR4-Grundregelwerk: "Edge: 10 GP pro Attributsstufe [ausgenommen Maximierung]"),
- * während Magic/Resonance denselben Rassenmax-Bonus wie Standardattribute erhalten (der sechste
- * Punkt kostet 25 GP). Die Karma-Kosten im Karrieremodus folgen dagegen für alle drei
- * Sonderattribute derselben Formel wie Standardattribute (GRW, Kapitel Attribut-Steigerung: "Die
- * Kosten für die Steigerung eines natürlichen Attributes betragen die neue Stufe × 5" — explizit
- * inklusive Edge/Magie/Resonanz, keine Ausnahme).
- */
 public class SpecialAttribute {
 
   private static final int BP_PER_POINT = 10;
@@ -25,9 +15,8 @@ public class SpecialAttribute {
   private int value;
 
   /**
-   * @param racialMaxBonusApplies ob das Erreichen des Maximalwerts einen Kostenaufschlag von
-   *                              {@value #RACIAL_MAX_BONUS} BP auslöst (gilt für Magic/Resonance,
-   *                              nicht für Edge)
+   * @param racialMaxBonusApplies ob das Erreichen des Maximalwerts einen Kostenaufschlag von {@value #RACIAL_MAX_BONUS} BP auslöst (gilt für
+   *                              Magic/Resonance, nicht für Edge)
    */
   public SpecialAttribute(@NonNull SpecialAttributeType type, int min, int max,
       boolean racialMaxBonusApplies) {
@@ -69,10 +58,6 @@ public class SpecialAttribute {
     return getBpCostForValue(value);
   }
 
-  /**
-   * BP-Kosten, die dieses Sonderattribut bei einem hypothetischen Wert hätte — für eine
-   * Budget-Vorschau vor einer tatsächlichen Erhöhung.
-   */
   public int getBpCostForValue(int hypotheticalValue) {
     int cost = (hypotheticalValue - min) * BP_PER_POINT;
     if (racialMaxBonusApplies && hypotheticalValue == max && min != max) {
@@ -81,10 +66,6 @@ public class SpecialAttribute {
     return cost;
   }
 
-  /**
-   * Karma-Kosten um dieses Sonderattribut im Karrieremodus um 1 zu erhöhen (neuer Wert × 5) —
-   * identische Formel für Edge/Magic/Resonance, keine Rassenmax-Ausnahme.
-   */
   public int getKarmaCost() {
     return (value + 1) * KARMA_PER_POINT;
   }

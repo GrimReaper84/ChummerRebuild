@@ -14,6 +14,9 @@ import org.w3c.dom.NodeList;
 
 public class SkillDataLoader {
 
+  private SkillDataLoader() {
+  }
+
   private static @Nullable List<Skill> cache;
 
   public static synchronized @NonNull List<Skill> createFreshSkills() {
@@ -31,7 +34,9 @@ public class SkillDataLoader {
         throw new IllegalStateException("skills.xml nicht gefunden");
       }
 
-      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      Document doc = factory.newDocumentBuilder().parse(in);
       doc.getDocumentElement().normalize();
 
       List<Skill> list = new ArrayList<>();

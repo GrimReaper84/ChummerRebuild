@@ -16,7 +16,9 @@ public class CharacterData {
   public @NonNull List<SelectedQualityEntry> selectedQualities = new ArrayList<>();
   public @NonNull Map<String, Integer> attributes = new HashMap<>();
   public int edge = 0;
-  /** Wert des freigeschalteten Magic- oder Resonance-Attributs, oder null wenn nicht freigeschaltet. */
+  /**
+   * Wert des freigeschalteten Magic- oder Resonance-Attributs, oder null wenn nicht freigeschaltet.
+   */
   public @Nullable Integer magic = null;
   public @Nullable Integer resonance = null;
   public @NonNull Map<String, Integer> skills = new HashMap<>(); // name → rating (nur > 0)
@@ -26,6 +28,7 @@ public class CharacterData {
   public @NonNull List<LogEntryData> nuyenLog = new ArrayList<>();
 
   public CharacterData() {
+    // Für Jackson-Deserialisierung benötigt (public Felder werden nach dem Konstruktoraufruf per Reflection befüllt).
   }
 
   public static class SelectedQualityEntry {
@@ -67,6 +70,7 @@ public class CharacterData {
     public int amount = 0;
     public @NonNull String date = ""; // ISO-Format: "2026-04-24"
 
+    @SuppressWarnings("unused") // Für Jackson-Deserialisierung benötigt
     public LogEntryData() {
     }
 

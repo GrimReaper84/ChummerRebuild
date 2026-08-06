@@ -2,15 +2,6 @@ package de.shalorian.chummer.model.character;
 
 import org.jspecify.annotations.NonNull;
 
-/**
- * Eine vom Spieler frei benannte Wissensfertigkeit eines Charakters. Anders als aktive
- * Fertigkeiten ({@link Skill}) gibt es keine feste Referenzliste — der Name ist Freitext.
- *
- * <p>Die Muttersprache eines Charakters wird laut SR4-Grundregelwerk ebenfalls in dieser Liste
- * geführt, ist aber keine reguläre, aus dem Wissensfertigkeitspunkte-Pool bezahlte Fertigkeit:
- * Sie ist kostenlos, hat kein Rating und wird auf dem Charakterbogen mit „M" statt einer Zahl
- * notiert. Das Flag {@link #isNativeLanguage()} markiert diesen Sonderfall.
- */
 public class KnowledgeSkill {
 
   public static final int MAX_RATING = 6;
@@ -44,8 +35,7 @@ public class KnowledgeSkill {
   }
 
   /**
-   * true, wenn dies die kostenlos deklarierte Muttersprache des Charakters ist (kein Pool-
-   * Verbrauch, kein Rating, Anzeige als „M").
+   * true, wenn dies die kostenlos deklarierte Muttersprache des Charakters ist (kein Pool- Verbrauch, kein Rating, Anzeige als „M").
    */
   public boolean isNativeLanguage() {
     return nativeLanguage;

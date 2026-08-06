@@ -2,6 +2,7 @@ package de.shalorian.chummer.view;
 
 import de.shalorian.chummer.model.character.LogEntry;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -35,7 +36,7 @@ public class LogEntryDialogController {
 
   @FXML
   public void initialize() {
-    datePicker.setValue(LocalDate.now());
+    datePicker.setValue(LocalDate.now(ZoneId.systemDefault()));
     typeBox.getItems().addAll("Einnahme +", "Ausgabe −");
     typeBox.setValue("Einnahme +");
 

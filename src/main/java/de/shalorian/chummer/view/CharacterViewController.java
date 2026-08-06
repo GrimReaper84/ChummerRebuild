@@ -30,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -62,14 +63,16 @@ public class CharacterViewController {
   private static final String STYLE_ATTR_VALUE = "attr-value";
   private static final String STYLE_ATTR_RANGE = "attr-range";
   private static final String STYLE_ATTR_BP = "attr-bp";
+  private static final String STYLE_ATTR_ABBR = "attr-abbr";
+  private static final String STYLE_SECTION_TITLE = "section-title";
+  private static final String STYLE_BTN_SECONDARY = "btn-secondary";
+  private static final String MIGPANE_HIDEMODE_3 = "hidemode 3";
   private static final String KARMA_SUFFIX = " Karma";
   private static final String CELL_COL_0 = "cell 0 ";
-  private static final String CELL_COL_1 = "cell 1 ";
   private static final String CELL_COL_2 = "cell 2 ";
   private static final String CELL_COL_3 = "cell 3 ";
   private static final String CELL_COL_4 = "cell 4 ";
   private static final String CELL_COL_5 = "cell 5 ";
-  private static final String CELL_COL_6 = "cell 6 ";
   // Attribute-Refresher bleiben stabil; Skill-Refresher werden beim Entkoppeln neu aufgebaut
   private final @NonNull List<Runnable> attrRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> specialAttrRefreshers = new ArrayList<>();
@@ -154,7 +157,7 @@ public class CharacterViewController {
     attributeGridHost.getChildren().clear();
     attrRefreshers.clear();
 
-    MigPane grid = new MigPane("hidemode 3",
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[170!][46!,center][30!,center][46!,center][30!,center][90!][70!]");
 
     boolean career = character.isCreated();
@@ -193,11 +196,11 @@ public class CharacterViewController {
     specialAttrRefreshers.clear();
 
     Label sectionLabel = new Label("Sonderattribute");
-    sectionLabel.getStyleClass().add("section-title");
+    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
     VBox.setMargin(sectionLabel, new Insets(12, 0, 6, 0));
     attributeGridHost.getChildren().add(sectionLabel);
 
-    MigPane grid = new MigPane("hidemode 3",
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[170!][46!,center][30!,center][46!,center][30!,center][90!][70!]");
 
     addSpecialAttributeRow(grid, 0, ch.getEdge(), ch);
@@ -213,24 +216,9 @@ public class CharacterViewController {
   private void addSpecialAttributeRow(@NonNull MigPane grid, int row,
       @NonNull SpecialAttribute attr, @NonNull Character character) {
     SpecialAttributeType type = attr.getType();
-    Label attrNameLabel = new Label(type.getDisplayName());
-    Label abbrLabel = new Label(type.getAbbreviation());
-    Button minus = new Button("−");
-    Label valueLabel = new Label();
-    Button plus = new Button("+");
-    Label rangeLabel = new Label(attr.getMin() + " – " + attr.getMax());
-    Label bpLabel = new Label();
-
-    attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
-    abbrLabel.getStyleClass().add("attr-abbr");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    valueLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
-    rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
-    bpLabel.getStyleClass().add(STYLE_ATTR_BP);
-
-    wireIncrementable(specialAttrRefreshers, new RowControls(valueLabel, bpLabel, minus, plus),
-        character.isCreated(), new RowModel() {
+    addAttributeGridRow(grid, row, specialAttrRefreshers,
+        new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
+            attr.getMax()), new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
@@ -276,36 +264,13 @@ public class CharacterViewController {
             return type.getDisplayName() + " " + from + " → " + to;
           }
         }, character);
-
-    grid.add(attrNameLabel, CELL_COL_0 + row);
-    grid.add(abbrLabel, CELL_COL_1 + row);
-    grid.add(minus, CELL_COL_2 + row);
-    grid.add(valueLabel, CELL_COL_3 + row);
-    grid.add(plus, CELL_COL_4 + row);
-    grid.add(rangeLabel, CELL_COL_5 + row);
-    grid.add(bpLabel, CELL_COL_6 + row);
   }
 
   private void addAttributeRow(@NonNull MigPane grid, int row, @NonNull AttributeType type,
       @NonNull CharacterAttribute attr, @NonNull Character character) {
-    Label attrNameLabel = new Label(type.getDisplayName());
-    Label abbrLabel = new Label(type.getAbbreviation());
-    Button minus = new Button("−");
-    Label valueLabel = new Label();
-    Button plus = new Button("+");
-    Label rangeLabel = new Label(attr.getMin() + " – " + attr.getMax());
-    Label bpLabel = new Label();
-
-    attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
-    abbrLabel.getStyleClass().add("attr-abbr");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    valueLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
-    rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
-    bpLabel.getStyleClass().add(STYLE_ATTR_BP);
-
-    wireIncrementable(attrRefreshers, new RowControls(valueLabel, bpLabel, minus, plus),
-        character.isCreated(), new RowModel() {
+    addAttributeGridRow(grid, row, attrRefreshers,
+        new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
+            attr.getMax()), new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
@@ -356,14 +321,48 @@ public class CharacterViewController {
             return type.getDisplayName() + " " + from + " → " + to;
           }
         }, character);
+  }
 
-    grid.add(attrNameLabel, CELL_COL_0 + row);
-    grid.add(abbrLabel, CELL_COL_1 + row);
-    grid.add(minus, CELL_COL_2 + row);
-    grid.add(valueLabel, CELL_COL_3 + row);
-    grid.add(plus, CELL_COL_4 + row);
-    grid.add(rangeLabel, CELL_COL_5 + row);
-    grid.add(bpLabel, CELL_COL_6 + row);
+  /**
+   * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Bereich, BP-/Karma-Kosten) in ein
+   * MigPane ein und verdrahtet sie über {@link #wireIncrementable}. Gemeinsam genutzt von
+   * {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle
+   * und {@link RowModel#canIncrement()} unterscheiden.
+   */
+  private void addAttributeGridRow(@NonNull MigPane grid, int row,
+      @NonNull List<Runnable> refresherList, @NonNull AttributeRowLabel label,
+      @NonNull RowModel model, @NonNull Character character) {
+    Label attrNameLabel = new Label(label.displayName());
+    Label abbrLabel = new Label(label.abbreviation());
+    Button minus = new Button("−");
+    Label valueLabel = new Label();
+    Button plus = new Button("+");
+    Label rangeLabel = new Label(label.min() + " – " + label.max());
+    Label bpLabel = new Label();
+
+    attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    abbrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    valueLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
+    bpLabel.getStyleClass().add(STYLE_ATTR_BP);
+
+    wireIncrementable(refresherList, new RowControls(valueLabel, bpLabel, minus, plus),
+        character.isCreated(), model, character);
+
+    addRowCells(grid, row, attrNameLabel, abbrLabel, minus, valueLabel, plus, rangeLabel, bpLabel);
+  }
+
+  /**
+   * Fügt die übergebenen Knoten spaltenweise (Spalte 0, 1, 2, …) in {@code grid} ein, in der
+   * angegebenen Zeile. Gemeinsam genutzt von allen Grid-Zeilen-Buildern, die durchgehend ab
+   * Spalte 0 befüllen (Attribut-, Sonderattribut-, Wissensfertigkeiten- und Skill-Zeilen).
+   */
+  private void addRowCells(@NonNull MigPane grid, int row, @NonNull Node... cells) {
+    for (int col = 0; col < cells.length; col++) {
+      grid.add(cells[col], "cell " + col + " " + row);
+    }
   }
 
   // ── Skills-Tab ────────────────────────────────────────────
@@ -385,7 +384,7 @@ public class CharacterViewController {
       }
 
       Label catLabel = new Label(catEntry.getKey().getDisplayName());
-      catLabel.getStyleClass().add("section-title");
+      catLabel.getStyleClass().add(STYLE_SECTION_TITLE);
       VBox.setMargin(catLabel, new Insets(firstSection ? 0 : 20, 0, 4, 0));
       skillsContainer.getChildren().add(catLabel);
       firstSection = false;
@@ -460,14 +459,14 @@ public class CharacterViewController {
     knowledgeSkillRefreshers.clear();
 
     Label sectionLabel = new Label("Wissensfertigkeiten");
-    sectionLabel.getStyleClass().add("section-title");
+    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
     VBox.setMargin(sectionLabel, new Insets(20, 0, 4, 0));
 
     Label poolLabel = new Label();
     poolLabel.getStyleClass().add("bp-label");
 
     Button addBtn = new Button("Hinzufügen");
-    addBtn.getStyleClass().add("btn-secondary");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     addBtn.setOnAction(e -> onAddKnowledgeSkill());
 
     HBox header = new HBox(8);
@@ -514,7 +513,7 @@ public class CharacterViewController {
     label.getStyleClass().add(STYLE_ATTR_NAME);
 
     Button editBtn = new Button("Ändern");
-    editBtn.getStyleClass().add("btn-secondary");
+    editBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
 
     Runnable refresh = () -> {
       KnowledgeSkill nativeLanguage = ch.getNativeLanguage();
@@ -546,7 +545,7 @@ public class CharacterViewController {
   }
 
   private @NonNull MigPane buildKnowledgeSkillGrid() {
-    MigPane grid = new MigPane("hidemode 3",
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[200!][90!][30!,center][30!,center][30!,center][70!][90!]");
     grid.getStyleClass().add("attr-grid");
     return grid;
@@ -563,12 +562,12 @@ public class CharacterViewController {
     Button removeBtn = new Button("Entfernen");
 
     nameLabelDummy.getStyleClass().add(STYLE_ATTR_NAME);
-    categoryLabel.getStyleClass().add("attr-abbr");
+    categoryLabel.getStyleClass().add(STYLE_ATTR_ABBR);
     minus.getStyleClass().add(STYLE_ATTR_BTN);
     ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
     costLabel.getStyleClass().add(STYLE_ATTR_BP);
-    removeBtn.getStyleClass().add("btn-secondary");
+    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
 
     wireIncrementable(knowledgeSkillRefreshers, new RowControls(ratingLabel, costLabel, minus, plus),
         character.isCreated(), new RowModel() {
@@ -634,13 +633,8 @@ public class CharacterViewController {
       refreshAllRows();
     });
 
-    grid.add(nameLabelDummy, CELL_COL_0 + row);
-    grid.add(categoryLabel, CELL_COL_1 + row);
-    grid.add(minus, CELL_COL_2 + row);
-    grid.add(ratingLabel, CELL_COL_3 + row);
-    grid.add(plus, CELL_COL_4 + row);
-    grid.add(costLabel, CELL_COL_5 + row);
-    grid.add(removeBtn, CELL_COL_6 + row);
+    addRowCells(grid, row, nameLabelDummy, categoryLabel, minus, ratingLabel, plus, costLabel,
+        removeBtn);
   }
 
   private void onAddKnowledgeSkill() {
@@ -726,13 +720,13 @@ public class CharacterViewController {
   private @NonNull HBox buildQualitySectionHeader(@NonNull String title,
       @NonNull QualityType type, boolean career, @NonNull Character ch) {
     Label sectionLabel = new Label(title);
-    sectionLabel.getStyleClass().add("section-title");
+    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
 
     Label limitLabel = new Label();
     limitLabel.getStyleClass().add("bp-label");
 
     Button addBtn = new Button("Hinzufügen");
-    addBtn.getStyleClass().add("btn-secondary");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     addBtn.setOnAction(e -> onAddQuality(type));
 
     HBox header = new HBox(8);
@@ -784,7 +778,7 @@ public class CharacterViewController {
 
     if (!isMetatype) {
       Button removeBtn = new Button("Entfernen");
-      removeBtn.getStyleClass().add("btn-secondary");
+      removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
       removeBtn.setOnAction(e -> onRemoveQuality(q));
       grid.add(removeBtn, 3, row);
     }
@@ -803,7 +797,7 @@ public class CharacterViewController {
     String qualityName = q.data().name();
     if (c.isCreated() && q.data().type() == QualityType.NEGATIVE && !q.gratis()) {
       int karmaCost = c.getQualityKarmaCost(q.data());
-      if (!chargeQualityKarma(c, "%s loswerden".formatted(qualityName), karmaCost)) {
+      if (qualityKarmaChargeFailed(c, "%s loswerden".formatted(qualityName), karmaCost)) {
         return;
       }
     }
@@ -819,9 +813,11 @@ public class CharacterViewController {
    * den Erwerb einer Gabe bzw. das Loswerden eines Handicaps im Karrieremodus (siehe
    * {@link Character#getQualityKarmaCost}).
    *
-   * @return true, wenn das Karma verbucht wurde und die eigentliche Aktion fortgesetzt werden darf
+   * @return true, wenn das Karma NICHT verbucht wurde (fehlendes Karma oder abgebrochen) — die
+   *     Aufrufer sollen in diesem Fall die eigentliche Aktion abbrechen
    */
-  private boolean chargeQualityKarma(@NonNull Character c, @NonNull String label, int karmaCost) {
+  private boolean qualityKarmaChargeFailed(@NonNull Character c, @NonNull String label,
+      int karmaCost) {
     if (c.getKarmaTotal() < karmaCost) {
       Notifications.create()
           .title("Nicht genug Karma")
@@ -829,14 +825,14 @@ public class CharacterViewController {
           .position(Pos.BOTTOM_RIGHT)
           .owner(nameLabel.getScene().getWindow())
           .showWarning();
-      return false;
+      return true;
     }
     if (!confirmKarmaSpend(label, karmaCost, c)) {
-      return false;
+      return true;
     }
     c.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
     updateLogDisplay();
-    return true;
+    return false;
   }
 
   private void rebuildQualitiesTab() {
@@ -894,7 +890,7 @@ public class CharacterViewController {
     // Eine Gabe im Karrieremodus erwerben kostet die doppelten GP-Kosten in Karma.
     if (ch.isCreated() && r.data().type() == QualityType.POSITIVE && !r.gratis()) {
       int karmaCost = ch.getQualityKarmaCost(r.data());
-      if (!chargeQualityKarma(ch, "%s erwerben".formatted(r.data().name()), karmaCost)) {
+      if (qualityKarmaChargeFailed(ch, "%s erwerben".formatted(r.data().name()), karmaCost)) {
         return;
       }
     }
@@ -911,7 +907,7 @@ public class CharacterViewController {
   }
 
   private @NonNull MigPane buildSkillGrid() {
-    MigPane grid = new MigPane("hidemode 3",
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[200!][46!,center][30!,center][46!,center][30!,center][70!]");
     grid.getStyleClass().add("attr-grid");
     return grid;
@@ -1046,7 +1042,7 @@ public class CharacterViewController {
     Label bpLabel = new Label();
 
     skillNameLabel.getStyleClass().add(coupled ? "attr-name-coupled" : STYLE_ATTR_NAME);
-    attrLabel.getStyleClass().add("attr-abbr");
+    attrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
     minus.getStyleClass().add(STYLE_ATTR_BTN);
     ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
@@ -1122,12 +1118,7 @@ public class CharacterViewController {
           }, character);
     }
 
-    grid.add(skillNameLabel, CELL_COL_0 + row);
-    grid.add(attrLabel, CELL_COL_1 + row);
-    grid.add(minus, CELL_COL_2 + row);
-    grid.add(ratingLabel, CELL_COL_3 + row);
-    grid.add(plus, CELL_COL_4 + row);
-    grid.add(bpLabel, CELL_COL_5 + row);
+    addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, bpLabel);
   }
 
   // ── Gemeinsam ─────────────────────────────────────────────
@@ -1511,6 +1502,15 @@ public class CharacterViewController {
   }
 
   private record DialogHandle(@NonNull FXMLLoader loader, @NonNull Stage stage) {
+
+  }
+
+  /**
+   * Anzeigedaten einer Attribut-Zeile ({@link #addAttributeGridRow}), unabhängig davon ob sie von
+   * einem Standard- oder Sonderattribut stammen.
+   */
+  private record AttributeRowLabel(
+      @NonNull String displayName, @NonNull String abbreviation, int min, int max) {
 
   }
 }
