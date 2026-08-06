@@ -29,6 +29,7 @@ public class Character {
   private static final int ACTIVE_SKILL_SPECIALIZATION_BP = 2;
   private static final int SPECIALIZATION_KARMA_COST = 2;
   private static final int MIN_RATING_FOR_SPECIALIZATION = 1;
+  private static final int CONTACT_BP_PER_POINT = 1;
 
   private static final double BASE_ESSENCE = 6.0;
 
@@ -37,6 +38,7 @@ public class Character {
   private final Set<String> decoupledGroups;
   private final List<CharacterQuality> qualities = new ArrayList<>();
   private final List<KnowledgeSkill> knowledgeSkills = new ArrayList<>();
+  private final List<Contact> contacts = new ArrayList<>();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private @NonNull String name;
@@ -728,6 +730,40 @@ public class Character {
     return isKnowledgeSkillCostDoubled(skill.getCategory()) ? cost * 2 : cost;
   }
 
+  // --- Kontakte ---
+
+  public @NonNull List<Contact> getContacts() {
+    return Collections.unmodifiableList(contacts);
+  }
+
+  /**
+   * Fügt einen neuen Kontakt hinzu. Connection und Loyalty starten auf {@link
+   * Contact#MIN_RATING} (siehe {@link Contact#Contact(String, String)}). Namensduplikate sind
+   * bewusst erlaubt (zwei Kontakte können denselben Namen tragen) — {@link
+   * #removeContact(Contact)} arbeitet deshalb über die Objektreferenz statt über den Namen.
+   */
+  public void addContact(@NonNull String name, @Nullable String description) {
+    contacts.add(new Contact(name, description));
+  }
+
+  public void removeContact(@NonNull Contact contact) {
+    contacts.remove(contact);
+  }
+
+  /**
+   * BP-Kosten aller Kontakte zusammen: (Connection + Loyalty) × 1 Punkt je Kontakt, aus dem
+   * allgemeinen Budget, ohne Freibetrag (die ursprünglich angenommene CHA×2-Freimenge ist im
+   * C#-Original nur eine standardmäßig deaktivierte Hausregel, siehe
+   * {@code docs/kontakte_analyse.md}). Wird nur während der Erstellung angezeigt/geprüft — im
+   * Karrieremodus bleiben Kontakte kostenlos änderbar (SR4-Grundregelwerk: Connections werden
+   * nicht mit Karma gekauft, siehe {@code docs/kontakte_java_analyse.md}).
+   */
+  public int getContactBP() {
+    return contacts.stream()
+        .mapToInt(c -> (c.getConnection() + c.getLoyalty()) * CONTACT_BP_PER_POINT)
+        .sum();
+  }
+
   // --- BP ---
   public int getSpentBP() {
     int attrBP = getAttributeBP();
@@ -754,7 +790,7 @@ public class Character {
 
     return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
         + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP()
-        + getActiveSkillSpecializationBP();
+        + getActiveSkillSpecializationBP() + getContactBP();
   }
 
   public int getRemainingBP() {

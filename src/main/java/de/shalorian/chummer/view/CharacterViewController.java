@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterAttribute;
 import de.shalorian.chummer.model.character.CharacterQuality;
+import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkill;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeData;
@@ -42,6 +43,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -79,6 +81,7 @@ public class CharacterViewController {
   private final @NonNull List<Runnable> skillRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> knowledgeSkillRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> qualityRefreshers = new ArrayList<>();
+  private final @NonNull List<Runnable> contactRefreshers = new ArrayList<>();
   @FXML
   private Label nameLabel;
   @FXML
@@ -117,6 +120,8 @@ public class CharacterViewController {
   private Label nuyenStatusLabel;
   @FXML
   private VBox qualitiesContainer;
+  @FXML
+  private VBox contactsContainer;
   private @Nullable Character character;
 
   @FXML
@@ -182,11 +187,9 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut die Sektion für die Sonderattribute Edge/Magic/Resonance unterhalb des
-   * Standardattribut-Grids. Edge ist immer sichtbar; Magic bzw. Resonance werden nur gerendert,
-   * wenn der Charakter eine entsprechende Quality besitzt (siehe {@link Character#hasMagic()}/
-   * {@link Character#hasResonance()}) — analog zum Verbergen im Original, siehe
-   * SR4-Regelwerksabgleich.
+   * Baut die Sektion für die Sonderattribute Edge/Magic/Resonance unterhalb des Standardattribut-Grids. Edge ist immer sichtbar; Magic bzw. Resonance
+   * werden nur gerendert, wenn der Charakter eine entsprechende Quality besitzt (siehe {@link Character#hasMagic()}/
+   * {@link Character#hasResonance()}) — analog zum Verbergen im Original, siehe SR4-Regelwerksabgleich.
    */
   private void buildSpecialAttributeSection() {
     Character ch = this.character;
@@ -324,10 +327,9 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Bereich, BP-/Karma-Kosten) in ein
-   * MigPane ein und verdrahtet sie über {@link #wireIncrementable}. Gemeinsam genutzt von
-   * {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle
-   * und {@link RowModel#canIncrement()} unterscheiden.
+   * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Bereich, BP-/Karma-Kosten) in ein MigPane ein und verdrahtet sie über
+   * {@link #wireIncrementable}. Gemeinsam genutzt von {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
+   * {@link RowModel#canIncrement()} unterscheiden.
    */
   private void addAttributeGridRow(@NonNull MigPane grid, int row,
       @NonNull List<Runnable> refresherList, @NonNull AttributeRowLabel label,
@@ -355,9 +357,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Fügt die übergebenen Knoten spaltenweise (Spalte 0, 1, 2, …) in {@code grid} ein, in der
-   * angegebenen Zeile. Gemeinsam genutzt von allen Grid-Zeilen-Buildern, die durchgehend ab
-   * Spalte 0 befüllen (Attribut-, Sonderattribut-, Wissensfertigkeiten- und Skill-Zeilen).
+   * Fügt die übergebenen Knoten spaltenweise (Spalte 0, 1, 2, …) in {@code grid} ein, in der angegebenen Zeile. Gemeinsam genutzt von allen
+   * Grid-Zeilen-Buildern, die durchgehend ab Spalte 0 befüllen (Attribut-, Sonderattribut-, Wissensfertigkeiten- und Skill-Zeilen).
    */
   private void addRowCells(@NonNull MigPane grid, int row, @NonNull Node... cells) {
     for (int col = 0; col < cells.length; col++) {
@@ -803,9 +804,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Entfernt eine gewählte Quality. Handicaps im Karrieremodus loswerden kostet die doppelten
-   * GP-Kosten in Karma (siehe {@link Character#getQualityKarmaCost}); alle anderen Fälle
-   * (Erstellungsmodus, Gaben, Gratis-Qualities) bleiben unverändert kostenlos.
+   * Entfernt eine gewählte Quality. Handicaps im Karrieremodus loswerden kostet die doppelten GP-Kosten in Karma (siehe
+   * {@link Character#getQualityKarmaCost}); alle anderen Fälle (Erstellungsmodus, Gaben, Gratis-Qualities) bleiben unverändert kostenlos.
    */
   private void onRemoveQuality(@NonNull CharacterQuality q) {
     Character c = this.character;
@@ -827,12 +827,11 @@ public class CharacterViewController {
   }
 
   /**
-   * Prüft Karma-Verfügbarkeit, holt eine Bestätigung ein und verbucht den Karma-Log-Eintrag für
-   * den Erwerb einer Gabe bzw. das Loswerden eines Handicaps im Karrieremodus (siehe
-   * {@link Character#getQualityKarmaCost}).
+   * Prüft Karma-Verfügbarkeit, holt eine Bestätigung ein und verbucht den Karma-Log-Eintrag für den Erwerb einer Gabe bzw. das Loswerden eines
+   * Handicaps im Karrieremodus (siehe {@link Character#getQualityKarmaCost}).
    *
-   * @return true, wenn das Karma NICHT verbucht wurde (fehlendes Karma oder abgebrochen) — die
-   *     Aufrufer sollen in diesem Fall die eigentliche Aktion abbrechen
+   * @return true, wenn das Karma NICHT verbucht wurde (fehlendes Karma oder abgebrochen) — die Aufrufer sollen in diesem Fall die eigentliche Aktion
+   * abbrechen
    */
   private boolean qualityKarmaChargeFailed(@NonNull Character c, @NonNull String label,
       int karmaCost) {
@@ -1035,7 +1034,7 @@ public class CharacterViewController {
       int rating = character.getGroupRating(groupName);
       String costInfo = rating > 0
           ? "\nAchtung: Die " + groupName + "-Skills werden ab jetzt einzeln bepreist "
-            + "(je " + (rating * 4) + " BP statt " + (rating * 10) + " BP gesamt)."
+          + "(je " + (rating * 4) + " BP statt " + (rating * 10) + " BP gesamt)."
           : "";
       confirm.setContentText(
           "Nach dem Auskoppeln können die Skills der Gruppe unabhängig voneinander "
@@ -1157,6 +1156,247 @@ public class CharacterViewController {
         specBtn);
   }
 
+  // ── Kontakte-Tab ──────────────────────────────────────────
+
+  private void buildContactsTab() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    contactsContainer.getChildren().clear();
+    contactRefreshers.clear();
+
+    Label sectionLabel = new Label("Kontakte");
+    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
+    VBox.setMargin(sectionLabel, new Insets(0, 0, 4, 0));
+
+    Button addBtn = new Button("Hinzufügen");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    addBtn.setOnAction(e -> onAddContact());
+
+    HBox header = new HBox(8);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.getChildren().add(sectionLabel);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().add(spacer);
+    header.getChildren().add(addBtn);
+    contactsContainer.getChildren().add(header);
+
+    MigPane grid = buildContactGrid();
+    contactsContainer.getChildren().add(grid);
+
+    int row = 0;
+    for (Contact contact : ch.getContacts()) {
+      addContactRow(grid, row++, contact, ch);
+    }
+  }
+
+  private @NonNull MigPane buildContactGrid() {
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
+        "[180!][80!][30!,center][30!,center][30!,center][50!][30!,center][30!,center][30!,center][50!][90!]");
+    grid.getStyleClass().add("attr-grid");
+    return grid;
+  }
+
+  private void addContactRow(@NonNull MigPane grid, int row, @NonNull Contact contact,
+      @NonNull Character character) {
+    Label nameLabelDummy = new Label(contact.getName());
+    Button editBtn = new Button("Bearbeiten");
+    Button connectionMinus = new Button("−");
+    Label connectionValue = new Label();
+    Button connectionPlus = new Button("+");
+    Label connectionCost = new Label();
+    Button loyaltyMinus = new Button("−");
+    Label loyaltyValue = new Label();
+    Button loyaltyPlus = new Button("+");
+    Label loyaltyCost = new Label();
+    Button removeBtn = new Button("Entfernen");
+
+    nameLabelDummy.getStyleClass().add(STYLE_ATTR_NAME);
+    editBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    connectionMinus.getStyleClass().add(STYLE_ATTR_BTN);
+    connectionValue.getStyleClass().add(STYLE_ATTR_VALUE);
+    connectionPlus.getStyleClass().add(STYLE_ATTR_BTN);
+    connectionCost.getStyleClass().add(STYLE_ATTR_BP);
+    loyaltyMinus.getStyleClass().add(STYLE_ATTR_BTN);
+    loyaltyValue.getStyleClass().add(STYLE_ATTR_VALUE);
+    loyaltyPlus.getStyleClass().add(STYLE_ATTR_BTN);
+    loyaltyCost.getStyleClass().add(STYLE_ATTR_BP);
+    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+
+    Runnable tooltipRefresh = () -> {
+      String description = contact.getDescription();
+      Tooltip.install(nameLabelDummy, description != null ? new Tooltip(description) : null);
+    };
+    contactRefreshers.add(tooltipRefresh);
+    tooltipRefresh.run();
+
+    editBtn.setOnAction(e -> onEditContact(contact));
+
+    boolean career = character.isCreated();
+
+    RowModel connectionModel = new RowModel() {
+      @Override
+      public int value() {
+        return contact.getConnection();
+      }
+
+      @Override
+      public int min() {
+        return Contact.MIN_RATING;
+      }
+
+      @Override
+      public int max() {
+        return Contact.MAX_RATING;
+      }
+
+      @Override
+      public int bpStepCost() {
+        return 1;
+      }
+
+      @Override
+      public @NonNull String bpDisplayText() {
+        return contact.getConnection() >= Contact.MAX_RATING ? "–" : "1 BP";
+      }
+
+      @Override
+      public int karmaStepCost() {
+        return 0;
+      }
+
+      @Override
+      public void increment() {
+        contact.setConnection(contact.getConnection() + 1);
+      }
+
+      @Override
+      public void decrement() {
+        contact.setConnection(contact.getConnection() - 1);
+      }
+
+      @Override
+      public @NonNull String actionLabel(int from, int to) {
+        return contact.getName() + " Connection " + from + " → " + to;
+      }
+    };
+
+    RowModel loyaltyModel = new RowModel() {
+      @Override
+      public int value() {
+        return contact.getLoyalty();
+      }
+
+      @Override
+      public int min() {
+        return Contact.MIN_RATING;
+      }
+
+      @Override
+      public int max() {
+        return Contact.MAX_RATING;
+      }
+
+      @Override
+      public int bpStepCost() {
+        return 1;
+      }
+
+      @Override
+      public @NonNull String bpDisplayText() {
+        return contact.getLoyalty() >= Contact.MAX_RATING ? "–" : "1 BP";
+      }
+
+      @Override
+      public int karmaStepCost() {
+        return 0;
+      }
+
+      @Override
+      public void increment() {
+        contact.setLoyalty(contact.getLoyalty() + 1);
+      }
+
+      @Override
+      public void decrement() {
+        contact.setLoyalty(contact.getLoyalty() - 1);
+      }
+
+      @Override
+      public @NonNull String actionLabel(int from, int to) {
+        return contact.getName() + " Loyalty " + from + " → " + to;
+      }
+    };
+
+    if (career) {
+      wireFreeIncrementable(contactRefreshers,
+          new RowControls(connectionValue, connectionCost, connectionMinus, connectionPlus),
+          connectionModel);
+      wireFreeIncrementable(contactRefreshers,
+          new RowControls(loyaltyValue, loyaltyCost, loyaltyMinus, loyaltyPlus), loyaltyModel);
+    } else {
+      wireIncrementable(contactRefreshers,
+          new RowControls(connectionValue, connectionCost, connectionMinus, connectionPlus), false,
+          connectionModel, character);
+      wireIncrementable(contactRefreshers,
+          new RowControls(loyaltyValue, loyaltyCost, loyaltyMinus, loyaltyPlus), false, loyaltyModel,
+          character);
+    }
+
+    removeBtn.setOnAction(e -> {
+      character.removeContact(contact);
+      buildContactsTab();
+      updateBpDisplay();
+      refreshAllRows();
+    });
+
+    addRowCells(grid, row, nameLabelDummy, editBtn, connectionMinus, connectionValue, connectionPlus,
+        connectionCost, loyaltyMinus, loyaltyValue, loyaltyPlus, loyaltyCost, removeBtn);
+  }
+
+  private void onAddContact() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    try {
+      DialogHandle dialog = openDialog("ContactEditDialog.fxml", "Kontakt hinzufügen");
+      ContactEditDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(r -> {
+        ch.addContact(r.name(), r.description());
+        buildContactsTab();
+        updateBpDisplay();
+        refreshAllRows();
+      });
+    } catch (IOException e) {
+      showDialogLoadError();
+    }
+  }
+
+  private void onEditContact(@NonNull Contact contact) {
+    try {
+      DialogHandle dialog = openDialog("ContactEditDialog.fxml", "Kontakt bearbeiten");
+      ContactEditDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.prefill(contact);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(r -> {
+        contact.setName(r.name());
+        contact.setDescription(r.description());
+        buildContactsTab();
+        refreshAllRows();
+      });
+    } catch (IOException e) {
+      showDialogLoadError();
+    }
+  }
+
   // ── Gemeinsam ─────────────────────────────────────────────
 
   /**
@@ -1275,16 +1515,52 @@ public class CharacterViewController {
     refresh.run();
   }
 
+  /**
+   * Verdrahtet eine +/−-Zeile ohne jegliche BP-/Karma-Kosten und ohne Bestätigung — für Werte, die in beiden Richtungen jederzeit frei änderbar
+   * bleiben sollen. Aktuell nur für Kontakt-Ratings im Karrieremodus genutzt (siehe {@code docs/kontakte_plan.md}: das SR4-Grundregelwerk kennt
+   * keinen Karma-Kauf für Connections). Bewusst getrennt von {@link #wireCareerIncrementable}, das strukturell einen Karma-Preis voraussetzt und das
+   * Minus-Control ausblendet — beides passt hier nicht.
+   */
+  private void wireFreeIncrementable(@NonNull List<Runnable> refresherList,
+      @NonNull RowControls controls, @NonNull RowModel model) {
+    Label valueLabel = controls.valueLabel();
+    Label costLabel = controls.costLabel();
+    Button minus = controls.minus();
+    Button plus = controls.plus();
+
+    Runnable refresh = () -> {
+      int val = model.value();
+      valueLabel.setText(model.valueDisplayText());
+      costLabel.setText("");
+      minus.setDisable(val <= model.min());
+      plus.setDisable(val >= model.max());
+    };
+    refresherList.add(refresh);
+
+    minus.setOnAction(e -> {
+      if (model.value() > model.min()) {
+        model.decrement();
+        refreshAllRows();
+      }
+    });
+    plus.setOnAction(e -> {
+      if (model.value() < model.max()) {
+        model.increment();
+        refreshAllRows();
+      }
+    });
+
+    refresh.run();
+  }
+
   private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
       @NonNull Character character) {
     return confirmKarmaSpend(label, karmaCost, character, null);
   }
 
   /**
-   * Wie {@link #confirmKarmaSpend(String, int, Character)}, aber mit einem optionalen
-   * Zusatzhinweis (z.B. Gruppenauflösungs-Warnung), der vor dem eigentlichen Kostentext
-   * eingeblendet wird — ein einziger kombinierter Dialog statt zweier verschachtelter
-   * Bestätigungen.
+   * Wie {@link #confirmKarmaSpend(String, int, Character)}, aber mit einem optionalen Zusatzhinweis (z.B. Gruppenauflösungs-Warnung), der vor dem
+   * eigentlichen Kostentext eingeblendet wird — ein einziger kombinierter Dialog statt zweier verschachtelter Bestätigungen.
    */
   private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
       @NonNull Character character, @Nullable String extraWarning) {
@@ -1302,12 +1578,10 @@ public class CharacterViewController {
   }
 
   /**
-   * Öffnet den Freitext-Dialog zum Setzen/Ändern der Spezialisierung einer aktiven Fertigkeit
-   * (analog {@link #buildNativeLanguageRow}). Im Erstellungsmodus wird direkt gesetzt (kostet nur
-   * beim erstmaligen Setzen den Fixpreis aus {@link Character#getActiveSkillSpecializationBpCost()},
-   * ein späteres Umbenennen ist kostenlos). Im Karrieremodus kostet jedes Setzen/Ändern erneut
-   * Karma (SR4-Grundregelwerk S. 312); ist die Fertigkeit noch Teil einer gekoppelten
-   * Fertigkeitsgruppe, wird das Auflösen der Gruppe im selben Bestätigungsdialog mit angekündigt.
+   * Öffnet den Freitext-Dialog zum Setzen/Ändern der Spezialisierung einer aktiven Fertigkeit (analog {@link #buildNativeLanguageRow}). Im
+   * Erstellungsmodus wird direkt gesetzt (kostet nur beim erstmaligen Setzen den Fixpreis aus {@link Character#getActiveSkillSpecializationBpCost()},
+   * ein späteres Umbenennen ist kostenlos). Im Karrieremodus kostet jedes Setzen/Ändern erneut Karma (SR4-Grundregelwerk S. 312); ist die Fertigkeit
+   * noch Teil einer gekoppelten Fertigkeitsgruppe, wird das Auflösen der Gruppe im selben Bestätigungsdialog mit angekündigt.
    */
   private void onEditSkillSpecialization(@NonNull Skill skill, @NonNull Character character) {
     if (!character.canSpecializeSkill(skill)) {
@@ -1332,8 +1606,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Karrieremodus-Zweig von {@link #applySkillSpecialization}: Karma-Bestätigung (kombiniert mit
-   * einem Gruppenauflösungs-Hinweis, falls die Fertigkeit noch gekoppelt ist), dann Buchung.
+   * Karrieremodus-Zweig von {@link #applySkillSpecialization}: Karma-Bestätigung (kombiniert mit einem Gruppenauflösungs-Hinweis, falls die
+   * Fertigkeit noch gekoppelt ist), dann Buchung.
    */
   private void applySkillSpecializationInCareerMode(@NonNull Skill skill,
       @NonNull Character character, @Nullable String newSpec) {
@@ -1344,7 +1618,7 @@ public class CharacterViewController {
     String groupName = skill.getGroupName();
     String warning = groupName != null && character.isGroupCoupled(groupName)
         ? "Dies löst die Fertigkeitsgruppe \"" + groupName + "\" auf. Die Mitglieder "
-            + "behalten ihr aktuelles Rating, können danach aber einzeln gesteigert werden."
+        + "behalten ihr aktuelles Rating, können danach aber einzeln gesteigert werden."
         : null;
     String label = skill.getName() + ": Spezialisierung \"" + (newSpec == null ? "–" : newSpec) + "\"";
     if (confirmKarmaSpend(label, karmaCost, character, warning)) {
@@ -1356,9 +1630,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Erstellungsmodus-Zweig von {@link #applySkillSpecialization}: erstmaliges Setzen kostet den
-   * Fixpreis aus {@link Character#getActiveSkillSpecializationBpCost()}, ein späteres Umbenennen
-   * oder Löschen ist kostenlos.
+   * Erstellungsmodus-Zweig von {@link #applySkillSpecialization}: erstmaliges Setzen kostet den Fixpreis aus
+   * {@link Character#getActiveSkillSpecializationBpCost()}, ein späteres Umbenennen oder Löschen ist kostenlos.
    */
   private void applySkillSpecializationInCreationMode(@NonNull Skill skill,
       @NonNull Character character, @Nullable String newSpec) {
@@ -1373,12 +1646,10 @@ public class CharacterViewController {
   }
 
   /**
-   * Öffnet den Freitext-Dialog zum Setzen/Ändern der Spezialisierung einer Wissensfertigkeit.
-   * Im Erstellungsmodus zählt eine neue Spezialisierung als +1 Punkt zum Wissensfertigkeitspunkte-
-   * Pool ({@link Character#getKnowledgeSkillSpecializationBP()}); im Karrieremodus
-   * kostet jedes Setzen/Ändern erneut Karma (SR4-Grundregelwerk S. 312). Wissensfertigkeiten haben
-   * keine Gruppen, daher entfällt der Gruppenauflösungs-Hinweis aus {@link
-   * #onEditSkillSpecialization}.
+   * Öffnet den Freitext-Dialog zum Setzen/Ändern der Spezialisierung einer Wissensfertigkeit. Im Erstellungsmodus zählt eine neue Spezialisierung als
+   * +1 Punkt zum Wissensfertigkeitspunkte- Pool ({@link Character#getKnowledgeSkillSpecializationBP()}); im Karrieremodus kostet jedes Setzen/Ändern
+   * erneut Karma (SR4-Grundregelwerk S. 312). Wissensfertigkeiten haben keine Gruppen, daher entfällt der Gruppenauflösungs-Hinweis aus
+   * {@link #onEditSkillSpecialization}.
    */
   private void onEditKnowledgeSkillSpecialization(@NonNull KnowledgeSkill skill,
       @NonNull Character character) {
@@ -1420,10 +1691,9 @@ public class CharacterViewController {
   }
 
   /**
-   * Erstellungsmodus-Zweig von {@link #applyKnowledgeSkillSpecialization}: erstmaliges Setzen
-   * kostet ggf. BP, falls es den Wissensfertigkeitspunkte-Pool überschreitet (siehe {@link
-   * Character#getKnowledgeSkillSpecializationBP()}), ein späteres Umbenennen oder Löschen ist
-   * kostenlos.
+   * Erstellungsmodus-Zweig von {@link #applyKnowledgeSkillSpecialization}: erstmaliges Setzen kostet ggf. BP, falls es den
+   * Wissensfertigkeitspunkte-Pool überschreitet (siehe {@link Character#getKnowledgeSkillSpecializationBP()}), ein späteres Umbenennen oder Löschen
+   * ist kostenlos.
    */
   private void applyKnowledgeSkillSpecializationInCreationMode(@NonNull KnowledgeSkill skill,
       @NonNull Character character, @Nullable String newSpec) {
@@ -1443,6 +1713,7 @@ public class CharacterViewController {
     skillRefreshers.forEach(Runnable::run);
     knowledgeSkillRefreshers.forEach(Runnable::run);
     qualityRefreshers.forEach(Runnable::run);
+    contactRefreshers.forEach(Runnable::run);
   }
 
   private void updateBpDisplay() {
@@ -1543,6 +1814,7 @@ public class CharacterViewController {
     buildAttributeGrid();
     buildSkillsTab();
     buildQualitiesTab();
+    buildContactsTab();
   }
 
   @SuppressWarnings("unchecked")

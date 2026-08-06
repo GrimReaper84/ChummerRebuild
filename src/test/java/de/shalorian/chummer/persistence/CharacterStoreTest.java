@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkill;
 import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
@@ -185,6 +186,27 @@ class CharacterStoreTest {
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals("Bandenkriminalität", loaded.getKnowledgeSkills().get(0).getSpecialization());
+  }
+
+  @Test
+  void roundtripPreservesContacts() throws IOException {
+    Character original = mensch("Test");
+    original.addContact("Sam", "Fixer im Barrens, mag keine Überraschungen");
+    Contact contact = original.getContacts().get(0);
+    contact.setConnection(4);
+    contact.setLoyalty(3);
+    original.addContact("Sam", null); // Duplikat-Name bewusst erlaubt
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(2, loaded.getContacts().size());
+    Contact loadedFirst = loaded.getContacts().get(0);
+    assertEquals("Sam", loadedFirst.getName());
+    assertEquals("Fixer im Barrens, mag keine Überraschungen", loadedFirst.getDescription());
+    assertEquals(4, loadedFirst.getConnection());
+    assertEquals(3, loadedFirst.getLoyalty());
+    assertNull(loaded.getContacts().get(1).getDescription());
   }
 
   @Test

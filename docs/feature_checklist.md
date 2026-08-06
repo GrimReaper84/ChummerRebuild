@@ -71,7 +71,7 @@
 | Erstellungs-Cap: 1×6 ODER 2×5, Rest max. 4                       | ✅      | GRW S. 109 verifiziert, `Character.canRaiseSkillAtCreation()`, 2026-08-04                    |
 | Erstellungs-Cap: Fertigkeitsgruppen max. 4                       | ✅      | GRW S. 109 verifiziert, `Character.canRaiseGroupAtCreation()`, 2026-08-04                    |
 | Karrieremodus: neue Fertigkeitsgruppe kostet pauschal 10 Karma   | ✅      | `Character.getGroupKarmaCost()`, 2026-08-04                                                  |
-| Spezialisierungen (+2 BP / +2 Karma)                             | ❌      | Nicht modelliert                                                                             |
+| Spezialisierungen (+2 BP / +2 Karma)                             | ✅      | `Skill.specialization`, `Character.getActiveSkillSpecializationBP()`/`getSpecializationKarmaCost()`, Mindestrating 1, Gruppenauflösung im Karrieremodus, 2026-08-06 |
 | Default-Flag (erlaubt Würfeln ohne Rating: Attribut − 1)         | ❌      | Flag im Modell fehlt, keine Würfelpool-Anzeige                                               |
 | Würfelpool-Anzeige (Rating + Attribut + Modifikatoren)           | ❌      | Nicht vorhanden                                                                              |
 | Exotische Fertigkeiten (Spez = Gegenstand, kein eigener Rating)  | ❌      |                                                                                              |
@@ -90,7 +90,7 @@
 | Muttersprache ("M"), separates Konzept außerhalb des Pools    | ✅      | Am 2026-08-04 korrigiert: gegen GRW S. 109/110 verifiziert — Symbol ist "M" nicht "N", eigenes `nativeLanguage`-Flag statt Rating-0-Eintrag, kostet keine Wissensfertigkeitspunkte |
 | Erstellungs-Cap: 1×6 ODER 2×5, Rest max. 4                    | ✅      | GRW S. 155 verifiziert, `Character.canRaiseKnowledgeSkillAtCreation()`, 2026-08-04 |
 | Obergrenze für Zusatzpunkte (max. Pool-Verdopplung)           | ✅      | GRW S. 110 verifiziert, dieselbe Methode wie oben, 2026-08-04 |
-| Spezialisierungen bei Wissensfertigkeiten                     | ❌      | Bewusst ausgeklammert, gemeinsam mit Spezialisierungen aktiver Fertigkeiten geplant |
+| Spezialisierungen bei Wissensfertigkeiten                     | ✅      | +1 Poolpunkt (flach, nicht Uneducated-verdoppelt) bei Erstellung, 2 Karma im Karrieremodus; Mindestrating 1, 2026-08-06 |
 
 ---
 
@@ -295,7 +295,7 @@
 
 1. ~~**Wissensfertigkeiten**~~ ✅ umgesetzt (freier Pool (INT+LOG)×3, Kategorien, Überzug in BP, Karrieremodus-Karma)
 2. ~~**Sonderattribute** EDG, MAG, RES~~ ✅ umgesetzt (`SpecialAttribute`, BP/Karma-Kosten, UI-Sektion, Persistenz, MAG/RES-Freischaltung via Quality) — **Essenz-Berechnung bleibt offen** (aktuell fixer Wert 6.0, echter Abzug erst mit Cyberware/Bioware in Stufe 2 möglich)
-3. **Spezialisierungen** (+2 BP / Karma) — inkl. Wissensfertigkeiten-Spezialisierungen (bewusst zurückgestellt bei Schritt 1); GRW bestätigt
+3. ~~**Spezialisierungen** (+2 BP / Karma)~~ ✅ umgesetzt (aktive Fertigkeiten: Fixpreis; Wissensfertigkeiten: +1 Poolpunkt; Karrieremodus einheitlich 2 Karma ohne Uneducated-Verdopplung; Mindestrating 1; Gruppenauflösung bei gruppierten aktiven Fertigkeiten im Karrieremodus), 2026-08-06
 4. **Kontakte** — GRW bestätigt, aber "CHA×2 freie Punkte"-Annahme widerlegt (s. Abschnitt 7 oben), Formel vor Umsetzung anpassen
 5. **Charakter-Biografie** (alle Textfelder) — kein Regelwerk-Bezug, reine Textfelder
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeData;
@@ -66,6 +67,10 @@ public class CharacterStore {
         .map(k -> new KnowledgeSkillEntry(k.getName(), k.getCategory().name(), k.getRating(),
             k.isNativeLanguage(), k.getSpecialization()))
         .toList();
+    data.contacts = character.getContacts().stream()
+        .map(c -> new ContactEntry(c.getName(), c.getDescription(), c.getConnection(),
+            c.getLoyalty()))
+        .toList();
     data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
     data.karmaLog = character.getKarmaLog().stream()
         .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString()))
@@ -90,6 +95,7 @@ public class CharacterStore {
     applySelectedQualities(character, data);
     applyMagicOrResonance(character, data);
     applyKnowledgeSkills(character, data);
+    applyContacts(character, data);
     data.decoupledGroups.forEach(character::decoupleGroup);
     applyLog(data.karmaLog, character::addKarmaEntry);
     applyLog(data.nuyenLog, character::addNuyenEntry);
@@ -150,6 +156,16 @@ public class CharacterStore {
             k.setRating(entry.rating);
             k.setSpecialization(entry.specialization);
           });
+    }
+  }
+
+  private static void applyContacts(@NonNull Character character, @NonNull CharacterData data) {
+    for (ContactEntry entry : data.contacts) {
+      character.addContact(entry.name, entry.description);
+      List<Contact> contacts = character.getContacts();
+      Contact added = contacts.get(contacts.size() - 1);
+      added.setConnection(entry.connection);
+      added.setLoyalty(entry.loyalty);
     }
   }
 

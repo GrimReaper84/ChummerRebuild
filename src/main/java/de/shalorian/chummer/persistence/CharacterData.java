@@ -23,6 +23,7 @@ public class CharacterData {
   public @Nullable Integer resonance = null;
   public @NonNull List<SkillEntry> skills = new ArrayList<>(); // nur Fertigkeiten mit Rating > 0 oder Spezialisierung
   public @NonNull List<KnowledgeSkillEntry> knowledgeSkills = new ArrayList<>();
+  public @NonNull List<ContactEntry> contacts = new ArrayList<>();
   public @NonNull List<String> decoupledGroups = new ArrayList<>();
   public @NonNull List<LogEntryData> karmaLog = new ArrayList<>();
   public @NonNull List<LogEntryData> nuyenLog = new ArrayList<>();
