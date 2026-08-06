@@ -38,6 +38,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
@@ -527,6 +528,7 @@ public class CharacterViewController {
     editBtn.setOnAction(e -> {
       KnowledgeSkill current = ch.getNativeLanguage();
       TextInputDialog dialog = new TextInputDialog(current != null ? current.getName() : "");
+      applyDialogStyle(dialog.getDialogPane());
       dialog.setTitle("Muttersprache");
       dialog.setHeaderText("Muttersprache des Charakters");
       dialog.setContentText("Sprache:");
@@ -1029,6 +1031,7 @@ public class CharacterViewController {
     decoupleBtn.getStyleClass().add("btn-decouple");
     decoupleBtn.setOnAction(e -> {
       Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+      applyDialogStyle(confirm.getDialogPane());
       confirm.setTitle("Gruppe auskoppeln");
       confirm.setHeaderText("Skillgruppe \"" + groupName + "\" wirklich auskoppeln?");
       int rating = character.getGroupRating(groupName);
@@ -1421,6 +1424,16 @@ public class CharacterViewController {
     return new DialogHandle(loader, dialogStage);
   }
 
+  /**
+   * Hängt das App-Stylesheet an einen {@link Alert} oder {@link TextInputDialog} — deren
+   * {@code DialogPane} bekommt sonst nie {@code style.css} zugewiesen und rendert rein mit dem
+   * JavaFX-Standard-Theme "Modena", was neben dem restlichen dunklen UI wie ein Fremdkörper wirkt.
+   */
+  private void applyDialogStyle(@NonNull DialogPane pane) {
+    pane.getStylesheets()
+        .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
+  }
+
   private void showDialogLoadError() {
     Notifications.create()
         .title("Fehler")
@@ -1565,6 +1578,7 @@ public class CharacterViewController {
   private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
       @NonNull Character character, @Nullable String extraWarning) {
     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+    applyDialogStyle(confirm.getDialogPane());
     confirm.setTitle("Karma ausgeben");
     confirm.setHeaderText(label);
     String content = karmaCost + " Karma ausgeben?\n\nVerbleibendes Karma danach: "
@@ -1589,6 +1603,7 @@ public class CharacterViewController {
     }
     TextInputDialog dialog = new TextInputDialog(
         skill.getSpecialization() != null ? skill.getSpecialization() : "");
+    applyDialogStyle(dialog.getDialogPane());
     dialog.setTitle("Spezialisierung");
     dialog.setHeaderText(skill.getName() + " – Spezialisierung");
     dialog.setContentText("Spezialisierung:");
@@ -1624,7 +1639,11 @@ public class CharacterViewController {
     if (confirmKarmaSpend(label, karmaCost, character, warning)) {
       character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
       character.setSkillSpecialization(skill, newSpec);
-      refreshAllRows();
+      // rebuildSkillsTab() statt refreshAllRows(): eine Gruppenauflösung ändert, wie die
+      // betroffenen Zeilen verdrahtet sind (gekoppelt = deaktivierte Rating-Buttons, entkoppelt =
+      // einzeln steigerbar) — das lässt sich nicht über die reinen Refresh-Callbacks nachziehen,
+      // die Zeilen müssen neu gebaut werden.
+      rebuildSkillsTab();
       updateLogDisplay();
     }
   }
@@ -1658,6 +1677,7 @@ public class CharacterViewController {
     }
     TextInputDialog dialog = new TextInputDialog(
         skill.getSpecialization() != null ? skill.getSpecialization() : "");
+    applyDialogStyle(dialog.getDialogPane());
     dialog.setTitle("Spezialisierung");
     dialog.setHeaderText(skill.getName() + " – Spezialisierung");
     dialog.setContentText("Spezialisierung:");
@@ -1769,6 +1789,7 @@ public class CharacterViewController {
     int startNuyen = nuyenBp * Character.NUYEN_PER_BP;
 
     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+    applyDialogStyle(confirm.getDialogPane());
     confirm.setTitle("Charakter abschließen");
     confirm.setHeaderText("Charakter in den Karrieremodus überführen?");
     String bpInfo = nuyenBp > 0

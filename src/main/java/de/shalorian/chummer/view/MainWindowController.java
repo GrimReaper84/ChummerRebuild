@@ -185,6 +185,8 @@ public class MainWindowController {
 
   private void showError(@NonNull String header, @Nullable String detail) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.getDialogPane().getStylesheets()
+        .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
     alert.setTitle("Fehler");
     alert.setHeaderText(header);
     alert.setContentText(detail);

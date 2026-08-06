@@ -511,3 +511,189 @@
 .table-view .placeholder .label {
     -fx-text-fill: #555555;
 }
+
+/* ── TextArea ────────────────────────────────────────── */
+
+.text-area {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.text-area .content {
+    -fx-background-color: #3c3c3c;
+}
+
+.text-area .text {
+    -fx-fill: #cccccc;
+}
+
+.text-area .prompt-text {
+    -fx-fill: #666666;
+}
+
+.text-area:focused {
+    -fx-border-color: #007acc;
+}
+
+/* ── CheckBox ────────────────────────────────────────── */
+
+.check-box {
+    -fx-text-fill: #cccccc;
+}
+
+.check-box .box {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #cccccc;
+}
+
+.check-box:hover .box {
+    -fx-border-color: #777777;
+}
+
+/* ── ListView (Standalone, z.B. Qualitäten-Auswahl) ──── */
+
+.list-view {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.list-view .list-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #cccccc;
+    -fx-padding: 4 8 4 8;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #3c3c3c;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: #094771;
+    -fx-text-fill: #ffffff;
+}
+
+/* ── DatePicker ──────────────────────────────────────── */
+
+.date-picker {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.date-picker .text-field {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #cccccc;
+    -fx-background-radius: 3 0 0 3;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #3c3c3c;
+    -fx-background-radius: 0 3 3 0;
+}
+
+.date-picker .arrow-button .arrow {
+    -fx-background-color: #888888;
+}
+
+.date-picker-popup {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #555555;
+    -fx-border-width: 1;
+}
+
+.date-picker-popup > .month-year-pane {
+    -fx-background-color: #252526;
+}
+
+.date-picker-popup > .month-year-pane .label {
+    -fx-text-fill: #e8e8e8;
+}
+
+.date-picker-popup > .month-year-pane .spinner .button,
+.date-picker-popup > .month-year-pane .spinner .button:hover {
+    -fx-background-color: transparent;
+}
+
+.date-picker-popup > .month-year-pane .spinner .button > .left-arrow,
+.date-picker-popup > .month-year-pane .spinner .button > .right-arrow {
+    -fx-background-color: #cccccc;
+}
+
+.date-picker-popup > .day-name-cell {
+    -fx-text-fill: #777777;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #cccccc;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #3c3c3c;
+}
+
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #094771;
+    -fx-text-fill: #ffffff;
+}
+
+.date-picker-popup .next-month,
+.date-picker-popup .previous-month {
+    -fx-text-fill: #666666;
+}
+
+.date-picker-popup .today {
+    -fx-border-color: #007acc;
+}
+
+/* ── Alert/TextInputDialog (Standard-JavaFX-Dialoge) ──
+   Diese Dialoge nutzen dieselbe .dialog-pane-Hintergrundregel wie die eigenen FXML-Dialoge (s.o.),
+   brauchen aber zusätzlich Regeln für Header/Content/Buttons, die es bei den eigenen Dialogen
+   nicht gibt (dort wird der Inhalt frei per FXML gebaut statt über die Standard-DialogPane-Struktur). */
+
+.dialog-pane > .header-panel {
+    -fx-background-color: #2d2d2d;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: #e8e8e8;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .content {
+    -fx-text-fill: #cccccc;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: #4e4e4e;
+}
+
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: #0e639c;
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button-bar .button:default:hover {
+    -fx-background-color: #1177bb;
+}
