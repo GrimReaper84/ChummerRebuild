@@ -163,6 +163,12 @@
     -fx-background-color: #4e4e4e;
 }
 
+/* Icon-Buttons: Icon-Farbe folgt der Textfarbe des jeweiligen Buttons (btn-primary/btn-secondary/
+   btn-decouple inkl. hover/disabled-Zuständen), statt fest auf Schwarz zu stehen. */
+.ikonli-font-icon {
+    -fx-icon-color: -fx-text-fill;
+}
+
 .toggle-button {
     -fx-background-color: #3c3c3c;
     -fx-text-fill: #cccccc;

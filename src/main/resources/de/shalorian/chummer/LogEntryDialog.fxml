@@ -2,6 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.shalorian.chummer.view.LogEntryDialogController"
@@ -30,7 +31,10 @@
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button text="Abbrechen"  onAction="#onCancel" styleClass="btn-secondary"/>
-        <Button fx:id="addButton" text="Hinzufügen" onAction="#onAdd"
-                defaultButton="true" styleClass="btn-primary"/>
+        <Button fx:id="addButton" onAction="#onAdd"
+                defaultButton="true" styleClass="btn-primary">
+            <graphic><FontIcon iconLiteral="fas-plus"/></graphic>
+            <tooltip><Tooltip text="Hinzufügen"/></tooltip>
+        </Button>
     </HBox>
 </VBox>

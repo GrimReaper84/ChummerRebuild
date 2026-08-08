@@ -68,6 +68,9 @@ import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.tbee.javafx.scene.layout.MigPane;
 
 public class CharacterViewController {
@@ -82,8 +85,18 @@ public class CharacterViewController {
   private static final String STYLE_SECTION_TITLE = "section-title";
   private static final String STYLE_BTN_SECONDARY = "btn-secondary";
   private static final String MIGPANE_HIDEMODE_3 = "hidemode 3";
+  /**
+   * Feste Breite der Attribut-"Wert"-Spalte — einzige Rating-Spalte, die zweistellig werden kann
+   * (Metatyp-Varianten erlauben Attributmaxima bis 10, siehe {@code max="10"} in den Metatyp-XML-Dateien).
+   * Alle anderen Rating-Spalten (Fertigkeiten, Wissensfertigkeiten, Kontakte, Gruppen) sind durch
+   * {@code MAX_RATING = 6} einstellig und brauchen daher keine feste Breite — ohne diese Ausnahme
+   * würde die Spalte beim Überschreiten von 9 sichtbar nachspringen, da die direkt angrenzenden
+   * +/−-Buttons mitverschoben würden.
+   */
+  private static final int ATTRIBUTE_VALUE_COLUMN_WIDTH = 46;
   private static final String KARMA_SUFFIX = " Karma";
   private static final String CELL_COL_0 = "cell 0 ";
+  private static final String CELL_COL_1 = "cell 1 ";
   private static final String CELL_COL_2 = "cell 2 ";
   private static final String CELL_COL_3 = "cell 3 ";
   private static final String CELL_COL_4 = "cell 4 ";
@@ -361,8 +374,7 @@ public class CharacterViewController {
     attributeGridHost.getChildren().clear();
     attrRefreshers.clear();
 
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[170!][46!,center][30!,center][46!,center][30!,center][90!][70!]");
+    MigPane grid = buildAttributeMigPane();
 
     boolean career = character.isCreated();
     String[] headers = {"Attribut", "", "", "Wert", "", "Bereich",
@@ -371,6 +383,7 @@ public class CharacterViewController {
       if (!headers[i].isEmpty()) {
         Label h = new Label(headers[i]);
         h.getStyleClass().add("attr-header");
+        preventShrink(h);
         grid.add(h, "cell " + i + " 0");
       }
     }
@@ -380,7 +393,7 @@ public class CharacterViewController {
       addAttributeRow(grid, row++, type, character.getAttribute(type), character);
     }
 
-    attributeGridHost.getChildren().add(grid);
+    attributeGridHost.getChildren().add(withRightFiller(grid));
 
     buildSpecialAttributeSection();
   }
@@ -402,8 +415,7 @@ public class CharacterViewController {
     VBox.setMargin(sectionLabel, new Insets(12, 0, 6, 0));
     attributeGridHost.getChildren().add(sectionLabel);
 
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[170!][46!,center][30!,center][46!,center][30!,center][90!][70!]");
+    MigPane grid = buildAttributeMigPane();
 
     addSpecialAttributeRow(grid, 0, ch.getEdge(), ch);
 
@@ -412,7 +424,7 @@ public class CharacterViewController {
       addSpecialAttributeRow(grid, 1, magicOrResonance, ch);
     }
 
-    attributeGridHost.getChildren().add(grid);
+    attributeGridHost.getChildren().add(withRightFiller(grid));
   }
 
   private void addSpecialAttributeRow(@NonNull MigPane grid, int row,
@@ -561,8 +573,54 @@ public class CharacterViewController {
    */
   private void addRowCells(@NonNull MigPane grid, int row, @NonNull Node... cells) {
     for (int col = 0; col < cells.length; col++) {
+      preventShrink(cells[col]);
       grid.add(cells[col], "cell " + col + " " + row);
     }
+  }
+
+  /**
+   * Verhindert, dass {@code node} unter seine bevorzugte Breite schrumpft. {@code MigPane}/{@code GridPane}
+   * ermitteln die Minimalbreite einer Spalte aus {@code minWidth()} der enthaltenen Controls; ohne diesen
+   * Aufruf könnten Labels/Buttons ihren Text per Ellipsis abschneiden, statt die Spalte auf Inhaltsbreite
+   * zu halten — genau das soll das inhaltsbasierte Spalten-Layout verhindern.
+   */
+  private static void preventShrink(@NonNull Node node) {
+    if (node instanceof Region region) {
+      region.setMinWidth(Region.USE_PREF_SIZE);
+    }
+  }
+
+  /**
+   * Ersetzt den Text von {@code button} durch ein FontAwesome-Icon; der bisherige Text bleibt als
+   * Tooltip erhalten, damit die Schaltfläche ohne Beschriftung weiterhin erkennbar bleibt.
+   */
+  private static void useIcon(@NonNull Button button, @NonNull Ikon icon) {
+    String label = button.getText();
+    button.setText(null);
+    button.setGraphic(new FontIcon(icon));
+    button.setTooltip(new Tooltip(label));
+  }
+
+  /**
+   * Umschließt {@code content} (typischerweise eines der inhaltsbasierten Grids) mit einem wachsenden,
+   * leeren Platzhalter ganz rechts. Dadurch landet ungenutzter Platz im Vollbildmodus dort, statt
+   * Lücken zwischen den Spalten von {@code content} selbst aufzureißen — {@code content} bleibt bei
+   * seiner inhaltsbasierten Breite als geschlossener Block am linken Rand.
+   */
+  private static @NonNull HBox withRightFiller(@NonNull Region content) {
+    Region filler = new Region();
+    HBox.setHgrow(filler, Priority.ALWAYS);
+    return new HBox(content, filler);
+  }
+
+  /**
+   * Gemeinsames Spalten-Layout für Standard- und Sonderattribut-Grid: alle Spalten inhaltsbasiert ohne
+   * eigenes Wachstum — ungenutzter Platz wird stattdessen außen über {@link #withRightFiller} verteilt.
+   * Die Wert-Spalte ist die einzige feste Ausnahme, siehe {@link #ATTRIBUTE_VALUE_COLUMN_WIDTH}.
+   */
+  private @NonNull MigPane buildAttributeMigPane() {
+    return new MigPane(MIGPANE_HIDEMODE_3,
+        "[][center][center][" + ATTRIBUTE_VALUE_COLUMN_WIDTH + "!,center][center][][]");
   }
 
   // ── Skills-Tab ────────────────────────────────────────────
@@ -611,7 +669,7 @@ public class CharacterViewController {
       firstSection = false;
 
       MigPane grid = buildSkillGrid();
-      skillsContainer.getChildren().add(grid);
+      skillsContainer.getChildren().add(withRightFiller(grid));
 
       int row = 0;
       for (Map.Entry<String, List<Skill>> groupEntry : catEntry.getValue().entrySet()) {
@@ -636,7 +694,7 @@ public class CharacterViewController {
     VBox.setMargin(groupsTitle, new Insets(0, 0, 4, 0));
     leftColumn.getChildren().add(groupsTitle);
     MigPane groupGrid = buildGroupOnlyGrid();
-    leftColumn.getChildren().add(groupGrid);
+    leftColumn.getChildren().add(withRightFiller(groupGrid));
     int groupRow = 0;
     for (String groupName : character.getCoupledGroupNames()) {
       groupRow = addGroupHeaderRow(groupGrid, groupRow, groupName, true, character);
@@ -648,7 +706,7 @@ public class CharacterViewController {
     VBox.setMargin(individualTitle, new Insets(0, 0, 4, 0));
     rightColumn.getChildren().add(individualTitle);
     MigPane skillGrid = buildSkillGrid();
-    rightColumn.getChildren().add(skillGrid);
+    rightColumn.getChildren().add(withRightFiller(skillGrid));
     int skillRow = 0;
     for (Skill skill : character.getIndividualSkills()) {
       addSkillRow(skillGrid, skillRow++, skill, false, character);
@@ -659,14 +717,18 @@ public class CharacterViewController {
   }
 
   /**
-   * Schmaleres Grid für die Gruppen-Liste im Alphabet-Modus — {@link #addGroupHeaderRow} befüllt
-   * nachweislich nur die Spalten 0 (Name) und 2/3/4/5 (−/Wert/+/BP), nie Spalte 1
-   * (Attribut-Abkürzung) oder 6/7 (Spezialisierung). Die volle 8-Spalten-Spec aus
-   * {@link #buildSkillGrid()} würde daher in einem Nebeneinander-Layout unnötig Platz verschenken.
+   * Schmaleres Grid für die Gruppen-Liste im Alphabet-Modus — {@link #addGroupHeaderRow} befüllt die
+   * Spalten 0 (Name), 1 (Auskoppeln-Button, nur bei gekoppelten Gruppen im Karrieremodus) und 2/3/4/5
+   * (−/Wert/+/BP), nie Spalte 6/7 (Attribut-Abkürzung/Spezialisierung). Die volle 8-Spalten-Spec aus
+   * {@link #buildSkillGrid()} würde daher in einem Nebeneinander-Layout unnötig Platz verschenken. Der
+   * Auskoppeln-Button steht bewusst in einer eigenen Spalte statt direkt am Namenstext dran, damit er
+   * über alle Zeilen hinweg untereinander ausgerichtet ist statt je nach Namenslänge zu wandern.
    */
   private @NonNull MigPane buildGroupOnlyGrid() {
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[160!][10!][46!,center][30!,center][46!,center][90!]");
+    // Wert-Spalte ist bei Fertigkeitsgruppen durch Skill.MAX_RATING = 6 einstellig und braucht keine
+    // feste Ausnahme (siehe ATTRIBUTE_VALUE_COLUMN_WIDTH-Kommentar). Kein eigenes Spaltenwachstum —
+    // ungenutzter Platz wird außen über withRightFiller verteilt.
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][center][center][]");
     grid.getStyleClass().add("attr-grid");
     return grid;
   }
@@ -738,6 +800,7 @@ public class CharacterViewController {
 
     Button addBtn = new Button("Hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(e -> onAddKnowledgeSkill());
 
     HBox header = new HBox(8);
@@ -764,7 +827,7 @@ public class CharacterViewController {
     knowledgeSkillsContainer.getChildren().add(buildNativeLanguageRow(ch));
 
     MigPane grid = buildKnowledgeSkillGrid();
-    knowledgeSkillsContainer.getChildren().add(grid);
+    knowledgeSkillsContainer.getChildren().add(withRightFiller(grid));
 
     int row = 0;
     for (KnowledgeSkill skill : ch.getKnowledgeSkills()) {
@@ -785,6 +848,10 @@ public class CharacterViewController {
 
     Button editBtn = new Button("Ändern");
     editBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    // EDIT statt PEN_TO_SQUARE: die gepinnte ikonli-fontawesome6-pack-Version 12.4.0 führt die
+    // FA6-Icons noch unter ihren alten FA5-Namen, liefert für "edit" aber denselben Glyph/Codepoint
+    // (U+F044), den FontAwesome 6 unter "pen-to-square" listet.
+    useIcon(editBtn, FontAwesomeSolid.EDIT);
 
     Runnable refresh = () -> {
       KnowledgeSkill nativeLanguage = ch.getNativeLanguage();
@@ -817,8 +884,10 @@ public class CharacterViewController {
   }
 
   private @NonNull MigPane buildKnowledgeSkillGrid() {
+    // Wert-Spalte durch KnowledgeSkill.MAX_RATING = 6 einstellig, keine feste Ausnahme nötig. Kein
+    // eigenes Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[200!][90!][30!,center][30!,center][30!,center][70!][130!][70!][90!]");
+        "[][][center][center][center][][][][]");
     grid.getStyleClass().add("attr-grid");
     return grid;
   }
@@ -916,6 +985,7 @@ public class CharacterViewController {
           }
         }, character);
 
+    useIcon(removeBtn, FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(e -> {
       character.removeKnowledgeSkill(skill.getName());
       buildSkillsTab();
@@ -984,11 +1054,12 @@ public class CharacterViewController {
     grid.setHgap(10);
     grid.setVgap(4);
 
-    int[] widths = {220, 90, 80, 90};
-    for (int width : widths) {
-      ColumnConstraints cc = new ColumnConstraints(width);
-      grid.getColumnConstraints().add(cc);
-    }
+    // Keine festen Breiten und kein eigenes Spaltenwachstum: alle vier Spalten bleiben bei ihrer
+    // Inhaltsbreite (siehe preventShrink in addQualityRow); ungenutzter Platz wird außen über
+    // withRightFiller verteilt.
+    grid.getColumnConstraints()
+        .addAll(new ColumnConstraints(), new ColumnConstraints(), new ColumnConstraints(),
+            new ColumnConstraints());
 
     List<CharacterQuality> section = ch.getQualities().stream()
         .filter(q -> q.data().type() == type)
@@ -1005,7 +1076,7 @@ public class CharacterViewController {
       grid.add(empty, 0, 0);
     }
 
-    qualitiesContainer.getChildren().add(grid);
+    qualitiesContainer.getChildren().add(withRightFiller(grid));
   }
 
   private @NonNull HBox buildQualitySectionHeader(@NonNull String title,
@@ -1018,6 +1089,7 @@ public class CharacterViewController {
 
     Button addBtn = new Button("Hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(e -> onAddQuality(type));
 
     HBox header = new HBox(8);
@@ -1063,6 +1135,9 @@ public class CharacterViewController {
     Label sourceLabel = new Label(isMetatype ? "(Metatyp)" : "");
     sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
 
+    preventShrink(qualityNameLabel);
+    preventShrink(costLabel);
+    preventShrink(sourceLabel);
     grid.add(qualityNameLabel, 0, row);
     grid.add(costLabel, 1, row);
     grid.add(sourceLabel, 2, row);
@@ -1070,7 +1145,9 @@ public class CharacterViewController {
     if (!isMetatype) {
       Button removeBtn = new Button("Entfernen");
       removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+      useIcon(removeBtn, FontAwesomeSolid.TRASH);
       removeBtn.setOnAction(e -> onRemoveQuality(q));
+      preventShrink(removeBtn);
       grid.add(removeBtn, 3, row);
     }
   }
@@ -1196,8 +1273,10 @@ public class CharacterViewController {
   }
 
   private @NonNull MigPane buildSkillGrid() {
+    // Wert-Spalte durch Skill.MAX_RATING = 6 einstellig, keine feste Ausnahme nötig. Kein eigenes
+    // Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[200!][46!,center][30!,center][46!,center][30!,center][70!][130!][70!]");
+        "[][center][center][center][center][][][]");
     grid.getStyleClass().add("attr-grid");
     return grid;
   }
@@ -1207,19 +1286,19 @@ public class CharacterViewController {
    */
   private int addGroupHeaderRow(@NonNull MigPane grid, int row, @NonNull String groupName,
       boolean coupled, @NonNull Character character) {
-    HBox nameBox = new HBox(8);
-    nameBox.setAlignment(Pos.CENTER_LEFT);
-
     Label groupLabel = new Label(groupName);
     groupLabel.getStyleClass().add(coupled ? "skill-group-header-coupled" : "skill-group-header");
-    nameBox.getChildren().add(groupLabel);
+    preventShrink(groupLabel);
+    grid.add(groupLabel, CELL_COL_0 + row);
 
-    // GRW S. 109: Fertigkeitsgruppen dürfen während der Erstellung nicht aufgelöst werden.
+    // GRW S. 109: Fertigkeitsgruppen dürfen während der Erstellung nicht aufgelöst werden. Eigene
+    // Spalte statt Anhängen an groupLabel, damit der Button unabhängig von der Namenslänge über alle
+    // Zeilen hinweg untereinander steht.
     if (coupled && character.isCreated()) {
-      nameBox.getChildren().add(buildDecoupleButton(groupName, character));
+      Button decoupleBtn = buildDecoupleButton(groupName, character);
+      preventShrink(decoupleBtn);
+      grid.add(decoupleBtn, CELL_COL_1 + row);
     }
-
-    grid.add(nameBox, CELL_COL_0 + row);
 
     if (coupled) {
       Button minus = new Button("−");
@@ -1286,6 +1365,10 @@ public class CharacterViewController {
             }
           }, character);
 
+      preventShrink(minus);
+      preventShrink(ratingLabel);
+      preventShrink(plus);
+      preventShrink(bpLabel);
       grid.add(minus, CELL_COL_2 + row);
       grid.add(ratingLabel, CELL_COL_3 + row);
       grid.add(plus, CELL_COL_4 + row);
@@ -1299,6 +1382,10 @@ public class CharacterViewController {
       @NonNull Character character) {
     Button decoupleBtn = new Button("Auskoppeln");
     decoupleBtn.getStyleClass().add("btn-decouple");
+    // UNLINK statt LINK_SLASH: die gepinnte ikonli-fontawesome6-pack-Version 12.4.0 führt die
+    // FA6-Icons noch unter ihren alten FA5-Namen, liefert für "unlink" aber denselben Glyph/Codepoint
+    // (U+F127), den FontAwesome 6 unter "link-slash" listet.
+    useIcon(decoupleBtn, FontAwesomeSolid.UNLINK);
     decoupleBtn.setOnAction(e -> {
       Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
       applyDialogStyle(confirm.getDialogPane());
@@ -1445,6 +1532,7 @@ public class CharacterViewController {
 
     Button addBtn = new Button("Hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(e -> onAddContact());
 
     HBox header = new HBox(8);
@@ -1457,7 +1545,7 @@ public class CharacterViewController {
     contactsContainer.getChildren().add(header);
 
     MigPane grid = buildContactGrid();
-    contactsContainer.getChildren().add(grid);
+    contactsContainer.getChildren().add(withRightFiller(grid));
 
     int row = 0;
     for (Contact contact : ch.getContacts()) {
@@ -1466,8 +1554,11 @@ public class CharacterViewController {
   }
 
   private @NonNull MigPane buildContactGrid() {
+    // Beide Wert-Spalten (Verbindung/Loyalität) durch Contact.MAX_RATING = 6 einstellig, keine feste
+    // Ausnahme nötig. Kein eigenes Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller
+    // verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[180!][80!][30!,center][30!,center][30!,center][50!][30!,center][30!,center][30!,center][50!][90!]");
+        "[][][center][center][center][][center][center][center][][]");
     grid.getStyleClass().add("attr-grid");
     return grid;
   }
@@ -1618,6 +1709,7 @@ public class CharacterViewController {
           character);
     }
 
+    useIcon(removeBtn, FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(e -> {
       character.removeContact(contact);
       buildContactsTab();
@@ -1694,6 +1786,7 @@ public class CharacterViewController {
 
     Button addBtn = new Button("Zauber hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(e -> onAddSpell());
 
     HBox header = new HBox(12);
@@ -1706,7 +1799,7 @@ public class CharacterViewController {
     magicContainer.getChildren().add(header);
 
     MigPane grid = buildSpellGrid();
-    magicContainer.getChildren().add(grid);
+    magicContainer.getChildren().add(withRightFiller(grid));
 
     int row = 1;
     for (SpellData spell : ch.getSpells()) {
@@ -1715,15 +1808,14 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut das Zauber-Grid inkl. Kopfzeile (Zeile 0). Die sieben Datenspalten wachsen mit der
-   * Fensterbreite (MigLayout {@code grow}-Flag), behalten dabei aber die bisherige Breite als
-   * Mindestmaß ({@code min:min:} ohne Maximum) — nur die Entfernen-Spalte bleibt fest, da ein Button
-   * nicht sinnvoll mitwachsen kann.
+   * Baut das Zauber-Grid inkl. Kopfzeile (Zeile 0). Alle Datenspalten bleiben bei ihrer Inhaltsbreite
+   * (feststehendes Vokabular aus den Zauber-Stammdaten, kein eigenes Wachstum nötig) — ungenutzter
+   * Platz wird stattdessen außen über {@link #withRightFiller} verteilt. Das Grid wird bei jeder Änderung
+   * komplett neu aufgebaut (kein In-Place-Refresh einzelner Zellen), daher gibt es hier keine
+   * Wert-Spalten-Ausnahme wie bei Attributen.
    */
   private @NonNull MigPane buildSpellGrid() {
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[160:160:,grow][100:100:,grow][30:30:,center,grow][60:60:,grow][60:60:,grow]"
-            + "[50:50:,center,grow][90:90:,grow][90!]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][center][][]");
     grid.getStyleClass().add("attr-grid");
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
@@ -1732,6 +1824,7 @@ public class CharacterViewController {
       if (!headers[i].isEmpty()) {
         Label h = new Label(headers[i]);
         h.getStyleClass().add("attr-header");
+        preventShrink(h);
         grid.add(h, "cell " + i + " 0");
       }
     }
@@ -1752,6 +1845,7 @@ public class CharacterViewController {
 
     spellNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
     removeBtn.setOnAction(e -> {
       character.removeSpell(spell.name());
