@@ -54,6 +54,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -141,7 +143,16 @@ public class CharacterViewController {
   private Tab magicTab;
   @FXML
   private VBox magicContainer;
+  @FXML
+  private VBox knowledgeSkillsContainer;
+  @FXML
+  private ToggleGroup skillSortToggleGroup;
+  @FXML
+  private ToggleButton sortByCategoryBtn;
+  @FXML
+  private ToggleButton sortByAlphabetBtn;
   private int magicTabIndex;
+  private @NonNull SkillSortMode skillSortMode = SkillSortMode.CATEGORY;
   private @Nullable Character character;
 
   @FXML
@@ -162,6 +173,21 @@ public class CharacterViewController {
 
     magicTabIndex = mainTabPane.getTabs().indexOf(magicTab);
     mainTabPane.getTabs().remove(magicTab);
+
+    skillSortToggleGroup.selectedToggleProperty().addListener((obs, old, newVal) -> {
+      if (newVal == null) {
+        // Ein ToggleButton in einer ToggleGroup kann sich durch erneutes Klicken selbst abwählen —
+        // die Auswahl muss exklusiv bleiben, daher Rücksprung auf den vorherigen Zustand.
+        skillSortToggleGroup.selectToggle(old);
+        return;
+      }
+      if (newVal == sortByAlphabetBtn) {
+        skillSortMode = SkillSortMode.ALPHABETICAL;
+      } else if (newVal == sortByCategoryBtn) {
+        skillSortMode = SkillSortMode.CATEGORY;
+      }
+      buildActiveSkillsSection();
+    });
   }
 
   /**
@@ -542,13 +568,34 @@ public class CharacterViewController {
   // ── Skills-Tab ────────────────────────────────────────────
 
   private void buildSkillsTab() {
-    if (character == null) {
+    buildActiveSkillsSection();
+    buildKnowledgeSkillSection();
+  }
+
+  /**
+   * Baut die aktive-Fertigkeiten-Sektion neu auf, je nach {@link #skillSortMode} entweder nach
+   * Kategorie ({@link #buildCategorySkillsSection}) oder als zwei parallele alphabetische Listen
+   * ({@link #buildAlphabeticalSkillsSection}). Betrifft ausschließlich {@link #skillsContainer} — die
+   * Wissensfertigkeiten-Sektion liegt seit der Layout-Trennung in einem eigenen Container und wird
+   * unabhängig über {@link #buildKnowledgeSkillSection()} aufgebaut.
+   */
+  private void buildActiveSkillsSection() {
+    Character ch = this.character;
+    if (ch == null) {
       return;
     }
 
     skillsContainer.getChildren().clear();
     skillRefreshers.clear();
 
+    if (skillSortMode == SkillSortMode.ALPHABETICAL) {
+      buildAlphabeticalSkillsSection(ch);
+    } else {
+      buildCategorySkillsSection(ch);
+    }
+  }
+
+  private void buildCategorySkillsSection(@NonNull Character character) {
     Map<SkillCategory, Map<String, List<Skill>>> grouped = groupSkillsByCategory(character);
 
     boolean firstSection = true;
@@ -571,8 +618,57 @@ public class CharacterViewController {
         row = addSkillGroupRows(grid, row, groupEntry.getKey(), groupEntry.getValue(), character);
       }
     }
+  }
 
-    buildKnowledgeSkillSection();
+  /**
+   * Alphabet-Modus: zwei unabhängig sortierte Listen nebeneinander — links alle noch gekoppelten
+   * Fertigkeitsgruppen (nur Name + gemeinsame Rating-Steuerung, keine Mitgliedsnamen, siehe
+   * {@code docs/skills_sortierung_plan.md} Abschnitt 13), rechts alle Einzelfertigkeiten (ungruppiert
+   * oder entkoppelt), jeweils alphabetisch nach Name sortiert über {@link Character#getCoupledGroupNames()}
+   * bzw. {@link Character#getIndividualSkills()}.
+   */
+  private void buildAlphabeticalSkillsSection(@NonNull Character character) {
+    HBox columns = new HBox(24);
+
+    VBox leftColumn = new VBox();
+    Label groupsTitle = new Label("Fertigkeitsgruppen");
+    groupsTitle.getStyleClass().add(STYLE_SECTION_TITLE);
+    VBox.setMargin(groupsTitle, new Insets(0, 0, 4, 0));
+    leftColumn.getChildren().add(groupsTitle);
+    MigPane groupGrid = buildGroupOnlyGrid();
+    leftColumn.getChildren().add(groupGrid);
+    int groupRow = 0;
+    for (String groupName : character.getCoupledGroupNames()) {
+      groupRow = addGroupHeaderRow(groupGrid, groupRow, groupName, true, character);
+    }
+
+    VBox rightColumn = new VBox();
+    Label individualTitle = new Label("Einzelfertigkeiten");
+    individualTitle.getStyleClass().add(STYLE_SECTION_TITLE);
+    VBox.setMargin(individualTitle, new Insets(0, 0, 4, 0));
+    rightColumn.getChildren().add(individualTitle);
+    MigPane skillGrid = buildSkillGrid();
+    rightColumn.getChildren().add(skillGrid);
+    int skillRow = 0;
+    for (Skill skill : character.getIndividualSkills()) {
+      addSkillRow(skillGrid, skillRow++, skill, false, character);
+    }
+
+    columns.getChildren().addAll(leftColumn, rightColumn);
+    skillsContainer.getChildren().add(columns);
+  }
+
+  /**
+   * Schmaleres Grid für die Gruppen-Liste im Alphabet-Modus — {@link #addGroupHeaderRow} befüllt
+   * nachweislich nur die Spalten 0 (Name) und 2/3/4/5 (−/Wert/+/BP), nie Spalte 1
+   * (Attribut-Abkürzung) oder 6/7 (Spezialisierung). Die volle 8-Spalten-Spec aus
+   * {@link #buildSkillGrid()} würde daher in einem Nebeneinander-Layout unnötig Platz verschenken.
+   */
+  private @NonNull MigPane buildGroupOnlyGrid() {
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
+        "[160!][10!][46!,center][30!,center][46!,center][90!]");
+    grid.getStyleClass().add("attr-grid");
+    return grid;
   }
 
   /**
@@ -630,11 +726,12 @@ public class CharacterViewController {
     if (ch == null) {
       return;
     }
+    knowledgeSkillsContainer.getChildren().clear();
     knowledgeSkillRefreshers.clear();
 
     Label sectionLabel = new Label("Wissensfertigkeiten");
     sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
-    VBox.setMargin(sectionLabel, new Insets(20, 0, 4, 0));
+    VBox.setMargin(sectionLabel, new Insets(0, 0, 4, 0));
 
     Label poolLabel = new Label();
     poolLabel.getStyleClass().add("bp-label");
@@ -653,7 +750,7 @@ public class CharacterViewController {
       header.getChildren().add(poolLabel);
     }
     header.getChildren().add(addBtn);
-    skillsContainer.getChildren().add(header);
+    knowledgeSkillsContainer.getChildren().add(header);
 
     if (!ch.isCreated()) {
       Runnable poolRefresh = () -> poolLabel.setText(
@@ -664,10 +761,10 @@ public class CharacterViewController {
       poolRefresh.run();
     }
 
-    skillsContainer.getChildren().add(buildNativeLanguageRow(ch));
+    knowledgeSkillsContainer.getChildren().add(buildNativeLanguageRow(ch));
 
     MigPane grid = buildKnowledgeSkillGrid();
-    skillsContainer.getChildren().add(grid);
+    knowledgeSkillsContainer.getChildren().add(grid);
 
     int row = 0;
     for (KnowledgeSkill skill : ch.getKnowledgeSkills()) {

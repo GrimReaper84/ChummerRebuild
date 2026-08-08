@@ -163,6 +163,25 @@
     -fx-background-color: #4e4e4e;
 }
 
+.toggle-button {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
+    -fx-padding: 5 14 5 14;
+}
+
+.toggle-button:hover {
+    -fx-background-color: #4e4e4e;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #0e639c;
+    -fx-text-fill: white;
+}
+
 /* ── Character View ──────────────────────────────────── */
 
 .character-view {

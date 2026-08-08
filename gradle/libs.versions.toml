@@ -6,6 +6,7 @@ jspecify = "1.0.0"
 jackson = "2.17.2"
 controlsfx = "11.2.1"
 miglayout = "11.4.3"
+ikonli = "12.4.0"
 errorprone-core = "2.26.1"
 nullaway = "0.10.22"
 junit-bom = "6.0.0"
@@ -15,6 +16,8 @@ jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 controlsfx = { module = "org.controlsfx:controlsfx", version.ref = "controlsfx" }
 miglayout-javafx = { module = "com.miglayout:miglayout-javafx", version.ref = "miglayout" }
+ikonli-javafx = { module = "org.kordamp.ikonli:ikonli-javafx", version.ref = "ikonli" }
+ikonli-fontawesome6-pack = { module = "org.kordamp.ikonli:ikonli-fontawesome6-pack", version.ref = "ikonli" }
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone-core" }
 nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit-bom" }

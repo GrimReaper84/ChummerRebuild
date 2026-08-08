@@ -1,6 +1,6 @@
 # Feature-Checkliste: Chummer4 → Java-Rebuild
 
-> Abgleich zwischen dem originalen C#-Verhalten (`chummer4_analyse.md`) und dem aktuellen Java-Implementierungsstand.
+> Abgleich zwischen dem originalen C#-Verhalten (`analysen/chummer4_analyse.md`) und dem aktuellen Java-Implementierungsstand.
 >
 > **Legende:**
 > - ✅ Vollständig und korrekt umgesetzt
@@ -82,7 +82,7 @@
 
 | Feature                                                       | Status | Anmerkung        |
 |---------------------------------------------------------------|--------|------------------|
-| Wissensfertigkeiten-Pool ((INT + LOG) × 3 freie Punkte)       | ✅      | Korrigierte Formel (nicht INT×2, siehe `docs/wissensfertigkeiten_analyse.md`) |
+| Wissensfertigkeiten-Pool ((INT + LOG) × 3 freie Punkte)       | ✅      | Korrigierte Formel (nicht INT×2, siehe `docs/analysen/wissensfertigkeiten_analyse.md`) |
 | Hinzufügen/Entfernen von Wissensfertigkeiten                  | ✅      | Freitext-Name, Dialog mit Kategorie-Auswahl, Duplikat-Prüfung |
 | Kategorie (Akademisch, Hobby, Beruflich, Straße + Sprache)    | ✅      | `KnowledgeSkillCategory`-Enum, GRW-Terminologie: INTEREST→HOBBY umbenannt, 2026-08-04 (kein Migrationspfad für alte Speicherdateien) |
 | BP-Kosten: 2 BP/Punkt (nur wenn Pool überschritten)           | ✅      | Gemeinsamer Pool über alle Wissensfertigkeiten, Uneducated verdoppelt Poolverbrauch |
@@ -112,7 +112,7 @@
 
 | Feature                                                   | Status | Anmerkung        |
 |-----------------------------------------------------------|--------|------------------|
-| Kontakt hinzufügen (Name, Kurzbeschreibung, Connection, Loyalty) | ✅ | `Contact`-Modell, eigener Tab, Add/Edit-Dialog (Beschreibung als Tooltip), 2026-08-07. Bewusst reduzierter Scope: kein Enemy/Pet-Unterschied, keine Gruppenkontakt-Modifikatoren (kein GRW-Beleg im Kernregelwerk, siehe `docs/kontakte_analyse.md`) |
+| Kontakt hinzufügen (Name, Kurzbeschreibung, Connection, Loyalty) | ✅ | `Contact`-Modell, eigener Tab, Add/Edit-Dialog (Beschreibung als Tooltip), 2026-08-07. Bewusst reduzierter Scope: kein Enemy/Pet-Unterschied, keine Gruppenkontakt-Modifikatoren (kein GRW-Beleg im Kernregelwerk, siehe `docs/analysen/kontakte_analyse.md`) |
 | BP-Kosten: 1 BP pro Kontaktpunkt (Connection + Loyalty)   | ✅      | GRW S. 113 bestätigt: "Kosten = Connectionstufe + Loyalitätsstufe", `Character.getContactBP()` |
 | ~~Freie Kontaktpunkte: CHA × 2~~                          | ✅      | **Widerlegt** (2026-08-04): Im GRW-Erstellungskapitel zu Connections (S. 113) wird Charisma kein einziges Mal erwähnt — Kontakte werden ganz normal aus dem allgemeinen 400-GP-Budget bezahlt, kein eigener CHA-basierter Freibetrag. Kein Freibetrag implementiert |
 | Karrieremodus: Kontakte frei bearbeitbar, ohne Karma-Kosten | ✅ | GRW: Connections werden nicht mit Karma gekauft ("müssen sie sich auf die harte Tour verdienen"), neue `wireFreeIncrementable()`-UI-Methode |
@@ -123,8 +123,8 @@
 
 > Scope-Entscheidung (2026-08-08): Nur reine **Magier** umgesetzt (Tradition + Zauber-Erlernen).
 > Adept-Kräfte und Mystic-Adept-Split sind bewusst zurückgestellt (eigenes Folgefeature). Details:
-> `docs/magie_analyse.md` (C#-Analyse), `docs/magie_java_analyse.md` (Java-Ist-Analyse),
-> `docs/magie_plan.md` (Umsetzungsplan inkl. aller Entscheidungen).
+> `docs/analysen/magie_analyse.md` (C#-Analyse), `docs/analysen/magie_java_analyse.md` (Java-Ist-Analyse),
+> `docs/plaene/magie_plan.md` (Umsetzungsplan inkl. aller Entscheidungen).
 
 | Feature                                                | Status | Anmerkung                                                                                                                                                                                                                                                            |
 |---------------------------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -299,8 +299,8 @@
 ## Prioritisierte Reihenfolge für nächste Schritte
 
 > **Regelwerk-Abgleich (2026-08-04):** Die komplette Roadmap wurde gegen das SR4-Grundregelwerk geprüft,
-> bevor weitere Features umgesetzt werden — siehe `docs/regelwerk_abgleich_stufe2_roadmap.md` und
-> `docs/regelwerk_abgleich_stufe3_roadmap.md`. Ergebnis: fast alles ist solide belegt, bis auf zwei
+> bevor weitere Features umgesetzt werden — siehe `docs/analysen/regelwerk_abgleich_stufe2_roadmap.md` und
+> `docs/analysen/regelwerk_abgleich_stufe3_roadmap.md`. Ergebnis: fast alles ist solide belegt, bis auf zwei
 > Punkte ohne GRW-Beleg (s.u., auf Niedrig gesetzt) und zwei korrigierte Annahmen (Kontakte, Komplexe
 > Formen, siehe jeweilige Abschnitte oben).
 

@@ -35,6 +35,8 @@ dependencies {
     implementation(libs.jackson.databind)
     implementation(libs.controlsfx)
     implementation(libs.miglayout.javafx)
+    implementation(libs.ikonli.javafx)
+    implementation(libs.ikonli.fontawesome6.pack)
 
     // JavaFX native JARs für alle Plattformen – damit distZip auf Windows, Mac und Linux läuft
     val javafxVersion = libs.versions.javafx.runtime.get()

@@ -9,6 +9,8 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -54,13 +56,35 @@
       </Tab>
 
       <Tab text="Skills">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="skillsContainer">
+        <VBox styleClass="attr-container">
+          <fx:define>
+            <ToggleGroup fx:id="skillSortToggleGroup"/>
+          </fx:define>
+          <HBox alignment="CENTER_LEFT" spacing="8" styleClass="skills-toolbar">
+            <ToggleButton fx:id="sortByCategoryBtn" text="Nach Kategorie" selected="true"
+              styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
+            <ToggleButton fx:id="sortByAlphabetBtn" text="Nach Alphabet"
+              styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
             <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
+              <Insets bottom="8" left="36" right="36" top="12"/>
             </padding>
-          </VBox>
-        </ScrollPane>
+          </HBox>
+          <ScrollPane fitToWidth="true" styleClass="attr-scroll" VBox.vgrow="ALWAYS">
+            <VBox styleClass="attr-container" fx:id="skillsContainer">
+              <padding>
+                <Insets bottom="20" left="36" right="36" top="8"/>
+              </padding>
+            </VBox>
+          </ScrollPane>
+          <ScrollPane fitToWidth="true" styleClass="attr-scroll"
+            prefHeight="220" minHeight="220" maxHeight="220">
+            <VBox styleClass="attr-container" fx:id="knowledgeSkillsContainer">
+              <padding>
+                <Insets bottom="12" left="36" right="36" top="12"/>
+              </padding>
+            </VBox>
+          </ScrollPane>
+        </VBox>
       </Tab>
 
       <Tab text="Gaben &amp; Handicaps">

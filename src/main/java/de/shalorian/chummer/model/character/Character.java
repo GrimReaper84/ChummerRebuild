@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -452,6 +453,33 @@ public class Character {
 
   public @NonNull Set<String> getDecoupledGroups() {
     return Collections.unmodifiableSet(decoupledGroups);
+  }
+
+  /**
+   * Alle aktiven Fertigkeiten, die aktuell nicht Teil einer noch gekoppelten Fertigkeitsgruppe sind —
+   * also nie gruppierte Fertigkeiten sowie im Karrieremodus entkoppelte ehemalige Gruppenmitglieder
+   * (siehe {@link #decoupleGroup(String)}), alphabetisch nach Name sortiert. Für die UI-Sortierung nach
+   * Alphabet gedacht, als Gegenstück zu {@link #getCoupledGroupNames()}.
+   */
+  public @NonNull List<Skill> getIndividualSkills() {
+    return skills.values().stream()
+        .filter(s -> !isCoupledGroupMember(s))
+        .sorted(Comparator.comparing(Skill::getName))
+        .toList();
+  }
+
+  /**
+   * Namen aller aktuell noch gekoppelten Fertigkeitsgruppen, alphabetisch sortiert — Gegenstück zu
+   * {@link #getDecoupledGroups()} (dort stehen die bereits aufgebrochenen Gruppen).
+   */
+  public @NonNull List<String> getCoupledGroupNames() {
+    return skills.values().stream()
+        .map(Skill::getGroupName)
+        .filter(Objects::nonNull)
+        .distinct()
+        .filter(this::isGroupCoupled)
+        .sorted()
+        .toList();
   }
 
   public int getNuyenBP() {
