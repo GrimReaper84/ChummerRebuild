@@ -15,7 +15,7 @@
     </HBox>
 
     <!-- Qualitätenliste -->
-    <ListView fx:id="qualityListView" prefHeight="260" VBox.vgrow="ALWAYS"/>
+    <ListView fx:id="itemListView" prefHeight="260" VBox.vgrow="ALWAYS"/>
 
     <!-- Info-Bereich -->
     <GridPane hgap="14" vgap="4">

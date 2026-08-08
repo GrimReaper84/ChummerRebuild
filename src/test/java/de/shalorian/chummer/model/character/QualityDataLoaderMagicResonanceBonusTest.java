@@ -23,4 +23,26 @@ class QualityDataLoaderMagicResonanceBonusTest {
     assertTrue(data.bonuses().contains(QualityBonusType.GRANTS_RESONANCE));
     assertFalse(data.bonuses().contains(QualityBonusType.GRANTS_MAGIC));
   }
+
+  @Test
+  void onlyMagicianGrantsSpellcasting() {
+    QualityData magier = QualityDataLoader.findByName("Magier");
+    assertNotNull(magier);
+    assertTrue(magier.bonuses().contains(QualityBonusType.GRANTS_SPELLCASTING));
+
+    for (String name : new String[] {"Adept", "Mystischer Adept", "Technomant"}) {
+      QualityData data = QualityDataLoader.findByName(name);
+      assertNotNull(data, name);
+      assertFalse(data.bonuses().contains(QualityBonusType.GRANTS_SPELLCASTING), name);
+    }
+  }
+
+  @Test
+  void magicianQualityCostsFifteenBp() {
+    // GRW S. 118 ("Zauberer — Kosten: 15 GP"), bildkorrigierter Bug-Fix aus dem Magie-Feature (war
+    // fälschlich 5 BP, siehe docs/magie_analyse.md).
+    QualityData magier = QualityDataLoader.findByName("Magier");
+    assertNotNull(magier);
+    assertEquals(15, magier.bp());
+  }
 }

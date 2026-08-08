@@ -14,6 +14,9 @@ import de.shalorian.chummer.model.character.QualityData;
 import de.shalorian.chummer.model.character.QualityDataLoader;
 import de.shalorian.chummer.model.character.QualitySource;
 import de.shalorian.chummer.model.character.Skill;
+import de.shalorian.chummer.model.character.SpellData;
+import de.shalorian.chummer.model.character.SpellDataLoader;
+import de.shalorian.chummer.model.character.Tradition;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -80,6 +83,8 @@ public class CharacterStore {
         .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString()))
         .toList();
     data.biography = toBiographyData(character.getBiography());
+    data.tradition = character.getTradition().name();
+    data.spellNames = character.getSpells().stream().map(SpellData::name).toList();
 
     return data;
   }
@@ -121,8 +126,30 @@ public class CharacterStore {
     applyLog(data.karmaLog, character::addKarmaEntry);
     applyLog(data.nuyenLog, character::addNuyenEntry);
     applyBiography(character, data);
+    applyTradition(character, data);
+    applySpells(character, data);
 
     return character;
+  }
+
+  private static void applyTradition(@NonNull Character character, @NonNull CharacterData data) {
+    for (Tradition t : Tradition.values()) {
+      if (t.name().equals(data.tradition)) {
+        character.setTradition(t);
+        return;
+      }
+    }
+    // Unbekannter/fehlender Tradition-Name (z.B. Altdatei) — Default aus dem Character-Konstruktor
+    // bleibt unangetastet, analog zur Nachsicht bei applySelectedQualities().
+  }
+
+  private static void applySpells(@NonNull Character character, @NonNull CharacterData data) {
+    for (String name : data.spellNames) {
+      SpellData spellData = SpellDataLoader.findByName(name);
+      if (spellData != null) {
+        character.addSpell(spellData);
+      }
+    }
   }
 
   private static void applyBiography(@NonNull Character character, @NonNull CharacterData data) {

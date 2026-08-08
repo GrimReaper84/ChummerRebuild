@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Zauber (2 pro Kategorie: Heilung, Illusion,
+  Kampf, Manipulation, Wahrnehmung), direkt gegen docs/rulebooks/Grundregelwerk_SR4_ocr.txt verifiziert
+  (Zauber-Kapitel S. 214 ff.). Die vollständige GRW-Kern-Liste (84 Zauber im C#-Original) ist bewusst
+  nicht Teil dieser Version — Vervollständigung ist ein separater Folgeauftrag (User-Entscheidung
+  2026-08-08), analog zum offenen Punkt bei qualities.xml.
+-->
+<spells>
+
+    <!-- ── HEILUNG ────────────────────────────────────────── -->
+
+    <spell>
+        <name>Heilen</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>(Schaden)-2</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <spell>
+        <name>Krankheit Heilen</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>(Krankheitsschaden)-2</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <!-- ── ILLUSION ───────────────────────────────────────── -->
+
+    <spell>
+        <name>Unsichtbarkeit</name>
+        <descriptors>Realistisch, Monosensorisch</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K+2)</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <spell>
+        <name>Maske</name>
+        <descriptors>Realistisch, Vollsensorisch</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K+2)</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <!-- ── KAMPF ──────────────────────────────────────────── -->
+
+    <spell>
+        <name>Flammenwerfer</name>
+        <descriptors>Indirekt, Elementar</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K+2)+3</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <spell>
+        <name>Energieball</name>
+        <descriptors>Direkt, Flächenzauber</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K+2)+3</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <!-- ── MANIPULATION ───────────────────────────────────── -->
+
+    <spell>
+        <name>Entzünden</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>K+2</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <spell>
+        <name>Schatten</name>
+        <descriptors>Umgebung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K+2)+1</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <!-- ── WAHRNEHMUNG ────────────────────────────────────── -->
+
+    <spell>
+        <name>Geistessonde</name>
+        <descriptors>Aktiv, Blickrichtungsgebunden</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K+2)+2</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+    <spell>
+        <name>Kampfsinn</name>
+        <descriptors>Aktiv, Übersinnlich</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K+2)+2</dv>
+        <source>SR4</source>
+        <page></page>
+    </spell>
+
+</spells>

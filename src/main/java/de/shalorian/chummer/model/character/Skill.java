@@ -9,14 +9,20 @@ public class Skill {
   private static final int BP_PER_RATING = 4;
 
   private final @NonNull String name;
-  private final @NonNull AttributeType linkedAttribute;
+  private final @NonNull String linkedAttribute;
   private final @NonNull SkillCategory category;
   private final @Nullable String groupName; // null wenn keine Gruppe
 
   private int rating = 0;
   private @Nullable String specialization;
 
-  public Skill(@NonNull String name, @NonNull AttributeType linkedAttribute,
+  /**
+   * @param linkedAttribute Abkürzung des verknüpften Attributs (z.B. "AGI", "LOG", oder "MAG" für
+   *     magische Fertigkeiten). Bewusst als reiner Anzeigetext modelliert statt als {@link
+   *     AttributeType}, da {@code MAG} ein {@link SpecialAttributeType} ist, kein {@link
+   *     AttributeType} — das Feld wird ausschließlich zur Anzeige genutzt, nie zur Berechnung.
+   */
+  public Skill(@NonNull String name, @NonNull String linkedAttribute,
       @NonNull SkillCategory category, @Nullable String groupName) {
     this.name = name;
     this.linkedAttribute = linkedAttribute;
@@ -28,7 +34,7 @@ public class Skill {
     return name;
   }
 
-  public @NonNull AttributeType getLinkedAttribute() {
+  public @NonNull String getLinkedAttribute() {
     return linkedAttribute;
   }
 

@@ -15,6 +15,9 @@ import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.QualityData;
 import de.shalorian.chummer.model.character.QualityDataLoader;
+import de.shalorian.chummer.model.character.SpellData;
+import de.shalorian.chummer.model.character.SpellDataLoader;
+import de.shalorian.chummer.model.character.Tradition;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -236,6 +239,33 @@ class CharacterStoreTest {
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals("", loaded.getBiography().getAlias());
+  }
+
+  @Test
+  void roundtripPreservesTraditionAndSpells() throws IOException {
+    Character original = mensch("Test");
+    original.setTradition(Tradition.SHAMANIC);
+    SpellData heilen = SpellDataLoader.findByName("Heilen");
+    assertNotNull(heilen);
+    original.addSpell(heilen);
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(Tradition.SHAMANIC, loaded.getTradition());
+    assertEquals(1, loaded.getSpells().size());
+    assertEquals("Heilen", loaded.getSpells().get(0).name());
+  }
+
+  @Test
+  void roundtripOmitsTraditionAndSpellsNodeGracefully() throws IOException {
+    Character original = mensch("Test");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(Tradition.HERMETIC, loaded.getTradition());
+    assertTrue(loaded.getSpells().isEmpty());
   }
 
   @Test

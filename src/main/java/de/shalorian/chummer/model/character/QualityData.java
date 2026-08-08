@@ -9,4 +9,4 @@ public record QualityData(
     @NonNull QualityType type,
     boolean contributeToLimit,
     @NonNull Set<QualityBonusType> bonuses
-) {}
+) implements CatalogEntry {}

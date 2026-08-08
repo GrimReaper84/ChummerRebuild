@@ -68,7 +68,6 @@ public class SkillDataLoader {
   }
 
   private static @NonNull Skill parseSkill(@NonNull Element el, @NonNull SkillCategory category, @Nullable String groupName) {
-    return new Skill(el.getAttribute("name"), AttributeType.valueOf(el.getAttribute("attribute")),
-        category, groupName);
+    return new Skill(el.getAttribute("name"), el.getAttribute("attribute"), category, groupName);
   }
 }

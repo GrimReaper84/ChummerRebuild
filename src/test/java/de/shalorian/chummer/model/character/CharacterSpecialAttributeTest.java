@@ -99,6 +99,20 @@ class CharacterSpecialAttributeTest {
   }
 
   @Test
+  void magicianAndAdeptAreMutuallyExclusive() {
+    Character c = mensch("Test");
+    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData adept = QualityDataLoader.findByName("Adept");
+    assertNotNull(magier);
+    assertNotNull(adept);
+
+    c.addQuality(magier, false);
+
+    assertThrows(IllegalArgumentException.class, () -> c.addQuality(adept, false));
+    assertTrue(c.isMagician());
+  }
+
+  @Test
   void resonanceBlocksMagicQualityToo() {
     Character c = mensch("Test");
     QualityData technomant = QualityDataLoader.findByName("Technomant");

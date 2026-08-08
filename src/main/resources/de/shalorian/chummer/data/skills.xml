@@ -99,4 +99,13 @@
     <skill name="Geschütze"        attribute="LOG" category="VEHICLE"/>
     <skill name="Motorrad steuern" attribute="REA" category="VEHICLE"/>
 
+    <!-- ── MAGIE ──────────────────────────────────────────── -->
+    <!-- Nur für Charaktere mit der Gabe "Magier" erlernbar/steigerbar (GRW S. 208: "Wenn nicht
+         anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder Magieradept und
+         einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder anwenden.") —
+         UI-seitig über Character.isMagician() gegated, siehe CharacterViewController. -->
+
+    <skill name="Spruchzauberei" attribute="MAG" category="MAGICAL"/>
+    <skill name="Ritualzauberei" attribute="MAG" category="MAGICAL"/>
+
 </skills>

@@ -29,7 +29,7 @@
     </HBox>
   </bottom>
   <center>
-    <TabPane styleClass="main-tabs" tabClosingPolicy="UNAVAILABLE">
+    <TabPane fx:id="mainTabPane" styleClass="main-tabs" tabClosingPolicy="UNAVAILABLE">
 
       <Tab text="Biografie">
         <ScrollPane fitToWidth="true" styleClass="attr-scroll">
@@ -66,6 +66,16 @@
       <Tab text="Gaben &amp; Handicaps">
         <ScrollPane fitToWidth="true" styleClass="attr-scroll">
           <VBox styleClass="attr-container" fx:id="qualitiesContainer">
+            <padding>
+              <Insets bottom="20" left="36" right="36" top="20"/>
+            </padding>
+          </VBox>
+        </ScrollPane>
+      </Tab>
+
+      <Tab text="Magie" fx:id="magicTab">
+        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+          <VBox styleClass="attr-container" fx:id="magicContainer">
             <padding>
               <Insets bottom="20" left="36" right="36" top="20"/>
             </padding>

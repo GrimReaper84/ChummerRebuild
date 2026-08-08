@@ -26,6 +26,13 @@ class CharacterTest {
     }
 
     @Test
+    void newCharacterDefaultsToHermeticTraditionAndHasNoSpells() {
+        Character c = mensch("Test");
+        assertEquals(Tradition.HERMETIC, c.getTradition());
+        assertTrue(c.getSpells().isEmpty());
+    }
+
+    @Test
     void elfStartsWithRacialMinimumForAgiAndCha() {
         Character elf = new Character("Elara", MetatypeDataLoader.find("Elf"));
         assertEquals(2, elf.getAttribute(AGI).getValue(), "Elf AGI Minimum ist 2");

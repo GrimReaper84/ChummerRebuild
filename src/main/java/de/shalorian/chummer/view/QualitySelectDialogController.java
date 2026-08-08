@@ -5,35 +5,23 @@ import de.shalorian.chummer.model.character.QualityData;
 import de.shalorian.chummer.model.character.QualityDataLoader;
 import de.shalorian.chummer.model.character.QualitySource;
 import de.shalorian.chummer.model.character.QualityType;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public class QualitySelectDialogController {
+public class QualitySelectDialogController extends CatalogSelectDialogController<QualityData> {
 
-  private static final String CATEGORY_ALL = "Alle";
   private static final String CATEGORY_POSITIVE = "Gaben";
   private static final String CATEGORY_NEGATIVE = "Handicaps";
 
-  @FXML
-  private ComboBox<String> categoryBox;
-  @FXML
-  private TextField searchField;
-  @FXML
-  private ListView<QualityData> qualityListView;
   @FXML
   private Label costLabel;
   @FXML
@@ -50,30 +38,13 @@ public class QualitySelectDialogController {
   private @Nullable QualitySelectResult result;
 
   @FXML
+  @Override
   public void initialize() {
-    categoryBox.getItems().addAll(CATEGORY_ALL, CATEGORY_POSITIVE, CATEGORY_NEGATIVE);
-    categoryBox.setValue(CATEGORY_ALL);
-
-    categoryBox.valueProperty().addListener((obs, old, val) -> updateList());
-    searchField.textProperty().addListener((obs, old, val) -> updateList());
+    super.initialize();
     onlySelectableBox.selectedProperty().addListener((obs, old, val) -> updateList());
-    gratisBox.selectedProperty().addListener((obs, old, val) -> updateInfoPanel());
-
-    qualityListView.getSelectionModel().selectedItemProperty()
-        .addListener((obs, old, val) -> updateInfoPanel());
-
-    qualityListView.setCellFactory(lv -> new javafx.scene.control.ListCell<>() {
-      @Override
-      protected void updateItem(@Nullable QualityData item, boolean empty) {
-        super.updateItem(item, empty);
-        setText(empty || item == null ? null : item.name());
-      }
-    });
-
+    gratisBox.selectedProperty().addListener((obs, old, val) -> onListUpdated());
     okButton.setDisable(true);
     addAgainButton.setDisable(true);
-
-    updateList();
   }
 
   public void setStage(@NonNull Stage stage) {
@@ -92,39 +63,40 @@ public class QualitySelectDialogController {
     categoryBox.setValue(filter == QualityType.POSITIVE ? CATEGORY_POSITIVE : CATEGORY_NEGATIVE);
   }
 
-  private void updateList() {
-    String category = categoryBox.getValue();
-    String search = searchField.getText().trim().toLowerCase(Locale.ROOT);
-    boolean onlySelectable = onlySelectableBox.isSelected();
+  @Override
+  protected @NonNull List<String> categoryOptions() {
+    return List.of(CATEGORY_POSITIVE, CATEGORY_NEGATIVE);
+  }
 
-    Set<String> alreadySelected = character == null ? Set.of() : character.getQualities().stream()
+  @Override
+  protected @NonNull List<QualityData> allEntries() {
+    return List.copyOf(QualityDataLoader.getAllQualities().values());
+  }
+
+  @Override
+  protected boolean matchesCategory(@NonNull QualityData q, @NonNull String category) {
+    return CATEGORY_POSITIVE.equals(category)
+        ? q.type() == QualityType.POSITIVE
+        : q.type() == QualityType.NEGATIVE;
+  }
+
+  @Override
+  protected boolean additionalFilter(@NonNull QualityData q) {
+    if (!onlySelectableBox.isSelected()) {
+      return true;
+    }
+    return isSelectable(q, alreadySelectedNames());
+  }
+
+  private @NonNull Set<String> alreadySelectedNames() {
+    Character c = this.character;
+    if (c == null) {
+      return Set.of();
+    }
+    return c.getQualities().stream()
         .filter(q -> q.source() == QualitySource.SELECTED)
         .map(q -> q.data().name())
         .collect(Collectors.toSet());
-
-    List<QualityData> filtered = QualityDataLoader.getAllQualities().values().stream()
-        .filter(q -> matchesCategory(q, category))
-        .filter(q -> search.isEmpty() || q.name().toLowerCase(Locale.ROOT).contains(search))
-        .filter(q -> !onlySelectable || isSelectable(q, alreadySelected))
-        .sorted(Comparator.comparing(QualityData::name))
-        .toList();
-
-    QualityData selected = qualityListView.getSelectionModel().getSelectedItem();
-    qualityListView.getItems().setAll(filtered);
-    if (selected != null && filtered.contains(selected)) {
-      qualityListView.getSelectionModel().select(selected);
-    }
-    updateInfoPanel();
-  }
-
-  private boolean matchesCategory(@NonNull QualityData q, @Nullable String category) {
-    if (category == null || CATEGORY_ALL.equals(category)) {
-      return true;
-    }
-    if (CATEGORY_POSITIVE.equals(category)) {
-      return q.type() == QualityType.POSITIVE;
-    }
-    return q.type() == QualityType.NEGATIVE;
   }
 
   private boolean isSelectable(@NonNull QualityData q, @NonNull Set<String> alreadySelected) {
@@ -144,8 +116,9 @@ public class QualitySelectDialogController {
     return true;
   }
 
-  private void updateInfoPanel() {
-    QualityData selected = qualityListView.getSelectionModel().getSelectedItem();
+  @Override
+  protected void onListUpdated() {
+    QualityData selected = itemListView.getSelectionModel().getSelectedItem();
     if (selected == null) {
       costLabel.setText("–");
       okButton.setDisable(true);
@@ -164,7 +137,7 @@ public class QualitySelectDialogController {
 
   @FXML
   private void onOk() {
-    QualityData selected = qualityListView.getSelectionModel().getSelectedItem();
+    QualityData selected = itemListView.getSelectionModel().getSelectedItem();
     if (selected == null) {
       return;
     }
@@ -176,7 +149,7 @@ public class QualitySelectDialogController {
 
   @FXML
   private void onOkAndAdd() {
-    QualityData selected = qualityListView.getSelectionModel().getSelectedItem();
+    QualityData selected = itemListView.getSelectionModel().getSelectedItem();
     if (selected == null) {
       return;
     }

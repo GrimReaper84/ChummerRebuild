@@ -17,6 +17,8 @@ import de.shalorian.chummer.model.character.Skill;
 import de.shalorian.chummer.model.character.SkillCategory;
 import de.shalorian.chummer.model.character.SpecialAttribute;
 import de.shalorian.chummer.model.character.SpecialAttributeType;
+import de.shalorian.chummer.model.character.SpellData;
+import de.shalorian.chummer.model.character.Tradition;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -45,6 +47,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -131,6 +135,13 @@ public class CharacterViewController {
   private VBox contactsContainer;
   @FXML
   private VBox biographyContainer;
+  @FXML
+  private TabPane mainTabPane;
+  @FXML
+  private Tab magicTab;
+  @FXML
+  private VBox magicContainer;
+  private int magicTabIndex;
   private @Nullable Character character;
 
   @FXML
@@ -148,6 +159,31 @@ public class CharacterViewController {
 
     buildLogTable(karmaTable);
     buildLogTable(nuyenTable);
+
+    magicTabIndex = mainTabPane.getTabs().indexOf(magicTab);
+    mainTabPane.getTabs().remove(magicTab);
+  }
+
+  /**
+   * Blendet den Magie-Tab ein bzw. aus, je nachdem ob {@link Character#isMagician()} aktuell wahr
+   * ist — funktioniert identisch im Erstellungs- und im Karrieremodus. Anders als das bestehende
+   * {@code setVisible()}/{@code setManaged()}-Muster für einzelne Controls wird der Tab tatsächlich
+   * aus {@link TabPane#getTabs()} entfernt bzw. an der ursprünglichen FXML-Position wieder
+   * eingefügt (analog zum C#-Original, siehe {@code docs/magie_analyse.md}).
+   */
+  private void syncMagicTabVisibility() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    boolean shouldBeVisible = ch.isMagician();
+    boolean isVisible = mainTabPane.getTabs().contains(magicTab);
+    if (shouldBeVisible && !isVisible) {
+      int index = Math.min(magicTabIndex, mainTabPane.getTabs().size());
+      mainTabPane.getTabs().add(index, magicTab);
+    } else if (!shouldBeVisible && isVisible) {
+      mainTabPane.getTabs().remove(magicTab);
+    }
   }
 
   public void setCharacter(@NonNull Character character) {
@@ -160,6 +196,7 @@ public class CharacterViewController {
     updateModeDisplay();
     buildQualitiesTab();
     buildBiographyTab();
+    buildMagicTab();
   }
 
   // ── Biografie-Tab ─────────────────────────────────────────
@@ -834,6 +871,7 @@ public class CharacterViewController {
     qualitiesContainer.getChildren().add(sep);
 
     buildQualitySection("Handicaps", QualityType.NEGATIVE, career);
+    syncMagicTabVisibility();
   }
 
   private void buildQualitySection(
@@ -952,7 +990,7 @@ public class CharacterViewController {
     String qualityName = q.data().name();
     if (c.isCreated() && q.data().type() == QualityType.NEGATIVE && !q.gratis()) {
       int karmaCost = c.getQualityKarmaCost(q.data());
-      if (qualityKarmaChargeFailed(c, "%s loswerden".formatted(qualityName), karmaCost)) {
+      if (karmaChargeFailed(c, "%s loswerden".formatted(qualityName), karmaCost)) {
         return;
       }
     }
@@ -964,13 +1002,13 @@ public class CharacterViewController {
   }
 
   /**
-   * Prüft Karma-Verfügbarkeit, holt eine Bestätigung ein und verbucht den Karma-Log-Eintrag für den Erwerb einer Gabe bzw. das Loswerden eines
-   * Handicaps im Karrieremodus (siehe {@link Character#getQualityKarmaCost}).
+   * Prüft Karma-Verfügbarkeit, holt eine Bestätigung ein und verbucht den Karma-Log-Eintrag für einen Karrieremodus-Kauf (z.B. Erwerb einer Gabe,
+   * Loswerden eines Handicaps, Erlernen eines Zaubers) — gemeinsame Verdrahtung für alle Karrieremodus-Käufe mit fixem Karma-Preis.
    *
    * @return true, wenn das Karma NICHT verbucht wurde (fehlendes Karma oder abgebrochen) — die Aufrufer sollen in diesem Fall die eigentliche Aktion
    * abbrechen
    */
-  private boolean qualityKarmaChargeFailed(@NonNull Character c, @NonNull String label,
+  private boolean karmaChargeFailed(@NonNull Character c, @NonNull String label,
       int karmaCost) {
     if (c.getKarmaTotal() < karmaCost) {
       Notifications.create()
@@ -1044,7 +1082,7 @@ public class CharacterViewController {
     // Eine Gabe im Karrieremodus erwerben kostet die doppelten GP-Kosten in Karma.
     if (ch.isCreated() && r.data().type() == QualityType.POSITIVE && !r.gratis()) {
       int karmaCost = ch.getQualityKarmaCost(r.data());
-      if (qualityKarmaChargeFailed(ch, "%s erwerben".formatted(r.data().name()), karmaCost)) {
+      if (karmaChargeFailed(ch, "%s erwerben".formatted(r.data().name()), karmaCost)) {
         return;
       }
     }
@@ -1190,7 +1228,7 @@ public class CharacterViewController {
   private void addSkillRow(@NonNull MigPane grid, int row, @NonNull Skill skill, boolean coupled,
       @NonNull Character character) {
     Label skillNameLabel = new Label(skill.getName());
-    Label attrLabel = new Label(skill.getLinkedAttribute().getAbbreviation());
+    Label attrLabel = new Label(skill.getLinkedAttribute());
     Button minus = new Button("−");
     Label ratingLabel = new Label();
     Button plus = new Button("+");
@@ -1254,7 +1292,7 @@ public class CharacterViewController {
 
             @Override
             public boolean canIncrement() {
-              return character.canRaiseSkillAtCreation(skill);
+              return character.canRaiseSkill(skill);
             }
 
             @Override
@@ -1535,6 +1573,142 @@ public class CharacterViewController {
     }
   }
 
+  // ── Magie-Tab ─────────────────────────────────────────────
+
+  private void buildMagicTab() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    magicContainer.getChildren().clear();
+
+    Label sectionLabel = new Label("Magie");
+    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
+
+    ComboBox<Tradition> traditionBox = new ComboBox<>();
+    traditionBox.getItems().setAll(Tradition.values());
+    traditionBox.setConverter(new TraditionStringConverter());
+    traditionBox.setValue(ch.getTradition());
+    traditionBox.valueProperty().addListener((obs, old, val) -> {
+      if (val != null) {
+        ch.setTradition(val);
+      }
+    });
+
+    Button addBtn = new Button("Zauber hinzufügen");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    addBtn.setOnAction(e -> onAddSpell());
+
+    HBox header = new HBox(12);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.getChildren().addAll(sectionLabel, traditionBox);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().add(spacer);
+    header.getChildren().add(addBtn);
+    magicContainer.getChildren().add(header);
+
+    MigPane grid = buildSpellGrid();
+    magicContainer.getChildren().add(grid);
+
+    int row = 1;
+    for (SpellData spell : ch.getSpells()) {
+      addSpellRow(grid, row++, spell, ch);
+    }
+  }
+
+  /**
+   * Baut das Zauber-Grid inkl. Kopfzeile (Zeile 0). Die sieben Datenspalten wachsen mit der
+   * Fensterbreite (MigLayout {@code grow}-Flag), behalten dabei aber die bisherige Breite als
+   * Mindestmaß ({@code min:min:} ohne Maximum) — nur die Entfernen-Spalte bleibt fest, da ein Button
+   * nicht sinnvoll mitwachsen kann.
+   */
+  private @NonNull MigPane buildSpellGrid() {
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
+        "[160:160:,grow][100:100:,grow][30:30:,center,grow][60:60:,grow][60:60:,grow]"
+            + "[50:50:,center,grow][90:90:,grow][90!]");
+    grid.getStyleClass().add("attr-grid");
+    VBox.setMargin(grid, new Insets(12, 0, 0, 0));
+
+    String[] headers = {"Zauber", "Kategorie", "Typ", "Reichweite", "Schaden", "Dauer", "Entzug", ""};
+    for (int i = 0; i < headers.length; i++) {
+      if (!headers[i].isEmpty()) {
+        Label h = new Label(headers[i]);
+        h.getStyleClass().add("attr-header");
+        grid.add(h, "cell " + i + " 0");
+      }
+    }
+
+    return grid;
+  }
+
+  private void addSpellRow(@NonNull MigPane grid, int row, @NonNull SpellData spell,
+      @NonNull Character character) {
+    Label spellNameLabel = new Label(spell.name());
+    Label categoryLabel = new Label(spell.category());
+    Label typeLabel = new Label(spell.type());
+    Label rangeLabel = new Label(spell.range());
+    Label damageLabel = new Label(spell.damage());
+    Label durationLabel = new Label(spell.duration());
+    Label dvLabel = new Label(spell.dv());
+    Button removeBtn = new Button("Entfernen");
+
+    spellNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+
+    removeBtn.setOnAction(e -> {
+      character.removeSpell(spell.name());
+      buildMagicTab();
+      updateBpDisplay();
+    });
+
+    addRowCells(grid, row, spellNameLabel, categoryLabel, typeLabel, rangeLabel, damageLabel,
+        durationLabel, dvLabel, removeBtn);
+  }
+
+  /**
+   * Öffnet den Zauber-Auswahl-Dialog und fügt den gewählten Zauber hinzu. Im Erstellungsmodus greift
+   * das Cap aus {@link Character#canAddSpellAtCreation()}; im Karrieremodus kostet jeder neue Zauber
+   * {@link Character#getSpellKarmaCost()} Karma (Bestätigungsdialog analog anderen
+   * Karrieremodus-Käufen, siehe {@link #karmaChargeFailed}).
+   */
+  private void onAddSpell() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    if (!ch.isCreated() && !ch.canAddSpellAtCreation()) {
+      Notifications.create()
+          .title("Zauberlimit erreicht")
+          .text("Kein weiterer Zauber ohne höheres Spruchzauberei-/Ritualzauberei-Rating möglich")
+          .position(Pos.BOTTOM_RIGHT)
+          .owner(nameLabel.getScene().getWindow())
+          .showWarning();
+      return;
+    }
+    try {
+      DialogHandle dialog = openDialog("SpellSelectDialog.fxml", "Zauber hinzufügen");
+      SpellSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(ch);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(spellData -> {
+        if (ch.isCreated()) {
+          String label = "Zauber gelernt: " + spellData.name();
+          if (karmaChargeFailed(ch, label, ch.getSpellKarmaCost())) {
+            return;
+          }
+        }
+        ch.addSpell(spellData);
+        buildMagicTab();
+        updateBpDisplay();
+      });
+    } catch (IOException e) {
+      showDialogLoadError();
+    }
+  }
+
   // ── Gemeinsam ─────────────────────────────────────────────
 
   /**
@@ -1606,7 +1780,8 @@ public class CharacterViewController {
       int karmaCost = model.karmaStepCost();
       valueLabel.setText(model.valueDisplayText());
       costLabel.setText(val >= model.max() ? "–" : karmaCost + KARMA_SUFFIX);
-      plus.setDisable(val >= model.max() || character.getKarmaTotal() < karmaCost);
+      plus.setDisable(val >= model.max() || character.getKarmaTotal() < karmaCost
+          || !model.canIncrement());
     };
     refresherList.add(refresh);
 
@@ -1614,7 +1789,7 @@ public class CharacterViewController {
       int val = model.value();
       int karmaCost = model.karmaStepCost();
       String label = model.actionLabel(val, val + 1);
-      if (val < model.max() && character.getKarmaTotal() >= karmaCost
+      if (val < model.max() && character.getKarmaTotal() >= karmaCost && model.canIncrement()
           && confirmKarmaSpend(label, karmaCost, character)) {
         character.addKarmaEntry(
             new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
@@ -1972,6 +2147,7 @@ public class CharacterViewController {
     buildQualitiesTab();
     buildContactsTab();
     buildBiographyTab();
+    buildMagicTab();
   }
 
   @SuppressWarnings("unchecked")

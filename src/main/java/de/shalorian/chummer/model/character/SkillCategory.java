@@ -7,7 +7,8 @@ public enum SkillCategory {
   PHYSICAL("Körperlich"),
   SOCIAL("Sozial"),
   TECHNICAL("Technisch"),
-  VEHICLE("Fahrzeuge");
+  VEHICLE("Fahrzeuge"),
+  MAGICAL("Magie");
 
   private final @NonNull String displayName;
 

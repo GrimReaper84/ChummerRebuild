@@ -30,6 +30,11 @@ public class Character {
   private static final int SPECIALIZATION_KARMA_COST = 2;
   private static final int MIN_RATING_FOR_SPECIALIZATION = 1;
   private static final int CONTACT_BP_PER_POINT = 1;
+  private static final int SPELL_BP_COST = 3;
+  private static final int SPELL_KARMA_COST = 5;
+  private static final int SPELL_CAP_MULTIPLIER = 2;
+  private static final String SPELLCASTING_SKILL = "Spruchzauberei";
+  private static final String RITUAL_SPELLCASTING_SKILL = "Ritualzauberei";
 
   private static final double BASE_ESSENCE = 6.0;
 
@@ -39,6 +44,7 @@ public class Character {
   private final List<CharacterQuality> qualities = new ArrayList<>();
   private final List<KnowledgeSkill> knowledgeSkills = new ArrayList<>();
   private final List<Contact> contacts = new ArrayList<>();
+  private final List<SpellData> spells = new ArrayList<>();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private final @NonNull CharacterBiography biography = new CharacterBiography();
@@ -46,6 +52,7 @@ public class Character {
   private @NonNull MetatypeData metatype;
   private @NonNull SpecialAttribute edge;
   private @Nullable SpecialAttribute magicOrResonance;
+  private @NonNull Tradition tradition = Tradition.HERMETIC;
   private boolean created = false;
   private int nuyenBP = 0;
 
@@ -196,6 +203,33 @@ public class Character {
   }
 
   /**
+   * Prüft, ob der Charakter speziell die Gabe "Magier" besitzt — anders als {@link #hasMagic()}
+   * (liefert auch für Adepten {@code true}, da diese ebenfalls ein Magie-Attribut besitzen), grenzt
+   * dies auf Charaktere ein, die tatsächlich Zauber wirken dürfen. SR4-Grundregelwerk S. 208: "Wenn
+   * nicht anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder Magieradept und
+   * einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder anwenden." Steuert die
+   * Sichtbarkeit des Magie-Tabs sowie der magischen Aktionsfertigkeiten (Spruchzauberei/
+   * Ritualzauberei).
+   */
+  public boolean isMagician() {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_SPELLCASTING));
+  }
+
+  /**
+   * Die gewählte magische Tradition (GRW-Kern: Hermetisch/Schamanistisch), Default {@link
+   * Tradition#HERMETIC}. Es gibt bewusst keinen "nicht gewählt"-Zustand — SR4-Grundregelwerk kennt
+   * keine harte Voraussetzung, eine Tradition vor dem Zauber-Erlernen festzulegen.
+   */
+  public @NonNull Tradition getTradition() {
+    return tradition;
+  }
+
+  public void setTradition(@NonNull Tradition tradition) {
+    this.tradition = tradition;
+  }
+
+  /**
    * Essenz des Charakters. Aktuell ein fixer Wert (SR4-Grundregelwerk: "Alle Charaktere beginnen
    * mit einer Essenz von 6"), ohne Cyberware-/Bioware-Abzug — dieses Subsystem existiert noch
    * nicht (bewusster Scope-Cut). Sobald Cyberware/Bioware modelliert sind, muss dieser Wert aus
@@ -285,6 +319,21 @@ public class Character {
       return count6 == 0 && count5 < 2;
     }
     return count5 == 0 && count6 < 1; // newValue == 6
+  }
+
+  /**
+   * Vollständige Steigerungs-Prüfung für eine aktive Fertigkeit: kombiniert den
+   * Erstellungs-Cap aus {@link #canRaiseSkillAtCreation(Skill)} mit der Magier-Voraussetzung für
+   * magische Fertigkeiten (SR4-Grundregelwerk S. 208: "können nur Charaktere mit einer der Gaben
+   * Zauberer oder Magieradept … magische Fertigkeiten erwerben oder anwenden") — anders als der
+   * reine Erstellungs-Cap gilt diese Sperre auch im Karrieremodus, da sie keine Erschaffungsregel,
+   * sondern eine grundsätzliche Zugriffsvoraussetzung ist.
+   */
+  public boolean canRaiseSkill(@NonNull Skill skill) {
+    if (skill.getCategory() == SkillCategory.MAGICAL && !isMagician()) {
+      return false;
+    }
+    return canRaiseSkillAtCreation(skill);
   }
 
   private boolean isCoupledGroupMember(@NonNull Skill s) {
@@ -449,8 +498,23 @@ public class Character {
       throw new IllegalArgumentException(
           "Magie und Resonanz schließen sich gegenseitig aus (SR4-Grundregelwerk)");
     }
+    if (data.bonuses().contains(QualityBonusType.GRANTS_MAGIC) && hasSelectedGrantsMagicQuality()) {
+      throw new IllegalArgumentException(
+          "Magier, Adept und Mystischer Adept schließen sich gegenseitig aus (SR4-Grundregelwerk)");
+    }
     qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis));
     syncMagicOrResonance();
+  }
+
+  /**
+   * Prüft, ob bereits eine gewählte (nicht metatyp-vererbte) Quality mit {@link
+   * QualityBonusType#GRANTS_MAGIC} aktiv ist — verhindert die gleichzeitige Wahl von Magier, Adept
+   * und Mystischem Adept (SR4-Grundregelwerk: diese Gaben schließen sich gegenseitig aus).
+   */
+  private boolean hasSelectedGrantsMagicQuality() {
+    return qualities.stream()
+        .anyMatch(q -> q.source() == QualitySource.SELECTED
+            && q.data().bonuses().contains(QualityBonusType.GRANTS_MAGIC));
   }
 
   /** Lädt eine gewählte Quality ohne Limit-Prüfung — nur für den Persistenz-Pfad. */
@@ -775,6 +839,66 @@ public class Character {
         .sum();
   }
 
+  // --- Zauber ---
+
+  public @NonNull List<SpellData> getSpells() {
+    return Collections.unmodifiableList(spells);
+  }
+
+  /**
+   * Lernt einen Zauber aus dem GRW-Kern-Katalog ({@link SpellDataLoader}). Ein Zauber kann pro
+   * Charakter nur einmal gelernt werden (analog {@link #addKnowledgeSkill(String,
+   * KnowledgeSkillCategory)}) — anders als bei Kontakten sind hier keine Namensduplikate erlaubt, da
+   * ein Zauber bereits durch seinen Namen fachlich eindeutig ist.
+   *
+   * @throws IllegalArgumentException wenn der Zauber bereits gelernt ist
+   */
+  public void addSpell(@NonNull SpellData data) {
+    boolean duplicate = spells.stream().anyMatch(s -> s.name().equals(data.name()));
+    if (duplicate) {
+      throw new IllegalArgumentException("Zauber \"%s\" ist bereits gelernt".formatted(data.name()));
+    }
+    spells.add(data);
+  }
+
+  public void removeSpell(@NonNull String name) {
+    spells.removeIf(s -> s.name().equals(name));
+  }
+
+  /**
+   * BP-Kosten aller gelernten Zauber: fixer Preis {@value #SPELL_BP_COST} BP pro Zauber
+   * (SR4-Grundregelwerk), unabhängig von Kategorie oder Kraftstufe.
+   */
+  public int getSpellBP() {
+    return spells.size() * SPELL_BP_COST;
+  }
+
+  /** Karma-Kosten im Karrieremodus, um einen weiteren Zauber zu lernen — fixer Preis, keine Staffelung. */
+  public int getSpellKarmaCost() {
+    return SPELL_KARMA_COST;
+  }
+
+  /**
+   * Prüft, ob ein weiterer Zauber während der Charaktererschaffung gelernt werden darf: die
+   * Gesamtzahl gelernter Zauber darf das Doppelte des höchsten Ratings von Spruchzauberei/
+   * Ritualzauberei nicht überschreiten (SR4-Grundregelwerk). Im Karrieremodus gilt dieser
+   * Erstellungs-Cap nicht.
+   */
+  public boolean canAddSpellAtCreation() {
+    if (created) {
+      return true;
+    }
+    return spells.size() < SPELL_CAP_MULTIPLIER * highestSpellcastingRating();
+  }
+
+  private int highestSpellcastingRating() {
+    Skill spellcasting = getSkill(SPELLCASTING_SKILL);
+    Skill ritual = getSkill(RITUAL_SPELLCASTING_SKILL);
+    int spellcastingRating = spellcasting != null ? spellcasting.getRating() : 0;
+    int ritualRating = ritual != null ? ritual.getRating() : 0;
+    return Math.max(spellcastingRating, ritualRating);
+  }
+
   // --- BP ---
   public int getSpentBP() {
     int attrBP = getAttributeBP();
@@ -801,7 +925,7 @@ public class Character {
 
     return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
         + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP()
-        + getActiveSkillSpecializationBP() + getContactBP();
+        + getActiveSkillSpecializationBP() + getContactBP() + getSpellBP();
   }
 
   public int getRemainingBP() {

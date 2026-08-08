@@ -147,9 +147,9 @@
 
     <quality>
         <name>Magier</name>
-        <bp>5</bp>
+        <bp>15</bp>
         <category>Positive</category>
-        <bonus><grantsmagic/></bonus>
+        <bonus><grantsmagic/><grantsspellcasting/></bonus>
         <source>SR4</source>
     </quality>
 

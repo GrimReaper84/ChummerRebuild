@@ -28,6 +28,8 @@ public class CharacterData {
   public @NonNull List<LogEntryData> karmaLog = new ArrayList<>();
   public @NonNull List<LogEntryData> nuyenLog = new ArrayList<>();
   public @NonNull BiographyData biography = new BiographyData();
+  public @NonNull String tradition = "HERMETIC";
+  public @NonNull List<String> spellNames = new ArrayList<>();
 
   public CharacterData() {
     // Für Jackson-Deserialisierung benötigt (public Felder werden nach dem Konstruktoraufruf per Reflection befüllt).

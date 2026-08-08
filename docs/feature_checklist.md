@@ -121,14 +121,26 @@
 
 ## 8. Magie
 
-| Feature                                       | Status | Anmerkung                                       |
-|-----------------------------------------------|--------|-------------------------------------------------|
-| MAG-Attribut aktivieren (via Quality)         | ❌      | Abhängig von fehlenden Qualities & MAG-Attribut |
-| Magier-Tab (Tradition, Zauber)                | ❌      |                                                 |
-| Adept-Tab (Adeptenkräfte, Power Points = MAG) | ❌      |                                                 |
-| Zauber hinzufügen (3 BP/Zauber)               | ❌      |                                                 |
-| Adeptenkräfte mit PP-Kosten                   | ❌      |                                                 |
-| Initiationsgrade                              | ❌      |                                                 |
+> Scope-Entscheidung (2026-08-08): Nur reine **Magier** umgesetzt (Tradition + Zauber-Erlernen).
+> Adept-Kräfte und Mystic-Adept-Split sind bewusst zurückgestellt (eigenes Folgefeature). Details:
+> `docs/magie_analyse.md` (C#-Analyse), `docs/magie_java_analyse.md` (Java-Ist-Analyse),
+> `docs/magie_plan.md` (Umsetzungsplan inkl. aller Entscheidungen).
+
+| Feature                                                | Status | Anmerkung                                                                                                                                                                                                                                                            |
+|---------------------------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Magier-Erkennung (feiner als reines MAG-Attribut)      | ✅      | Neuer `QualityBonusType.GRANTS_SPELLCASTING`, nur auf Quality "Magier" gesetzt — unterscheidet Magier von Adept (beide teilen weiterhin `GRANTS_MAGIC` fürs MAG-Attribut selbst), `Character.isMagician()`                                                        |
+| Magie-Tab (Tradition, Zauber)                          | ✅      | Eigener Tab, dynamisch ein-/ausgeblendet (`TabPane.getTabs()`), sichtbar sobald Gabe "Magier" aktiv — funktioniert bereits im Erstellungsmodus, nicht erst im Karrieremodus                                                                                        |
+| Tradition                                              | ✅      | Festes Enum `Tradition` (Hermetisch/Schamanistisch, GRW-Kern) mit Drain-Attributformel als Anzeigetext; freie Tradition-Erschaffung bewusst nicht umgesetzt                                                                                                         |
+| Zauber-Katalog                                         | ⚠️     | Initiale, direkt aus dem GRW-Text verifizierte Teilmenge (10 Zauber, 2 je GRW-Kategorie: Kampf/Wahrnehmung/Heilung/Illusion/Manipulation). Vollständige GRW-Kern-Liste (84 Zauber im C#-Original) ist offener Folgeauftrag, analog zum offenen Punkt bei Qualities |
+| Zauber hinzufügen (3 BP / 5 Karma)                     | ✅      | Fixpreis pro Zauber in beiden Modi, Karrieremodus mit Karma-Bestätigungsdialog                                                                                                                                                                                       |
+| Zauber-Cap bei Erstellung (2×höchstes Spellcasting-Rating) | ✅  | `Character.canAddSpellAtCreation()`, kein Cap im Karrieremodus                                                                                                                                                                                                       |
+| Magische Aktionsfertigkeiten (Spruchzauberei/Ritualzauberei) | ✅ | Neu in `skills.xml`, eigene `SkillCategory.MAGICAL`, immer im Skills-Tab sichtbar (für alle Charaktere), aber nur für Magier steigerbar — `+`-Button deaktiviert ohne Gabe "Magier" (`Character.canRaiseSkill()`, GRW S. 208), gilt in Erstellung **und** Karrieremodus |
+| Magier/Adept/Mystischer-Adept-Exklusivität             | ✅      | `Character.addQuality()` verhindert gleichzeitige Wahl mehrerer `GRANTS_MAGIC`-Qualities                                                                                                                                                                            |
+| Magier-Quality-Kosten (Bug-Fix)                        | ✅      | `qualities.xml` von 5 auf 15 BP korrigiert (GRW S. 118)                                                                                                                                                                                                              |
+| Adept-Tab (Adeptenkräfte, Power Points = MAG)          | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
+| Adeptenkräfte mit PP-Kosten                            | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
+| Mystic-Adept-MAG-Split                                 | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
+| Initiationsgrade                                       | ❌      | Kein GRW-Kern-Beleg im Grundregelwerk gefunden (vermutlich Sourcebook *Street Magic*), niedrige Priorität                                                                                                                                                            |
 
 ---
 
@@ -304,7 +316,7 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 
 **Stufe 2 – Erweiterte Features**
 
-1. Magie (MAG-Aktivierung, Tradition, Zauber, Adeptenkräfte) — GRW vollständig bestätigt
+1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
 2. Technomancer (RES-Aktivierung, Stream, Komplexe Formen) — RES + Komplexe Formen bestätigt (Formel korrigiert, s. Abschnitt 9); **Submersionsgrade auf Niedrig-Priorität**, kein GRW-Beleg
 3. Cyberware/Bioware mit Essenz — GRW bestätigt (Essenz-Split, Grades)
 4. Rüstung mit Stacking-Regeln — GRW bestätigt (Addition mehrerer Rüstungsteile + Tragebelastungsformel)
