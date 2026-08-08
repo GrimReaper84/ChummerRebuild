@@ -27,6 +27,7 @@ public class CharacterData {
   public @NonNull List<String> decoupledGroups = new ArrayList<>();
   public @NonNull List<LogEntryData> karmaLog = new ArrayList<>();
   public @NonNull List<LogEntryData> nuyenLog = new ArrayList<>();
+  public @NonNull BiographyData biography = new BiographyData();
 
   public CharacterData() {
     // Für Jackson-Deserialisierung benötigt (public Felder werden nach dem Konstruktoraufruf per Reflection befüllt).

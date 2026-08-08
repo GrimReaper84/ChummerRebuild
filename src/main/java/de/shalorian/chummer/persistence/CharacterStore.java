@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.CharacterBiography;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
@@ -78,7 +79,27 @@ public class CharacterStore {
     data.nuyenLog = character.getNuyenLog().stream()
         .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString()))
         .toList();
+    data.biography = toBiographyData(character.getBiography());
 
+    return data;
+  }
+
+  private static @NonNull BiographyData toBiographyData(@NonNull CharacterBiography biography) {
+    BiographyData data = new BiographyData();
+    data.alias = biography.getAlias();
+    data.sex = biography.getSex();
+    data.age = biography.getAge();
+    data.eyes = biography.getEyes();
+    data.height = biography.getHeight();
+    data.weight = biography.getWeight();
+    data.skin = biography.getSkin();
+    data.hair = biography.getHair();
+    data.description = biography.getDescription();
+    data.background = biography.getBackground();
+    data.concept = biography.getConcept();
+    data.notes = biography.getNotes();
+    data.playerName = biography.getPlayerName();
+    data.gameNotes = biography.getGameNotes();
     return data;
   }
 
@@ -99,8 +120,27 @@ public class CharacterStore {
     data.decoupledGroups.forEach(character::decoupleGroup);
     applyLog(data.karmaLog, character::addKarmaEntry);
     applyLog(data.nuyenLog, character::addNuyenEntry);
+    applyBiography(character, data);
 
     return character;
+  }
+
+  private static void applyBiography(@NonNull Character character, @NonNull CharacterData data) {
+    CharacterBiography biography = character.getBiography();
+    biography.setAlias(data.biography.alias);
+    biography.setSex(data.biography.sex);
+    biography.setAge(data.biography.age);
+    biography.setEyes(data.biography.eyes);
+    biography.setHeight(data.biography.height);
+    biography.setWeight(data.biography.weight);
+    biography.setSkin(data.biography.skin);
+    biography.setHair(data.biography.hair);
+    biography.setDescription(data.biography.description);
+    biography.setBackground(data.biography.background);
+    biography.setConcept(data.biography.concept);
+    biography.setNotes(data.biography.notes);
+    biography.setPlayerName(data.biography.playerName);
+    biography.setGameNotes(data.biography.gameNotes);
   }
 
   private static void applyAttributes(@NonNull Character character, @NonNull CharacterData data) {

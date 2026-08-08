@@ -17,7 +17,7 @@
 | BP-Budget = 400                                                                                                                 | ✅      | Konstante korrekt                                                                               |
 | BP-Restanzeige mit Farbwechsel bei Überschreitung                                                                               | ✅      |                                                                                                 |
 | Nuyen-Budget in der Erstellung (max. 50 BP × 5.000 ¥)                                                                           | ✅      | `nuyenBP`-Feld in `Character`, UI im Erstellungsmodus, korrekte Konvertierung bei Finalisierung |
-| Charakter-Biografie (Alias, Geschlecht, Alter, Augen, Größe, Gewicht, Beschreibung, Hintergrund, Konzept, Notizen, Spielername) | ❌      | Nur `name` vorhanden                                                                            |
+| Charakter-Biografie (Alias, Geschlecht, Alter, Augen, Größe, Gewicht, Haut, Haare, Beschreibung, Hintergrund, Konzept, Notizen, Spielername, Spielnotizen) | ✅      | `CharacterBiography` (Value-Object, 15 Freitextfelder), eigener Tab "Biografie" (vor "Attribute"), Live-Text-Binding über `bindTextControl()`, Persistenz via `BiographyData`-DTO; Spielnotizen nur im Karrieremodus sichtbar |
 | Mugshot / Portrait                                                                                                              | ❌      |                                                                                                 |
 
 ---
@@ -112,9 +112,10 @@
 
 | Feature                                                   | Status | Anmerkung        |
 |-----------------------------------------------------------|--------|------------------|
-| Kontakt hinzufügen (Name, Loyalität, Verbindung)          | ❌      | Komplett fehlend |
-| BP-Kosten: 1 BP pro Kontaktpunkt (Loyalität + Verbindung) | ❌      | GRW S. 113 bestätigt: "Kosten = Connectionstufe + Loyalitätsstufe" |
-| ~~Freie Kontaktpunkte: CHA × 2~~                          | ❌      | **Widerlegt** (2026-08-04): Im GRW-Erstellungskapitel zu Connections (S. 113) wird Charisma kein einziges Mal erwähnt — Kontakte werden ganz normal aus dem allgemeinen 400-GP-Budget bezahlt, kein eigener CHA-basierter Freibetrag |
+| Kontakt hinzufügen (Name, Kurzbeschreibung, Connection, Loyalty) | ✅ | `Contact`-Modell, eigener Tab, Add/Edit-Dialog (Beschreibung als Tooltip), 2026-08-07. Bewusst reduzierter Scope: kein Enemy/Pet-Unterschied, keine Gruppenkontakt-Modifikatoren (kein GRW-Beleg im Kernregelwerk, siehe `docs/kontakte_analyse.md`) |
+| BP-Kosten: 1 BP pro Kontaktpunkt (Connection + Loyalty)   | ✅      | GRW S. 113 bestätigt: "Kosten = Connectionstufe + Loyalitätsstufe", `Character.getContactBP()` |
+| ~~Freie Kontaktpunkte: CHA × 2~~                          | ✅      | **Widerlegt** (2026-08-04): Im GRW-Erstellungskapitel zu Connections (S. 113) wird Charisma kein einziges Mal erwähnt — Kontakte werden ganz normal aus dem allgemeinen 400-GP-Budget bezahlt, kein eigener CHA-basierter Freibetrag. Kein Freibetrag implementiert |
+| Karrieremodus: Kontakte frei bearbeitbar, ohne Karma-Kosten | ✅ | GRW: Connections werden nicht mit Karma gekauft ("müssen sie sich auf die harte Tour verdienen"), neue `wireFreeIncrementable()`-UI-Methode |
 
 ---
 
@@ -267,7 +268,7 @@
 | Aktive Fertigkeiten    | 9 | 0  | 4 |
 | Wissensfertigkeiten    | 6 | 0  | 1 |
 | Qualities              | 6 | 0  | 0 |
-| Kontakte               | 0 | 0  | 3 |
+| Kontakte               | 4 | 0  | 0 |
 | Magie                  | 0 | 0  | 6 |
 | Technomancer           | 0 | 0  | 4 |
 | Cyberware/Bioware      | 0 | 0  | 6 |
@@ -296,8 +297,10 @@
 1. ~~**Wissensfertigkeiten**~~ ✅ umgesetzt (freier Pool (INT+LOG)×3, Kategorien, Überzug in BP, Karrieremodus-Karma)
 2. ~~**Sonderattribute** EDG, MAG, RES~~ ✅ umgesetzt (`SpecialAttribute`, BP/Karma-Kosten, UI-Sektion, Persistenz, MAG/RES-Freischaltung via Quality) — **Essenz-Berechnung bleibt offen** (aktuell fixer Wert 6.0, echter Abzug erst mit Cyberware/Bioware in Stufe 2 möglich)
 3. ~~**Spezialisierungen** (+2 BP / Karma)~~ ✅ umgesetzt (aktive Fertigkeiten: Fixpreis; Wissensfertigkeiten: +1 Poolpunkt; Karrieremodus einheitlich 2 Karma ohne Uneducated-Verdopplung; Mindestrating 1; Gruppenauflösung bei gruppierten aktiven Fertigkeiten im Karrieremodus), 2026-08-06
-4. **Kontakte** — GRW bestätigt, aber "CHA×2 freie Punkte"-Annahme widerlegt (s. Abschnitt 7 oben), Formel vor Umsetzung anpassen
-5. **Charakter-Biografie** (alle Textfelder) — kein Regelwerk-Bezug, reine Textfelder
+4. ~~**Kontakte**~~ ✅ umgesetzt (2026-08-07) — Name/Beschreibung/Connection/Loyalty, BP-Kosten aus allgemeinem Budget, im Karrieremodus frei ohne Karma-Kosten (s. Abschnitt 7 oben)
+5. ~~**Charakter-Biografie**~~ ✅ umgesetzt (2026-08-08) — 15 Freitextfelder in `CharacterBiography`, eigener Tab, Live-Text-Binding, Persistenz via `BiographyData`; Mugshot/Portrait bleibt separater Checklisten-Punkt (s. Abschnitt 1 oben)
+
+Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett abgeschlossen.**
 
 **Stufe 2 – Erweiterte Features**
 

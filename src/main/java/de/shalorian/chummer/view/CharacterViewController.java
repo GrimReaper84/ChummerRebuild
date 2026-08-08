@@ -4,6 +4,7 @@ import de.shalorian.chummer.App;
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterAttribute;
+import de.shalorian.chummer.model.character.CharacterBiography;
 import de.shalorian.chummer.model.character.CharacterQuality;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkill;
@@ -26,11 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,6 +47,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
@@ -123,6 +129,8 @@ public class CharacterViewController {
   private VBox qualitiesContainer;
   @FXML
   private VBox contactsContainer;
+  @FXML
+  private VBox biographyContainer;
   private @Nullable Character character;
 
   @FXML
@@ -151,6 +159,133 @@ public class CharacterViewController {
     updateLogDisplay();
     updateModeDisplay();
     buildQualitiesTab();
+    buildBiographyTab();
+  }
+
+  // ── Biografie-Tab ─────────────────────────────────────────
+
+  private void buildBiographyTab() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    biographyContainer.getChildren().clear();
+    CharacterBiography bio = ch.getBiography();
+
+    biographyContainer.getChildren().add(biographySectionTitle("Aussehen"));
+    biographyContainer.getChildren().add(buildAppearanceGrid(bio));
+
+    biographyContainer.getChildren().add(biographySectionTitle("Hintergrund"));
+    biographyContainer.getChildren().add(buildBackgroundGrid(bio));
+
+    biographyContainer.getChildren().add(biographySectionTitle("Spieler-Metadaten"));
+    biographyContainer.getChildren().add(buildPlayerGrid(bio));
+
+    if (ch.isCreated()) {
+      biographyContainer.getChildren().add(biographySectionTitle("Spielnotizen"));
+      biographyContainer.getChildren().add(buildGameNotesGrid(bio));
+    }
+  }
+
+  private @NonNull Label biographySectionTitle(@NonNull String text) {
+    Label label = new Label(text);
+    label.getStyleClass().add(STYLE_SECTION_TITLE);
+    VBox.setMargin(label, new Insets(16, 0, 4, 0));
+    return label;
+  }
+
+  private @NonNull GridPane newBiographyGrid() {
+    GridPane grid = new GridPane();
+    grid.setHgap(14);
+    grid.setVgap(10);
+    ColumnConstraints labelCol = new ColumnConstraints();
+    labelCol.setMinWidth(120);
+    labelCol.setPrefWidth(140);
+    ColumnConstraints fieldCol = new ColumnConstraints();
+    fieldCol.setMinWidth(220);
+    fieldCol.setHgrow(Priority.ALWAYS);
+    grid.getColumnConstraints().addAll(labelCol, fieldCol);
+    return grid;
+  }
+
+  private @NonNull GridPane buildAppearanceGrid(@NonNull CharacterBiography bio) {
+    GridPane grid = newBiographyGrid();
+    int row = 0;
+    row = addTextFieldRow(grid, row, "Alias:", bio::getAlias, bio::setAlias);
+    row = addTextFieldRow(grid, row, "Geschlecht:", bio::getSex, bio::setSex);
+    row = addTextFieldRow(grid, row, "Alter:", bio::getAge, bio::setAge);
+    row = addTextFieldRow(grid, row, "Augen:", bio::getEyes, bio::setEyes);
+    row = addTextFieldRow(grid, row, "Größe:", bio::getHeight, bio::setHeight);
+    row = addTextFieldRow(grid, row, "Gewicht:", bio::getWeight, bio::setWeight);
+    row = addTextFieldRow(grid, row, "Haut:", bio::getSkin, bio::setSkin);
+    addTextFieldRow(grid, row, "Haare:", bio::getHair, bio::setHair);
+    return grid;
+  }
+
+  private @NonNull GridPane buildBackgroundGrid(@NonNull CharacterBiography bio) {
+    GridPane grid = newBiographyGrid();
+    int row = 0;
+    row = addTextAreaRow(grid, row, "Beschreibung:", bio::getDescription, bio::setDescription);
+    row = addTextAreaRow(grid, row, "Hintergrund:", bio::getBackground, bio::setBackground);
+    row = addTextAreaRow(grid, row, "Konzept:", bio::getConcept, bio::setConcept);
+    addTextAreaRow(grid, row, "Notizen:", bio::getNotes, bio::setNotes);
+    return grid;
+  }
+
+  private @NonNull GridPane buildPlayerGrid(@NonNull CharacterBiography bio) {
+    GridPane grid = newBiographyGrid();
+    addTextFieldRow(grid, 0, "Spielername:", bio::getPlayerName, bio::setPlayerName);
+    return grid;
+  }
+
+  private @NonNull GridPane buildGameNotesGrid(@NonNull CharacterBiography bio) {
+    GridPane grid = newBiographyGrid();
+    addTextAreaRow(grid, 0, "Spielnotizen:", bio::getGameNotes, bio::setGameNotes);
+    return grid;
+  }
+
+  private int addTextFieldRow(@NonNull GridPane grid, int row, @NonNull String labelText,
+      @NonNull Supplier<String> getter, @NonNull Consumer<String> setter) {
+    Label label = new Label(labelText);
+    label.getStyleClass().add("field-label");
+    TextField field = new TextField();
+    bindTextControl(field, getter, setter);
+    grid.add(label, 0, row);
+    grid.add(field, 1, row);
+    return row + 1;
+  }
+
+  private int addTextAreaRow(@NonNull GridPane grid, int row, @NonNull String labelText,
+      @NonNull Supplier<String> getter, @NonNull Consumer<String> setter) {
+    Label label = new Label(labelText);
+    label.getStyleClass().add("field-label");
+    GridPane.setValignment(label, VPos.TOP);
+    TextArea area = new TextArea();
+    area.setPrefRowCount(3);
+    area.setWrapText(true);
+    bindTextControl(area, getter, setter);
+    grid.add(label, 0, row);
+    grid.add(area, 1, row);
+    return row + 1;
+  }
+
+  /**
+   * Bindet ein einzeiliges Textfeld live ans Modell: der Wert wird beim Aufbau vorbefüllt, jede
+   * Änderung schreibt sofort über {@code setter} ins Modell — kein Trimmen, keine Validierung,
+   * kein Bestätigungsdialog (anders als die bestehenden Dialog-Formulare, die nur beim Bestätigen
+   * einmalig auslesen).
+   */
+  private void bindTextControl(@NonNull TextField field, @NonNull Supplier<String> getter,
+      @NonNull Consumer<String> setter) {
+    field.setText(getter.get());
+    field.textProperty().addListener((obs, old, val) -> setter.accept(val));
+  }
+
+  /** Mehrzeiliges Gegenstück zu {@link #bindTextControl(TextField, Supplier, Consumer)}. */
+  private void bindTextControl(@NonNull TextArea area, @NonNull Supplier<String> getter,
+      @NonNull Consumer<String> setter) {
+    area.setText(getter.get());
+    area.textProperty().addListener((obs, old, val) -> setter.accept(val));
   }
 
   // ── Attribute-Tab ─────────────────────────────────────────
@@ -1836,6 +1971,7 @@ public class CharacterViewController {
     buildSkillsTab();
     buildQualitiesTab();
     buildContactsTab();
+    buildBiographyTab();
   }
 
   @SuppressWarnings("unchecked")

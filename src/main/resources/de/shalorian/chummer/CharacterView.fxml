@@ -31,6 +31,16 @@
   <center>
     <TabPane styleClass="main-tabs" tabClosingPolicy="UNAVAILABLE">
 
+      <Tab text="Biografie">
+        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+          <VBox styleClass="attr-container" fx:id="biographyContainer">
+            <padding>
+              <Insets bottom="20" left="36" right="36" top="20"/>
+            </padding>
+          </VBox>
+        </ScrollPane>
+      </Tab>
+
       <Tab text="Attribute">
         <ScrollPane fitToWidth="true" styleClass="attr-scroll">
           <VBox styleClass="attr-container">

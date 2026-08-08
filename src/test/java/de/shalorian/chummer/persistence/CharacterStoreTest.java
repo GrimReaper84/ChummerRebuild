@@ -210,6 +210,35 @@ class CharacterStoreTest {
   }
 
   @Test
+  void roundtripPreservesBiography() throws IOException {
+    Character original = mensch("Test");
+    original.getBiography().setAlias("Razorwing");
+    original.getBiography().setAge("27");
+    original.getBiography().setDescription("Schlank, auffällige Cybertattoos\nNarbe über dem linken Auge");
+    original.getBiography().setGameNotes("Sitzung 3: Kontakt zu Mr. Johnson verloren – Ärger!");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals("Razorwing", loaded.getBiography().getAlias());
+    assertEquals("27", loaded.getBiography().getAge());
+    assertEquals("Schlank, auffällige Cybertattoos\nNarbe über dem linken Auge",
+        loaded.getBiography().getDescription());
+    assertEquals("Sitzung 3: Kontakt zu Mr. Johnson verloren – Ärger!",
+        loaded.getBiography().getGameNotes());
+  }
+
+  @Test
+  void roundtripOmitsBiographyNodeGracefully() throws IOException {
+    Character original = mensch("Test");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals("", loaded.getBiography().getAlias());
+  }
+
+  @Test
   void roundtripPreservesLogs() throws IOException {
     Character original = mensch("Test");
     original.addKarmaEntry(new LogEntry("Mission", 10, LocalDate.of(2026, Month.JANUARY, 15)));

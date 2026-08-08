@@ -41,6 +41,7 @@ public class Character {
   private final List<Contact> contacts = new ArrayList<>();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
+  private final @NonNull CharacterBiography biography = new CharacterBiography();
   private @NonNull String name;
   private @NonNull MetatypeData metatype;
   private @NonNull SpecialAttribute edge;
@@ -103,6 +104,16 @@ public class Character {
 
   public @NonNull MetatypeData getMetatype() {
     return metatype;
+  }
+
+  /**
+   * Liefert die Biografie-Metadaten dieses Charakters (Aussehen, Hintergrund, Spieler-Metadaten,
+   * Spielnotizen) — immer initialisiert, nie {@code null}. Kein eigener Setter auf {@code
+   * Character}-Ebene: Aufrufer mutieren das zurückgegebene Objekt direkt über dessen eigene Setter
+   * (analog {@link #getEdge()}).
+   */
+  public @NonNull CharacterBiography getBiography() {
+    return biography;
   }
 
   public void setMetatype(@NonNull MetatypeData metatype) {

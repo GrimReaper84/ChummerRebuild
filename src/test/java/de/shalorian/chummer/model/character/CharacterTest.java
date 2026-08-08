@@ -19,6 +19,13 @@ class CharacterTest {
     }
 
     @Test
+    void newCharacterHasInitializedEmptyBiography() {
+        Character c = mensch("Test");
+        assertNotNull(c.getBiography());
+        assertEquals("", c.getBiography().getAlias());
+    }
+
+    @Test
     void elfStartsWithRacialMinimumForAgiAndCha() {
         Character elf = new Character("Elara", MetatypeDataLoader.find("Elf"));
         assertEquals(2, elf.getAttribute(AGI).getValue(), "Elf AGI Minimum ist 2");
