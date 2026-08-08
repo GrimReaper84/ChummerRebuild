@@ -46,6 +46,7 @@ public class Character {
   private final List<KnowledgeSkill> knowledgeSkills = new ArrayList<>();
   private final List<Contact> contacts = new ArrayList<>();
   private final List<SpellData> spells = new ArrayList<>();
+  private final List<ComplexForm> complexForms = new ArrayList<>();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private final @NonNull CharacterBiography biography = new CharacterBiography();
@@ -927,6 +928,60 @@ public class Character {
     return Math.max(spellcastingRating, ritualRating);
   }
 
+  // --- Komplexe Formen ---
+
+  public @NonNull List<ComplexForm> getComplexForms() {
+    return Collections.unmodifiableList(complexForms);
+  }
+
+  /**
+   * Lernt eine Komplexe Form aus dem GRW-Kern-Katalog ({@link ComplexFormDataLoader}). Wird laut
+   * SR4-Grundregelwerk immer mit Stufe 1 gelernt (siehe {@link ComplexForm#MIN_RATING}). Eine Komplexe
+   * Form kann pro Charakter nur einmal gelernt werden (analog {@link #addSpell(SpellData)}).
+   *
+   * @throws IllegalArgumentException wenn die Komplexe Form bereits gelernt ist
+   */
+  public void addComplexForm(@NonNull ComplexFormData data) {
+    boolean duplicate = complexForms.stream().anyMatch(cf -> cf.getName().equals(data.name()));
+    if (duplicate) {
+      throw new IllegalArgumentException(
+          "Komplexe Form \"%s\" ist bereits gelernt".formatted(data.name()));
+    }
+    complexForms.add(new ComplexForm(data));
+  }
+
+  public void removeComplexForm(@NonNull String name) {
+    complexForms.removeIf(cf -> cf.getName().equals(name));
+  }
+
+  /** BP-Kosten aller gelernten Komplexen Formen: Rating × {@link ComplexForm#getBpCostPerRating()}. */
+  public int getComplexFormBP() {
+    return complexForms.stream().mapToInt(cf -> cf.getRating() * cf.getBpCostPerRating()).sum();
+  }
+
+  /**
+   * Prüft, ob das Rating einer Komplexen Form um 1 gesteigert werden darf (bzw., bei einer noch nicht
+   * gelernten Form, ob sie überhaupt gelernt werden darf): die neue Stufe darf das aktuelle
+   * Resonanzattribut nicht überschreiten (SR4-Grundregelwerk: "Die Grundstufe einer Komplexen Form kann
+   * das Resonanzattribut des Technomancers nicht überschreiten"). Anders als die reinen
+   * Erstellungs-Caps bei Fertigkeiten gilt dieser Cap **durchgehend**, auch im Karrieremodus, da er
+   * keine Erschaffungsregel ist, sondern eine grundsätzliche Grenze.
+   */
+  public boolean canRaiseComplexForm(@NonNull ComplexForm complexForm) {
+    SpecialAttribute resonance = magicOrResonance;
+    if (resonance == null || resonance.getType() != SpecialAttributeType.RESONANCE) {
+      return false;
+    }
+    return complexForm.getRating() + 1 <= resonance.getValue();
+  }
+
+  /** Wie {@link #canRaiseComplexForm(ComplexForm)}, aber für den Erwerb einer noch nicht gelernten Form (Stufe 1). */
+  public boolean canAddComplexForm() {
+    SpecialAttribute resonance = magicOrResonance;
+    return resonance != null && resonance.getType() == SpecialAttributeType.RESONANCE
+        && resonance.getValue() >= ComplexForm.MIN_RATING;
+  }
+
   // --- BP ---
   public int getSpentBP() {
     int attrBP = getAttributeBP();
@@ -953,7 +1008,7 @@ public class Character {
 
     return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
         + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP()
-        + getActiveSkillSpecializationBP() + getContactBP() + getSpellBP();
+        + getActiveSkillSpecializationBP() + getContactBP() + getSpellBP() + getComplexFormBP();
   }
 
   public int getRemainingBP() {

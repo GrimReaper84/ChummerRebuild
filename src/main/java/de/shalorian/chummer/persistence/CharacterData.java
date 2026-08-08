@@ -30,6 +30,7 @@ public class CharacterData {
   public @NonNull BiographyData biography = new BiographyData();
   public @NonNull String tradition = "HERMETIC";
   public @NonNull List<String> spellNames = new ArrayList<>();
+  public @NonNull List<ComplexFormEntry> complexForms = new ArrayList<>();
 
   public CharacterData() {
     // Für Jackson-Deserialisierung benötigt (public Felder werden nach dem Konstruktoraufruf per Reflection befüllt).

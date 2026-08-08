@@ -109,6 +109,16 @@
         </ScrollPane>
       </Tab>
 
+      <Tab text="Technomancer" fx:id="technomancerTab">
+        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+          <VBox styleClass="attr-container" fx:id="technomancerContainer">
+            <padding>
+              <Insets bottom="20" left="36" right="36" top="20"/>
+            </padding>
+          </VBox>
+        </ScrollPane>
+      </Tab>
+
       <Tab text="Kontakte">
         <ScrollPane fitToWidth="true" styleClass="attr-scroll">
           <VBox styleClass="attr-container" fx:id="contactsContainer">

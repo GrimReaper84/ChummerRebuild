@@ -6,6 +6,7 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterAttribute;
 import de.shalorian.chummer.model.character.CharacterBiography;
 import de.shalorian.chummer.model.character.CharacterQuality;
+import de.shalorian.chummer.model.character.ComplexForm;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkill;
 import de.shalorian.chummer.model.character.LogEntry;
@@ -157,6 +158,10 @@ public class CharacterViewController {
   @FXML
   private VBox magicContainer;
   @FXML
+  private Tab technomancerTab;
+  @FXML
+  private VBox technomancerContainer;
+  @FXML
   private VBox knowledgeSkillsContainer;
   @FXML
   private ToggleGroup skillSortToggleGroup;
@@ -165,6 +170,7 @@ public class CharacterViewController {
   @FXML
   private ToggleButton sortByAlphabetBtn;
   private int magicTabIndex;
+  private int technomancerTabIndex;
   private @NonNull SkillSortMode skillSortMode = SkillSortMode.CATEGORY;
   private @Nullable Character character;
 
@@ -186,6 +192,9 @@ public class CharacterViewController {
 
     magicTabIndex = mainTabPane.getTabs().indexOf(magicTab);
     mainTabPane.getTabs().remove(magicTab);
+
+    technomancerTabIndex = mainTabPane.getTabs().indexOf(technomancerTab);
+    mainTabPane.getTabs().remove(technomancerTab);
 
     skillSortToggleGroup.selectedToggleProperty().addListener((obs, old, newVal) -> {
       if (newVal == null) {
@@ -225,6 +234,27 @@ public class CharacterViewController {
     }
   }
 
+  /**
+   * Blendet den Technomancer-Tab ein bzw. aus, je nachdem ob {@link Character#hasResonance()}
+   * aktuell wahr ist — 1:1 dasselbe Muster wie {@link #syncMagicTabVisibility()}. Anders als bei Magie
+   * (Magier vs. Adept) gibt es bei Technomancer keine feinere Differenzierung nötig, da nur eine
+   * einzige Quality ("Technomant") RES freischaltet.
+   */
+  private void syncTechnomancerTabVisibility() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    boolean shouldBeVisible = ch.hasResonance();
+    boolean isVisible = mainTabPane.getTabs().contains(technomancerTab);
+    if (shouldBeVisible && !isVisible) {
+      int index = Math.min(technomancerTabIndex, mainTabPane.getTabs().size());
+      mainTabPane.getTabs().add(index, technomancerTab);
+    } else if (!shouldBeVisible && isVisible) {
+      mainTabPane.getTabs().remove(technomancerTab);
+    }
+  }
+
   public void setCharacter(@NonNull Character character) {
     this.character = character;
     nameLabel.setText(character.getName());
@@ -236,6 +266,7 @@ public class CharacterViewController {
     buildQualitiesTab();
     buildBiographyTab();
     buildMagicTab();
+    buildTechnomancerTab();
   }
 
   // ── Biografie-Tab ─────────────────────────────────────────
@@ -1039,6 +1070,7 @@ public class CharacterViewController {
 
     buildQualitySection("Handicaps", QualityType.NEGATIVE, career);
     syncMagicTabVisibility();
+    syncTechnomancerTabVisibility();
   }
 
   private void buildQualitySection(
@@ -1900,6 +1932,206 @@ public class CharacterViewController {
     }
   }
 
+  // ── Technomancer-Tab ───────────────────────────────────────
+
+  private void buildTechnomancerTab() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    technomancerContainer.getChildren().clear();
+
+    Label sectionLabel = new Label("Technomancer");
+    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
+
+    // Fester Anzeigetext statt Auswahl-Steuerelement: das SR4-Grundregelwerk kennt kein "Stream"-
+    // Auswahlkonzept (0 Treffer im GRW-Kern-Volltext), die Schwund-Widerstandsformel gilt
+    // bedingungslos für jeden Technomancer (siehe docs/plaene/technomancer_plan.md Abschnitt 13).
+    Label fadingLabel = new Label("Schwund-Widerstand: Willenskraft + Resonanz");
+    fadingLabel.getStyleClass().add(STYLE_ATTR_NAME);
+
+    // Bewusst kein addBtn.setDisable() anhand von canAddComplexForm() an dieser Stelle: der
+    // Tab-Inhalt wird nur bei setCharacter()/updateModeDisplay() neu gebaut, nicht bei jeder
+    // Quality-Änderung (nur die Tab-Sichtbarkeit wird dort synchronisiert, siehe
+    // syncTechnomancerTabVisibility()) — ein hier gesetzter Disabled-Zustand würde nach Erwerb der
+    // Quality "Technomant" eingefroren bleiben. Die Prüfung erfolgt stattdessen live beim Klick in
+    // onAddComplexForm() (analog dem Zauber-Button in buildMagicTab()).
+    Button addBtn = new Button("Komplexe Form hinzufügen");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    addBtn.setOnAction(e -> onAddComplexForm());
+
+    HBox header = new HBox(12);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.getChildren().addAll(sectionLabel, fadingLabel);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().add(spacer);
+    header.getChildren().add(addBtn);
+    technomancerContainer.getChildren().add(header);
+
+    MigPane grid = buildComplexFormGrid();
+    technomancerContainer.getChildren().add(withRightFiller(grid));
+
+    int row = 1;
+    for (ComplexForm complexForm : ch.getComplexForms()) {
+      addComplexFormRow(grid, row++, complexForm, ch);
+    }
+  }
+
+  /**
+   * Baut das Komplexe-Formen-Grid inkl. Kopfzeile (Zeile 0) — Spaltenlayout analog {@link
+   * #buildSkillGrid()}, aber ohne Spezialisierungs-Spalten (Komplexe Formen kennen keine
+   * Spezialisierung).
+   */
+  private @NonNull MigPane buildComplexFormGrid() {
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][center][center][center][center][][]");
+    grid.getStyleClass().add("attr-grid");
+    VBox.setMargin(grid, new Insets(12, 0, 0, 0));
+
+    String[] headers = {"Komplexe Form", "Kategorie", "", "Stufe", "", "Kosten", ""};
+    for (int i = 0; i < headers.length; i++) {
+      if (!headers[i].isEmpty()) {
+        Label h = new Label(headers[i]);
+        h.getStyleClass().add("attr-header");
+        preventShrink(h);
+        grid.add(h, "cell " + i + " 0");
+      }
+    }
+
+    return grid;
+  }
+
+  private void addComplexFormRow(@NonNull MigPane grid, int row,
+      @NonNull ComplexForm complexForm, @NonNull Character character) {
+    Label nameLabel = new Label(complexForm.getName());
+    Label categoryLabel = new Label(complexForm.getData().category());
+    Button minus = new Button("−");
+    Label ratingLabel = new Label();
+    Button plus = new Button("+");
+    Label costLabel = new Label();
+    Button removeBtn = new Button("Entfernen");
+
+    nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    categoryLabel.getStyleClass().add(STYLE_ATTR_ABBR);
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    costLabel.getStyleClass().add(STYLE_ATTR_BP);
+    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(removeBtn, FontAwesomeSolid.TRASH);
+
+    boolean career = character.isCreated();
+
+    wireIncrementable(skillRefreshers, new RowControls(ratingLabel, costLabel, minus, plus),
+        career, new RowModel() {
+          @Override
+          public int value() {
+            return complexForm.getRating();
+          }
+
+          @Override
+          public int min() {
+            return ComplexForm.MIN_RATING;
+          }
+
+          @Override
+          public int max() {
+            SpecialAttribute resonance = character.getMagicOrResonance();
+            return resonance != null ? resonance.getValue() : ComplexForm.MIN_RATING;
+          }
+
+          @Override
+          public boolean canIncrement() {
+            return character.canRaiseComplexForm(complexForm);
+          }
+
+          @Override
+          public int bpStepCost() {
+            return complexForm.getBpCostPerRating();
+          }
+
+          @Override
+          public @NonNull String bpDisplayText() {
+            return (complexForm.getRating() * complexForm.getBpCostPerRating()) + " BP";
+          }
+
+          @Override
+          public int karmaStepCost() {
+            return complexForm.getKarmaCost(complexForm.getRating());
+          }
+
+          @Override
+          public void increment() {
+            complexForm.setRating(complexForm.getRating() + 1);
+          }
+
+          @Override
+          public void decrement() {
+            complexForm.setRating(complexForm.getRating() - 1);
+          }
+
+          @Override
+          public @NonNull String actionLabel(int from, int to) {
+            return complexForm.getName() + " " + from + " → " + to;
+          }
+        }, character);
+
+    removeBtn.setOnAction(e -> {
+      character.removeComplexForm(complexForm.getName());
+      buildTechnomancerTab();
+      updateBpDisplay();
+    });
+
+    addRowCells(grid, row, nameLabel, categoryLabel, minus, ratingLabel, plus, costLabel,
+        removeBtn);
+  }
+
+  /**
+   * Öffnet den Komplexe-Formen-Auswahl-Dialog und lernt die gewählte Form mit Stufe 1 (SR4-
+   * Grundregelwerk: "lernt die neue Komplexe Form mit Stufe 1"). Im Erstellungsmodus greift {@link
+   * Character#canAddComplexForm()}; im Karrieremodus kostet der Erwerb {@link
+   * ComplexForm#getKarmaCost(int)} mit {@code currentRating=0}, analog anderen
+   * Karrieremodus-Käufen.
+   */
+  private void onAddComplexForm() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    if (!ch.canAddComplexForm()) {
+      Notifications.create()
+          .title("Keine Resonanz")
+          .text("Ohne Resonanzwert kann keine Komplexe Form gelernt werden")
+          .position(Pos.BOTTOM_RIGHT)
+          .owner(nameLabel.getScene().getWindow())
+          .showWarning();
+      return;
+    }
+    try {
+      DialogHandle dialog = openDialog("ComplexFormSelectDialog.fxml", "Komplexe Form hinzufügen");
+      ComplexFormSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(ch);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(data -> {
+        if (ch.isCreated()) {
+          String label = "Komplexe Form gelernt: " + data.name();
+          int karmaCost = ComplexForm.KARMA_NEW;
+          if (karmaChargeFailed(ch, label, karmaCost)) {
+            return;
+          }
+        }
+        ch.addComplexForm(data);
+        buildTechnomancerTab();
+        updateBpDisplay();
+      });
+    } catch (IOException e) {
+      showDialogLoadError();
+    }
+  }
+
   // ── Gemeinsam ─────────────────────────────────────────────
 
   /**
@@ -2339,6 +2571,7 @@ public class CharacterViewController {
     buildContactsTab();
     buildBiographyTab();
     buildMagicTab();
+    buildTechnomancerTab();
   }
 
   @SuppressWarnings("unchecked")

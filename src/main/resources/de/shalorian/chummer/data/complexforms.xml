@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Komplexen-Formen (Kategorien "Standard" und
+  "Hacking", direkt gegen docs/rulebooks/Grundregelwerk_SR4_ocr.txt verifiziert, Kapitel
+  STANDARDPROGRAMME/HACKING-PROGRAMME S. ca. 266-270). Komplexe Formen werden laut GRW nach den
+  Programmen benannt, deren Funktion sie nachbilden ("Der Einfachheit halber werden Komplexe Formen
+  nach den Programmen benannt, deren Funktion sie nachbilden"). Die Kategorien "Skillsofts"/"ARE
+  Programs"/"Autosoft" aus dem C#-Original sind bewusst nicht Teil dieser Version (siehe
+  docs/analysen/technomancer_analyse.md). Biofeedback-Filter ist laut GRW explizit NICHT als Komplexe
+  Form wählbar (Technomancer besitzen sie angeboren als Teil der Lebenden Persona) und daher hier
+  ausgelassen.
+-->
+<complexforms>
+
+    <!-- ── STANDARD ───────────────────────────────────────── -->
+
+    <complexform>
+        <name>Analyse</name>
+        <category>Standard</category>
+        <skill>Computer</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Befehl</name>
+        <category>Standard</category>
+        <skill>Verschieden</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Editieren</name>
+        <category>Standard</category>
+        <skill>Computer</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Realitätsfilter</name>
+        <category>Standard</category>
+        <skill>Prozessor</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Scannen</name>
+        <category>Standard</category>
+        <skill>Elektronische Kriegsführung</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Schmöker</name>
+        <category>Standard</category>
+        <skill>Datensuche</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Verschlüsselung</name>
+        <category>Standard</category>
+        <skill>Elektronische Kriegsführung</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <!-- ── HACKING ────────────────────────────────────────── -->
+
+    <complexform>
+        <name>Angriff</name>
+        <category>Hacking</category>
+        <skill>Hacking</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Aufspüren</name>
+        <category>Hacking</category>
+        <skill>Computer</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Ausnutzen</name>
+        <category>Hacking</category>
+        <skill>Hacking</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Blackout</name>
+        <category>Hacking</category>
+        <skill>Matrixkampf</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Datenbombe</name>
+        <category>Hacking</category>
+        <skill>Verschieden</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>ECCM</name>
+        <category>Hacking</category>
+        <skill>Verschieden</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Entschärfen</name>
+        <category>Hacking</category>
+        <skill>Hacking</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Entschlüsselung</name>
+        <category>Hacking</category>
+        <skill>Elektronische Kriegsführung</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Medic</name>
+        <category>Hacking</category>
+        <skill>Computer</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Schleicher</name>
+        <category>Hacking</category>
+        <skill>Hacking</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Schnüffler</name>
+        <category>Hacking</category>
+        <skill>Elektronische Kriegsführung</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Schwarzer Hammer</name>
+        <category>Hacking</category>
+        <skill>Matrixkampf</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+    <complexform>
+        <name>Täuschung</name>
+        <category>Hacking</category>
+        <skill>Hacking</skill>
+        <source>SR4</source>
+        <page></page>
+    </complexform>
+
+</complexforms>

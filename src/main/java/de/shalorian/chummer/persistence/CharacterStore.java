@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterBiography;
+import de.shalorian.chummer.model.character.ComplexFormData;
+import de.shalorian.chummer.model.character.ComplexFormDataLoader;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
@@ -85,6 +87,9 @@ public class CharacterStore {
     data.biography = toBiographyData(character.getBiography());
     data.tradition = character.getTradition().name();
     data.spellNames = character.getSpells().stream().map(SpellData::name).toList();
+    data.complexForms = character.getComplexForms().stream()
+        .map(cf -> new ComplexFormEntry(cf.getName(), cf.getRating()))
+        .toList();
 
     return data;
   }
@@ -128,6 +133,7 @@ public class CharacterStore {
     applyBiography(character, data);
     applyTradition(character, data);
     applySpells(character, data);
+    applyComplexForms(character, data);
 
     return character;
   }
@@ -149,6 +155,21 @@ public class CharacterStore {
       if (spellData != null) {
         character.addSpell(spellData);
       }
+    }
+  }
+
+  private static void applyComplexForms(@NonNull Character character,
+      @NonNull CharacterData data) {
+    for (ComplexFormEntry entry : data.complexForms) {
+      ComplexFormData complexFormData = ComplexFormDataLoader.findByName(entry.name);
+      if (complexFormData == null) {
+        continue;
+      }
+      character.addComplexForm(complexFormData);
+      character.getComplexForms().stream()
+          .filter(cf -> cf.getName().equals(entry.name))
+          .findFirst()
+          .ifPresent(cf -> cf.setRating(entry.rating));
     }
   }
 

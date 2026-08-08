@@ -141,6 +141,7 @@
 | Adeptenkräfte mit PP-Kosten                            | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
 | Mystic-Adept-MAG-Split                                 | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
 | Initiationsgrade                                       | ❌      | Kein GRW-Kern-Beleg im Grundregelwerk gefunden (vermutlich Sourcebook *Street Magic*), niedrige Priorität                                                                                                                                                            |
+| Restliche magische Aktionsfertigkeiten (Antimagie, Beschwören-Gruppe, Arcana, Verzaubern, Askennen, Astralkampf) | ❌ | **Gefunden 2026-08-08** (User-Verdacht bestätigt): `skills.xml` enthält nur Spruchzauberei/Ritualzauberei. GRW-Kapitel "Magische Aktionsfertigkeiten" (S. ~208-211) listet zusätzlich Antimagie (Hexerei-Gruppe), Herbeirufen/Binden/Verbannen (Beschwören-Gruppe), Arcana (LOG-verknüpft, auch für Nicht-Magische lernbar), Verzaubern, Askennen und Astralkampf (beide nur mit Astralwahrnehmung nutzbar). Zusatzbefund: Spruchzauberei/Ritualzauberei sind aktuell nicht als GRW-Fertigkeitsgruppe "Hexerei" gruppiert (kein `<group>`-Knoten in `skills.xml`, anders als bei Nahkampf/Schusswaffen etc.). Scope-Entscheidung noch offen (u.a. abhängig davon, ob Beschwören/Geister-Feature überhaupt geplant ist) |
 
 ---
 
@@ -148,10 +149,10 @@
 
 | Feature                                    | Status | Anmerkung |
 |--------------------------------------------|--------|-----------|
-| RES-Attribut aktivieren (via Quality)      | ❌      | GRW S. 106 bestätigt |
+| RES-Attribut aktivieren (via Quality)      | ✅      | **Korrektur (2026-08-08):** bereits umgesetzt im Zuge des Sonderattribute-Features (analog zur EDG/MAG/RES-Korrektur vom 2026-08-06) — Quality "Technomant" (5 BP, `qualities.xml`), `QualityBonusType.GRANTS_RESONANCE`, `Character.hasResonance()`/`syncMagicOrResonance()`, Magie/Resonanz-Exklusivität, Persistenz. GRW S. 106 bestätigt. Checkliste war nicht mit dem Code synchron, siehe `docs/analysen/technomancer_java_analyse.md` |
 | Technomancer-Tab (Stream, Komplexe Formen) | ❌      |           |
 | ~~Komplexe Formen (1 BP/Stück)~~ Komplexe Formen (1 GP/Rating-Punkt) | ❌ | **Formel korrigiert** (2026-08-04): GRW S. 113 sagt "1 GP pro Stufenpunkt" (Beispiel: Panzerung 4 = 4 GP), kein Fixpreis pro Form — strukturell wie Wissensfertigkeiten. Zusatzregel: max. Anzahl bei Erstellung = Logik × 2 |
-| Submersiongrade                            | ❌      | **Niedrige Priorität** (2026-08-04): Stichwortsuche im kompletten GRW-Text (72734 Zeilen) ergibt 0 Treffer für "Submersion" — vermutlich Inhalt des Sourcebooks *Unwired*, nicht des Grundregelwerks. Zurückstellen bis Zusatzquelle verfügbar (analog zum Qualities-Vervollständigungs-Problem) |
+| Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/technomancer_analyse.md`) |
 
 ---
 

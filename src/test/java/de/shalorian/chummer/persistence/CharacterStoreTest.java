@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.AttributeType;
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.ComplexFormData;
+import de.shalorian.chummer.model.character.ComplexFormDataLoader;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.KnowledgeSkill;
 import de.shalorian.chummer.model.character.KnowledgeSkillCategory;
@@ -266,6 +268,38 @@ class CharacterStoreTest {
 
     assertEquals(Tradition.HERMETIC, loaded.getTradition());
     assertTrue(loaded.getSpells().isEmpty());
+  }
+
+  @Test
+  void roundtripPreservesComplexForms() throws IOException {
+    Character original = mensch("Test");
+    QualityData technomant = QualityDataLoader.findByName("Technomant");
+    assertNotNull(technomant);
+    original.addQuality(technomant, false);
+    var resonance = original.getMagicOrResonance();
+    assertNotNull(resonance);
+    resonance.setValue(3);
+    ComplexFormData analyse = ComplexFormDataLoader.findByName("Analyse");
+    assertNotNull(analyse);
+    original.addComplexForm(analyse);
+    original.getComplexForms().get(0).setRating(3);
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(1, loaded.getComplexForms().size());
+    assertEquals("Analyse", loaded.getComplexForms().get(0).getName());
+    assertEquals(3, loaded.getComplexForms().get(0).getRating());
+  }
+
+  @Test
+  void roundtripOmitsComplexFormsNodeGracefully() throws IOException {
+    Character original = mensch("Test");
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertTrue(loaded.getComplexForms().isEmpty());
   }
 
   @Test
