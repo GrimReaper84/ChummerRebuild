@@ -1,11 +1,12 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.skill.Skill;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 /**
  * Deckt die Fachlogik hinter der alphabetischen Skills-Tab-Ansicht ab: {@link

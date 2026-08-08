@@ -19,6 +19,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **MVC with FXML.** Views are defined in `.fxml` files under `src/main/resources/de/shalorian/chummer/` and paired with
 controller classes in `src/main/java/de/shalorian/chummer/view/`.
 
+**Package structure:** `model/character` and `view` are split into feature-area subpackages to keep each package
+navigable (each holds only a handful of classes):
+
+- `model.character` (root): `Character` (aggregate root), `CharacterBiography`, `Contact`, `LogEntry`, `CatalogEntry`,
+  `DataPaths`
+- `model.character.attribute`, `.skill`, `.quality`, `.magic`, `.technomancer`, `.metatype`: data model classes for
+  the respective feature area (e.g. `Skill`/`SkillDataLoader` in `.skill`, `SpellData`/`Tradition` in `.magic`)
+- `view` (root): `MainWindowController`, `CharacterViewController`
+- `view.dialog`: all modal dialog controllers and their result/handle types
+- `view.converter`: JavaFX `StringConverter` implementations
+- `view.grid`: shared row-wiring types (`RowModel`, `RowControls`, `AttributeRowLabel`, `SkillSortMode`)
+
+`persistence` and `utils` remain flat (small enough to stay navigable). When adding a new class, place it in the
+subpackage matching its feature area rather than the package root.
+
 **Controller hierarchy:**
 
 - `MainWindowController` — root; handles file menu, opens NewCharacterDialog, loads/saves via `CharacterStore`

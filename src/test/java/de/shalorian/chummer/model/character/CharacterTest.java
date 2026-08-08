@@ -1,8 +1,10 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
+import de.shalorian.chummer.model.character.magic.Tradition;
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import org.junit.jupiter.api.Test;
-
-import static de.shalorian.chummer.model.character.AttributeType.*;
+import static de.shalorian.chummer.model.character.attribute.AttributeType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CharacterTest {

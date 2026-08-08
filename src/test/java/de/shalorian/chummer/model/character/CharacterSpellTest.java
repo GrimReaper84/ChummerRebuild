@@ -1,12 +1,14 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.magic.SpellData;
+import de.shalorian.chummer.model.character.magic.SpellDataLoader;
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
-import org.jspecify.annotations.NonNull;
 
 class CharacterSpellTest {
 

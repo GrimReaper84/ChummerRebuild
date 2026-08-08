@@ -1,13 +1,17 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.quality.QualityData;
+import de.shalorian.chummer.model.character.quality.QualityDataLoader;
+import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
+import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.Test;
 
 class CharacterComplexFormTest {
 

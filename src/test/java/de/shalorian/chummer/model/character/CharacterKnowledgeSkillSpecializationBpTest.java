@@ -1,8 +1,11 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.quality.QualityDataLoader;
+import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
+import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import org.junit.jupiter.api.Test;
-
-import static de.shalorian.chummer.model.character.AttributeType.*;
+import static de.shalorian.chummer.model.character.attribute.AttributeType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

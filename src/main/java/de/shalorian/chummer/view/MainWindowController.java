@@ -4,6 +4,7 @@ import de.shalorian.chummer.App;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.persistence.CharacterStore;
 import de.shalorian.chummer.utils.PersistenceUtils;
+import de.shalorian.chummer.view.dialog.NewCharacterDialogController;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;

@@ -1,5 +1,27 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.attribute.AttributeRange;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
+import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
+import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
+import de.shalorian.chummer.model.character.magic.SpellData;
+import de.shalorian.chummer.model.character.magic.Tradition;
+import de.shalorian.chummer.model.character.metatype.MetatypeData;
+import de.shalorian.chummer.model.character.quality.CharacterQuality;
+import de.shalorian.chummer.model.character.quality.QualityBonusType;
+import de.shalorian.chummer.model.character.quality.QualityData;
+import de.shalorian.chummer.model.character.quality.QualityDataLoader;
+import de.shalorian.chummer.model.character.quality.QualitySource;
+import de.shalorian.chummer.model.character.quality.QualityType;
+import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
+import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
+import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.skill.SkillCategory;
+import de.shalorian.chummer.model.character.skill.SkillDataLoader;
+import de.shalorian.chummer.model.character.technomancer.ComplexForm;
+import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

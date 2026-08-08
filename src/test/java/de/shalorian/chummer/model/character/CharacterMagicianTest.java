@@ -1,10 +1,13 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.quality.QualityData;
+import de.shalorian.chummer.model.character.quality.QualityDataLoader;
+import de.shalorian.chummer.model.character.skill.Skill;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * SR4-Grundregelwerk S. 208: Magische Aktionsfertigkeiten und Zauber sind nur Charakteren mit der
