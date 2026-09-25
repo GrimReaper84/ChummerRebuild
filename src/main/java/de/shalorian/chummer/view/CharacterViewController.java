@@ -308,7 +308,7 @@ public class CharacterViewController {
     biographyContainer.getChildren().add(buildBackgroundGrid(bio));
 
     biographyContainer.getChildren().add(biographySectionTitle("Spieler-Metadaten"));
-    biographyContainer.getChildren().add(buildPlayerGrid(bio));
+    biographyContainer.getChildren().add(buildPlayerGrid(bio, ch));
 
     if (ch.isCreated()) {
       biographyContainer.getChildren().add(biographySectionTitle("Spielnotizen"));
@@ -344,10 +344,10 @@ public class CharacterViewController {
     row = addTextFieldRow(grid, row, "Geschlecht:", bio::getSex, bio::setSex);
     row = addTextFieldRow(grid, row, "Alter:", bio::getAge, bio::setAge);
     row = addTextFieldRow(grid, row, "Augen:", bio::getEyes, bio::setEyes);
+    row = addTextFieldRow(grid, row, "Haare:", bio::getHair, bio::setHair);
     row = addTextFieldRow(grid, row, "Größe:", bio::getHeight, bio::setHeight);
     row = addTextFieldRow(grid, row, "Gewicht:", bio::getWeight, bio::setWeight);
-    row = addTextFieldRow(grid, row, "Haut:", bio::getSkin, bio::setSkin);
-    addTextFieldRow(grid, row, "Haare:", bio::getHair, bio::setHair);
+    addTextFieldRow(grid, row, "Haut:", bio::getSkin, bio::setSkin);
     return grid;
   }
 
@@ -361,9 +361,22 @@ public class CharacterViewController {
     return grid;
   }
 
-  private @NonNull GridPane buildPlayerGrid(@NonNull CharacterBiography bio) {
+  /**
+   * "Name:" bindet direkt an {@link Character#getName()}/{@link Character#setName(String)} (nicht an
+   * {@link CharacterBiography}) — im alten WinForms-UI stand dieses Feld (bürgerlicher Name, getrennt
+   * vom Straßennamen/Alias) in derselben Zeile wie der Spielername. Der Setter aktualisiert zusätzlich
+   * {@link #nameLabel}, da dessen Text sonst nur beim initialen {@link #setCharacter} gesetzt wird und
+   * nach einer Live-Änderung hier sonst veraltet bliebe.
+   */
+  private @NonNull GridPane buildPlayerGrid(@NonNull CharacterBiography bio,
+      @NonNull Character character) {
     GridPane grid = newBiographyGrid();
-    addTextFieldRow(grid, 0, "Spielername:", bio::getPlayerName, bio::setPlayerName);
+    int row = addTextFieldRow(grid, 0, "Name:", character::getName,
+        val -> {
+          character.setName(val);
+          nameLabel.setText(val);
+        });
+    addTextFieldRow(grid, row, "Spielername:", bio::getPlayerName, bio::setPlayerName);
     return grid;
   }
 
@@ -1055,8 +1068,8 @@ public class CharacterViewController {
       refreshAllRows();
     });
 
-    addRowCells(grid, row, nameLabelDummy, categoryLabel, minus, ratingLabel, plus, costLabel,
-        specLabel, specBtn, removeBtn);
+    addRowCells(grid, row, nameLabelDummy, categoryLabel, minus, ratingLabel, plus, specLabel,
+        specBtn, costLabel, removeBtn);
   }
 
   private void onAddKnowledgeSkill() {
@@ -1575,8 +1588,8 @@ public class CharacterViewController {
           }, character);
     }
 
-    addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, bpLabel, specLabel,
-        specBtn);
+    addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, specLabel, specBtn,
+        bpLabel);
   }
 
   // ── Kontakte-Tab ──────────────────────────────────────────
@@ -1610,12 +1623,19 @@ public class CharacterViewController {
     MigPane grid = buildContactGrid();
     contactsContainer.getChildren().add(withRightFiller(grid));
 
-    int row = 0;
+    int row = 1;
     for (Contact contact : ch.getContacts()) {
       addContactRow(grid, row++, contact, ch);
     }
   }
 
+  /**
+   * Baut das Kontakte-Grid inkl. Kopfzeile (Zeile 0) mit "Verbindung"/"Loyalität"-Spaltenüberschriften
+   * über den jeweiligen Wert-Spalten — ersetzt die im alten WinForms-UI pro Zeile wiederholten
+   * "Connection:"/"Loyalty:"-Inline-Labels (dort nötig, da jede Kontakt-Zeile aus einer eigenständigen
+   * UserControl-Instanz bestand) durch eine einzelne gemeinsame Kopfzeile, analog zum bestehenden
+   * Attribute-/Zauber-/Komplexe-Formen-Grid-Muster.
+   */
   private @NonNull MigPane buildContactGrid() {
     // Beide Wert-Spalten (Verbindung/Loyalität) durch Contact.MAX_RATING = 6 einstellig, keine feste
     // Ausnahme nötig. Kein eigenes Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller
@@ -1623,6 +1643,17 @@ public class CharacterViewController {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[][][center][center][center][][center][center][center][][]");
     grid.getStyleClass().add("attr-grid");
+
+    String[] headers = {"", "", "", "Verbindung", "", "", "", "Loyalität", "", "", ""};
+    for (int i = 0; i < headers.length; i++) {
+      if (!headers[i].isEmpty()) {
+        Label h = new Label(headers[i]);
+        h.getStyleClass().add("attr-header");
+        preventShrink(h);
+        grid.add(h, "cell " + i + " 0");
+      }
+    }
+
     return grid;
   }
 
@@ -1878,11 +1909,12 @@ public class CharacterViewController {
    * Wert-Spalten-Ausnahme wie bei Attributen.
    */
   private @NonNull MigPane buildSpellGrid() {
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][center][][]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][center][][][]");
     grid.getStyleClass().add("attr-grid");
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
-    String[] headers = {"Zauber", "Kategorie", "Typ", "Reichweite", "Schaden", "Dauer", "Entzug", ""};
+    String[] headers = {"Zauber", "Kategorie", "Typ", "Reichweite", "Schaden", "Dauer", "Entzug",
+        "Quelle", ""};
     for (int i = 0; i < headers.length; i++) {
       if (!headers[i].isEmpty()) {
         Label h = new Label(headers[i]);
@@ -1904,9 +1936,11 @@ public class CharacterViewController {
     Label damageLabel = new Label(spell.damage());
     Label durationLabel = new Label(spell.duration());
     Label dvLabel = new Label(spell.dv());
+    Label sourceLabel = new Label(spell.source());
     Button removeBtn = new Button("Entfernen");
 
     spellNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
@@ -1917,7 +1951,7 @@ public class CharacterViewController {
     });
 
     addRowCells(grid, row, spellNameLabel, categoryLabel, typeLabel, rangeLabel, damageLabel,
-        durationLabel, dvLabel, removeBtn);
+        durationLabel, dvLabel, sourceLabel, removeBtn);
   }
 
   /**
@@ -2016,11 +2050,13 @@ public class CharacterViewController {
    * Spezialisierung).
    */
   private @NonNull MigPane buildComplexFormGrid() {
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][center][center][center][center][][]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
+        "[][center][][center][center][center][][][]");
     grid.getStyleClass().add("attr-grid");
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
-    String[] headers = {"Komplexe Form", "Kategorie", "", "Stufe", "", "Kosten", ""};
+    String[] headers = {"Komplexe Form", "Kategorie", "Fertigkeit", "", "Stufe", "", "Kosten",
+        "Quelle", ""};
     for (int i = 0; i < headers.length; i++) {
       if (!headers[i].isEmpty()) {
         Label h = new Label(headers[i]);
@@ -2037,18 +2073,22 @@ public class CharacterViewController {
       @NonNull ComplexForm complexForm, @NonNull Character character) {
     Label nameLabel = new Label(complexForm.getName());
     Label categoryLabel = new Label(complexForm.getData().category());
+    Label skillLabel = new Label(complexForm.getData().skill());
     Button minus = new Button("−");
     Label ratingLabel = new Label();
     Button plus = new Button("+");
     Label costLabel = new Label();
+    Label sourceLabel = new Label(complexForm.getData().source());
     Button removeBtn = new Button("Entfernen");
 
     nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
     categoryLabel.getStyleClass().add(STYLE_ATTR_ABBR);
+    skillLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     minus.getStyleClass().add(STYLE_ATTR_BTN);
     ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
     costLabel.getStyleClass().add(STYLE_ATTR_BP);
+    sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
@@ -2114,8 +2154,8 @@ public class CharacterViewController {
       updateBpDisplay();
     });
 
-    addRowCells(grid, row, nameLabel, categoryLabel, minus, ratingLabel, plus, costLabel,
-        removeBtn);
+    addRowCells(grid, row, nameLabel, categoryLabel, skillLabel, minus, ratingLabel, plus,
+        costLabel, sourceLabel, removeBtn);
   }
 
   /**
@@ -2612,10 +2652,6 @@ public class CharacterViewController {
         new SimpleStringProperty(c.getValue().date().format(DATE_FMT)));
     dateCol.setPrefWidth(90);
 
-    TableColumn<LogEntry, String> descCol = new TableColumn<>("Bezeichnung");
-    descCol.setCellValueFactory(c ->
-        new SimpleStringProperty(c.getValue().description()));
-
     TableColumn<LogEntry, String> amountCol = new TableColumn<>("Menge");
     amountCol.setCellValueFactory(c -> {
       int a = c.getValue().amount();
@@ -2624,7 +2660,11 @@ public class CharacterViewController {
     amountCol.setPrefWidth(70);
     amountCol.setStyle("-fx-alignment: CENTER-RIGHT;");
 
-    table.getColumns().addAll(dateCol, descCol, amountCol);
+    TableColumn<LogEntry, String> descCol = new TableColumn<>("Bezeichnung");
+    descCol.setCellValueFactory(c ->
+        new SimpleStringProperty(c.getValue().description()));
+
+    table.getColumns().addAll(dateCol, amountCol, descCol);
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     table.setPlaceholder(new Label("Keine Einträge"));
   }
