@@ -97,6 +97,14 @@ public class CharacterViewController {
   private static final String STYLE_ATTR_RANGE = "attr-range";
   private static final String STYLE_ATTR_BP = "attr-bp";
   private static final String STYLE_ATTR_ABBR = "attr-abbr";
+  private static final String STYLE_ATTR_AUG = "attr-aug";
+  /**
+   * Platzhalter für den augmentierten Attributwert bzw. das augmentierte Metatyp-Maximum, solange
+   * es noch keine Essenz-/Cyberware-Berechnung gibt (Roadmap Stufe 2, Cyberware/Bioware). Struktur
+   * (eigene Spalte + Klammerzusatz im Bereichs-Label, analog zum alten WinForms-UI) ist bereits
+   * vorbereitet — bei Einführung der echten Berechnung wird hier nur dieser Platzhalter ersetzt.
+   */
+  private static final String ATTRIBUTE_AUGMENTED_PLACEHOLDER = "—";
   private static final String STYLE_SECTION_TITLE = "section-title";
   private static final String STYLE_BTN_SECONDARY = "btn-secondary";
   private static final String MIGPANE_HIDEMODE_3 = "hidemode 3";
@@ -422,7 +430,7 @@ public class CharacterViewController {
     MigPane grid = buildAttributeMigPane();
 
     boolean career = character.isCreated();
-    String[] headers = {"Attribut", "", "", "Wert", "", "Bereich",
+    String[] headers = {"Attribut", "", "", "Wert", "", "(Aug)", "Bereich",
         career ? "Karma" : "BP-Kosten"};
     for (int i = 0; i < headers.length; i++) {
       if (!headers[i].isEmpty()) {
@@ -583,9 +591,13 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Bereich, BP-/Karma-Kosten) in ein MigPane ein und verdrahtet sie über
-   * {@link #wireIncrementable}. Gemeinsam genutzt von {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
-   * {@link RowModel#canIncrement()} unterscheiden.
+   * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Aug-Platzhalter, Bereich, BP-/Karma-Kosten) in ein
+   * MigPane ein und verdrahtet sie über {@link #wireIncrementable}. Gemeinsam genutzt von
+   * {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
+   * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am
+   * alten WinForms-{@code panAttributes} (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen
+   * inkl. augmentiertem Maximum); die Aug-Spalte und der Klammerzusatz im Bereichs-Label zeigen bis zur
+   * Essenz-/Cyberware-Implementierung nur {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}.
    */
   private void addAttributeGridRow(@NonNull MigPane grid, int row,
       @NonNull List<Runnable> refresherList, @NonNull AttributeRowLabel label,
@@ -595,7 +607,9 @@ public class CharacterViewController {
     Button minus = new Button("−");
     Label valueLabel = new Label();
     Button plus = new Button("+");
-    Label rangeLabel = new Label(label.min() + " – " + label.max());
+    Label augLabel = new Label(ATTRIBUTE_AUGMENTED_PLACEHOLDER);
+    Label rangeLabel = new Label(
+        label.min() + " / " + label.max() + " (" + ATTRIBUTE_AUGMENTED_PLACEHOLDER + ")");
     Label bpLabel = new Label();
 
     attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
@@ -603,13 +617,15 @@ public class CharacterViewController {
     minus.getStyleClass().add(STYLE_ATTR_BTN);
     valueLabel.getStyleClass().add(STYLE_ATTR_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
+    augLabel.getStyleClass().add(STYLE_ATTR_AUG);
     rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     bpLabel.getStyleClass().add(STYLE_ATTR_BP);
 
     wireIncrementable(refresherList, new RowControls(valueLabel, bpLabel, minus, plus),
         character.isCreated(), model, character);
 
-    addRowCells(grid, row, attrNameLabel, abbrLabel, minus, valueLabel, plus, rangeLabel, bpLabel);
+    addRowCells(grid, row, attrNameLabel, abbrLabel, minus, valueLabel, plus, augLabel, rangeLabel,
+        bpLabel);
   }
 
   /**
@@ -665,7 +681,8 @@ public class CharacterViewController {
    */
   private @NonNull MigPane buildAttributeMigPane() {
     return new MigPane(MIGPANE_HIDEMODE_3,
-        "[][center][center][" + ATTRIBUTE_VALUE_COLUMN_WIDTH + "!,center][center][][]");
+        "[][center][center][" + ATTRIBUTE_VALUE_COLUMN_WIDTH
+            + "!,center][center][center][][]");
   }
 
   // ── Skills-Tab ────────────────────────────────────────────

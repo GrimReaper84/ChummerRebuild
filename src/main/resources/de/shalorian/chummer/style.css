@@ -317,6 +317,12 @@
     -fx-text-fill: #555555;
 }
 
+.attr-aug {
+    -fx-font-size: 11px;
+    -fx-text-fill: #555555;
+    -fx-alignment: CENTER;
+}
+
 .attr-bp {
     -fx-font-size: 12px;
     -fx-text-fill: #4ec9b0;
