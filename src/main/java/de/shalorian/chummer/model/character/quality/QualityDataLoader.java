@@ -79,7 +79,8 @@ public class QualityDataLoader {
       "infirm", QualityBonusType.INFIRM,
       "grantsmagic", QualityBonusType.GRANTS_MAGIC,
       "grantsresonance", QualityBonusType.GRANTS_RESONANCE,
-      "grantsspellcasting", QualityBonusType.GRANTS_SPELLCASTING);
+      "grantsspellcasting", QualityBonusType.GRANTS_SPELLCASTING,
+      "doublescyberwareessence", QualityBonusType.DOUBLES_CYBERWARE_ESSENCE);
 
   private static @NonNull Set<QualityBonusType> parseBonuses(@NonNull Element el) {
     Set<QualityBonusType> bonuses = EnumSet.noneOf(QualityBonusType.class);

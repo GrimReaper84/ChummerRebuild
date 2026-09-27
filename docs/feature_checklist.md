@@ -51,7 +51,7 @@
 | Sonderattribute: MAG (Magie)                                                | ✅      | Wie EDG, aber nur sichtbar/freigeschaltet wenn Quality mit `GRANTS_MAGIC` vorhanden (`Character.hasMagic()`) |
 | Sonderattribute: RES (Resonanz)                                             | ✅      | Analog MAG, über `GRANTS_RESONANCE` (`Character.hasResonance()`)                              |
 | Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ❌      | Nicht modelliert                               |
-| Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ⚠️     | `Character.getEssence()` liefert fixen Wert 6.0; Cyberware-/Bioware-Abzug fehlt noch (Subsystem selbst nicht implementiert) |
+| Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ✅     | `Character.getEssence()` nach GRW-Kombinationsregel (S. 111), 2 Nachkommastellen, 2026-09-27 |
 
 ---
 
@@ -160,12 +160,13 @@
 
 | Feature                                                       | Status | Anmerkung        |
 |---------------------------------------------------------------|--------|------------------|
-| Cyberware kaufen (Nuyen-Kosten)                               | ❌      | Komplett fehlend |
-| Essenz-Kosten berechnen (Cyberware vs. Bioware getrennt)      | ❌      |                  |
-| Essenz-Berechnung: höhere Kategorie voll, niedrigere halbiert | ❌      |                  |
-| Grades (Standard, Alphaware, Betaware, Deltaware)             | ❌      |                  |
-| Subsystem-Kapazität                                           | ❌      |                  |
-| Augmented Maximum durch Implantate (Augmented Modifier)       | ❌      |                  |
+| Cyberware kaufen (Nuyen-Kosten)                               | ⚠️      | Einbau + Preisanzeige (inkl. Grade-Multiplikator) umgesetzt, Katalog = verifizierte GRW-Teilmenge (13 Cyberware/8 Bioware). **Keine Nuyen-Abbuchung** (weder Erstellungsbudget noch Karrieremodus-Log) |
+| Essenz-Kosten berechnen (Cyberware vs. Bioware getrennt)      | ✅      | `Cyberware.getEssenceCost()` (`RatingFormula` × Grade), getrennte Summen am `Character` |
+| Essenz-Berechnung: höhere Kategorie voll, niedrigere halbiert | ✅      | GRW S. 111 inkl. Rechenbeispiel als Test; Handicap "Immunabstoßung" (S. 120) verdoppelt Cyberware-Summe |
+| Grades (Standard, Alphaware, Betaware, Deltaware)             | ✅      | GRW S. 359; bei Erschaffung nur Standard/Alpha wählbar |
+| MAG/RES-Reduktion durch Essenzverlust (Wert + Maximum)        | ✅      | GRW S. 208, abgeleitet (`getEffectiveMagicOrResonanceValue/Max()`), investierter Wert bleibt Kostenbasis |
+| Subsystem-Kapazität                                           | ❌      | Bewusst zurückgestellt (inkl. Cybergliedmaßen) |
+| Augmented Maximum durch Implantate (Augmented Modifier)       | ❌      | Bewusst zurückgestellt |
 
 ---
 
@@ -284,7 +285,7 @@
 | Kontakte               | 4 | 0  | 0 |
 | Magie                  | 0 | 0  | 6 |
 | Technomancer           | 0 | 0  | 4 |
-| Cyberware/Bioware      | 0 | 0  | 6 |
+| Cyberware/Bioware      | 4 | 1  | 2 |
 | Rüstung                | 0 | 0  | 3 |
 | Waffen                 | 0 | 0  | 2 |
 | Gear                   | 0 | 0  | 3 |
@@ -319,7 +320,7 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 
 1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
 2. Technomancer (RES-Aktivierung, Stream, Komplexe Formen) — RES + Komplexe Formen bestätigt (Formel korrigiert, s. Abschnitt 9); **Submersionsgrade auf Niedrig-Priorität**, kein GRW-Beleg
-3. Cyberware/Bioware mit Essenz — GRW bestätigt (Essenz-Split, Grades)
+3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Offen: Nuyen-Abbuchung, vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
 4. Rüstung mit Stacking-Regeln — GRW bestätigt (Addition mehrerer Rüstungsteile + Tragebelastungsformel)
 5. Waffen — Kapitel vorhanden, Details bei Umsetzung gezielt nachschlagen
 6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen

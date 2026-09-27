@@ -57,6 +57,17 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
     updateList();
   }
 
+  /**
+   * Baut die Kategorie-Auswahl neu aus {@link #categoryOptions()} auf und setzt sie auf "Alle" zurück —
+   * für Subklassen, deren Kategorien von einem erst nach {@link #initialize()} gesetzten Zustand
+   * abhängen (z.B. Cyberware- vs. Bioware-Kategorien).
+   */
+  protected void refreshCategoryOptions() {
+    categoryBox.getItems().setAll(CATEGORY_ALL);
+    categoryBox.getItems().addAll(categoryOptions());
+    categoryBox.setValue(CATEGORY_ALL);
+  }
+
   /** Kategorie-Bezeichnungen (ohne {@code "Alle"}, das wird automatisch vorangestellt). */
   protected abstract @NonNull List<String> categoryOptions();
 

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Cyberware (Kapitel STRASSENAUSRÜSTUNG,
+  Tabellen "Headware" S. 386, "Augen-Cyberware"/"Ohren-Cyberware" S. 388 und "Bodyware" S. 389 —
+  Essenz- und Preiswerte direkt gegen das PDF-Bild verifiziert, nicht nur gegen den OCR-Text).
+
+  Alle Werte gelten für die Standardvariante; Grade-Multiplikatoren (Alpha/Beta/Delta) werden erst
+  in der Charakter-Instanz eingerechnet (siehe CyberwareGrade). Formelfelder verwenden die
+  RatingFormula-Syntax ("Rating * X", Dezimalpunkt statt Komma).
+
+  Bewusst NICHT enthalten (siehe docs/plaene/cyberware_plan.md Abschnitt 13):
+  - Cybergliedmaßen, Cyberglied-Verbesserungen/-Zubehör, Cyberimplantatwaffen (Kernmechanik
+    Attributersatz bzw. Kapazität/Waffen-Integration ist zurückgestellt)
+  - Einträge mit Kapazitäts-Basissystem (Cyberaugen/Cyberohren) und Einträge mit nicht-linearer
+    Stufen-Essenz (Reflexbooster 2/3/5)
+  - Implantate mit Attributboni (z.B. Kunstmuskeln, Reaktionsverbesserung), solange Attributboni
+    durch Cyberware nicht modelliert sind
+  Verfügbarkeit ist in diesem Feature-Schnitt nicht Teil des Datenmodells.
+-->
+<cyberware>
+
+    <!-- ── HEADWARE (S. 386) ────────────────────────────────── -->
+
+    <item>
+        <name>Datenbuchse</name>
+        <category>Headware</category>
+        <essence>0.1</essence>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+
+    <item>
+        <name>Geruchsbooster</name>
+        <category>Headware</category>
+        <essence>0.2</essence>
+        <cost>Rating * 1000</cost>
+        <rating>6</rating>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+
+    <item>
+        <name>Riggerkontrolle</name>
+        <category>Headware</category>
+        <essence>0.5</essence>
+        <cost>10000</cost>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+
+    <item>
+        <name>Sim-Modul</name>
+        <category>Headware</category>
+        <essence>0.2</essence>
+        <cost>2000</cost>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+
+    <!-- ── AUGEN-CYBERWARE (S. 388) ─────────────────────────── -->
+
+    <item>
+        <name>Blitzkompensation</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>750</cost>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+
+    <item>
+        <name>Sichtverbesserung</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>Rating * 1500</cost>
+        <rating>3</rating>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+
+    <item>
+        <name>Smartlink</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+
+    <!-- ── OHREN-CYBERWARE (S. 388) ─────────────────────────── -->
+
+    <item>
+        <name>Audioverbesserung</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>Rating * 1500</cost>
+        <rating>3</rating>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+
+    <item>
+        <name>Dämpfer</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>750</cost>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+
+    <!-- ── BODYWARE (S. 389) ────────────────────────────────── -->
+
+    <item>
+        <name>Dermalpanzerung</name>
+        <category>Bodyware</category>
+        <essence>Rating * 0.5</essence>
+        <cost>Rating * 5000</cost>
+        <rating>3</rating>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+
+    <item>
+        <name>Interner Lufttank</name>
+        <category>Bodyware</category>
+        <essence>0.25</essence>
+        <cost>650</cost>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+
+    <item>
+        <name>Schmuggelbehälter</name>
+        <category>Bodyware</category>
+        <essence>0.2</essence>
+        <cost>1500</cost>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+
+    <item>
+        <name>Talentleitungen</name>
+        <category>Bodyware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 2000</cost>
+        <rating>5</rating>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+
+</cyberware>

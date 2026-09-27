@@ -8,6 +8,10 @@ import de.shalorian.chummer.model.character.CharacterBiography;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
 import de.shalorian.chummer.model.character.Contact;
+import de.shalorian.chummer.model.character.cyberware.Cyberware;
+import de.shalorian.chummer.model.character.cyberware.CyberwareData;
+import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
+import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -90,6 +94,9 @@ public class CharacterStore {
     data.complexForms = character.getComplexForms().stream()
         .map(cf -> new ComplexFormEntry(cf.getName(), cf.getRating()))
         .toList();
+    data.cyberware = character.getCyberware().stream()
+        .map(c -> new CyberwareEntry(c.getName(), c.getGrade().name(), c.getRating()))
+        .toList();
 
     return data;
   }
@@ -134,6 +141,7 @@ public class CharacterStore {
     applyTradition(character, data);
     applySpells(character, data);
     applyComplexForms(character, data);
+    applyCyberware(character, data);
 
     return character;
   }
@@ -171,6 +179,30 @@ public class CharacterStore {
           .findFirst()
           .ifPresent(cf -> cf.setRating(entry.rating));
     }
+  }
+
+  /**
+   * Stellt die eingebauten Implantate wieder her. Unbekannte Katalognamen werden — analog {@link
+   * #applyComplexForms} — übersprungen; eine unbekannte Grade fällt auf {@link
+   * CyberwareGrade#STANDARD} zurück (analog zur Nachsicht bei {@link #applyTradition}).
+   */
+  private static void applyCyberware(@NonNull Character character, @NonNull CharacterData data) {
+    for (CyberwareEntry entry : data.cyberware) {
+      CyberwareData cyberwareData = CyberwareDataLoader.findByName(entry.name);
+      if (cyberwareData == null) {
+        continue;
+      }
+      character.addCyberware(new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating));
+    }
+  }
+
+  private static @NonNull CyberwareGrade parseGrade(@NonNull String name) {
+    for (CyberwareGrade grade : CyberwareGrade.values()) {
+      if (grade.name().equals(name)) {
+        return grade;
+      }
+    }
+    return CyberwareGrade.STANDARD;
   }
 
   private static void applyBiography(@NonNull Character character, @NonNull CharacterData data) {

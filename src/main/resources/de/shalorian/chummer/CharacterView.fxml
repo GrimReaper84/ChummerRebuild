@@ -119,6 +119,16 @@
         </ScrollPane>
       </Tab>
 
+      <Tab text="Cyberware &amp; Bioware">
+        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+          <VBox styleClass="attr-container" fx:id="cyberwareContainer">
+            <padding>
+              <Insets bottom="20" left="36" right="36" top="20"/>
+            </padding>
+          </VBox>
+        </ScrollPane>
+      </Tab>
+
       <Tab text="Kontakte">
         <ScrollPane fitToWidth="true" styleClass="attr-scroll">
           <VBox styleClass="attr-container" fx:id="contactsContainer">

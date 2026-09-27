@@ -6,6 +6,9 @@ import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
+import de.shalorian.chummer.model.character.cyberware.Cyberware;
+import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
+import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -22,6 +25,8 @@ import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.model.character.skill.SkillDataLoader;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -59,7 +64,9 @@ public class Character {
   private static final String SPELLCASTING_SKILL = "Spruchzauberei";
   private static final String RITUAL_SPELLCASTING_SKILL = "Ritualzauberei";
 
-  private static final double BASE_ESSENCE = 6.0;
+  private static final BigDecimal BASE_ESSENCE = BigDecimal.valueOf(6);
+  private static final int ESSENCE_DECIMALS = 2;
+  private static final BigDecimal TWO = BigDecimal.valueOf(2);
 
   private final Map<AttributeType, CharacterAttribute> attributes;
   private final Map<String, Skill> skills;
@@ -69,6 +76,7 @@ public class Character {
   private final List<Contact> contacts = new ArrayList<>();
   private final List<SpellData> spells = new ArrayList<>();
   private final List<ComplexForm> complexForms = new ArrayList<>();
+  private final List<Cyberware> cyberware = new ArrayList<>();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private final @NonNull CharacterBiography biography = new CharacterBiography();
@@ -254,13 +262,97 @@ public class Character {
   }
 
   /**
-   * Essenz des Charakters. Aktuell ein fixer Wert (SR4-Grundregelwerk: "Alle Charaktere beginnen
-   * mit einer Essenz von 6"), ohne Cyberware-/Bioware-Abzug — dieses Subsystem existiert noch
-   * nicht (bewusster Scope-Cut). Sobald Cyberware/Bioware modelliert sind, muss dieser Wert aus
-   * der tatsächlichen Implantatliste berechnet werden.
+   * Essenz des Charakters, auf {@value #ESSENCE_DECIMALS} Nachkommastellen gerundet. Alle Charaktere
+   * beginnen mit Essenz 6 (metatypunabhängig); davon wird der Essenzverlust durch Implantate nach der
+   * GRW-Kombinationsregel abgezogen (S. 111): "Essenzverlust durch Cyberware und Bioware wird getrennt berechnet
+   * und notiert. Der höhere der beiden Werte wird vollständig von der Essenz abgezogen, der andere Wert
+   * nur zur Hälfte" — also {@code 6 − max(ΣCyber, ΣBio) − min(ΣCyber, ΣBio) / 2}. GRW-Beispiel: 1,5
+   * Cyberware + 2,5 Bioware ergibt 6 − 2,5 − 0,75 = 2,75.
+   *
+   * <p>Dies ist die <b>einzige</b> Stelle der Essenzberechnung — bewusste Abweichung vom C#-Original,
+   * das dieselbe Summe in vier Gettern dupliziert. Die Cyberware-Summe ist bei "Immunabstoßung"
+   * bereits verdoppelt (siehe {@link #getCyberwareEssenceLoss()}). Die Rundung erfolgt hier (nicht
+   * erst in der Anzeige), damit Anzeige und {@link #getEssencePenalty()} dieselbe Grundlage haben.
    */
   public double getEssence() {
-    return BASE_ESSENCE;
+    return getExactEssence().doubleValue();
+  }
+
+  private @NonNull BigDecimal getExactEssence() {
+    BigDecimal cyber = getExactCyberwareEssenceLoss();
+    BigDecimal bio = sumEssenceCost(EquipmentKind.BIOWARE);
+    BigDecimal higher = cyber.max(bio);
+    BigDecimal lower = cyber.min(bio);
+    return BASE_ESSENCE.subtract(higher).subtract(lower.divide(TWO))
+        .setScale(ESSENCE_DECIMALS, RoundingMode.HALF_UP);
+  }
+
+  /**
+   * Essenzverlust durch Cyberware (vor Anwendung der Kombinationsregel) — bei der Quality
+   * "Immunabstoßung" ({@link QualityBonusType#DOUBLES_CYBERWARE_ESSENCE}) verdoppelt. Das GRW
+   * empfiehlt, Cyberware- und Bioware-Verlust getrennt zu notieren; dient daher auch der Anzeige.
+   */
+  public double getCyberwareEssenceLoss() {
+    return getExactCyberwareEssenceLoss().doubleValue();
+  }
+
+  /** Essenzverlust durch Bioware (vor Anwendung der Kombinationsregel), Gegenstück zu {@link #getCyberwareEssenceLoss()}. */
+  public double getBiowareEssenceLoss() {
+    return sumEssenceCost(EquipmentKind.BIOWARE).doubleValue();
+  }
+
+  private @NonNull BigDecimal getExactCyberwareEssenceLoss() {
+    BigDecimal loss = sumEssenceCost(EquipmentKind.CYBERWARE);
+    return hasDoubledCyberwareEssence() ? loss.multiply(TWO) : loss;
+  }
+
+  private @NonNull BigDecimal sumEssenceCost(@NonNull EquipmentKind kind) {
+    return cyberware.stream()
+        .filter(c -> c.getKind() == kind)
+        .map(Cyberware::getEssenceCost)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  private boolean hasDoubledCyberwareEssence() {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.DOUBLES_CYBERWARE_ESSENCE));
+  }
+
+  /**
+   * Um wie viele Punkte Magie bzw. Resonanz (Wert UND Maximum) durch Essenzverlust sinken.
+   * SR4-Grundregelwerk S. 208: "Für jeden angefangenen Punkt Essenzverlust werden das Magieattribut
+   * des Charakters und sein maximaler Magiewert um jeweils 1 Punkt reduziert. Bei einem Charakter mit
+   * Magie 4, dessen Essenz auf 5,8 sinkt, beträgt die Magie 3 und das Magiemaximum 5" — also
+   * {@code ceiling(6 − Essenz)}. Gilt ebenso für Resonanz (GRW S. 111: "Jeder Essenzverlust
+   * beeinflusst auch die Magie bzw. die Resonanz eines Charakters"). Einheitlich für Erstellungs-
+   * und Karrieremodus (kein modusabhängiger Sonderfall wie im C#-Original).
+   */
+  public int getEssencePenalty() {
+    return BASE_ESSENCE.subtract(getExactEssence()).setScale(0, RoundingMode.CEILING).intValue();
+  }
+
+  /**
+   * Der tatsächlich wirksame Magie- bzw. Resonanzwert: investierter Wert abzüglich {@link
+   * #getEssencePenalty()}, nicht unter 0. Der investierte Wert ({@link SpecialAttribute#getValue()})
+   * bleibt bewusst unverändert, weil sich BP-Kosten und Rückerstattung bei der Erstellung nach ihm
+   * richten; die Essenz-Reduktion wird ausschließlich hier abgeleitet (keine Mutation von {@link
+   * SpecialAttribute}, siehe {@code docs/plaene/cyberware_plan.md} Abschnitt 13).
+   *
+   * @return wirksamer Wert, oder 0 wenn weder Magie noch Resonanz freigeschaltet sind
+   */
+  public int getEffectiveMagicOrResonanceValue() {
+    if (magicOrResonance == null) {
+      return 0;
+    }
+    return Math.max(0, magicOrResonance.getValue() - getEssencePenalty());
+  }
+
+  /** Wirksames Magie-/Resonanzmaximum: Maximum abzüglich {@link #getEssencePenalty()}, nicht unter 0. */
+  public int getEffectiveMagicOrResonanceMax() {
+    if (magicOrResonance == null) {
+      return 0;
+    }
+    return Math.max(0, magicOrResonance.getMax() - getEssencePenalty());
   }
 
   /**
@@ -987,21 +1079,64 @@ public class Character {
    * Resonanzattribut nicht überschreiten (SR4-Grundregelwerk: "Die Grundstufe einer Komplexen Form kann
    * das Resonanzattribut des Technomancers nicht überschreiten"). Anders als die reinen
    * Erstellungs-Caps bei Fertigkeiten gilt dieser Cap **durchgehend**, auch im Karrieremodus, da er
-   * keine Erschaffungsregel ist, sondern eine grundsätzliche Grenze.
+   * keine Erschaffungsregel ist, sondern eine grundsätzliche Grenze. Maßgeblich ist der durch
+   * Essenzverlust ggf. reduzierte Resonanzwert ({@link #getEffectiveMagicOrResonanceValue()}).
    */
   public boolean canRaiseComplexForm(@NonNull ComplexForm complexForm) {
-    SpecialAttribute resonance = magicOrResonance;
-    if (resonance == null || resonance.getType() != SpecialAttributeType.RESONANCE) {
-      return false;
-    }
-    return complexForm.getRating() + 1 <= resonance.getValue();
+    return hasResonance()
+        && complexForm.getRating() + 1 <= getEffectiveMagicOrResonanceValue();
   }
 
   /** Wie {@link #canRaiseComplexForm(ComplexForm)}, aber für den Erwerb einer noch nicht gelernten Form (Stufe 1). */
   public boolean canAddComplexForm() {
-    SpecialAttribute resonance = magicOrResonance;
-    return resonance != null && resonance.getType() == SpecialAttributeType.RESONANCE
-        && resonance.getValue() >= ComplexForm.MIN_RATING;
+    return hasResonance() && getEffectiveMagicOrResonanceValue() >= ComplexForm.MIN_RATING;
+  }
+
+  // --- Cyberware & Bioware ---
+
+  /** Alle eingebauten Implantate (Cyberware und Bioware gemeinsam, siehe {@link Cyberware#getKind()}). */
+  public @NonNull List<Cyberware> getCyberware() {
+    return Collections.unmodifiableList(cyberware);
+  }
+
+  /**
+   * Baut ein Implantat ein. Dasselbe Implantat darf mehrfach eingebaut werden (z.B. mehrere
+   * Schmuggelbehälter), daher keine Duplikatprüfung. Keine Prüfung der Grade-Verfügbarkeit oder der
+   * Mindest-Essenz an dieser Stelle — beides sind Erschaffungsregeln, die die UI über {@link
+   * #isCyberwareGradeAvailable(CyberwareGrade)} bzw. {@link #isEssenceBelowCreationMinimum()} prüft
+   * (analog {@link #canAddSpellAtCreation()}); der Persistenz-Pfad lädt so auch im Karrieremodus
+   * erworbene Beta-/Deltaware ohne Sonderbehandlung.
+   */
+  public void addCyberware(@NonNull Cyberware implant) {
+    cyberware.add(implant);
+  }
+
+  /** Entfernt genau dieses Implantat (Objektreferenz, da Duplikate erlaubt sind — analog {@link #removeContact(Contact)}). */
+  public void removeCyberware(@NonNull Cyberware implant) {
+    cyberware.remove(implant);
+  }
+
+  /**
+   * Ob Implantate dieser Kategorie aktuell gekauft werden dürfen: bei der Charaktererschaffung nur
+   * Standard- und Alphaware (SR4-Grundregelwerk S. 359), im Karrieremodus alle Kategorien.
+   */
+  public boolean isCyberwareGradeAvailable(@NonNull CyberwareGrade grade) {
+    return created || grade.isAvailableAtCreation();
+  }
+
+  /**
+   * Ob die Essenz während der Charaktererschaffung auf 0 oder darunter gefallen ist, was das GRW für
+   * Startcharaktere nicht erlaubt. Wird bewusst nur als Warnung angezeigt, nicht als harte Sperre
+   * (konsistent mit der übrigen Validierung, siehe {@code docs/plaene/cyberware_plan.md} Abschnitt 13).
+   * Im Karrieremodus immer {@code false}.
+   */
+  public boolean isEssenceBelowCreationMinimum() {
+    return !created && getExactEssence().signum() <= 0;
+  }
+
+  /** Gesamtpreis aller eingebauten Implantate in Nuyen (inkl. Grade-Multiplikatoren). */
+  public int getCyberwareNuyenCost() {
+    return cyberware.stream().mapToInt(Cyberware::getNuyenCost).sum();
   }
 
   // --- BP ---

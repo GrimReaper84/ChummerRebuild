@@ -248,10 +248,14 @@
     </quality>
 
     <quality>
-        <name>Empfindliches System</name>
+        <!-- GRW S. 120 (gegen PDF-Bild verifiziert). Hieß zuvor "Empfindliches System" (Übersetzung
+             des englischen "Sensitive System" aus dem C#-Original, im deutschen GRW nicht vorhanden). -->
+        <name>Immunabstoßung</name>
         <bp>-15</bp>
         <category>Negative</category>
-        <bonus/>
+        <bonus>
+            <doublescyberwareessence/>
+        </bonus>
         <source>SR4</source>
     </quality>
 

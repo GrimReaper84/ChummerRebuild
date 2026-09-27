@@ -9,6 +9,8 @@ import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
+import de.shalorian.chummer.model.character.cyberware.Cyberware;
+import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -20,10 +22,12 @@ import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
+import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
 import de.shalorian.chummer.view.converter.TraditionStringConverter;
 import de.shalorian.chummer.view.dialog.ComplexFormSelectDialogController;
 import de.shalorian.chummer.view.dialog.ContactEditDialogController;
+import de.shalorian.chummer.view.dialog.CyberwareSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.KnowledgeSkillAddDialogController;
 import de.shalorian.chummer.view.dialog.LogEntryDialogController;
@@ -118,6 +122,8 @@ public class CharacterViewController {
    */
   private static final int ATTRIBUTE_VALUE_COLUMN_WIDTH = 46;
   private static final String KARMA_SUFFIX = " Karma";
+  private static final String NUYEN_SUFFIX = " ¥";
+  private static final EssenceStringConverter ESSENCE_FORMAT = new EssenceStringConverter();
   private static final String CELL_COL_0 = "cell 0 ";
   private static final String CELL_COL_1 = "cell 1 ";
   private static final String CELL_COL_2 = "cell 2 ";
@@ -183,6 +189,8 @@ public class CharacterViewController {
   private Tab technomancerTab;
   @FXML
   private VBox technomancerContainer;
+  @FXML
+  private VBox cyberwareContainer;
   @FXML
   private VBox knowledgeSkillsContainer;
   @FXML
@@ -289,6 +297,7 @@ public class CharacterViewController {
     buildBiographyTab();
     buildMagicTab();
     buildTechnomancerTab();
+    buildCyberwareTab();
   }
 
   // ── Biografie-Tab ─────────────────────────────────────────
@@ -491,17 +500,53 @@ public class CharacterViewController {
     }
 
     attributeGridHost.getChildren().add(withRightFiller(grid));
+    attributeGridHost.getChildren().add(buildEssenceInfoLabel(ch));
   }
 
+  /**
+   * Essenz-Zeile unter den Sonderattributen. Weist zusätzlich auf eine Magie-/Resonanz-Reduktion durch
+   * Essenzverlust hin, damit der Unterschied zwischen angezeigtem (wirksamem) Wert und den nach dem
+   * investierten Wert berechneten BP-/Karma-Kosten nachvollziehbar bleibt.
+   */
+  private @NonNull Label buildEssenceInfoLabel(@NonNull Character ch) {
+    String text = "Essenz: " + ESSENCE_FORMAT.toString(ch.getEssence());
+    SpecialAttribute magicOrResonance = ch.getMagicOrResonance();
+    int penalty = ch.getEssencePenalty();
+    if (magicOrResonance != null && penalty > 0) {
+      text += "  —  " + magicOrResonance.getType().getDisplayName() + " (Wert und Maximum) um "
+          + penalty + " reduziert";
+    }
+    Label label = new Label(text);
+    label.getStyleClass().add(STYLE_ATTR_RANGE);
+    VBox.setMargin(label, new Insets(8, 0, 0, 0));
+    return label;
+  }
+
+  /**
+   * Sonderattribut-Zeile. Für Magie/Resonanz zeigen Wert und Maximum die durch Essenzverlust reduzierten
+   * Werte ({@link Character#getEffectiveMagicOrResonanceValue()}/{@link
+   * Character#getEffectiveMagicOrResonanceMax()}); Grenzen, +/−-Logik und BP-/Karma-Kosten arbeiten
+   * dagegen weiterhin auf dem investierten Wert. Da investierter Wert und Maximum um dieselbe Penalty
+   * verschoben werden, bleibt die Sperre am Maximum trotzdem konsistent mit der Anzeige.
+   */
   private void addSpecialAttributeRow(@NonNull MigPane grid, int row,
       @NonNull SpecialAttribute attr, @NonNull Character character) {
     SpecialAttributeType type = attr.getType();
+    boolean reducedByEssence = type != SpecialAttributeType.EDGE;
+    int displayMax = reducedByEssence ? character.getEffectiveMagicOrResonanceMax() : attr.getMax();
     addAttributeGridRow(grid, row, specialAttrRefreshers,
         new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
-            attr.getMax()), new RowModel() {
+            displayMax), new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
+          }
+
+          @Override
+          public @NonNull String valueDisplayText() {
+            return String.valueOf(reducedByEssence
+                ? character.getEffectiveMagicOrResonanceValue()
+                : attr.getValue());
           }
 
           @Override
@@ -1247,6 +1292,7 @@ public class CharacterViewController {
     c.removeQuality(qualityName);
     buildQualitiesTab();
     buildAttributeGrid();
+    buildCyberwareTab();
     updateBpDisplay();
     refreshAllRows();
   }
@@ -1280,6 +1326,7 @@ public class CharacterViewController {
   private void rebuildQualitiesTab() {
     buildQualitiesTab();
     buildAttributeGrid();
+    buildCyberwareTab();
     refreshAllRows();
   }
 
@@ -2108,8 +2155,9 @@ public class CharacterViewController {
 
           @Override
           public int max() {
-            SpecialAttribute resonance = character.getMagicOrResonance();
-            return resonance != null ? resonance.getValue() : ComplexForm.MIN_RATING;
+            return character.hasResonance()
+                ? character.getEffectiveMagicOrResonanceValue()
+                : ComplexForm.MIN_RATING;
           }
 
           @Override
@@ -2201,6 +2249,184 @@ public class CharacterViewController {
     } catch (IOException e) {
       showDialogLoadError();
     }
+  }
+
+  // ── Cyberware-Tab ──────────────────────────────────────────
+
+  /**
+   * Baut den (immer sichtbaren) Cyberware-&-Bioware-Tab: Kopfzeile mit Essenz-Übersicht (Gesamt-Essenz
+   * sowie getrennte Cyberware-/Bioware-Verluste, wie vom GRW zum Notieren empfohlen) und zwei Sektionen
+   * mit je eigenem Hinzufügen-Button — analog {@link #buildQualitiesTab()}. Wird bei jeder
+   * Implantat-Änderung komplett neu aufgebaut (kein In-Place-Refresh einzelner Zellen).
+   */
+  private void buildCyberwareTab() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    cyberwareContainer.getChildren().clear();
+
+    Label sectionLabel = new Label("Cyberware & Bioware");
+    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
+
+    Label essenceLabel = new Label("Essenz: " + ESSENCE_FORMAT.toString(ch.getEssence()));
+    essenceLabel.getStyleClass().add("bp-value");
+    Label lossLabel = new Label("(Cyberware " + ESSENCE_FORMAT.toString(ch.getCyberwareEssenceLoss())
+        + " / Bioware " + ESSENCE_FORMAT.toString(ch.getBiowareEssenceLoss()) + ")");
+    lossLabel.getStyleClass().add("bp-label");
+    Label costLabel = new Label("Kosten: " + ch.getCyberwareNuyenCost() + NUYEN_SUFFIX);
+    costLabel.getStyleClass().add("bp-label");
+
+    HBox header = new HBox(12);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.getChildren().addAll(sectionLabel, essenceLabel, lossLabel);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().addAll(spacer, costLabel);
+    VBox.setMargin(header, new Insets(0, 0, 12, 0));
+    cyberwareContainer.getChildren().add(header);
+
+    buildCyberwareSection(ch, EquipmentKind.CYBERWARE);
+
+    Separator sep = new Separator();
+    VBox.setMargin(sep, new Insets(16, 0, 16, 0));
+    cyberwareContainer.getChildren().add(sep);
+
+    buildCyberwareSection(ch, EquipmentKind.BIOWARE);
+  }
+
+  private void buildCyberwareSection(@NonNull Character ch, @NonNull EquipmentKind kind) {
+    Label title = new Label(kind.getDisplayName());
+    title.getStyleClass().add(STYLE_SECTION_TITLE);
+
+    Button addBtn = new Button(kind.getDisplayName() + " hinzufügen");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    addBtn.setOnAction(e -> onAddCyberware(kind));
+
+    HBox header = new HBox(8);
+    header.setAlignment(Pos.CENTER_LEFT);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().addAll(title, spacer, addBtn);
+    cyberwareContainer.getChildren().add(header);
+
+    List<Cyberware> implants = ch.getCyberware().stream()
+        .filter(c -> c.getKind() == kind)
+        .toList();
+    if (implants.isEmpty()) {
+      Label empty = new Label("Keine " + kind.getDisplayName() + " eingebaut");
+      empty.getStyleClass().add(STYLE_ATTR_RANGE);
+      VBox.setMargin(empty, new Insets(8, 0, 0, 0));
+      cyberwareContainer.getChildren().add(empty);
+      return;
+    }
+
+    MigPane grid = buildCyberwareGrid();
+    int row = 1;
+    for (Cyberware implant : implants) {
+      addCyberwareRow(grid, row++, implant, ch);
+    }
+    cyberwareContainer.getChildren().add(withRightFiller(grid));
+  }
+
+  /** Implantat-Grid inkl. Kopfzeile (Zeile 0), inhaltsbasierte Spalten analog {@link #buildSpellGrid()}. */
+  private @NonNull MigPane buildCyberwareGrid() {
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][]");
+    grid.getStyleClass().add("attr-grid");
+    VBox.setMargin(grid, new Insets(12, 0, 0, 0));
+
+    String[] headers = {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Quelle",
+        ""};
+    for (int i = 0; i < headers.length; i++) {
+      if (!headers[i].isEmpty()) {
+        Label h = new Label(headers[i]);
+        h.getStyleClass().add("attr-header");
+        preventShrink(h);
+        grid.add(h, "cell " + i + " 0");
+      }
+    }
+    return grid;
+  }
+
+  private void addCyberwareRow(@NonNull MigPane grid, int row, @NonNull Cyberware implant,
+      @NonNull Character character) {
+    Label implantNameLabel = new Label(implant.getName());
+    Label categoryLabel = new Label(implant.getData().category());
+    Label gradeLabel = new Label(implant.getGrade().getDisplayName());
+    Label ratingLabel = new Label(implant.getData().hasRating()
+        ? String.valueOf(implant.getRating())
+        : "–");
+    Label essenceLabel = new Label(ESSENCE_FORMAT.toString(implant.getEssenceCost().doubleValue()));
+    Label priceLabel = new Label(implant.getNuyenCost() + NUYEN_SUFFIX);
+    Label sourceLabel = new Label(implant.getData().source() + " S. " + implant.getData().page());
+    Button removeBtn = new Button("Entfernen");
+
+    implantNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    categoryLabel.getStyleClass().add(STYLE_ATTR_RANGE);
+    gradeLabel.getStyleClass().add(STYLE_ATTR_ABBR);
+    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    essenceLabel.getStyleClass().add(STYLE_ATTR_VALUE);
+    priceLabel.getStyleClass().add(STYLE_ATTR_BP);
+    sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
+    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(removeBtn, FontAwesomeSolid.TRASH);
+
+    removeBtn.setOnAction(e -> {
+      character.removeCyberware(implant);
+      onCyberwareChanged();
+    });
+
+    addRowCells(grid, row, implantNameLabel, categoryLabel, gradeLabel, ratingLabel, essenceLabel,
+        priceLabel, sourceLabel, removeBtn);
+  }
+
+  /**
+   * Öffnet den Implantat-Auswahl-Dialog für Cyberware bzw. Bioware und baut die Auswahl ein. Fällt die
+   * Essenz während der Charaktererschaffung dadurch auf 0 oder darunter, erscheint nur eine Warnung
+   * (keine Sperre, siehe {@link Character#isEssenceBelowCreationMinimum()}). Eine Nuyen-Abbuchung
+   * findet in diesem Feature-Schnitt noch nicht statt — der Preis wird nur angezeigt.
+   */
+  private void onAddCyberware(@NonNull EquipmentKind kind) {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    try {
+      DialogHandle dialog = openDialog("CyberwareSelectDialog.fxml",
+          kind.getDisplayName() + " hinzufügen");
+      CyberwareSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setKind(kind);
+      ctrl.setCharacter(ch);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(implant -> {
+        ch.addCyberware(implant);
+        onCyberwareChanged();
+        if (ch.isEssenceBelowCreationMinimum()) {
+          Notifications.create()
+              .title("Essenz zu niedrig")
+              .text("Bei der Charaktererschaffung darf die Essenz nicht auf 0 oder darunter fallen")
+              .position(Pos.BOTTOM_RIGHT)
+              .owner(nameLabel.getScene().getWindow())
+              .showWarning();
+        }
+      });
+    } catch (IOException e) {
+      showDialogLoadError();
+    }
+  }
+
+  /**
+   * Zieht alle essenzabhängigen Anzeigen nach einer Implantat-Änderung nach: den Cyberware-Tab selbst,
+   * das Attribut-Grid (Essenz-Zeile, wirksame Magie/Resonanz inkl. Maximum im Bereichs-Label) und die
+   * übrigen Zeilen (z.B. Komplexe Formen, deren Maximum am wirksamen Resonanzwert hängt).
+   */
+  private void onCyberwareChanged() {
+    buildCyberwareTab();
+    buildAttributeGrid();
+    refreshAllRows();
   }
 
   // ── Gemeinsam ─────────────────────────────────────────────
@@ -2643,6 +2869,7 @@ public class CharacterViewController {
     buildBiographyTab();
     buildMagicTab();
     buildTechnomancerTab();
+    buildCyberwareTab();
   }
 
   @SuppressWarnings("unchecked")

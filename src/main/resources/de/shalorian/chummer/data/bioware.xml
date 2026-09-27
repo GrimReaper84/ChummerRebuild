@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Bioware (Kapitel STRASSENAUSRÜSTUNG,
+  Tabellen "Standard-Bioware" und "Kultivierte Bioware" S. 394 — Essenz- und Preiswerte direkt gegen
+  das PDF-Bild verifiziert, nicht nur gegen den OCR-Text).
+
+  Alle Werte gelten für die Standardvariante; Grade-Multiplikatoren werden erst in der
+  Charakter-Instanz eingerechnet (siehe CyberwareGrade — die vier Kategorien gelten laut GRW S. 359
+  für Cyberware UND Bioware). Formelfelder verwenden die RatingFormula-Syntax.
+
+  Bewusst NICHT enthalten: Bioware mit Attributboni (z.B. Muskelverstärkung, Zerebralbooster,
+  Synapsenbeschleuniger), solange Attributboni durch Implantate nicht modelliert sind (siehe
+  docs/plaene/cyberware_plan.md Abschnitt 13). Verfügbarkeit ist nicht Teil des Datenmodells.
+-->
+<bioware>
+
+    <!-- ── STANDARD-BIOWARE (S. 394) ────────────────────────── -->
+
+    <item>
+        <name>Hauttasche</name>
+        <category>Standard-Bioware</category>
+        <essence>0.1</essence>
+        <cost>5000</cost>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+    <item>
+        <name>Katzenaugen</name>
+        <category>Standard-Bioware</category>
+        <essence>0.1</essence>
+        <cost>7500</cost>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+    <item>
+        <name>Pathogenabwehr</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.1</essence>
+        <cost>Rating * 10000</cost>
+        <rating>6</rating>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+    <item>
+        <name>Thrombozytenfabrik</name>
+        <category>Standard-Bioware</category>
+        <essence>0.2</essence>
+        <cost>25000</cost>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+    <item>
+        <name>Toxinextraktor</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 20000</cost>
+        <rating>6</rating>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+    <!-- ── KULTIVIERTE BIOWARE (S. 394) ─────────────────────── -->
+
+    <item>
+        <name>Mnemoverstärker</name>
+        <category>Kultivierte Bioware</category>
+        <essence>Rating * 0.1</essence>
+        <cost>Rating * 7500</cost>
+        <rating>3</rating>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+    <item>
+        <name>Schlafregulator</name>
+        <category>Kultivierte Bioware</category>
+        <essence>0.15</essence>
+        <cost>10000</cost>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+    <item>
+        <name>Schmerzeditor</name>
+        <category>Kultivierte Bioware</category>
+        <essence>0.3</essence>
+        <cost>40000</cost>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+
+</bioware>
