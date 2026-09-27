@@ -24,7 +24,7 @@ navigable (each holds only a handful of classes):
 
 - `model.character` (root): `Character` (aggregate root), `CharacterBiography`, `Contact`, `LogEntry`, `CatalogEntry`,
   `DataPaths`
-- `model.character.attribute`, `.skill`, `.quality`, `.magic`, `.technomancer`, `.metatype`: data model classes for
+- `model.character.attribute`, `.skill`, `.quality`, `.magic`, `.technomancer`, `.cyberware`, `.metatype`: data model classes for
   the respective feature area (e.g. `Skill`/`SkillDataLoader` in `.skill`, `SpellData`/`Tradition` in `.magic`)
 - `view` (root): `MainWindowController`, `CharacterViewController`
 - `view.dialog`: all modal dialog controllers and their result/handle types
@@ -62,8 +62,9 @@ The model enforces SR4 rules:
 
 ## Language
 
-All user-facing strings, XML data, comments, and identifiers are in **German**. Keep this consistent when adding code or
-data.
+All user-facing strings, XML data, comments, and Javadoc are in **German**. Identifiers (class, method, field names)
+follow the existing code, which uses mostly **English** names (e.g. `Character.getEssence()`, `Cyberware`); German
+domain terms appear in texts and data, not in identifiers. Keep this consistent when adding code or data.
 
 ## Workflows
 
