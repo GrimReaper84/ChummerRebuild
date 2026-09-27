@@ -51,6 +51,7 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
       protected void updateItem(@Nullable T item, boolean empty) {
         super.updateItem(item, empty);
         setText(empty || item == null ? null : item.name());
+        setDisable(!empty && item != null && !isSelectable(item));
       }
     });
 
@@ -85,6 +86,16 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
     return true;
   }
 
+  /**
+   * Ob {@code entry} aktuell gewählt werden darf. Nicht wählbare Einträge bleiben in der Liste
+   * sichtbar, werden aber deaktiviert dargestellt (z.B. Verfügbarkeit über 12 bei der
+   * Charaktererschaffung). Subklassen müssen die Regel zusätzlich beim Bestätigen prüfen, da die
+   * Auswahl per Tastatur deaktivierte Zellen nicht zuverlässig überspringt. Default: alle wählbar.
+   */
+  protected boolean isSelectable(@NonNull T entry) {
+    return true;
+  }
+
   /** Wird nach jedem {@link #updateList()} sowie bei Selektionsänderung aufgerufen — Subklassen aktualisieren hier ihr Info-Panel. */
   protected void onListUpdated() {
   }
@@ -102,6 +113,7 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
 
     T selected = itemListView.getSelectionModel().getSelectedItem();
     itemListView.getItems().setAll(filtered);
+    itemListView.refresh();
     if (selected != null && filtered.contains(selected)) {
       itemListView.getSelectionModel().select(selected);
     }

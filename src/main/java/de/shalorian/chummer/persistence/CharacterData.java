@@ -32,6 +32,8 @@ public class CharacterData {
   public @NonNull List<String> spellNames = new ArrayList<>();
   public @NonNull List<ComplexFormEntry> complexForms = new ArrayList<>();
   public @NonNull List<CyberwareEntry> cyberware = new ArrayList<>();
+  public @NonNull List<ArmorEntry> armor = new ArrayList<>();
+  public @NonNull LifestyleEntry lifestyle = new LifestyleEntry();
 
   public CharacterData() {
     // Für Jackson-Deserialisierung benötigt (public Felder werden nach dem Konstruktoraufruf per Reflection befüllt).

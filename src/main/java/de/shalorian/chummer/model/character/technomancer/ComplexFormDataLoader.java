@@ -1,5 +1,7 @@
 package de.shalorian.chummer.model.character.technomancer;
 
+import static de.shalorian.chummer.utils.XmlUtils.childText;
+
 import de.shalorian.chummer.model.character.DataPaths;
 import java.io.InputStream;
 import java.util.Collections;
@@ -67,17 +69,5 @@ public class ComplexFormDataLoader {
         childText(el, "skill"),
         childText(el, "source"),
         childText(el, "page"));
-  }
-
-  private static @NonNull String childText(@NonNull Element parent, @NonNull String tag) {
-    NodeList list = parent.getChildNodes();
-    for (int i = 0; i < list.getLength(); i++) {
-      Node node = list.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE && tag.equals(node.getNodeName())) {
-        String text = node.getTextContent();
-        return text == null ? "" : text.trim();
-      }
-    }
-    return "";
   }
 }

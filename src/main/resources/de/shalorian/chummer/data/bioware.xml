@@ -10,7 +10,8 @@
 
   Bewusst NICHT enthalten: Bioware mit Attributboni (z.B. Muskelverstärkung, Zerebralbooster,
   Synapsenbeschleuniger), solange Attributboni durch Implantate nicht modelliert sind (siehe
-  docs/plaene/cyberware_plan.md Abschnitt 13). Verfügbarkeit ist nicht Teil des Datenmodells.
+  docs/plaene/cyberware_plan.md Abschnitt 13). Verfügbarkeit (<avail>, <legality> E/V) gegen das
+  PDF-Bild verifiziert; fehlendes <avail> = "–".
 -->
 <bioware>
 
@@ -21,6 +22,7 @@
         <category>Standard-Bioware</category>
         <essence>0.1</essence>
         <cost>5000</cost>
+        <avail>4</avail>
         <source>SR4</source>
         <page>394</page>
     </item>
@@ -30,6 +32,7 @@
         <category>Standard-Bioware</category>
         <essence>0.1</essence>
         <cost>7500</cost>
+        <avail>4</avail>
         <source>SR4</source>
         <page>394</page>
     </item>
@@ -40,6 +43,7 @@
         <essence>Rating * 0.1</essence>
         <cost>Rating * 10000</cost>
         <rating>6</rating>
+        <avail>8</avail>
         <source>SR4</source>
         <page>394</page>
     </item>
@@ -49,6 +53,7 @@
         <category>Standard-Bioware</category>
         <essence>0.2</essence>
         <cost>25000</cost>
+        <avail>12</avail>
         <source>SR4</source>
         <page>394</page>
     </item>
@@ -59,6 +64,7 @@
         <essence>Rating * 0.2</essence>
         <cost>Rating * 20000</cost>
         <rating>6</rating>
+        <avail>Rating * 3</avail>
         <source>SR4</source>
         <page>394</page>
     </item>
@@ -71,6 +77,7 @@
         <essence>Rating * 0.1</essence>
         <cost>Rating * 7500</cost>
         <rating>3</rating>
+        <avail>Rating * 5</avail>
         <source>SR4</source>
         <page>394</page>
     </item>
@@ -80,6 +87,7 @@
         <category>Kultivierte Bioware</category>
         <essence>0.15</essence>
         <cost>10000</cost>
+        <avail>8</avail>
         <source>SR4</source>
         <page>394</page>
     </item>
@@ -89,6 +97,8 @@
         <category>Kultivierte Bioware</category>
         <essence>0.3</essence>
         <cost>40000</cost>
+        <avail>18</avail>
+        <legality>V</legality>
         <source>SR4</source>
         <page>394</page>
     </item>

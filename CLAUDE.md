@@ -55,8 +55,10 @@ The model enforces SR4 rules:
 
 - **Character creation:** 400 BP total; 10 BP per attribute point above racial minimum
 - **Skills:** 4 BP/rating (individual) or 10 BP/rating (group); max rating 6
-- **Career mode:** After finalizing, remaining BP convert to Nuyen (1 BP = 2000 ¥); attribute costs become (new rating ×
-    5) Karma; skill costs become (new rating × 2) Karma
+- **Resources:** BP explicitly assigned to resources (max. 50) buy equipment at 5,000 ¥ per BP, i.e. max. 250,000 ¥
+  (SR4-Grundregelwerk S. 110, `Character.NUYEN_PER_BP`)
+- **Career mode:** After finalizing, the assigned resource BP convert to starting Nuyen; attribute costs become (new
+  rating × 5) Karma; skill costs become (new rating × 2) Karma
 - **Metatypes:** 15 options (5 base races + 10 variants), each with specific attribute min/max ranges; variant
   attributes override parent attributes
 

@@ -2,6 +2,9 @@ package de.shalorian.chummer.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.shalorian.chummer.model.character.armor.Armor;
+import de.shalorian.chummer.model.character.armor.ArmorData;
+import de.shalorian.chummer.model.character.armor.ArmorDataLoader;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterBiography;
@@ -12,6 +15,8 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
+import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
+import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -97,6 +102,11 @@ public class CharacterStore {
     data.cyberware = character.getCyberware().stream()
         .map(c -> new CyberwareEntry(c.getName(), c.getGrade().name(), c.getRating()))
         .toList();
+    data.armor = character.getArmor().stream()
+        .map(a -> new ArmorEntry(a.getName(), a.isEquipped()))
+        .toList();
+    Lifestyle lifestyle = character.getLifestyle();
+    data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
 
     return data;
   }
@@ -142,6 +152,8 @@ public class CharacterStore {
     applySpells(character, data);
     applyComplexForms(character, data);
     applyCyberware(character, data);
+    applyArmor(character, data);
+    applyLifestyle(character, data);
 
     return character;
   }
@@ -194,6 +206,30 @@ public class CharacterStore {
       }
       character.addCyberware(new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating));
     }
+  }
+
+  /** Stellt die gekauften Rüstungsteile wieder her; unbekannte Katalognamen werden übersprungen. */
+  private static void applyArmor(@NonNull Character character, @NonNull CharacterData data) {
+    for (ArmorEntry entry : data.armor) {
+      ArmorData armorData = ArmorDataLoader.findByName(entry.name);
+      if (armorData != null) {
+        character.addArmor(new Armor(armorData, entry.equipped));
+      }
+    }
+  }
+
+  /**
+   * Stellt den Lebensstil wieder her. Eine unbekannte Stufe bzw. ein fehlender Knoten (Altdatei)
+   * lässt den Default Straße stehen; weniger als ein Monat wird auf das Minimum angehoben.
+   */
+  private static void applyLifestyle(@NonNull Character character, @NonNull CharacterData data) {
+    Lifestyle lifestyle = character.getLifestyle();
+    for (LifestyleLevel level : LifestyleLevel.values()) {
+      if (level.name().equals(data.lifestyle.level)) {
+        lifestyle.setLevel(level);
+      }
+    }
+    lifestyle.setMonths(Math.max(Lifestyle.MIN_MONTHS, data.lifestyle.months));
   }
 
   private static @NonNull CyberwareGrade parseGrade(@NonNull String name) {

@@ -1,5 +1,25 @@
 package de.shalorian.chummer.view;
 
+import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
+import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.preventShrink;
+import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
+import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
+import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
+import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_ABBR;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_AUG;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_VALUE;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
+
 import de.shalorian.chummer.App;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterBiography;
@@ -29,12 +49,14 @@ import de.shalorian.chummer.view.dialog.ComplexFormSelectDialogController;
 import de.shalorian.chummer.view.dialog.ContactEditDialogController;
 import de.shalorian.chummer.view.dialog.CyberwareSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
+import de.shalorian.chummer.view.dialog.FinalizeDialogController;
 import de.shalorian.chummer.view.dialog.KnowledgeSkillAddDialogController;
 import de.shalorian.chummer.view.dialog.LogEntryDialogController;
 import de.shalorian.chummer.view.dialog.QualitySelectDialogController;
 import de.shalorian.chummer.view.dialog.QualitySelectResult;
 import de.shalorian.chummer.view.dialog.SpellSelectDialogController;
 import de.shalorian.chummer.view.grid.AttributeRowLabel;
+import de.shalorian.chummer.view.grid.GridSupport;
 import de.shalorian.chummer.view.grid.RowControls;
 import de.shalorian.chummer.view.grid.RowModel;
 import de.shalorian.chummer.view.grid.SkillSortMode;
@@ -56,7 +78,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -87,21 +108,12 @@ import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.tbee.javafx.scene.layout.MigPane;
 
 public class CharacterViewController {
 
   private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-  private static final String STYLE_ATTR_NAME = "attr-name";
-  private static final String STYLE_ATTR_BTN = "attr-btn";
-  private static final String STYLE_ATTR_VALUE = "attr-value";
-  private static final String STYLE_ATTR_RANGE = "attr-range";
-  private static final String STYLE_ATTR_BP = "attr-bp";
-  private static final String STYLE_ATTR_ABBR = "attr-abbr";
-  private static final String STYLE_ATTR_AUG = "attr-aug";
   /**
    * Platzhalter für den augmentierten Attributwert bzw. das augmentierte Metatyp-Maximum, solange
    * es noch keine Essenz-/Cyberware-Berechnung gibt (Roadmap Stufe 2, Cyberware/Bioware). Struktur
@@ -109,9 +121,6 @@ public class CharacterViewController {
    * vorbereitet — bei Einführung der echten Berechnung wird hier nur dieser Platzhalter ersetzt.
    */
   private static final String ATTRIBUTE_AUGMENTED_PLACEHOLDER = "—";
-  private static final String STYLE_SECTION_TITLE = "section-title";
-  private static final String STYLE_BTN_SECONDARY = "btn-secondary";
-  private static final String MIGPANE_HIDEMODE_3 = "hidemode 3";
   /**
    * Feste Breite der Attribut-"Wert"-Spalte — einzige Rating-Spalte, die zweistellig werden kann
    * (Metatyp-Varianten erlauben Attributmaxima bis 10, siehe {@code max="10"} in den Metatyp-XML-Dateien).
@@ -192,6 +201,12 @@ public class CharacterViewController {
   @FXML
   private VBox cyberwareContainer;
   @FXML
+  private VBox lifestyleContainer;
+  @FXML
+  private VBox armorContainer;
+  @FXML
+  private Label remainingNuyenLabel;
+  @FXML
   private VBox knowledgeSkillsContainer;
   @FXML
   private ToggleGroup skillSortToggleGroup;
@@ -203,9 +218,13 @@ public class CharacterViewController {
   private int technomancerTabIndex;
   private @NonNull SkillSortMode skillSortMode = SkillSortMode.CATEGORY;
   private @Nullable Character character;
+  /** Wird in {@link #initialize()} erzeugt, sobald die FXML-Container injiziert sind. */
+  @SuppressWarnings("NullAway.Init")
+  private StreetGearTabBuilder streetGear;
 
   @FXML
   public void initialize() {
+    streetGear = new StreetGearTabBuilder(lifestyleContainer, armorContainer, streetGearHost());
     metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
     metatypeBox.setConverter(new MetatypeStringConverter());
     metatypeBox.valueProperty().addListener((obs, old, newVal) -> {
@@ -215,6 +234,7 @@ public class CharacterViewController {
       character.setMetatype(newVal);
       buildAttributeGrid();
       updateBpDisplay();
+      refreshAllRows();
     });
 
     buildLogTable(karmaTable);
@@ -298,6 +318,7 @@ public class CharacterViewController {
     buildMagicTab();
     buildTechnomancerTab();
     buildCyberwareTab();
+    buildStreetGearTabs();
   }
 
   // ── Biografie-Tab ─────────────────────────────────────────
@@ -454,14 +475,7 @@ public class CharacterViewController {
     boolean career = character.isCreated();
     String[] headers = {"Attribut", "", "", "Wert", "", "(Aug)", "Bereich",
         career ? "Karma" : "BP-Kosten"};
-    for (int i = 0; i < headers.length; i++) {
-      if (!headers[i].isEmpty()) {
-        Label h = new Label(headers[i]);
-        h.getStyleClass().add("attr-header");
-        preventShrink(h);
-        grid.add(h, "cell " + i + " 0");
-      }
-    }
+    addHeaderRow(grid, headers);
 
     int row = 1;
     for (AttributeType type : AttributeType.values()) {
@@ -536,7 +550,7 @@ public class CharacterViewController {
     int displayMax = reducedByEssence ? character.getEffectiveMagicOrResonanceMax() : attr.getMax();
     addAttributeGridRow(grid, row, specialAttrRefreshers,
         new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
-            displayMax), new RowModel() {
+            displayMax), null, new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
@@ -595,7 +609,7 @@ public class CharacterViewController {
       @NonNull CharacterAttribute attr, @NonNull Character character) {
     addAttributeGridRow(grid, row, attrRefreshers,
         new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
-            attr.getMax()), new RowModel() {
+            attr.getMax()), () -> augmentedAttributeText(character, type), new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
@@ -654,12 +668,15 @@ public class CharacterViewController {
    * {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
    * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am
    * alten WinForms-{@code panAttributes} (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen
-   * inkl. augmentiertem Maximum); die Aug-Spalte und der Klammerzusatz im Bereichs-Label zeigen bis zur
-   * Essenz-/Cyberware-Implementierung nur {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}.
+   * inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den Text aus {@code augmentedText} (bei jedem
+   * Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht),
+   * bzw. {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}, wenn {@code augmentedText} {@code null} ist; der
+   * Klammerzusatz im Bereichs-Label bleibt bis zur Modellierung von Attributboni ein Platzhalter.
    */
   private void addAttributeGridRow(@NonNull MigPane grid, int row,
       @NonNull List<Runnable> refresherList, @NonNull AttributeRowLabel label,
-      @NonNull RowModel model, @NonNull Character character) {
+      @Nullable Supplier<String> augmentedText, @NonNull RowModel model,
+      @NonNull Character character) {
     Label attrNameLabel = new Label(label.displayName());
     Label abbrLabel = new Label(label.abbreviation());
     Button minus = new Button("−");
@@ -679,6 +696,11 @@ public class CharacterViewController {
     rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     bpLabel.getStyleClass().add(STYLE_ATTR_BP);
 
+    if (augmentedText != null) {
+      Runnable refreshAugmented = () -> augLabel.setText(augmentedText.get());
+      refresherList.add(refreshAugmented);
+      refreshAugmented.run();
+    }
     wireIncrementable(refresherList, new RowControls(valueLabel, bpLabel, minus, plus),
         character.isCreated(), model, character);
 
@@ -687,54 +709,21 @@ public class CharacterViewController {
   }
 
   /**
-   * Fügt die übergebenen Knoten spaltenweise (Spalte 0, 1, 2, …) in {@code grid} ein, in der angegebenen Zeile. Gemeinsam genutzt von allen
-   * Grid-Zeilen-Buildern, die durchgehend ab Spalte 0 befüllen (Attribut-, Sonderattribut-, Wissensfertigkeiten- und Skill-Zeilen).
+   * Inhalt der Aug-Spalte eines Körperlichen/Geistigen Attributs: der wirksame Wert (derzeit nur durch
+   * Panzerungsbehinderung auf GES/REA reduziert, siehe {@link
+   * Character#getAugmentedAttributeValue(AttributeType)}), sofern er vom investierten Wert abweicht.
    */
-  private void addRowCells(@NonNull MigPane grid, int row, @NonNull Node... cells) {
-    for (int col = 0; col < cells.length; col++) {
-      preventShrink(cells[col]);
-      grid.add(cells[col], "cell " + col + " " + row);
-    }
-  }
-
-  /**
-   * Verhindert, dass {@code node} unter seine bevorzugte Breite schrumpft. {@code MigPane}/{@code GridPane}
-   * ermitteln die Minimalbreite einer Spalte aus {@code minWidth()} der enthaltenen Controls; ohne diesen
-   * Aufruf könnten Labels/Buttons ihren Text per Ellipsis abschneiden, statt die Spalte auf Inhaltsbreite
-   * zu halten — genau das soll das inhaltsbasierte Spalten-Layout verhindern.
-   */
-  private static void preventShrink(@NonNull Node node) {
-    if (node instanceof Region region) {
-      region.setMinWidth(Region.USE_PREF_SIZE);
-    }
-  }
-
-  /**
-   * Ersetzt den Text von {@code button} durch ein FontAwesome-Icon; der bisherige Text bleibt als
-   * Tooltip erhalten, damit die Schaltfläche ohne Beschriftung weiterhin erkennbar bleibt.
-   */
-  private static void useIcon(@NonNull Button button, @NonNull Ikon icon) {
-    String label = button.getText();
-    button.setText(null);
-    button.setGraphic(new FontIcon(icon));
-    button.setTooltip(new Tooltip(label));
-  }
-
-  /**
-   * Umschließt {@code content} (typischerweise eines der inhaltsbasierten Grids) mit einem wachsenden,
-   * leeren Platzhalter ganz rechts. Dadurch landet ungenutzter Platz im Vollbildmodus dort, statt
-   * Lücken zwischen den Spalten von {@code content} selbst aufzureißen — {@code content} bleibt bei
-   * seiner inhaltsbasierten Breite als geschlossener Block am linken Rand.
-   */
-  private static @NonNull HBox withRightFiller(@NonNull Region content) {
-    Region filler = new Region();
-    HBox.setHgrow(filler, Priority.ALWAYS);
-    return new HBox(content, filler);
+  private static @NonNull String augmentedAttributeText(@NonNull Character character,
+      @NonNull AttributeType type) {
+    int augmented = character.getAugmentedAttributeValue(type);
+    return augmented == character.getAttribute(type).getValue()
+        ? ATTRIBUTE_AUGMENTED_PLACEHOLDER
+        : String.valueOf(augmented);
   }
 
   /**
    * Gemeinsames Spalten-Layout für Standard- und Sonderattribut-Grid: alle Spalten inhaltsbasiert ohne
-   * eigenes Wachstum — ungenutzter Platz wird stattdessen außen über {@link #withRightFiller} verteilt.
+   * eigenes Wachstum — ungenutzter Platz wird stattdessen außen über {@link GridSupport#withRightFiller} verteilt.
    * Die Wert-Spalte ist die einzige feste Ausnahme, siehe {@link #ATTRIBUTE_VALUE_COLUMN_WIDTH}.
    */
   private @NonNull MigPane buildAttributeMigPane() {
@@ -849,7 +838,7 @@ public class CharacterViewController {
     // feste Ausnahme (siehe ATTRIBUTE_VALUE_COLUMN_WIDTH-Kommentar). Kein eigenes Spaltenwachstum —
     // ungenutzter Platz wird außen über withRightFiller verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][center][center][]");
-    grid.getStyleClass().add("attr-grid");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
     return grid;
   }
 
@@ -916,7 +905,7 @@ public class CharacterViewController {
     VBox.setMargin(sectionLabel, new Insets(0, 0, 4, 0));
 
     Label poolLabel = new Label();
-    poolLabel.getStyleClass().add("bp-label");
+    poolLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     Button addBtn = new Button("Hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -1008,7 +997,7 @@ public class CharacterViewController {
     // eigenes Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[][][center][center][center][][][][]");
-    grid.getStyleClass().add("attr-grid");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
     return grid;
   }
 
@@ -1206,7 +1195,7 @@ public class CharacterViewController {
     sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
 
     Label limitLabel = new Label();
-    limitLabel.getStyleClass().add("bp-label");
+    limitLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     Button addBtn = new Button("Hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -1306,19 +1295,42 @@ public class CharacterViewController {
    */
   private boolean karmaChargeFailed(@NonNull Character c, @NonNull String label,
       int karmaCost) {
-    if (c.getKarmaTotal() < karmaCost) {
+    return chargeFailed(SpendCurrency.KARMA, label, karmaCost, c.getKarmaTotal(),
+        c::addKarmaEntry);
+  }
+
+  /**
+   * Gegenstück zu {@link #karmaChargeFailed} für Nuyen-Käufe im Karrieremodus (Cyberware, Rüstung;
+   * Muster des C#-Originals: Guthabenprüfung, Log-Eintrag, sonst Abbruch mit Hinweis).
+   *
+   * @return true, wenn NICHT gebucht wurde — der Aufrufer bricht dann den Kauf ab
+   */
+  private boolean nuyenChargeFailed(@NonNull Character c, @NonNull String label, int nuyenCost) {
+    return chargeFailed(SpendCurrency.NUYEN, label, nuyenCost, c.getNuyenTotal(),
+        c::addNuyenEntry);
+  }
+
+  /**
+   * Gemeinsamer Ablauf aller Karrieremodus-Käufe: bei zu wenig Guthaben Hinweis und Abbruch, sonst
+   * Bestätigung einholen und einen negativen Log-Eintrag über {@code logSink} buchen.
+   *
+   * @return true, wenn NICHT gebucht wurde (zu wenig Guthaben oder abgebrochen)
+   */
+  private boolean chargeFailed(@NonNull SpendCurrency currency, @NonNull String label, int cost,
+      int available, @NonNull Consumer<LogEntry> logSink) {
+    if (available < cost) {
       Notifications.create()
-          .title("Nicht genug Karma")
-          .text("Benötigt: " + karmaCost + KARMA_SUFFIX)
+          .title("Nicht genug " + currency.getDisplayName())
+          .text("Benötigt: " + currency.formatAmount(cost))
           .position(Pos.BOTTOM_RIGHT)
           .owner(nameLabel.getScene().getWindow())
           .showWarning();
       return true;
     }
-    if (!confirmKarmaSpend(label, karmaCost, c)) {
+    if (!confirmSpend(currency, label, cost, available, null)) {
       return true;
     }
-    c.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+    logSink.accept(new LogEntry(label, -cost, LocalDate.now(ZoneId.systemDefault())));
     updateLogDisplay();
     return false;
   }
@@ -1400,7 +1412,7 @@ public class CharacterViewController {
     // Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[][center][center][center][center][][][]");
-    grid.getStyleClass().add("attr-grid");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
     return grid;
   }
 
@@ -1689,17 +1701,10 @@ public class CharacterViewController {
     // verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[][][center][center][center][][center][center][center][][]");
-    grid.getStyleClass().add("attr-grid");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
 
     String[] headers = {"", "", "", "Verbindung", "", "", "", "Loyalität", "", "", ""};
-    for (int i = 0; i < headers.length; i++) {
-      if (!headers[i].isEmpty()) {
-        Label h = new Label(headers[i]);
-        h.getStyleClass().add("attr-header");
-        preventShrink(h);
-        grid.add(h, "cell " + i + " 0");
-      }
-    }
+    addHeaderRow(grid, headers);
 
     return grid;
   }
@@ -1951,25 +1956,18 @@ public class CharacterViewController {
   /**
    * Baut das Zauber-Grid inkl. Kopfzeile (Zeile 0). Alle Datenspalten bleiben bei ihrer Inhaltsbreite
    * (feststehendes Vokabular aus den Zauber-Stammdaten, kein eigenes Wachstum nötig) — ungenutzter
-   * Platz wird stattdessen außen über {@link #withRightFiller} verteilt. Das Grid wird bei jeder Änderung
+   * Platz wird stattdessen außen über {@link GridSupport#withRightFiller} verteilt. Das Grid wird bei jeder Änderung
    * komplett neu aufgebaut (kein In-Place-Refresh einzelner Zellen), daher gibt es hier keine
    * Wert-Spalten-Ausnahme wie bei Attributen.
    */
   private @NonNull MigPane buildSpellGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][center][][][]");
-    grid.getStyleClass().add("attr-grid");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
     String[] headers = {"Zauber", "Kategorie", "Typ", "Reichweite", "Schaden", "Dauer", "Entzug",
         "Quelle", ""};
-    for (int i = 0; i < headers.length; i++) {
-      if (!headers[i].isEmpty()) {
-        Label h = new Label(headers[i]);
-        h.getStyleClass().add("attr-header");
-        preventShrink(h);
-        grid.add(h, "cell " + i + " 0");
-      }
-    }
+    addHeaderRow(grid, headers);
 
     return grid;
   }
@@ -2099,19 +2097,12 @@ public class CharacterViewController {
   private @NonNull MigPane buildComplexFormGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
         "[][center][][center][center][center][][][]");
-    grid.getStyleClass().add("attr-grid");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
     String[] headers = {"Komplexe Form", "Kategorie", "Fertigkeit", "", "Stufe", "", "Kosten",
         "Quelle", ""};
-    for (int i = 0; i < headers.length; i++) {
-      if (!headers[i].isEmpty()) {
-        Label h = new Label(headers[i]);
-        h.getStyleClass().add("attr-header");
-        preventShrink(h);
-        grid.add(h, "cell " + i + " 0");
-      }
-    }
+    addHeaderRow(grid, headers);
 
     return grid;
   }
@@ -2270,12 +2261,12 @@ public class CharacterViewController {
     sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
 
     Label essenceLabel = new Label("Essenz: " + ESSENCE_FORMAT.toString(ch.getEssence()));
-    essenceLabel.getStyleClass().add("bp-value");
+    essenceLabel.getStyleClass().add(STYLE_BP_VALUE);
     Label lossLabel = new Label("(Cyberware " + ESSENCE_FORMAT.toString(ch.getCyberwareEssenceLoss())
         + " / Bioware " + ESSENCE_FORMAT.toString(ch.getBiowareEssenceLoss()) + ")");
-    lossLabel.getStyleClass().add("bp-label");
+    lossLabel.getStyleClass().add(STYLE_BP_LABEL);
     Label costLabel = new Label("Kosten: " + ch.getCyberwareNuyenCost() + NUYEN_SUFFIX);
-    costLabel.getStyleClass().add("bp-label");
+    costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     HBox header = new HBox(12);
     header.setAlignment(Pos.CENTER_LEFT);
@@ -2333,19 +2324,12 @@ public class CharacterViewController {
   /** Implantat-Grid inkl. Kopfzeile (Zeile 0), inhaltsbasierte Spalten analog {@link #buildSpellGrid()}. */
   private @NonNull MigPane buildCyberwareGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][]");
-    grid.getStyleClass().add("attr-grid");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
     String[] headers = {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Quelle",
         ""};
-    for (int i = 0; i < headers.length; i++) {
-      if (!headers[i].isEmpty()) {
-        Label h = new Label(headers[i]);
-        h.getStyleClass().add("attr-header");
-        preventShrink(h);
-        grid.add(h, "cell " + i + " 0");
-      }
-    }
+    addHeaderRow(grid, headers);
     return grid;
   }
 
@@ -2384,8 +2368,9 @@ public class CharacterViewController {
   /**
    * Öffnet den Implantat-Auswahl-Dialog für Cyberware bzw. Bioware und baut die Auswahl ein. Fällt die
    * Essenz während der Charaktererschaffung dadurch auf 0 oder darunter, erscheint nur eine Warnung
-   * (keine Sperre, siehe {@link Character#isEssenceBelowCreationMinimum()}). Eine Nuyen-Abbuchung
-   * findet in diesem Feature-Schnitt noch nicht statt — der Preis wird nur angezeigt.
+   * (keine Sperre, siehe {@link Character#isEssenceBelowCreationMinimum()}). Bei der Erschaffung zählt
+   * der Preis gegen das Ressourcengeld ({@link Character#getRemainingNuyen()}), im Karrieremodus wird
+   * er nach Bestätigung vom Nuyen-Guthaben abgebucht ({@link #nuyenChargeFailed}).
    */
   private void onAddCyberware(@NonNull EquipmentKind kind) {
     Character ch = this.character;
@@ -2402,6 +2387,10 @@ public class CharacterViewController {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(implant -> {
+        if (ch.isCreated()
+            && nuyenChargeFailed(ch, "Kauf: " + cyberwareLabel(implant), implant.getNuyenCost())) {
+          return;
+        }
         ch.addCyberware(implant);
         onCyberwareChanged();
         if (ch.isEssenceBelowCreationMinimum()) {
@@ -2426,7 +2415,60 @@ public class CharacterViewController {
   private void onCyberwareChanged() {
     buildCyberwareTab();
     buildAttributeGrid();
+    updateNuyenBpDisplay();
     refreshAllRows();
+  }
+
+  /** Bezeichnung eines Implantats für Log-Einträge, z.B. "Dermalpanzerung (Stufe 2, Alphaware)". */
+  private static @NonNull String cyberwareLabel(@NonNull Cyberware implant) {
+    String details = implant.getGrade().getDisplayName();
+    if (implant.getData().hasRating()) {
+      details = "Stufe " + implant.getRating() + ", " + details;
+    }
+    return implant.getName() + " (" + details + ")";
+  }
+
+  // ── Straßenausrüstung-Tab (Lebensstil, Rüstung) ───────────
+
+  /** Baut den Straßenausrüstung-Tab über {@link StreetGearTabBuilder} neu auf. */
+  private void buildStreetGearTabs() {
+    if (character == null) {
+      return;
+    }
+    streetGear.build(character);
+  }
+
+  /** Verbindet den {@link StreetGearTabBuilder} mit den Anzeigen und Diensten dieses Controllers. */
+  private @NonNull StreetGearHost streetGearHost() {
+    return new StreetGearHost() {
+      @Override
+      public @NonNull DialogHandle openDialog(@NonNull String fxmlName, @NonNull String title)
+          throws IOException {
+        return CharacterViewController.this.openDialog(fxmlName, title);
+      }
+
+      @Override
+      public void showDialogLoadError() {
+        CharacterViewController.this.showDialogLoadError();
+      }
+
+      @Override
+      public boolean nuyenChargeFailed(@NonNull Character c, @NonNull String label, int cost) {
+        return CharacterViewController.this.nuyenChargeFailed(c, label, cost);
+      }
+
+      @Override
+      public void onNuyenSpentChanged() {
+        updateNuyenBpDisplay();
+      }
+
+      @Override
+      public void onArmorChanged() {
+        buildAttributeGrid();
+        updateNuyenBpDisplay();
+        refreshAllRows();
+      }
+    };
   }
 
   // ── Gemeinsam ─────────────────────────────────────────────
@@ -2607,12 +2649,19 @@ public class CharacterViewController {
    */
   private boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
       @NonNull Character character, @Nullable String extraWarning) {
+    return confirmSpend(SpendCurrency.KARMA, label, karmaCost, character.getKarmaTotal(),
+        extraWarning);
+  }
+
+  /** Bestätigungsdialog für einen Karrieremodus-Kauf; {@code extraWarning} wird dem Kostentext vorangestellt. */
+  private boolean confirmSpend(@NonNull SpendCurrency currency, @NonNull String label, int cost,
+      int available, @Nullable String extraWarning) {
     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
     applyDialogStyle(confirm.getDialogPane());
-    confirm.setTitle("Karma ausgeben");
+    confirm.setTitle(currency.getDisplayName() + " ausgeben");
     confirm.setHeaderText(label);
-    String content = karmaCost + " Karma ausgeben?\n\nVerbleibendes Karma danach: "
-        + (character.getKarmaTotal() - karmaCost);
+    String content = currency.formatAmount(cost) + " ausgeben?\n\n"
+        + currency.formatRemaining(available - cost);
     if (extraWarning != null) {
       content = extraWarning + "\n\n" + content;
     }
@@ -2764,6 +2813,7 @@ public class CharacterViewController {
     knowledgeSkillRefreshers.forEach(Runnable::run);
     qualityRefreshers.forEach(Runnable::run);
     contactRefreshers.forEach(Runnable::run);
+    streetGear.refresh();
   }
 
   private void updateBpDisplay() {
@@ -2772,10 +2822,7 @@ public class CharacterViewController {
     }
     int remaining = character.getRemainingBP();
     remainingBpLabel.setText(String.valueOf(remaining));
-    remainingBpLabel.getStyleClass().remove("bp-value-warn");
-    if (remaining < 0) {
-      remainingBpLabel.getStyleClass().add("bp-value-warn");
-    }
+    setWarnStyle(remainingBpLabel, remaining < 0);
   }
 
   private void updateNuyenBpDisplay() {
@@ -2783,7 +2830,10 @@ public class CharacterViewController {
       return;
     }
     int bp = character.getNuyenBP();
-    nuyenBpValueLabel.setText(bp + " BP (" + (bp * Character.NUYEN_PER_BP) + " ¥)");
+    nuyenBpValueLabel.setText(bp + " BP (" + character.getResourceNuyen() + NUYEN_SUFFIX + ")");
+    int remaining = character.getRemainingNuyen();
+    remainingNuyenLabel.setText(remaining + NUYEN_SUFFIX);
+    setWarnStyle(remainingNuyenLabel, remaining < 0);
     nuyenBpMinusBtn.setDisable(bp <= 0);
     nuyenBpPlusBtn.setDisable(bp >= Character.MAX_NUYEN_BP || character.getRemainingBP() <= 0);
   }
@@ -2810,36 +2860,43 @@ public class CharacterViewController {
     refreshAllRows();
   }
 
+  /**
+   * Schließt die Charaktererschaffung ab. Hinderungsgründe aus {@link Character#getFinalizeProblems()}
+   * (derzeit negatives Restgeld) brechen mit einer Warnung ab; sonst zeigt der Abschlussdialog den
+   * Startkapital-Wurf nach Lebensstil (GRW S. 114), gebucht wird über {@link
+   * Character#finalizeCreation(int)}.
+   */
   @FXML
   private void onFinalize() {
-    if (character == null) {
+    Character ch = this.character;
+    if (ch == null) {
       return;
     }
-    int nuyenBp = character.getNuyenBP();
-    int startNuyen = nuyenBp * Character.NUYEN_PER_BP;
-
-    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-    applyDialogStyle(confirm.getDialogPane());
-    confirm.setTitle("Charakter abschließen");
-    confirm.setHeaderText("Charakter in den Karrieremodus überführen?");
-    String bpInfo = nuyenBp > 0
-        ? nuyenBp + " BP Startkapital werden umgerechnet in " + startNuyen + " ¥.\n\n"
-        : "";
-    confirm.setContentText(bpInfo + "Dieser Schritt kann nicht rückgängig gemacht werden.");
-    confirm.initOwner(nameLabel.getScene().getWindow());
-
-    Optional<ButtonType> result = confirm.showAndWait();
-    if (result.isEmpty() || result.get() != ButtonType.OK) {
+    List<String> problems = ch.getFinalizeProblems();
+    if (!problems.isEmpty()) {
+      Notifications.create()
+          .title("Abschluss nicht möglich")
+          .text(String.join("\n", problems))
+          .position(Pos.BOTTOM_RIGHT)
+          .owner(nameLabel.getScene().getWindow())
+          .showWarning();
       return;
     }
-    if (nuyenBp > 0) {
-      character.addNuyenEntry(new LogEntry(
-          "Startkapital (Charaktererstellung)", startNuyen, LocalDate.now(ZoneId.systemDefault())));
-      character.setNuyenBP(0);
+    try {
+      DialogHandle dialog = openDialog("FinalizeDialog.fxml", "Charakter abschließen");
+      FinalizeDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(ch);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(diceSum -> {
+        ch.finalizeCreation(diceSum);
+        updateModeDisplay();
+        updateLogDisplay();
+      });
+    } catch (IOException e) {
+      showDialogLoadError();
     }
-    character.setCreated(true);
-    updateModeDisplay();
-    updateLogDisplay();
   }
 
   private void updateModeDisplay() {
@@ -2870,6 +2927,7 @@ public class CharacterViewController {
     buildMagicTab();
     buildTechnomancerTab();
     buildCyberwareTab();
+    buildStreetGearTabs();
   }
 
   @SuppressWarnings("unchecked")

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Panzerung (Kapitel STRASSENAUSRÜSTUNG,
+  Tabelle "Panzerung" S. 373 — Werte direkt gegen das PDF-Bild verifiziert).
+
+  <category> ist die GRW-Bezeichnung (siehe ArmorCategory). Bei "Helme und Schilde" sind <ballistic>
+  und <impact> Boni, die zum höchsten getragenen Panzerungsteil addiert werden (GRW S. 372).
+  <avail>/<legality> wie in cyberware.xml (Legalität E = eingeschränkt, V = verboten).
+
+  Bewusst NICHT enthalten (siehe docs/plaene/nuyen_ruestung_plan.md Abschnitt 13):
+  - Kleidung (variabler Preis), Feedback-Kleidung (kein Schutz), Lederjacke/-mantel (kommt mit einer
+    Kleidungskategorie, sobald die Zusatzbände vorliegen)
+  - Zubehör der Ganzkörperpanzerung bzw. des Urban Explorer Overalls, Panzerungsmodifikationen
+-->
+<armor>
+
+    <!-- ── PANZERUNG (S. 373) ──────────────────────────────────── -->
+
+    <item>
+        <name>Actioneer-Geschäftskleidung</name>
+        <category>Panzerung</category>
+        <ballistic>5</ballistic>
+        <impact>3</impact>
+        <avail>8</avail>
+        <cost>1500</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Chamäleonanzug</name>
+        <category>Panzerung</category>
+        <ballistic>6</ballistic>
+        <impact>4</impact>
+        <avail>10</avail>
+        <legality>E</legality>
+        <cost>8000</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Ganzkörperpanzerung</name>
+        <category>Panzerung</category>
+        <ballistic>10</ballistic>
+        <impact>8</impact>
+        <avail>14</avail>
+        <legality>E</legality>
+        <cost>6000</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Gefütterter Mantel</name>
+        <category>Panzerung</category>
+        <ballistic>6</ballistic>
+        <impact>4</impact>
+        <avail>2</avail>
+        <cost>700</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Panzerjacke</name>
+        <category>Panzerung</category>
+        <ballistic>8</ballistic>
+        <impact>6</impact>
+        <avail>2</avail>
+        <cost>900</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Panzerkleidung</name>
+        <category>Panzerung</category>
+        <ballistic>4</ballistic>
+        <impact>0</impact>
+        <avail>2</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Panzerweste</name>
+        <category>Panzerung</category>
+        <ballistic>6</ballistic>
+        <impact>4</impact>
+        <avail>4</avail>
+        <cost>600</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Tarnanzug</name>
+        <category>Panzerung</category>
+        <ballistic>8</ballistic>
+        <impact>6</impact>
+        <avail>4</avail>
+        <cost>1200</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Urban Explorer Overall</name>
+        <category>Panzerung</category>
+        <ballistic>6</ballistic>
+        <impact>6</impact>
+        <avail>8</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <!-- ── HELME UND SCHILDE (S. 373) ──────────────────────────── -->
+
+    <item>
+        <name>Helm</name>
+        <category>Helme und Schilde</category>
+        <ballistic>1</ballistic>
+        <impact>2</impact>
+        <avail>2</avail>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Ballistischer Schild</name>
+        <category>Helme und Schilde</category>
+        <ballistic>6</ballistic>
+        <impact>4</impact>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>1500</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Schutzschild</name>
+        <category>Helme und Schilde</category>
+        <ballistic>2</ballistic>
+        <impact>6</impact>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Taserschild</name>
+        <category>Helme und Schilde</category>
+        <ballistic>2</ballistic>
+        <impact>6</impact>
+        <avail>10</avail>
+        <legality>E</legality>
+        <cost>750</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+</armor>

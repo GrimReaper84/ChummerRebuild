@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.cyberware;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.equipment.Availability;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -13,6 +14,8 @@ import org.jspecify.annotations.NonNull;
  * @param essence   Essenzkosten-Formel der Standardvariante, z.B. {@code "0.1"} oder {@code "Rating * 0.5"}
  * @param cost      Preis-Formel (Nuyen) der Standardvariante, z.B. {@code "750"} oder {@code "Rating * 5000"}
  * @param maxRating höchste wählbare Stufe; {@code 0} bei Implantaten ohne Stufe
+ * @param availability Verfügbarkeit der Standardvariante (GRW-Tabellen S. 386–394); die Grade
+ *                     verändert sie nicht (siehe {@link Availability})
  */
 public record CyberwareData(
     @NonNull String name,
@@ -21,6 +24,7 @@ public record CyberwareData(
     @NonNull String essence,
     @NonNull String cost,
     int maxRating,
+    @NonNull Availability availability,
     @NonNull String source,
     @NonNull String page
 ) implements CatalogEntry {

@@ -10,6 +10,7 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
@@ -32,7 +33,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   private static Cyberware cyberware(String essence) {
     return new Cyberware(new CyberwareData("Test-" + essence, "Test", EquipmentKind.CYBERWARE,
-        essence, "100", 0, "SR4", "0"), CyberwareGrade.STANDARD, 0);
+        essence, "100", 0, Availability.NONE, "SR4", "0"), CyberwareGrade.STANDARD, 0);
   }
 
   private static SpecialAttribute magicOrResonance(Character c) {

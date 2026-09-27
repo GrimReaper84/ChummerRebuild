@@ -1,6 +1,9 @@
 package de.shalorian.chummer.model.character.cyberware;
 
+import static de.shalorian.chummer.utils.XmlUtils.childText;
+
 import de.shalorian.chummer.model.character.DataPaths;
+import de.shalorian.chummer.model.character.equipment.Availability;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -77,19 +80,8 @@ public class CyberwareDataLoader {
         childText(el, "essence"),
         childText(el, "cost"),
         rating.isEmpty() ? 0 : Integer.parseInt(rating),
+        Availability.parse(childText(el, "avail"), childText(el, "legality")),
         childText(el, "source"),
         childText(el, "page"));
-  }
-
-  private static @NonNull String childText(@NonNull Element parent, @NonNull String tag) {
-    NodeList list = parent.getChildNodes();
-    for (int i = 0; i < list.getLength(); i++) {
-      Node node = list.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE && tag.equals(node.getNodeName())) {
-        String text = node.getTextContent();
-        return text == null ? "" : text.trim();
-      }
-    }
-    return "";
   }
 }

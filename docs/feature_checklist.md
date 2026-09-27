@@ -16,7 +16,7 @@
 | Neuer Charakter (Name + Metatyp)                                                                                                | ✅      | Dialog vollständig                                                                              |
 | BP-Budget = 400                                                                                                                 | ✅      | Konstante korrekt                                                                               |
 | BP-Restanzeige mit Farbwechsel bei Überschreitung                                                                               | ✅      |                                                                                                 |
-| Nuyen-Budget in der Erstellung (max. 50 BP × 5.000 ¥)                                                                           | ✅      | `nuyenBP`-Feld in `Character`, UI im Erstellungsmodus, korrekte Konvertierung bei Finalisierung |
+| Nuyen-Budget in der Erstellung (max. 50 BP × 5.000 ¥)                                                                           | ✅      | `getResourceNuyen/getSpentNuyen/getRemainingNuyen()` (GRW S. 110/111): Cyberware, Rüstung und Lebensstil zählen gegen das Budget, Kopfzeile "Ressourcen" + "Übrig" (rot bei < 0), Abschluss mit Restgeld < 0 gesperrt (2026-09-27) |
 | Charakter-Biografie (Alias, Geschlecht, Alter, Augen, Größe, Gewicht, Haut, Haare, Beschreibung, Hintergrund, Konzept, Notizen, Spielername, Spielnotizen) | ✅      | `CharacterBiography` (Value-Object, 15 Freitextfelder), eigener Tab "Biografie" (vor "Attribute"), Live-Text-Binding über `bindTextControl()`, Persistenz via `BiographyData`-DTO; Spielnotizen nur im Karrieremodus sichtbar |
 | Mugshot / Portrait                                                                                                              | ❌      |                                                                                                 |
 
@@ -160,7 +160,8 @@
 
 | Feature                                                       | Status | Anmerkung        |
 |---------------------------------------------------------------|--------|------------------|
-| Cyberware kaufen (Nuyen-Kosten)                               | ⚠️      | Einbau + Preisanzeige (inkl. Grade-Multiplikator) umgesetzt, Katalog = verifizierte GRW-Teilmenge (13 Cyberware/8 Bioware). **Keine Nuyen-Abbuchung** (weder Erstellungsbudget noch Karrieremodus-Log) |
+| Cyberware kaufen (Nuyen-Kosten)                               | ✅      | Katalog = verifizierte GRW-Teilmenge (13 Cyberware/8 Bioware). Preis zählt bei Erschaffung gegen das Ressourcengeld, im Karrieremodus Abbuchung über das Nuyen-Log mit Bestätigung (2026-09-27) |
+| Verfügbarkeit ≤ 12 bei Erschaffung                            | ✅      | GRW S. 111; `Availability` je Katalogeintrag, gesperrte Implantate und einzelne Stufen sichtbar-deaktiviert; Grades ohne Verfügbarkeitsaufschlag (GRW S. 359) |
 | Essenz-Kosten berechnen (Cyberware vs. Bioware getrennt)      | ✅      | `Cyberware.getEssenceCost()` (`RatingFormula` × Grade), getrennte Summen am `Character` |
 | Essenz-Berechnung: höhere Kategorie voll, niedrigere halbiert | ✅      | GRW S. 111 inkl. Rechenbeispiel als Test; Handicap "Immunabstoßung" (S. 120) verdoppelt Cyberware-Summe |
 | Grades (Standard, Alphaware, Betaware, Deltaware)             | ✅      | GRW S. 359; bei Erschaffung nur Standard/Alpha wählbar |
@@ -174,9 +175,22 @@
 
 | Feature                                       | Status | Anmerkung        |
 |-----------------------------------------------|--------|------------------|
-| Rüstung kaufen und ausrüsten                  | ❌      | Komplett fehlend |
-| Ballistik/Impact-Berechnung (Stacking-Regeln) | ❌      |                  |
-| Tragebelastung (Armor Encumbrance)            | ❌      |                  |
+| Rüstung kaufen und ausrüsten                  | ✅      | Tab "Straßenausrüstung" → "Rüstung", 13 GRW-Einträge (S. 373), Anlegen/Ablegen, "Alle anlegen/ablegen", Verfügbarkeit ≤ 12 bei Erschaffung, Karriere-Kauf über Nuyen-Log (2026-09-27) |
+| Ballistik/Impact-Berechnung (Stacking-Regeln) | ✅      | GRW S. 190/372: höchstes angelegtes Teil + Helm-/Schild-Boni |
+| Tragebelastung (Armor Encumbrance)            | ✅      | GRW S. 190 inkl. Rechenbeispiel; reduziert GES/REA in der "(Aug)"-Spalte. Helme/Schilde zählen mit; Untergrenze 1 **vorläufig** (kein GRW-Beleg, Nutzerentscheidung) |
+| Kleidung, Lederjacke/-mantel                  | ❌      | Zurückgestellt bis Zusatzbände (Runner's Kompendium/Arsenal) vorliegen |
+| Rüstungsmodifikationen, GKP-/UEO-Zubehör      | ❌      | Zurückgestellt |
+| Schild-Malus −1 auf körperliche Proben        | ❌      | Zurückgestellt (keine Würfelpools im Modell) |
+
+---
+
+## 11a. Lebensstil
+
+| Feature                                   | Status | Anmerkung |
+|-------------------------------------------|--------|-----------|
+| Lebensstil (6 GRW-Stufen, Monate im Voraus) | ✅      | GRW S. 111; Kosten zählen gegen das Ressourcengeld; Tab "Straßenausrüstung" → "Lebensstil" (2026-09-27) |
+| Lebensstil-Ausbaustufen, weitere Lebensstile | ❌      | Zusatzband, zurückgestellt |
+| Lebensstilzahlungen im Karrieremodus      | ❌      | Zurückgestellt, manuell über das Nuyen-Log |
 
 ---
 
@@ -211,7 +225,9 @@
 
 | Feature                                                               | Status | Anmerkung                                                     |
 |-----------------------------------------------------------------------|--------|---------------------------------------------------------------|
-| Übergang Creation → Career (explizite Nuyen-Konvertierung)            | ✅      | Nur zugewiesene nuyenBP (max. 50) werden in Nuyen umgerechnet |
+| Übergang Creation → Career (Startkapital nach Lebensstil)             | ✅      | GRW S. 114: `Character.finalizeCreation()` bucht (Würfel + Restgeld-Bonus) × Multiplikator, Restgeld verfällt; Abschlussdialog würfelt, Wurf editierbar (2026-09-27, ersetzt die frühere Umrechnung des vollen Budgets) |
+| Nuyen-Käufe im Karrieremodus (Cyberware, Rüstung)                     | ✅      | Guthabenprüfung + Bestätigung + negativer Log-Eintrag; Entfernen ohne Erstattung |
+| Verkauf von Ausrüstung im Karrieremodus                               | ❌      | Zurückgestellt (keine GRW-Verkaufsregel gesucht) |
 | ESS-Penalty-Korrektur bei Übergang (MAG/RES += EssenzPenalty)         | ❌      | Abhängig von fehlenden Sonderattributen                       |
 | Karma-Ausgaben für Attribute (neue Stufe × 5 Karma)                   | ✅      |                                                               |
 | Karma-Ausgaben für Fertigkeiten (neue Stufe × 2, erste Stufe 4 Karma) | ✅      | Korrigiert in `Skill.getKarmaCost()`                          |
@@ -285,12 +301,13 @@
 | Kontakte               | 4 | 0  | 0 |
 | Magie                  | 0 | 0  | 6 |
 | Technomancer           | 0 | 0  | 4 |
-| Cyberware/Bioware      | 4 | 1  | 2 |
-| Rüstung                | 0 | 0  | 3 |
+| Cyberware/Bioware      | 6 | 0  | 2 |
+| Rüstung                | 3 | 0  | 3 |
+| Lebensstil             | 1 | 0  | 2 |
 | Waffen                 | 0 | 0  | 2 |
 | Gear                   | 0 | 0  | 3 |
 | Fahrzeuge              | 0 | 0  | 1 |
-| Karrieremodus          | 4 | 0  | 3 |
+| Karrieremodus          | 5 | 0  | 4 |
 | Initiative             | 0 | 0  | 4 |
 | Condition Monitor      | 0 | 0  | 4 |
 | Persistenz             | 8 | 1  | 0 |
@@ -320,8 +337,8 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 
 1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
 2. Technomancer (RES-Aktivierung, Stream, Komplexe Formen) — RES + Komplexe Formen bestätigt (Formel korrigiert, s. Abschnitt 9); **Submersionsgrade auf Niedrig-Priorität**, kein GRW-Beleg
-3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Offen: Nuyen-Abbuchung, vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
-4. Rüstung mit Stacking-Regeln — GRW bestätigt (Addition mehrerer Rüstungsteile + Tragebelastungsformel)
+3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
+4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
 5. Waffen — Kapitel vorhanden, Details bei Umsetzung gezielt nachschlagen
 6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen
 

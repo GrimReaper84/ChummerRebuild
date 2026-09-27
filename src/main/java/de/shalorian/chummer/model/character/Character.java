@@ -1,6 +1,8 @@
 package de.shalorian.chummer.model.character;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.armor.Armor;
+import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.attribute.AttributeRange;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
@@ -9,6 +11,8 @@ import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -27,6 +31,8 @@ import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.ToIntFunction;
+import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -67,6 +75,9 @@ public class Character {
   private static final BigDecimal BASE_ESSENCE = BigDecimal.valueOf(6);
   private static final int ESSENCE_DECIMALS = 2;
   private static final BigDecimal TWO = BigDecimal.valueOf(2);
+  private static final int ARMOR_ENCUMBRANCE_BOD_MULTIPLIER = 2;
+  private static final int ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY = 2;
+  private static final int MIN_ENCUMBERED_ATTRIBUTE_VALUE = 1;
 
   private final Map<AttributeType, CharacterAttribute> attributes;
   private final Map<String, Skill> skills;
@@ -77,6 +88,8 @@ public class Character {
   private final List<SpellData> spells = new ArrayList<>();
   private final List<ComplexForm> complexForms = new ArrayList<>();
   private final List<Cyberware> cyberware = new ArrayList<>();
+  private final List<Armor> armor = new ArrayList<>();
+  private final @NonNull Lifestyle lifestyle = new Lifestyle();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private final @NonNull CharacterBiography biography = new CharacterBiography();
@@ -207,6 +220,27 @@ public class Character {
     }
     boolean wouldMaximize = attr.getMin() != attr.getMax() && newValue == attr.getMax();
     return !wouldMaximize || getMaximizedAttributeCount() == 0;
+  }
+
+  /**
+   * Wirksamer Attributwert inkl. aller modellierten Modifikatoren — derzeit ausschließlich die
+   * Panzerungsbehinderung auf Geschicklichkeit und Reaktion (siehe {@link
+   * #getArmorEncumbrancePenalty()}). Der investierte Wert ({@link CharacterAttribute#getValue()})
+   * bleibt unverändert, BP- und Karma-Kosten richten sich weiter nach ihm (analog {@link
+   * #getEffectiveMagicOrResonanceValue()}).
+   *
+   * <p>Ein durch Behinderung reduzierter Wert fällt nicht unter {@value
+   * #MIN_ENCUMBERED_ATTRIBUTE_VALUE}. Das GRW nennt dafür keine Untergrenze; die Grenze ist eine
+   * vorläufige Nutzerentscheidung bis zu einem Beleg in weiteren Regelwerken (siehe {@code
+   * docs/plaene/nuyen_ruestung_plan.md} Abschnitt 13).
+   */
+  public int getAugmentedAttributeValue(@NonNull AttributeType type) {
+    int base = getAttribute(type).getValue();
+    int penalty = getArmorEncumbrancePenalty();
+    if (penalty == 0 || (type != AttributeType.AGI && type != AttributeType.REA)) {
+      return base;
+    }
+    return Math.max(MIN_ENCUMBERED_ATTRIBUTE_VALUE, base + penalty);
   }
 
   // --- Sonderattribute (Edge/Magic/Resonance) & Essenz ---
@@ -1137,6 +1171,191 @@ public class Character {
   /** Gesamtpreis aller eingebauten Implantate in Nuyen (inkl. Grade-Multiplikatoren). */
   public int getCyberwareNuyenCost() {
     return cyberware.stream().mapToInt(Cyberware::getNuyenCost).sum();
+  }
+
+  /**
+   * Ob ein Gegenstand mit dieser Verfügbarkeit in dieser Stufe aktuell gekauft werden darf: bei der
+   * Charaktererschaffung nur bis Verfügbarkeit {@value Availability#MAX_AVAILABILITY_AT_CREATION}
+   * (SR4-Grundregelwerk S. 111: "Die höchste Verfügbarkeit ist 12"), im Karrieremodus immer. Wie
+   * bei {@link #isCyberwareGradeAvailable(CyberwareGrade)} prüft die UI diese Regel, nicht {@code
+   * add…()}, damit der Persistenz-Pfad unverändert laden kann.
+   */
+  public boolean isAvailableForPurchase(@NonNull Availability availability, int rating) {
+    return created || availability.isAllowedAtCreation(rating);
+  }
+
+  /** Wie {@link #isAvailableForPurchase(Availability, int)} für Rüstung, die keine Stufe hat. */
+  public boolean isAvailableForPurchase(@NonNull ArmorData armorData) {
+    return created || armorData.isAllowedAtCreation();
+  }
+
+  // --- Rüstung ---
+
+  /** Alle gekauften Rüstungsteile, angelegt oder nicht. */
+  public @NonNull List<Armor> getArmor() {
+    return Collections.unmodifiableList(armor);
+  }
+
+  /** Kauft ein Rüstungsteil. Dasselbe Teil darf mehrfach gekauft werden (keine Duplikatprüfung). */
+  public void addArmor(@NonNull Armor piece) {
+    armor.add(piece);
+  }
+
+  /** Entfernt genau dieses Rüstungsteil (Objektreferenz, da Duplikate erlaubt sind). */
+  public void removeArmor(@NonNull Armor piece) {
+    armor.remove(piece);
+  }
+
+  /** Gesamtpreis aller gekauften Rüstungsteile in Nuyen (angelegt oder nicht). */
+  public int getArmorNuyenCost() {
+    return armor.stream().mapToInt(Armor::getNuyenCost).sum();
+  }
+
+  /**
+   * Ballistik-Schutzwert der angelegten Rüstung. SR4-Grundregelwerk S. 190: "Wenn ein Charakter mehr
+   * als ein Panzerungsstück gleichzeitig trägt, wird nur der höchste Wert (für jeweils Ballistik oder
+   * Stoß) beachtet. Einige Panzerungsgegenstände, wie Helme und Schilde, liefern einen Bonus auf die
+   * Panzerungsstufe" — und S. 372: Helme und Schilde "erhöhen den Wert der getragenen Panzerung um
+   * ihre Stufe". Also höchstes angelegtes Panzerungsteil + Summe aller angelegten Helm-/Schild-Boni.
+   */
+  public int getArmorBallistic() {
+    return protectionValue(ArmorData::ballistic);
+  }
+
+  /** Stoß-Schutzwert der angelegten Rüstung, Regel wie {@link #getArmorBallistic()}. */
+  public int getArmorImpact() {
+    return protectionValue(ArmorData::impact);
+  }
+
+  private int protectionValue(@NonNull ToIntFunction<ArmorData> value) {
+    int highest = equippedArmor()
+        .filter(a -> !a.getData().category().isBonus())
+        .mapToInt(a -> value.applyAsInt(a.getData()))
+        .max().orElse(0);
+    int bonus = equippedArmor()
+        .filter(a -> a.getData().category().isBonus())
+        .mapToInt(a -> value.applyAsInt(a.getData()))
+        .sum();
+    return highest + bonus;
+  }
+
+  /**
+   * Panzerungsbehinderung als (nicht positiver) Modifikator auf Geschicklichkeit und Reaktion.
+   * SR4-Grundregelwerk S. 190: Übersteigt die Summe der getragenen Panzerung (je Ballistik und Stoß)
+   * die doppelte Konstitution, gibt es je angefangene 2 Punkte darüber −1 auf GES und REA; die
+   * Modifikatoren aus Ballistik und Stoß addieren sich. GRW-Beispiel: KON 3, Actioneer-
+   * Geschäftskleidung 5/3 + Gefütterter Mantel 6/4 → Ballistik 11 (5 über 6 → −3), Stoß 7 (1 über 6 →
+   * −1), zusammen −4.
+   *
+   * <p>Helme und Schilde zählen in die Summe mit (Nutzerentscheidung, wie im C#-Original; GRW S. 372
+   * verweist bei ihnen ausdrücklich auf die Panzerungsbehinderung). Grundlage ist die investierte
+   * Konstitution — sobald Attributboni modelliert sind, muss hier der modifizierte Wert verwendet
+   * werden.
+   */
+  public int getArmorEncumbrancePenalty() {
+    int limit = getAttribute(AttributeType.BOD).getValue() * ARMOR_ENCUMBRANCE_BOD_MULTIPLIER;
+    return -(encumbranceSteps(ArmorData::ballistic, limit)
+        + encumbranceSteps(ArmorData::impact, limit));
+  }
+
+  private int encumbranceSteps(@NonNull ToIntFunction<ArmorData> value, int limit) {
+    int total = equippedArmor().mapToInt(a -> value.applyAsInt(a.getData())).sum();
+    int excess = Math.max(0, total - limit);
+    return (excess + ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY - 1) / ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY;
+  }
+
+  private @NonNull Stream<Armor> equippedArmor() {
+    return armor.stream().filter(Armor::isEquipped);
+  }
+
+  // --- Lebensstil & Nuyen-Budget ---
+
+  /**
+   * Der Lebensstil des Charakters — immer vorhanden, Default Straße/1 Monat. Aufrufer ändern Stufe
+   * und Monate direkt am zurückgegebenen Objekt (analog {@link #getBiography()}).
+   */
+  public @NonNull Lifestyle getLifestyle() {
+    return lifestyle;
+  }
+
+  /**
+   * Ressourcengeld für Ausrüstungskäufe bei der Erschaffung: Ressourcen-BP × {@value #NUYEN_PER_BP}
+   * ¥. SR4-Grundregelwerk S. 110: "Für jeden GP, den der Spieler in Ausrüstung investiert, kann der
+   * Charakter Waffen, Panzerung, Cyberware und andere Ausrüstung im Wert von 5.000 ¥ erwerben, bis zu
+   * einem Maximum von 50 GP oder 250.000 ¥."
+   */
+  public int getResourceNuyen() {
+    return nuyenBP * NUYEN_PER_BP;
+  }
+
+  /**
+   * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung und
+   * Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige Kaufkategorien (Waffen,
+   * Gear) werden hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
+   * Ausrüstungsgegenstände vollständig bezahlen."
+   */
+  public int getSpentNuyen() {
+    return getCyberwareNuyenCost() + getArmorNuyenCost() + lifestyle.getNuyenCost();
+  }
+
+  /**
+   * Nicht ausgegebenes Ressourcengeld — eine reine Ableitung ohne Buchungsliste, Entfernen eines
+   * Gegenstands "erstattet" also automatisch. Darf zwischenzeitlich negativ sein; ein Abschluss ist
+   * dann nicht möglich (siehe {@link #getFinalizeProblems()}).
+   */
+  public int getRemainingNuyen() {
+    return getResourceNuyen() - getSpentNuyen();
+  }
+
+  // --- Abschluss der Charaktererschaffung ---
+
+  /**
+   * Gründe, die einen Abschluss der Charaktererschaffung verhindern; leer, wenn abgeschlossen werden
+   * darf. Derzeit nur negatives Restgeld (GRW S. 111: "Wenn der Spieler zum Schluss einfach nicht
+   * genügend Nuyen hat […], muss er dies bis zum Ende der Charaktererschaffung tun"). Essenz ≤ 0 ist
+   * bewusst kein Hinderungsgrund, sondern bleibt eine weiche Warnung (Nutzerentscheidung, siehe
+   * {@link #isEssenceBelowCreationMinimum()}).
+   */
+  public @NonNull List<String> getFinalizeProblems() {
+    List<String> problems = new ArrayList<>();
+    int remaining = getRemainingNuyen();
+    if (remaining < 0) {
+      problems.add("Es wurden %d ¥ mehr ausgegeben, als an Ressourcen zur Verfügung stehen."
+          .formatted(-remaining));
+    }
+    return problems;
+  }
+
+  /**
+   * Schließt die Charaktererschaffung ab und wechselt in den Karrieremodus. Das Startkapital wird nach
+   * SR4-Grundregelwerk S. 114 aus dem Lebensstil erwürfelt ({@link
+   * de.shalorian.chummer.model.character.lifestyle.LifestyleLevel#startingCapital(int, int)}) und als
+   * erster Nuyen-Log-Eintrag gebucht. Übriges Ressourcengeld verfällt ("Nuyen, die bei der Zuteilung
+   * von Ressourcen nicht für Ausrüstung ausgegeben werden, werden nicht ins Spiel übernommen") und
+   * fließt nur als Bonus in den Wurf ein. Ersetzt die frühere Controller-Logik, die das volle
+   * Ressourcengeld als Startkapital gebucht hat. Die Ressourcen-BP werden wie bisher auf 0 gesetzt.
+   *
+   * @param diceSum vom Spieler bzw. der App gewürfelte Summe der Lebensstil-W6
+   * @return das gebuchte Startkapital in Nuyen
+   * @throws IllegalStateException    wenn bereits abgeschlossen oder {@link #getFinalizeProblems()}
+   *                                  nicht leer ist
+   * @throws IllegalArgumentException bei einer mit der Würfelzahl unmöglichen Würfelsumme
+   */
+  public int finalizeCreation(int diceSum) {
+    if (created) {
+      throw new IllegalStateException("Charaktererschaffung ist bereits abgeschlossen");
+    }
+    List<String> problems = getFinalizeProblems();
+    if (!problems.isEmpty()) {
+      throw new IllegalStateException(String.join(" ", problems));
+    }
+    int startingCapital = lifestyle.getLevel().startingCapital(diceSum, getRemainingNuyen());
+    nuyenLog.add(new LogEntry(
+        "Startkapital (Lebensstil " + lifestyle.getLevel().getDisplayName() + ")",
+        startingCapital, LocalDate.now(ZoneId.systemDefault())));
+    nuyenBP = 0;
+    created = true;
+    return startingCapital;
   }
 
   // --- BP ---

@@ -8,6 +8,7 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ class CharacterCyberwareTest {
 
   private static Cyberware implant(String essence, String cost) {
     return new Cyberware(new CyberwareData("Test", "Test", EquipmentKind.CYBERWARE, essence, cost,
-        0, "SR4", "0"), CyberwareGrade.STANDARD, 0);
+        0, Availability.NONE, "SR4", "0"), CyberwareGrade.STANDARD, 0);
   }
 
   @Test

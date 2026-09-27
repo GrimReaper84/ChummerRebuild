@@ -3,15 +3,17 @@ package de.shalorian.chummer.model.character.cyberware;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import de.shalorian.chummer.model.character.equipment.Availability;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 class CyberwareEssenceCostTest {
 
   private static final CyberwareData DATENBUCHSE = new CyberwareData("Datenbuchse", "Headware",
-      EquipmentKind.CYBERWARE, "0.1", "500", 0, "SR4", "386");
+      EquipmentKind.CYBERWARE, "0.1", "500", 0, Availability.NONE, "SR4", "386");
   private static final CyberwareData DERMALPANZERUNG = new CyberwareData("Dermalpanzerung",
-      "Bodyware", EquipmentKind.CYBERWARE, "Rating * 0.5", "Rating * 5000", 3, "SR4", "389");
+      "Bodyware", EquipmentKind.CYBERWARE, "Rating * 0.5", "Rating * 5000", 3,
+      Availability.NONE, "SR4", "389");
 
   private static void assertEssence(String expected, Cyberware implant) {
     assertEquals(0, new BigDecimal(expected).compareTo(implant.getEssenceCost()),
@@ -53,7 +55,7 @@ class CyberwareEssenceCostTest {
   @Test
   void essenceCostIsNotRoundedPerItem() {
     CyberwareData schlafregulator = new CyberwareData("Schlafregulator", "Kultivierte Bioware",
-        EquipmentKind.BIOWARE, "0.15", "10000", 0, "SR4", "394");
+        EquipmentKind.BIOWARE, "0.15", "10000", 0, Availability.NONE, "SR4", "394");
     assertEssence("0.105", new Cyberware(schlafregulator, CyberwareGrade.BETAWARE, 0));
   }
 

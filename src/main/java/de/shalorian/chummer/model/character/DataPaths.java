@@ -9,6 +9,7 @@ public final class DataPaths {
   public static final String COMPLEXFORMS_XML = "/de/shalorian/chummer/data/complexforms.xml";
   public static final String CYBERWARE_XML = "/de/shalorian/chummer/data/cyberware.xml";
   public static final String BIOWARE_XML = "/de/shalorian/chummer/data/bioware.xml";
+  public static final String ARMOR_XML = "/de/shalorian/chummer/data/armor.xml";
 
   private DataPaths() {}
 }

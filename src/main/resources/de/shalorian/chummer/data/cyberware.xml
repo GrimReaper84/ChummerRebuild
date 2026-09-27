@@ -15,7 +15,7 @@
     Stufen-Essenz (Reflexbooster 2/3/5)
   - Implantate mit Attributboni (z.B. Kunstmuskeln, Reaktionsverbesserung), solange Attributboni
     durch Cyberware nicht modelliert sind
-  Verfügbarkeit ist in diesem Feature-Schnitt nicht Teil des Datenmodells.
+  Verfügbarkeit (<avail>, <legality> E/V) gegen das PDF-Bild verifiziert; fehlendes <avail> = "–".
 -->
 <cyberware>
 
@@ -36,6 +36,7 @@
         <essence>0.2</essence>
         <cost>Rating * 1000</cost>
         <rating>6</rating>
+        <avail>Rating * 4</avail>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -45,6 +46,7 @@
         <category>Headware</category>
         <essence>0.5</essence>
         <cost>10000</cost>
+        <avail>8</avail>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -65,6 +67,7 @@
         <category>Augen-Cyberware</category>
         <essence>0.1</essence>
         <cost>750</cost>
+        <avail>4</avail>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -75,6 +78,7 @@
         <essence>0.1</essence>
         <cost>Rating * 1500</cost>
         <rating>3</rating>
+        <avail>Rating * 3</avail>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -84,6 +88,8 @@
         <category>Augen-Cyberware</category>
         <essence>0.1</essence>
         <cost>1000</cost>
+        <avail>8</avail>
+        <legality>E</legality>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -96,6 +102,7 @@
         <essence>0.1</essence>
         <cost>Rating * 1500</cost>
         <rating>3</rating>
+        <avail>Rating * 3</avail>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -105,6 +112,7 @@
         <category>Ohren-Cyberware</category>
         <essence>0.1</essence>
         <cost>750</cost>
+        <avail>4</avail>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -117,6 +125,8 @@
         <essence>Rating * 0.5</essence>
         <cost>Rating * 5000</cost>
         <rating>3</rating>
+        <avail>Rating * 5</avail>
+        <legality>E</legality>
         <source>SR4</source>
         <page>389</page>
     </item>
@@ -126,6 +136,7 @@
         <category>Bodyware</category>
         <essence>0.25</essence>
         <cost>650</cost>
+        <avail>4</avail>
         <source>SR4</source>
         <page>389</page>
     </item>
@@ -135,6 +146,7 @@
         <category>Bodyware</category>
         <essence>0.2</essence>
         <cost>1500</cost>
+        <avail>6</avail>
         <source>SR4</source>
         <page>389</page>
     </item>
@@ -145,6 +157,7 @@
         <essence>Rating * 0.2</essence>
         <cost>Rating * 2000</cost>
         <rating>5</rating>
+        <avail>Rating * 4</avail>
         <source>SR4</source>
         <page>389</page>
     </item>
