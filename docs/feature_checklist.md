@@ -75,6 +75,8 @@
 | Default-Flag (erlaubt Würfeln ohne Rating: Attribut − 1)         | ❌      | Flag im Modell fehlt, keine Würfelpool-Anzeige                                               |
 | Würfelpool-Anzeige (Rating + Attribut + Modifikatoren)           | ❌      | Nicht vorhanden                                                                              |
 | Exotische Fertigkeiten (Spez = Gegenstand, kein eigener Rating)  | ❌      |                                                                                              |
+| Kampf-Aktionsfertigkeiten nach GRW                               | ✅      | **Korrigiert 2026-09-28** (GRW S. 147/148, am Bild geprüft): Gruppen Nahkampf (Klingenwaffen, Knüppel, Waffenloser Kampf) und Feuerwaffen (Gewehre, Pistolen, Schnellfeuerwaffen), dazu Ausweichen (REA), Exotische Fern-/Nahkampfwaffe, Projektilwaffen, Schwere Waffen, Wurfwaffen. Entfernt: Klingen, Automatikwaffen, Langwaffen, Schrotflinten (keine GRW-Fertigkeit), Bogenschießen, Gruppe "Schusswaffen". "Sprengstoff" → technische Fertigkeit "Sprengstoffe" (GRW S. 154). Alte Speicherdateien: Werte umbenannter Fertigkeiten werden beim Laden übersprungen |
+| Übrige Fertigkeitsbereiche nach GRW (Körperlich, Sozial, Technisch, Fahrzeug) | ❌ | **Befund 2026-09-28:** `skills.xml` weicht auch dort vom GRW S. 149–154 ab, z.B. Sozial GRW: Einschüchtern, Führung, Gebräuche, Überreden, Unterricht, Verhandlung (Gruppe Einfluss); Technisch GRW: Hacking, Hardware, Software, Computer, Datensuche (Gruppe Elektronik/Cracken), Fahrzeug-/Industrie-/Luftfahrt-/Seefahrtmechanik (Gruppe Mechanik), Kybernetik, Schlosser, Waffenbau … Eigener Korrekturauftrag (Abgleich Seite für Seite am Bild) |
 
 ---
 
@@ -150,8 +152,9 @@
 | Feature                                    | Status | Anmerkung |
 |--------------------------------------------|--------|-----------|
 | RES-Attribut aktivieren (via Quality)      | ✅      | **Korrektur (2026-08-08):** bereits umgesetzt im Zuge des Sonderattribute-Features (analog zur EDG/MAG/RES-Korrektur vom 2026-08-06) — Quality "Technomant" (5 BP, `qualities.xml`), `QualityBonusType.GRANTS_RESONANCE`, `Character.hasResonance()`/`syncMagicOrResonance()`, Magie/Resonanz-Exklusivität, Persistenz. GRW S. 106 bestätigt. Checkliste war nicht mit dem Code synchron, siehe `docs/analysen/technomancer_java_analyse.md` |
-| Technomancer-Tab (Stream, Komplexe Formen) | ❌      |           |
-| ~~Komplexe Formen (1 BP/Stück)~~ Komplexe Formen (1 GP/Rating-Punkt) | ❌ | **Formel korrigiert** (2026-08-04): GRW S. 113 sagt "1 GP pro Stufenpunkt" (Beispiel: Panzerung 4 = 4 GP), kein Fixpreis pro Form — strukturell wie Wissensfertigkeiten. Zusatzregel: max. Anzahl bei Erstellung = Logik × 2 |
+| Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/technomancer_plan.md`) |
+| Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (20 GRW-Einträge), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
+| Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ❌ | **Lücke gefunden 2026-09-27:** GRW S. 112: "Die maximale Anzahl an komplexen Formen, mit denen ein Charakter das Spiel beginnen kann, entspricht – unabhängig von ihrer Stufe – dem doppelten Logikattribut". Im Code nicht geprüft (nur der Stufen-Cap); kleiner Folgeauftrag analog `canAddSpellAtCreation()` |
 | Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/technomancer_analyse.md`) |
 
 ---
@@ -198,8 +201,11 @@
 
 | Feature                     | Status | Anmerkung        |
 |-----------------------------|--------|------------------|
-| Waffen kaufen und verwalten | ❌      | Komplett fehlend |
-| Modifikationen, Zubehör     | ❌      |                  |
+| Waffen kaufen und verwalten | ✅      | Teil A umgesetzt 2026-09-28 (`docs/plaene/waffen_plan.md`): 63 GRW-Kern-Waffen (Tabellen S. 361/363/366, am Bild geprüft) mit Tabellenwerten als Text, Bogen mit Stufe 1–8 (Mindeststärke), Kauf/Entfernen, Nuyen-Budget, Verfügbarkeit ≤ 12 (sichtbar-deaktiviert), Karriere-Kauf über Nuyen-Log, Persistenz; Unter-Tab "Waffen" als `TreeTableView` |
+| Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ❌ | Teil B des Waffen-Plans |
+| Zubehör mit Halterungen     | ❌      | Teil C des Waffen-Plans |
+| Waffenmodifikationen        | ❌      | Nur Arsenal, zurückgestellt |
+| Munition, Pfeile/Bolzen, Granaten/Raketen | ❌ | Gehören zum Gear-Feature |
 
 ---
 
@@ -300,11 +306,11 @@
 | Qualities              | 6 | 0  | 0 |
 | Kontakte               | 4 | 0  | 0 |
 | Magie                  | 0 | 0  | 6 |
-| Technomancer           | 0 | 0  | 4 |
+| Technomancer           | 3 | 0  | 2 |
 | Cyberware/Bioware      | 6 | 0  | 2 |
 | Rüstung                | 3 | 0  | 3 |
 | Lebensstil             | 1 | 0  | 2 |
-| Waffen                 | 0 | 0  | 2 |
+| Waffen                 | 1 | 0  | 4 |
 | Gear                   | 0 | 0  | 3 |
 | Fahrzeuge              | 0 | 0  | 1 |
 | Karrieremodus          | 5 | 0  | 4 |
@@ -336,10 +342,10 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 **Stufe 2 – Erweiterte Features**
 
 1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
-2. Technomancer (RES-Aktivierung, Stream, Komplexe Formen) — RES + Komplexe Formen bestätigt (Formel korrigiert, s. Abschnitt 9); **Submersionsgrade auf Niedrig-Priorität**, kein GRW-Beleg
+2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung (GRW-Kern S. 284, zurückgestellt)
 3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
 4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
-5. Waffen — Kapitel vorhanden, Details bei Umsetzung gezielt nachschlagen
+5. **Waffen** ⚠️ Teil A umgesetzt (2026-09-28, `docs/plaene/waffen_plan.md`); offen: Teil B (berechnete Werte), Teil C (Zubehör)
 6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen
 
 **Stufe 3 – Abgeleitete Werte & Gameplay**

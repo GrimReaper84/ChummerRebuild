@@ -543,6 +543,64 @@
     -fx-text-fill: #555555;
 }
 
+/* ── TreeTableView (Dark Theme, analog TableView) ─────── */
+
+.tree-table-view {
+    -fx-background-color: #252526;
+    -fx-border-color: #3c3c3c;
+    -fx-border-width: 1;
+}
+
+.tree-table-view .column-header-background {
+    -fx-background-color: #2d2d2d;
+}
+
+.tree-table-view .column-header,
+.tree-table-view .filler {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: transparent #3c3c3c transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 28;
+}
+
+.tree-table-view .column-header .label {
+    -fx-text-fill: #888888;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 4 0 4;
+}
+
+.tree-table-row-cell {
+    -fx-background-color: #252526;
+    -fx-border-color: transparent transparent #2d2d2d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 28px;
+}
+
+.tree-table-row-cell:odd {
+    -fx-background-color: #232323;
+}
+
+.tree-table-row-cell:selected {
+    -fx-background-color: #094771;
+}
+
+.tree-table-row-cell .tree-table-cell {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+    -fx-padding: 0 4 0 4;
+    -fx-border-color: transparent;
+}
+
+.tree-table-row-cell .tree-disclosure-node .arrow {
+    -fx-background-color: #888888;
+}
+
+.tree-table-view .placeholder .label {
+    -fx-text-fill: #555555;
+}
+
 /* ── TextArea ────────────────────────────────────────── */
 
 .text-area {

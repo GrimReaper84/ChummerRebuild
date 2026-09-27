@@ -25,10 +25,10 @@ class CharacterSkillSortTest {
 
     List<Skill> individual = c.getIndividualSkills();
 
-    assertFalse(individual.stream().anyMatch(s -> "Klingen".equals(s.getName())),
-        "Klingen gehört zur gekoppelten Gruppe Nahkampf");
-    assertTrue(individual.stream().anyMatch(s -> "Bogenschießen".equals(s.getName())),
-        "Bogenschießen ist nie gruppiert");
+    assertFalse(individual.stream().anyMatch(s -> "Klingenwaffen".equals(s.getName())),
+        "Klingenwaffen gehört zur gekoppelten Gruppe Nahkampf");
+    assertTrue(individual.stream().anyMatch(s -> "Projektilwaffen".equals(s.getName())),
+        "Projektilwaffen ist nie gruppiert");
   }
 
   @Test
@@ -39,8 +39,8 @@ class CharacterSkillSortTest {
 
     List<Skill> individual = c.getIndividualSkills();
 
-    assertTrue(individual.stream().anyMatch(s -> "Klingen".equals(s.getName())),
-        "Nach dem Auskoppeln verhält sich Klingen wie eine Einzelfertigkeit");
+    assertTrue(individual.stream().anyMatch(s -> "Klingenwaffen".equals(s.getName())),
+        "Nach dem Auskoppeln verhält sich Klingenwaffen wie eine Einzelfertigkeit");
   }
 
   @Test
@@ -56,13 +56,13 @@ class CharacterSkillSortTest {
   @Test
   void coupledGroupNamesContainOnlyStillCoupledGroups() {
     Character c = mensch("Test");
-    c.raiseGroup("Schusswaffen");
-    c.decoupleGroup("Schusswaffen");
+    c.raiseGroup("Feuerwaffen");
+    c.decoupleGroup("Feuerwaffen");
 
     List<String> groups = c.getCoupledGroupNames();
 
     assertTrue(groups.contains("Nahkampf"));
-    assertFalse(groups.contains("Schusswaffen"), "Entkoppelte Gruppen zählen nicht mehr als Gruppe");
+    assertFalse(groups.contains("Feuerwaffen"), "Entkoppelte Gruppen zählen nicht mehr als Gruppe");
   }
 
   @Test

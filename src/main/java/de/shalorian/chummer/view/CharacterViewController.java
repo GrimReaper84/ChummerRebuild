@@ -205,6 +205,8 @@ public class CharacterViewController {
   @FXML
   private VBox armorContainer;
   @FXML
+  private VBox weaponContainer;
+  @FXML
   private Label remainingNuyenLabel;
   @FXML
   private VBox knowledgeSkillsContainer;
@@ -224,7 +226,8 @@ public class CharacterViewController {
 
   @FXML
   public void initialize() {
-    streetGear = new StreetGearTabBuilder(lifestyleContainer, armorContainer, streetGearHost());
+    streetGear = new StreetGearTabBuilder(lifestyleContainer, armorContainer, weaponContainer,
+        streetGearHost());
     metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
     metatypeBox.setConverter(new MetatypeStringConverter());
     metatypeBox.valueProperty().addListener((obs, old, newVal) -> {

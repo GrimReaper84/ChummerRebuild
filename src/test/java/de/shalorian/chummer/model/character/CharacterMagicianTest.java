@@ -88,7 +88,7 @@ class CharacterMagicianTest {
   @Test
   void magicianStatusDoesNotAffectNonMagicalSkills() {
     Character c = mensch("Test");
-    Skill bogen = c.getSkill("Bogenschießen");
+    Skill bogen = c.getSkill("Projektilwaffen");
     assertNotNull(bogen);
 
     assertTrue(c.canRaiseSkill(bogen));

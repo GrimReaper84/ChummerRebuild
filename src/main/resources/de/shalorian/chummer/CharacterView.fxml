@@ -149,6 +149,13 @@
               </VBox>
             </ScrollPane>
           </Tab>
+          <Tab text="Waffen">
+            <VBox styleClass="attr-container" fx:id="weaponContainer">
+              <padding>
+                <Insets bottom="20" left="36" right="36" top="20"/>
+              </padding>
+            </VBox>
+          </Tab>
         </TabPane>
       </Tab>
 

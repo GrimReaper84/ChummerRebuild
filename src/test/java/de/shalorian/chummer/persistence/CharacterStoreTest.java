@@ -69,12 +69,12 @@ class CharacterStoreTest {
   @Test
   void roundtripPreservesSkillRatings() throws IOException {
     Character original = mensch("Test");
-    original.getSkill("Bogenschießen").setRating(3);
+    original.getSkill("Projektilwaffen").setRating(3);
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
-    assertEquals(3, loaded.getSkill("Bogenschießen").getRating());
+    assertEquals(3, loaded.getSkill("Projektilwaffen").getRating());
   }
 
   @Test
@@ -159,24 +159,24 @@ class CharacterStoreTest {
   @Test
   void roundtripPreservesActiveSkillSpecialization() throws IOException {
     Character original = mensch("Test");
-    original.getSkill("Bogenschießen").setRating(1);
-    original.setSkillSpecialization(original.getSkill("Bogenschießen"), "Langbögen (Öko-Kunststoff)");
+    original.getSkill("Projektilwaffen").setRating(1);
+    original.setSkillSpecialization(original.getSkill("Projektilwaffen"), "Langbögen (Öko-Kunststoff)");
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
-    assertEquals("Langbögen (Öko-Kunststoff)", loaded.getSkill("Bogenschießen").getSpecialization());
+    assertEquals("Langbögen (Öko-Kunststoff)", loaded.getSkill("Projektilwaffen").getSpecialization());
   }
 
   @Test
   void roundtripOmitsSpecializationWhenUnset() throws IOException {
     Character original = mensch("Test");
-    original.getSkill("Bogenschießen").setRating(1);
+    original.getSkill("Projektilwaffen").setRating(1);
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
-    assertNull(loaded.getSkill("Bogenschießen").getSpecialization());
+    assertNull(loaded.getSkill("Projektilwaffen").getSpecialization());
   }
 
   @Test

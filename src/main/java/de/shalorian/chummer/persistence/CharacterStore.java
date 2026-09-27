@@ -25,6 +25,9 @@ import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponData;
+import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.SpellDataLoader;
 import de.shalorian.chummer.model.character.magic.Tradition;
@@ -105,6 +108,9 @@ public class CharacterStore {
     data.armor = character.getArmor().stream()
         .map(a -> new ArmorEntry(a.getName(), a.isEquipped()))
         .toList();
+    data.weapons = character.getWeapons().stream()
+        .map(w -> new WeaponEntry(w.getName(), w.getRating()))
+        .toList();
     Lifestyle lifestyle = character.getLifestyle();
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
 
@@ -153,6 +159,7 @@ public class CharacterStore {
     applyComplexForms(character, data);
     applyCyberware(character, data);
     applyArmor(character, data);
+    applyWeapons(character, data);
     applyLifestyle(character, data);
 
     return character;
@@ -214,6 +221,19 @@ public class CharacterStore {
       ArmorData armorData = ArmorDataLoader.findByName(entry.name);
       if (armorData != null) {
         character.addArmor(new Armor(armorData, entry.equipped));
+      }
+    }
+  }
+
+  /**
+   * Stellt die gekauften Waffen wieder her; unbekannte Katalognamen und unzulässige Stufen werden
+   * übersprungen statt die ganze Datei abzulehnen.
+   */
+  private static void applyWeapons(@NonNull Character character, @NonNull CharacterData data) {
+    for (WeaponEntry entry : data.weapons) {
+      WeaponData weaponData = WeaponDataLoader.findByName(entry.name);
+      if (weaponData != null && weaponData.isValidRating(entry.rating)) {
+        character.addWeapon(new Weapon(weaponData, entry.rating));
       }
     }
   }

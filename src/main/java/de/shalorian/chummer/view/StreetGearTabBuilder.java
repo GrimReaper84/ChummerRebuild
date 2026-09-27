@@ -45,9 +45,9 @@ import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.tbee.javafx.scene.layout.MigPane;
 
 /**
- * Baut den Tab "Straßenausrüstung" mit seinen Unter-Tabs Lebensstil und Rüstung (Aufbau nach dem
- * alten {@code tabStreetGearTabs} aus {@code frmCreate.Designer.cs}; Waffen und Gear folgen als weitere
- * Unter-Tabs). Beide Unter-Tabs werden bei jeder Änderung komplett neu aufgebaut; nur die
+ * Baut den Tab "Straßenausrüstung" mit seinen Unter-Tabs Lebensstil, Rüstung und Waffen (Aufbau nach dem
+ * alten {@code tabStreetGearTabs} aus {@code frmCreate.Designer.cs}; Gear folgt als weiterer Unter-Tab;
+ * die Waffentabelle baut {@link WeaponTableBuilder}). Beide Unter-Tabs werden bei jeder Änderung komplett neu aufgebaut; nur die
  * Rüstungs-Kopfzeile hängt zusätzlich an der Konstitution und wird deshalb über {@link #refresh()}
  * beim Attribut-Refresh des {@link CharacterViewController} nachgezogen. Alles außerhalb dieses Tabs
  * erreicht der Builder ausschließlich über den {@link StreetGearHost}.
@@ -59,19 +59,22 @@ final class StreetGearTabBuilder {
   private final @NonNull VBox lifestyleContainer;
   private final @NonNull VBox armorContainer;
   private final @NonNull StreetGearHost host;
+  private final @NonNull WeaponTableBuilder weaponTable;
   private final @NonNull List<Runnable> armorRefreshers = new ArrayList<>();
 
   StreetGearTabBuilder(@NonNull VBox lifestyleContainer, @NonNull VBox armorContainer,
-      @NonNull StreetGearHost host) {
+      @NonNull VBox weaponContainer, @NonNull StreetGearHost host) {
     this.lifestyleContainer = lifestyleContainer;
     this.armorContainer = armorContainer;
     this.host = host;
+    this.weaponTable = new WeaponTableBuilder(weaponContainer, host);
   }
 
-  /** Baut beide Unter-Tabs für {@code character} neu auf. */
+  /** Baut alle Unter-Tabs für {@code character} neu auf. */
   void build(@NonNull Character character) {
     buildLifestyleTab(character);
     buildArmorTab(character);
+    weaponTable.build(character);
   }
 
   /** Zieht die von Attributen abhängigen Anzeigen (Schutz, Behinderung) nach. */

@@ -28,7 +28,7 @@ class CharacterSpecializationGroupDecoupleTest {
         Character c = mensch("Test");
         c.raiseGroup("Nahkampf"); // Rating 0 -> 1
         c.setCreated(true);
-        Skill klingen = skill(c, "Klingen");
+        Skill klingen = skill(c, "Klingenwaffen");
 
         assertTrue(c.isGroupCoupled("Nahkampf"));
 
@@ -44,11 +44,11 @@ class CharacterSpecializationGroupDecoupleTest {
         c.raiseGroup("Nahkampf");
         c.raiseGroup("Nahkampf"); // Rating 0 -> 2
         c.setCreated(true);
-        Skill klingen = skill(c, "Klingen");
+        Skill klingen = skill(c, "Klingenwaffen");
 
         c.setSkillSpecialization(klingen, "Katana");
 
-        assertEquals(2, skill(c, "Klingen").getRating());
+        assertEquals(2, skill(c, "Klingenwaffen").getRating());
         assertEquals(2, skill(c, "Knüppel").getRating());
         assertEquals(2, skill(c, "Waffenloser Kampf").getRating());
     }
@@ -56,21 +56,21 @@ class CharacterSpecializationGroupDecoupleTest {
     @Test
     void specializingUncoupledSkillDoesNotAffectOtherGroups() {
         Character c = mensch("Test");
-        c.raiseGroup("Schusswaffen");
+        c.raiseGroup("Feuerwaffen");
         c.setCreated(true);
-        Skill bogen = skill(c, "Bogenschießen"); // kein Gruppen-Mitglied
+        Skill bogen = skill(c, "Projektilwaffen"); // kein Gruppen-Mitglied
         bogen.setRating(1);
 
         c.setSkillSpecialization(bogen, "Langbogen");
 
-        assertTrue(c.isGroupCoupled("Schusswaffen"));
+        assertTrue(c.isGroupCoupled("Feuerwaffen"));
     }
 
     @Test
     void specializingDuringCreationDoesNotDecoupleBecauseItIsNotAllowedAtAll() {
         Character c = mensch("Test");
         c.raiseGroup("Nahkampf");
-        Skill klingen = skill(c, "Klingen");
+        Skill klingen = skill(c, "Klingenwaffen");
 
         assertFalse(c.canSpecializeSkill(klingen));
         // Kein setSkillSpecialization-Aufruf hier — die UI verdrahtet den Button ohnehin nur,

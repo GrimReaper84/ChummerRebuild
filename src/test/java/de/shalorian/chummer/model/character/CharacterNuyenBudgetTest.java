@@ -12,6 +12,9 @@ import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
 /** Ressourcengeld und Restgeld bei der Erschaffung (GRW S. 110–112). */
@@ -92,6 +95,17 @@ class CharacterNuyenBudgetTest {
 
     assertEquals(1_000 + 900 + 5_000, c.getSpentNuyen());
     assertEquals(5_000 - 6_900, c.getRemainingNuyen());
+  }
+
+  @Test
+  void weaponsCountTowardsSpentNuyen() {
+    Character c = mensch();
+    c.setNuyenBP(1);
+    c.addArmor(armor("Panzerjacke"));
+    c.addWeapon(new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Ares Predator IV"))));
+
+    assertEquals(900 + 350, c.getSpentNuyen());
+    assertEquals(5_000 - 1_250, c.getRemainingNuyen());
   }
 
   @Test

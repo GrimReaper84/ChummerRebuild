@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.shalorian.chummer.view.dialog.WeaponSelectDialogController"
+      spacing="14" styleClass="dialog-pane" prefWidth="480">
+    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+    <!-- Filter-Zeile -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <ComboBox fx:id="categoryBox" prefWidth="200"/>
+        <TextField fx:id="searchField" promptText="Suche…" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- Waffen-Liste -->
+    <ListView fx:id="itemListView" prefHeight="260" VBox.vgrow="ALWAYS"/>
+
+    <!-- Auswahl + Info-Bereich -->
+    <GridPane hgap="14" vgap="6">
+        <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="110"/>
+            <ColumnConstraints minWidth="200" prefWidth="260" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label text="Stufe:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <ComboBox fx:id="ratingBox" prefWidth="80"
+                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="Schaden:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="damageLabel" styleClass="attr-value"
+               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label text="PB:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="armorPiercingLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label text="Modus:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="modeLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Label text="Rückstoß:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <Label fx:id="recoilLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Label text="Munition:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <Label fx:id="ammoLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        <Label text="Verfügbarkeit:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <Label fx:id="availabilityLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+        <Label text="Preis:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+        <Label fx:id="costLabel" styleClass="attr-bp"
+               GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+        <Label text="Quelle:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+        <Label fx:id="sourceLabel" styleClass="attr-range"
+               GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+    </GridPane>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Abbrechen" onAction="#onCancel" styleClass="btn-secondary"/>
+        <Button fx:id="okButton" text="OK" onAction="#onOk"
+                defaultButton="true" styleClass="btn-primary"/>
+    </HBox>
+</VBox>

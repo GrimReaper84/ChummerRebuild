@@ -29,6 +29,7 @@ import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.model.character.skill.SkillDataLoader;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
+import de.shalorian.chummer.model.character.weapon.Weapon;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -89,6 +90,7 @@ public class Character {
   private final List<ComplexForm> complexForms = new ArrayList<>();
   private final List<Cyberware> cyberware = new ArrayList<>();
   private final List<Armor> armor = new ArrayList<>();
+  private final List<Weapon> weapons = new ArrayList<>();
   private final @NonNull Lifestyle lifestyle = new Lifestyle();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
@@ -1268,6 +1270,32 @@ public class Character {
     return armor.stream().filter(Armor::isEquipped);
   }
 
+  // --- Waffen ---
+
+  /** Alle gekauften Waffen. */
+  public @NonNull List<Weapon> getWeapons() {
+    return Collections.unmodifiableList(weapons);
+  }
+
+  /**
+   * Kauft eine Waffe. Dieselbe Waffe darf mehrfach gekauft werden (keine Duplikatprüfung). Die
+   * Verfügbarkeit prüft die UI über {@link #isAvailableForPurchase(Availability, int)} — wie bei
+   * Rüstung, damit der Persistenz-Pfad unverändert laden kann.
+   */
+  public void addWeapon(@NonNull Weapon weapon) {
+    weapons.add(weapon);
+  }
+
+  /** Entfernt genau diese Waffe (Objektreferenz, da Duplikate erlaubt sind). */
+  public void removeWeapon(@NonNull Weapon weapon) {
+    weapons.remove(weapon);
+  }
+
+  /** Gesamtpreis aller gekauften Waffen in Nuyen. */
+  public int getWeaponNuyenCost() {
+    return weapons.stream().mapToInt(Weapon::getNuyenCost).sum();
+  }
+
   // --- Lebensstil & Nuyen-Budget ---
 
   /**
@@ -1289,13 +1317,14 @@ public class Character {
   }
 
   /**
-   * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung und
-   * Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige Kaufkategorien (Waffen,
-   * Gear) werden hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
+   * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung, Waffen und
+   * Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige Kaufkategorien (Gear) werden
+   * hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
    * Ausrüstungsgegenstände vollständig bezahlen."
    */
   public int getSpentNuyen() {
-    return getCyberwareNuyenCost() + getArmorNuyenCost() + lifestyle.getNuyenCost();
+    return getCyberwareNuyenCost() + getArmorNuyenCost() + getWeaponNuyenCost()
+        + lifestyle.getNuyenCost();
   }
 
   /**

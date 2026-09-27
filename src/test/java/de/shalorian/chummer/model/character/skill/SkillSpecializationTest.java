@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SkillSpecializationTest {
 
     private static Skill skill() {
-        return new Skill("Bogenschießen", "AGI", SkillCategory.COMBAT, null);
+        return new Skill("Projektilwaffen", "AGI", SkillCategory.COMBAT, null);
     }
 
     @Test

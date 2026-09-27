@@ -2,24 +2,26 @@
 <skills>
 
     <!-- ── KAMPF ──────────────────────────────────────────── -->
+    <!-- Kampf-Aktionsfertigkeiten laut SR4-Grundregelwerk S. 147/148 (gegen das PDF-Bild geprüft):
+         Namen, verknüpftes Attribut und Fertigkeitsgruppe wie im GRW. -->
 
     <group name="Nahkampf" category="COMBAT">
-        <skill name="Klingen"           attribute="AGI"/>
+        <skill name="Klingenwaffen"     attribute="AGI"/>
         <skill name="Knüppel"           attribute="AGI"/>
         <skill name="Waffenloser Kampf" attribute="AGI"/>
     </group>
 
-    <group name="Schusswaffen" category="COMBAT">
-        <skill name="Automatikwaffen" attribute="AGI"/>
-        <skill name="Langwaffen"      attribute="AGI"/>
-        <skill name="Pistolen"        attribute="AGI"/>
-        <skill name="Schrotflinten"   attribute="AGI"/>
+    <group name="Feuerwaffen" category="COMBAT">
+        <skill name="Gewehre"            attribute="AGI"/>
+        <skill name="Pistolen"           attribute="AGI"/>
+        <skill name="Schnellfeuerwaffen" attribute="AGI"/>
     </group>
 
-    <skill name="Bogenschießen"            attribute="AGI" category="COMBAT"/>
+    <skill name="Ausweichen"               attribute="REA" category="COMBAT"/>
     <skill name="Exotische Fernkampfwaffe" attribute="AGI" category="COMBAT"/>
     <skill name="Exotische Nahkampfwaffe"  attribute="AGI" category="COMBAT"/>
-    <skill name="Sprengstoff"              attribute="LOG" category="COMBAT"/>
+    <skill name="Projektilwaffen"          attribute="AGI" category="COMBAT"/>
+    <skill name="Schwere Waffen"           attribute="AGI" category="COMBAT"/>
     <skill name="Wurfwaffen"               attribute="AGI" category="COMBAT"/>
 
     <!-- ── KÖRPERLICH ─────────────────────────────────────── -->
@@ -86,6 +88,8 @@
 
     <skill name="Chemie"            attribute="LOG" category="TECHNICAL"/>
     <skill name="Schlösser knacken" attribute="AGI" category="TECHNICAL"/>
+    <!-- GRW S. 154: "Sprengstoffe (Logik)", technische Aktionsfertigkeit ohne Gruppe -->
+    <skill name="Sprengstoffe"      attribute="LOG" category="TECHNICAL"/>
     <skill name="Waffenmeister"     attribute="LOG" category="TECHNICAL"/>
 
     <!-- ── FAHRZEUGE ──────────────────────────────────────── -->

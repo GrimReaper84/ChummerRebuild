@@ -31,7 +31,7 @@ class CharacterActiveSkillSpecializationBpTest {
     @Test
     void oneSpecializationCostsFlatTwoBp() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(1);
         c.setSkillSpecialization(bogen, "Langbogen");
 
@@ -41,7 +41,7 @@ class CharacterActiveSkillSpecializationBpTest {
     @Test
     void costIsFlatRegardlessOfRating() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(6);
         c.setSkillSpecialization(bogen, "Langbogen");
 
@@ -51,7 +51,7 @@ class CharacterActiveSkillSpecializationBpTest {
     @Test
     void multipleSpecializationsAddUp() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(1);
         c.setSkillSpecialization(bogen, "Langbogen");
         Skill wurfwaffen = skill(c, "Wurfwaffen");
@@ -65,7 +65,7 @@ class CharacterActiveSkillSpecializationBpTest {
     void spentBpIncludesActiveSkillSpecialization() {
         Character c = mensch("Test");
         int baseline = c.getSpentBP();
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(1);
         c.setSkillSpecialization(bogen, "Langbogen");
 
@@ -76,7 +76,7 @@ class CharacterActiveSkillSpecializationBpTest {
     @Test
     void clearingSpecializationRemovesCost() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(1);
         c.setSkillSpecialization(bogen, "Langbogen");
         c.setSkillSpecialization(bogen, null);

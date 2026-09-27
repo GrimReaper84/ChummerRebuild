@@ -120,7 +120,7 @@ class CharacterTest {
     @Test
     void spentBpIncludesSkillRating() {
         Character c = mensch("Test");
-        c.getSkill("Bogenschießen").setRating(3); // 3 × 4 BP = 12 BP
+        c.getSkill("Projektilwaffen").setRating(3); // 3 × 4 BP = 12 BP
         assertEquals(12, c.getSpentBP());
     }
 

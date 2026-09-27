@@ -25,7 +25,7 @@ class CharacterSkillCapsTest {
     @Test
     void raisingUpToFourIsAlwaysAllowed() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(3);
 
         assertTrue(c.canRaiseSkillAtCreation(bogen)); // 3 -> 4
@@ -34,7 +34,7 @@ class CharacterSkillCapsTest {
     @Test
     void firstSkillMayReachSix() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(5);
 
         assertTrue(c.canRaiseSkillAtCreation(bogen)); // 5 -> 6, noch keine andere Fertigkeit auf 5/6
@@ -43,8 +43,8 @@ class CharacterSkillCapsTest {
     @Test
     void secondSkillMayNotAlsoReachSix() {
         Character c = mensch("Test");
-        skill(c, "Bogenschießen").setRating(6);
-        Skill sprengstoff = skill(c, "Sprengstoff");
+        skill(c, "Projektilwaffen").setRating(6);
+        Skill sprengstoff = skill(c, "Sprengstoffe");
         sprengstoff.setRating(5);
 
         assertFalse(c.canRaiseSkillAtCreation(sprengstoff)); // bereits eine Fertigkeit auf 6
@@ -53,7 +53,7 @@ class CharacterSkillCapsTest {
     @Test
     void twoSkillsMayReachFive() {
         Character c = mensch("Test");
-        skill(c, "Bogenschießen").setRating(5);
+        skill(c, "Projektilwaffen").setRating(5);
         Skill wurfwaffen = skill(c, "Wurfwaffen");
         wurfwaffen.setRating(4);
 
@@ -63,7 +63,7 @@ class CharacterSkillCapsTest {
     @Test
     void thirdSkillMayNotReachFive() {
         Character c = mensch("Test");
-        skill(c, "Bogenschießen").setRating(5);
+        skill(c, "Projektilwaffen").setRating(5);
         skill(c, "Wurfwaffen").setRating(5);
         Skill exotisch = skill(c, "Exotische Fernkampfwaffe");
         exotisch.setRating(4);
@@ -74,7 +74,7 @@ class CharacterSkillCapsTest {
     @Test
     void raisingToSixIsBlockedWhenAnotherSkillIsAtFive() {
         Character c = mensch("Test");
-        skill(c, "Bogenschießen").setRating(5);
+        skill(c, "Projektilwaffen").setRating(5);
         Skill wurfwaffen = skill(c, "Wurfwaffen");
         wurfwaffen.setRating(5);
 
@@ -87,8 +87,8 @@ class CharacterSkillCapsTest {
     @Test
     void capsDoNotApplyInCareerMode() {
         Character c = mensch("Test");
-        skill(c, "Bogenschießen").setRating(6);
-        Skill sprengstoff = skill(c, "Sprengstoff");
+        skill(c, "Projektilwaffen").setRating(6);
+        Skill sprengstoff = skill(c, "Sprengstoffe");
         sprengstoff.setRating(5);
         c.setCreated(true);
 

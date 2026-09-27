@@ -1,0 +1,949 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Waffen des SR4-Grundregelwerks (Kapitel STRASSENAUSRÜSTUNG, Tabellen S. 361 Nahkampf-, Projektil- und
+  Wurfwaffen, S. 363 Taser bis Maschinenpistolen, S. 366 Sturmgewehre bis Raketenwerfer) — alle Werte
+  direkt gegen das PDF-Bild verifiziert, nicht gegen den OCR-Text.
+
+  Die Kampfwerte stehen als GRW-Text in deutscher Schreibweise: Schaden K/G, (e) Elektrizität,
+  (f) Flechette, "÷" wie im Buch; Modus EM/HM/SM/AM; Munition mit Nachlademethode (s) Ladestreifen,
+  (m) internes Magazin, (tr) Trommel, (k) Klapplademechanismus, (v) Vorderlader, (gurt) Gurt (GRW
+  S. 357). "–" wie in der Tabelle; fehlende Elemente (reach/mode/rc/ammo) = die Tabelle der Kategorie
+  führt diese Spalte nicht. <avail>/<legality> wie armor.xml. Der Bogen hat die Mindeststärke als Stufe
+  (Rating 1–8, GRW S. 361).
+
+  Bewusst NICHT enthalten (siehe docs/plaene/waffen_plan.md Abschnitt 13):
+  - Pfeil, Injektionspfeil, Bolzen, Injektionsbolzen (Munition, kommt mit dem Gear-Feature)
+  - Unterlaufwaffen und HK-XM30-Umbausätze als eigene Einträge (→ <note>), "mit Flechette"-Zeilen (→ <note>)
+  - Granaten, Raketen, Lenkraketen (Gear), Cyberimplantatwaffen, Waffenmodifikationen (Arsenal)
+-->
+<weapons>
+
+    <!-- ── KLINGENWAFFEN (S. 361) ──────────────────────────────── -->
+
+    <item>
+        <name>Kampfaxt</name>
+        <category>Klingenwaffen</category>
+        <reach>2</reach>
+        <damage>(STR÷2+4)K</damage>
+        <ap>–1</ap>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>600</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Katana</name>
+        <category>Klingenwaffen</category>
+        <reach>1</reach>
+        <damage>(STR÷2+3)K</damage>
+        <ap>–1</ap>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Messer</name>
+        <category>Klingenwaffen</category>
+        <reach>–</reach>
+        <damage>(STR÷2+1)K</damage>
+        <ap>–</ap>
+        <cost>20</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Monofilamentschwert</name>
+        <category>Klingenwaffen</category>
+        <reach>1</reach>
+        <damage>(STR÷2+3)K</damage>
+        <ap>–1</ap>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>750</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Schwert</name>
+        <category>Klingenwaffen</category>
+        <reach>1</reach>
+        <damage>(STR÷2+3)K</damage>
+        <ap>–</ap>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>350</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Überlebensmesser</name>
+        <category>Klingenwaffen</category>
+        <reach>–</reach>
+        <damage>(STR÷2+1)K</damage>
+        <ap>–1</ap>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Unterarm-Schnappklingen</name>
+        <category>Klingenwaffen</category>
+        <reach>–</reach>
+        <damage>(STR÷2+2)K</damage>
+        <ap>–</ap>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>150</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── KNÜPPEL (S. 361) ────────────────────────────────────── -->
+
+    <item>
+        <name>Betäubungsschlagstock</name>
+        <category>Knüppel</category>
+        <reach>1</reach>
+        <damage>6G(e)</damage>
+        <ap>–Hälfte</ap>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>400</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Knüppel</name>
+        <category>Knüppel</category>
+        <reach>1</reach>
+        <damage>(STR÷2+1)K</damage>
+        <ap>–</ap>
+        <cost>30</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Stab</name>
+        <category>Knüppel</category>
+        <reach>2</reach>
+        <damage>(STR÷2+2)K</damage>
+        <ap>–</ap>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Teleskopschlagstock</name>
+        <category>Knüppel</category>
+        <reach>1</reach>
+        <damage>(STR÷2+1)K</damage>
+        <ap>–</ap>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Totschläger</name>
+        <category>Knüppel</category>
+        <reach>–</reach>
+        <damage>(STR÷2+1)G</damage>
+        <ap>–</ap>
+        <cost>30</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── EXOTISCHE NAHKAMPFWAFFEN (S. 361) ───────────────────── -->
+
+    <item>
+        <name>Hellebarde</name>
+        <category>Exotische Nahkampfwaffen</category>
+        <reach>2</reach>
+        <damage>(STR÷2+2)K</damage>
+        <ap>–2</ap>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Monofilamentpeitsche</name>
+        <category>Exotische Nahkampfwaffen</category>
+        <reach>2</reach>
+        <damage>8K</damage>
+        <ap>–4</ap>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>3000</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── WAFFENLOS (S. 361) ──────────────────────────────────── -->
+
+    <item>
+        <name>Schockhandschuh</name>
+        <category>Waffenlos</category>
+        <reach>–</reach>
+        <damage>5G(e)</damage>
+        <ap>–Hälfte</ap>
+        <avail>3</avail>
+        <legality>E</legality>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── BÖGEN (S. 361) ──────────────────────────────────────── -->
+
+    <item>
+        <name>Bogen</name>
+        <category>Bögen</category>
+        <damage>(STR Min + 2)K</damage>
+        <ap>–</ap>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 100</cost>
+        <rating>8</rating>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── ARMBRÜSTE (S. 361) ──────────────────────────────────── -->
+
+    <item>
+        <name>Leichte Armbrust</name>
+        <category>Armbrüste</category>
+        <damage>3K</damage>
+        <ap>–</ap>
+        <avail>2</avail>
+        <cost>300</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Mittlere Armbrust</name>
+        <category>Armbrüste</category>
+        <damage>5K</damage>
+        <ap>–</ap>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Schwere Armbrust</name>
+        <category>Armbrüste</category>
+        <damage>7K</damage>
+        <ap>–1</ap>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>750</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── WURFWAFFEN (S. 361) ─────────────────────────────────── -->
+
+    <item>
+        <name>Shuriken</name>
+        <category>Wurfwaffen</category>
+        <damage>(STR÷2)K</damage>
+        <ap>–</ap>
+        <avail>2</avail>
+        <cost>30</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <item>
+        <name>Wurfmesser</name>
+        <category>Wurfwaffen</category>
+        <damage>(STR÷2+1)K</damage>
+        <ap>–</ap>
+        <avail>2</avail>
+        <cost>20</cost>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── TASER (S. 363) ──────────────────────────────────────── -->
+
+    <item>
+        <name>Defiance EX Schocker</name>
+        <category>Taser</category>
+        <damage>8G(e)</damage>
+        <ap>–Hälfte</ap>
+        <mode>EM</mode>
+        <rc>–</rc>
+        <ammo>4 (m)</ammo>
+        <cost>150</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Yamaha Pulsar</name>
+        <category>Taser</category>
+        <damage>6G(e)</damage>
+        <ap>–Hälfte</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>4 (m)</ammo>
+        <cost>150</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <!-- ── HOLDOUT-PISTOLEN (S. 363) ───────────────────────────── -->
+
+    <item>
+        <name>Raecor Sting</name>
+        <category>Holdout-Pistolen</category>
+        <damage>6K(f)</damage>
+        <ap>+5</ap>
+        <mode>EM</mode>
+        <rc>–</rc>
+        <ammo>5 (s)</ammo>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>350</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Streetline Special</name>
+        <category>Holdout-Pistolen</category>
+        <damage>4K</damage>
+        <ap>–</ap>
+        <mode>EM</mode>
+        <rc>–</rc>
+        <ammo>6 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <!-- ── LEICHTE PISTOLEN (S. 363) ───────────────────────────── -->
+
+    <item>
+        <name>Colt America L36</name>
+        <category>Leichte Pistolen</category>
+        <damage>4K</damage>
+        <ap>–</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>11 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>150</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Fichetti Security 600</name>
+        <category>Leichte Pistolen</category>
+        <damage>4K</damage>
+        <ap>–</ap>
+        <mode>HM</mode>
+        <rc>(1)</rc>
+        <ammo>30 (s)</ammo>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>450</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Hämmerli 620S</name>
+        <category>Leichte Pistolen</category>
+        <damage>4K</damage>
+        <ap>–</ap>
+        <mode>HM</mode>
+        <rc>1</rc>
+        <ammo>6 (s)</ammo>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>650</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Yamaha Sakura Fubuki</name>
+        <category>Leichte Pistolen</category>
+        <damage>4K</damage>
+        <ap>–</ap>
+        <mode>HM/SM</mode>
+        <rc>(1)</rc>
+        <ammo>10 (v) x 4</ammo>
+        <avail>10</avail>
+        <legality>E</legality>
+        <cost>2000</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <!-- ── SCHWERE PISTOLEN (S. 363) ───────────────────────────── -->
+
+    <item>
+        <name>Ares Predator IV</name>
+        <category>Schwere Pistolen</category>
+        <damage>5K</damage>
+        <ap>–1</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>15 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>350</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Ares Viper Slivergun</name>
+        <category>Schwere Pistolen</category>
+        <damage>8K(f)</damage>
+        <ap>+5</ap>
+        <mode>HM/SM</mode>
+        <rc>–</rc>
+        <ammo>30 (s)</ammo>
+        <avail>5</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Colt Manhunter</name>
+        <category>Schwere Pistolen</category>
+        <damage>5K</damage>
+        <ap>–1</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>16 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>300</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Remington Roomsweeper</name>
+        <category>Schwere Pistolen</category>
+        <damage>5K</damage>
+        <ap>–1</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>8 (m)</ammo>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>250</cost>
+        <note>Mit Flechette: 7K(f), PB +5</note>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Ruger Super Warhawk</name>
+        <category>Schwere Pistolen</category>
+        <damage>6K</damage>
+        <ap>–2</ap>
+        <mode>EM</mode>
+        <rc>–</rc>
+        <ammo>6 (tr)</ammo>
+        <avail>3</avail>
+        <legality>E</legality>
+        <cost>250</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <!-- ── AUTOMATIKPISTOLEN (S. 363) ──────────────────────────── -->
+
+    <item>
+        <name>Ceska Black Scorpion</name>
+        <category>Automatikpistolen</category>
+        <damage>4K</damage>
+        <ap>–</ap>
+        <mode>HM/SM</mode>
+        <rc>(1)</rc>
+        <ammo>35 (s)</ammo>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>550</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Steyr TMP</name>
+        <category>Automatikpistolen</category>
+        <damage>4K</damage>
+        <ap>–</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>–</rc>
+        <ammo>30 (s)</ammo>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>600</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <!-- ── MASCHINENPISTOLEN (S. 363) ──────────────────────────── -->
+
+    <item>
+        <name>AK-97 Karabiner</name>
+        <category>Maschinenpistolen</category>
+        <damage>5K</damage>
+        <ap>–</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>(1)</rc>
+        <ammo>30 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>400</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>HK 227-X</name>
+        <category>Maschinenpistolen</category>
+        <damage>5K</damage>
+        <ap>–</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>(1)</rc>
+        <ammo>28 (s)</ammo>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>800</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>HK MP-5 TX</name>
+        <category>Maschinenpistolen</category>
+        <damage>5K</damage>
+        <ap>–</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>2 (3)</rc>
+        <ammo>20 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>550</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Ingram Smartgun X</name>
+        <category>Maschinenpistolen</category>
+        <damage>5K</damage>
+        <ap>–</ap>
+        <mode>SM/AM</mode>
+        <rc>2 (3)</rc>
+        <ammo>32 (s)</ammo>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>650</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <item>
+        <name>Uzi IV</name>
+        <category>Maschinenpistolen</category>
+        <damage>5K</damage>
+        <ap>–</ap>
+        <mode>SM</mode>
+        <rc>(1)</rc>
+        <ammo>24 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>363</page>
+    </item>
+
+    <!-- ── STURMGEWEHRE (S. 366) ───────────────────────────────── -->
+
+    <item>
+        <name>AK-97</name>
+        <category>Sturmgewehre</category>
+        <damage>6K</damage>
+        <ap>–1</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>–</rc>
+        <ammo>38 (s)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>Ares Alpha</name>
+        <category>Sturmgewehre</category>
+        <damage>6K</damage>
+        <ap>–1</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>2</rc>
+        <ammo>42 (s)</ammo>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>1700</cost>
+        <note>Inkl. Unterlauf-Granatwerfer: Granate, PB –, EM, Rückstoß –, 6 (s)</note>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>FN HAR</name>
+        <category>Sturmgewehre</category>
+        <damage>6K</damage>
+        <ap>–1</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>2</rc>
+        <ammo>35 (s)</ammo>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>HK XM30</name>
+        <category>Sturmgewehre</category>
+        <damage>6K</damage>
+        <ap>–1</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>(1)</rc>
+        <ammo>30 (s)</ammo>
+        <avail>15</avail>
+        <legality>V</legality>
+        <cost>2500</cost>
+        <note>Inkl. Unterlauf-Granatwerfer: Granate, PB –, EM, Rückstoß –, 8 (s). Umbausätze (Unterlauf-Schrotflinte, Karabiner, Scharfschützengewehr, LMG) nicht enthalten, siehe GRW S. 366</note>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── SPORTGEWEHRE (S. 366) ───────────────────────────────── -->
+
+    <item>
+        <name>Ruger 100</name>
+        <category>Sportgewehre</category>
+        <damage>7K</damage>
+        <ap>–1</ap>
+        <mode>HM</mode>
+        <rc>(1)</rc>
+        <ammo>5 (m)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>900</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>PJSS Elefantenbüchse</name>
+        <category>Sportgewehre</category>
+        <damage>9K</damage>
+        <ap>–1</ap>
+        <mode>EM</mode>
+        <rc>(1)</rc>
+        <ammo>2 (k)</ammo>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>6000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── SCHARFSCHÜTZENGEWEHRE (S. 366) ──────────────────────── -->
+
+    <item>
+        <name>Ranger Arms SM-4</name>
+        <category>Scharfschützengewehre</category>
+        <damage>8K</damage>
+        <ap>–3</ap>
+        <mode>HM</mode>
+        <rc>(1)</rc>
+        <ammo>15 (s)</ammo>
+        <avail>16</avail>
+        <legality>V</legality>
+        <cost>6200</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>Walter MA-2100</name>
+        <category>Scharfschützengewehre</category>
+        <damage>7K</damage>
+        <ap>–3</ap>
+        <mode>HM</mode>
+        <rc>(1)</rc>
+        <ammo>10 (m)</ammo>
+        <avail>10</avail>
+        <legality>V</legality>
+        <cost>5000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── SCHROTFLINTEN (S. 366) ──────────────────────────────── -->
+
+    <item>
+        <name>Mossberg AM-CMDT</name>
+        <category>Schrotflinten</category>
+        <damage>9K(f)</damage>
+        <ap>+5</ap>
+        <mode>HM/SM/AM</mode>
+        <rc>–</rc>
+        <ammo>10 (s)</ammo>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>Remington 990</name>
+        <category>Schrotflinten</category>
+        <damage>7K</damage>
+        <ap>–1</ap>
+        <mode>HM</mode>
+        <rc>(1)</rc>
+        <ammo>8 (m)</ammo>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>550</cost>
+        <note>Mit Flechette: 9K(f), PB +5</note>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── SPEZIELLE WAFFEN (S. 366) ───────────────────────────── -->
+
+    <item>
+        <name>Ares S-III Super-Squirt</name>
+        <category>Spezielle Waffen</category>
+        <damage>Chemikalie</damage>
+        <ap>–</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>20 (s)</ammo>
+        <avail>4</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>Fichetti Pain Inducer</name>
+        <category>Spezielle Waffen</category>
+        <damage>Speziell</damage>
+        <ap>–Hälfte</ap>
+        <mode>EM</mode>
+        <rc>–</rc>
+        <ammo>Speziell</ammo>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>2000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>Parashield Pfeilpistole</name>
+        <category>Spezielle Waffen</category>
+        <damage>Droge/Toxin</damage>
+        <ap>–2</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>5 (s)</ammo>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>600</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>Parashield Pfeilgewehr</name>
+        <category>Spezielle Waffen</category>
+        <damage>Droge/Toxin</damage>
+        <ap>–2</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>10 (s)</ammo>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>1700</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── LEICHTE MASCHINENGEWEHRE (S. 366) ───────────────────── -->
+
+    <item>
+        <name>Ingram White Knight</name>
+        <category>Leichte Maschinengewehre</category>
+        <damage>6K</damage>
+        <ap>–1</ap>
+        <mode>SM/AM</mode>
+        <rc>5 (6)</rc>
+        <ammo>50 (s) oder 100 (gurt)</ammo>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>2000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── MITTLERE MASCHINENGEWEHRE (S. 366) ──────────────────── -->
+
+    <item>
+        <name>Stoner-Ares M202</name>
+        <category>Mittlere Maschinengewehre</category>
+        <damage>6K</damage>
+        <ap>–2</ap>
+        <mode>AM</mode>
+        <rc>–</rc>
+        <ammo>50 (s) oder 100 (gurt)</ammo>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>4500</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── SCHWERE MASCHINENGEWEHRE (S. 366) ───────────────────── -->
+
+    <item>
+        <name>Ultimax HMG-2</name>
+        <category>Schwere Maschinengewehre</category>
+        <damage>7K</damage>
+        <ap>–3</ap>
+        <mode>AM</mode>
+        <rc>3 (10)</rc>
+        <ammo>50 (s) oder 100 (gurt)</ammo>
+        <avail>15</avail>
+        <legality>V</legality>
+        <cost>7500</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── STURMKANONEN (S. 366) ───────────────────────────────── -->
+
+    <item>
+        <name>Panther XXL</name>
+        <category>Sturmkanonen</category>
+        <damage>10K</damage>
+        <ap>–5</ap>
+        <mode>EM</mode>
+        <rc>(1)</rc>
+        <ammo>15 (s)</ammo>
+        <avail>20</avail>
+        <legality>V</legality>
+        <cost>5500</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── GRANATWERFER (S. 366) ───────────────────────────────── -->
+
+    <item>
+        <name>Ares Antioch-2</name>
+        <category>Granatwerfer</category>
+        <damage>Granate</damage>
+        <ap>–</ap>
+        <mode>EM</mode>
+        <rc>–</rc>
+        <ammo>8 (m)</ammo>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>600</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>ArmTech MGL-12</name>
+        <category>Granatwerfer</category>
+        <damage>Granate</damage>
+        <ap>–</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>12 (s)</ammo>
+        <avail>10</avail>
+        <legality>V</legality>
+        <cost>2000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <!-- ── RAKETENWERFER (S. 366) ──────────────────────────────── -->
+
+    <item>
+        <name>Aztechnology Striker</name>
+        <category>Raketenwerfer</category>
+        <damage>Rakete</damage>
+        <ap>–</ap>
+        <mode>EM</mode>
+        <rc>–</rc>
+        <ammo>1 (v)</ammo>
+        <avail>10</avail>
+        <legality>V</legality>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+
+    <item>
+        <name>Mitsubishi Yakusoku MRL</name>
+        <category>Raketenwerfer</category>
+        <damage>Rakete</damage>
+        <ap>–</ap>
+        <mode>HM</mode>
+        <rc>–</rc>
+        <ammo>8 (m)</ammo>
+        <avail>20</avail>
+        <legality>V</legality>
+        <cost>12000</cost>
+        <source>SR4</source>
+        <page>366</page>
+    </item>
+</weapons>

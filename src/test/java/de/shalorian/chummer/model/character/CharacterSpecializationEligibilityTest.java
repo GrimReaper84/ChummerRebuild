@@ -30,7 +30,7 @@ class CharacterSpecializationEligibilityTest {
     @Test
     void activeSkillWithRatingZeroCannotBeSpecialized() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
 
         assertFalse(c.canSpecializeSkill(bogen));
     }
@@ -38,7 +38,7 @@ class CharacterSpecializationEligibilityTest {
     @Test
     void activeSkillWithRatingOneCanBeSpecialized() {
         Character c = mensch("Test");
-        Skill bogen = skill(c, "Bogenschießen");
+        Skill bogen = skill(c, "Projektilwaffen");
         bogen.setRating(1);
 
         assertTrue(c.canSpecializeSkill(bogen));
@@ -47,7 +47,7 @@ class CharacterSpecializationEligibilityTest {
     @Test
     void coupledGroupSkillCannotBeSpecializedDuringCreation() {
         Character c = mensch("Test");
-        Skill klingen = skill(c, "Klingen"); // Mitglied der Gruppe "Nahkampf"
+        Skill klingen = skill(c, "Klingenwaffen"); // Mitglied der Gruppe "Nahkampf"
         c.raiseGroup("Nahkampf");
 
         assertFalse(c.canSpecializeSkill(klingen));
@@ -56,7 +56,7 @@ class CharacterSpecializationEligibilityTest {
     @Test
     void coupledGroupSkillCanBeSpecializedInCareerMode() {
         Character c = mensch("Test");
-        Skill klingen = skill(c, "Klingen");
+        Skill klingen = skill(c, "Klingenwaffen");
         c.raiseGroup("Nahkampf");
         c.setCreated(true);
 
@@ -66,7 +66,7 @@ class CharacterSpecializationEligibilityTest {
     @Test
     void decoupledGroupSkillCanBeSpecializedDuringCreation() {
         Character c = mensch("Test");
-        Skill klingen = skill(c, "Klingen");
+        Skill klingen = skill(c, "Klingenwaffen");
         c.raiseGroup("Nahkampf");
         c.decoupleGroup("Nahkampf");
 
