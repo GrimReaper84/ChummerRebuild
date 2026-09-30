@@ -10,6 +10,7 @@ import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.WeaponSelectDialogController;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -32,12 +33,16 @@ import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
  * (Hinzufügen, Entfernen der Auswahl) und ein {@link TreeTableView} mit den GRW-Tabellenwerten je
  * Waffe. Der Baum ist bewusst schon jetzt ein Baum (flach, eine Ebene): Zubehör wird in einer späteren
  * Ausbaustufe als Kindknoten der Waffe ergänzt (siehe {@code docs/plaene/waffen_plan.md}, Teil C).
- * Der Tab wird nach jeder Änderung neu aufgebaut.
+ * Der Tab wird nach Kauf/Entfernen neu aufgebaut. Schaden, Reichweiten und Fertigkeitswert hängen an
+ * Stärke und Fertigkeiten; {@link #refresh()} erneuert deshalb nur die Zeilenwerte (Auswahl und
+ * Scrollposition bleiben erhalten) und läuft über {@link StreetGearTabBuilder#refresh()} bei jedem
+ * Attribut-/Fertigkeits-Refresh.
  */
 final class WeaponTableBuilder {
 
   private final @NonNull VBox container;
   private final @NonNull StreetGearHost host;
+  private final @NonNull List<Runnable> rowRefreshers = new ArrayList<>();
 
   WeaponTableBuilder(@NonNull VBox container, @NonNull StreetGearHost host) {
     this.container = container;
@@ -46,9 +51,15 @@ final class WeaponTableBuilder {
 
   void build(@NonNull Character character) {
     container.getChildren().clear();
-    TreeTableView<WeaponTableRow> table = buildTable(character.getWeapons());
+    rowRefreshers.clear();
+    TreeTableView<WeaponTableRow> table = buildTable(character);
     VBox.setVgrow(table, Priority.ALWAYS);
     container.getChildren().addAll(buildHeader(character), buildToolbar(character, table), table);
+  }
+
+  /** Berechnet die charakterabhängigen Zeilenwerte (Schaden, Reichweiten, Fertigkeit) neu. */
+  void refresh() {
+    rowRefreshers.forEach(Runnable::run);
   }
 
   private @NonNull HBox buildHeader(@NonNull Character character) {
@@ -89,10 +100,12 @@ final class WeaponTableBuilder {
     return toolbar;
   }
 
-  private static @NonNull TreeTableView<WeaponTableRow> buildTable(@NonNull List<Weapon> weapons) {
+  private @NonNull TreeTableView<WeaponTableRow> buildTable(@NonNull Character character) {
     TreeItem<WeaponTableRow> root = new TreeItem<>();
-    for (Weapon weapon : weapons) {
-      root.getChildren().add(new TreeItem<>(WeaponTableRow.of(weapon)));
+    for (Weapon weapon : character.getWeapons()) {
+      TreeItem<WeaponTableRow> item = new TreeItem<>(WeaponTableRow.of(weapon, character));
+      rowRefreshers.add(() -> item.setValue(WeaponTableRow.of(weapon, character)));
+      root.getChildren().add(item);
     }
 
     TreeTableView<WeaponTableRow> table = new TreeTableView<>(root);
@@ -100,16 +113,18 @@ final class WeaponTableBuilder {
     table.setPlaceholder(new Label("Keine Waffen gekauft"));
     table.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
-    TreeTableColumn<WeaponTableRow, String> nameColumn = column("Waffe", WeaponTableRow::name, 190);
-    nameColumn.setCellFactory(col -> new WeaponNameCell());
-    table.getColumns().add(nameColumn);
+    table.getColumns().add(column("Waffe", WeaponTableRow::name, WeaponTableRow::note, 190));
     table.getColumns().add(column("Kategorie", WeaponTableRow::category, 150));
+    table.getColumns().add(column("Fertigkeit", WeaponTableRow::skill, 150));
     table.getColumns().add(column("RW", WeaponTableRow::reach, 40));
-    table.getColumns().add(column("Schaden", WeaponTableRow::damage, 110));
+    table.getColumns().add(
+        column("Schaden", WeaponTableRow::damage, WeaponTableRow::damageFormula, 90));
     table.getColumns().add(column("PB", WeaponTableRow::armorPiercing, 60));
     table.getColumns().add(column("Modus", WeaponTableRow::mode, 80));
     table.getColumns().add(column("RK", WeaponTableRow::recoil, 50));
     table.getColumns().add(column("Munition", WeaponTableRow::ammo, 110));
+    table.getColumns().add(column("Reichweiten (K/M/W/E)", WeaponTableRow::ranges,
+        WeaponTableRow::rangeRow, 170));
     table.getColumns().add(column("Verf.", WeaponTableRow::availability, 50));
     table.getColumns().add(column("Preis", WeaponTableRow::cost, 80));
     table.getColumns().add(column("Quelle", WeaponTableRow::source, 80));
@@ -124,6 +139,15 @@ final class WeaponTableBuilder {
       return new ReadOnlyStringWrapper(row == null ? "" : value.apply(row));
     });
     column.setPrefWidth(prefWidth);
+    return column;
+  }
+
+  /** Spalte mit Tooltip je Zelle (leerer Tooltip-Text = kein Tooltip). */
+  private static @NonNull TreeTableColumn<WeaponTableRow, String> column(@NonNull String title,
+      @NonNull Function<WeaponTableRow, String> value,
+      @NonNull Function<WeaponTableRow, String> tooltip, double prefWidth) {
+    TreeTableColumn<WeaponTableRow, String> column = column(title, value, prefWidth);
+    column.setCellFactory(col -> new WeaponTooltipCell(tooltip));
     return column;
   }
 

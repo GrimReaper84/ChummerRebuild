@@ -77,6 +77,9 @@ While analyzing the old repository to migrate a feature use the following skills
 - **javafx-planner** to compare the differences between the two analyzers and plan the javafx structure for the new
   feature
 - **java-developer** to implement the newly planned code
+- **java-code-quality-reviewer** (diff mode) as the final step: after every implementation, java-developer starts a
+  separate agent with fresh context that reviews the diff with a focus on unnecessary complexity, over-abstraction and
+  duplication; it only reports, the user decides which findings get implemented
 
 While analyzing the existing code to check for code quality and make suggestion to increase the code quality use the
 following skill:

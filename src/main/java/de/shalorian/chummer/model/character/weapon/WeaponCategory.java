@@ -8,37 +8,39 @@ import org.jspecify.annotations.NonNull;
  * zugleich der Wert von {@code <category>} in {@code weapons.xml}.
  */
 public enum WeaponCategory {
-  BLADES("Klingenwaffen", true),
-  CLUBS("Knüppel", true),
-  EXOTIC_MELEE("Exotische Nahkampfwaffen", true),
-  UNARMED("Waffenlos", true),
-  BOWS("Bögen", false),
-  CROSSBOWS("Armbrüste", false),
-  THROWING("Wurfwaffen", false),
-  TASERS("Taser", false),
-  HOLDOUTS("Holdout-Pistolen", false),
-  LIGHT_PISTOLS("Leichte Pistolen", false),
-  HEAVY_PISTOLS("Schwere Pistolen", false),
-  MACHINE_PISTOLS("Automatikpistolen", false),
-  SUBMACHINE_GUNS("Maschinenpistolen", false),
-  ASSAULT_RIFLES("Sturmgewehre", false),
-  SPORTS_RIFLES("Sportgewehre", false),
-  SNIPER_RIFLES("Scharfschützengewehre", false),
-  SHOTGUNS("Schrotflinten", false),
-  SPECIAL("Spezielle Waffen", false),
-  LIGHT_MG("Leichte Maschinengewehre", false),
-  MEDIUM_MG("Mittlere Maschinengewehre", false),
-  HEAVY_MG("Schwere Maschinengewehre", false),
-  ASSAULT_CANNONS("Sturmkanonen", false),
-  GRENADE_LAUNCHERS("Granatwerfer", false),
-  MISSILE_LAUNCHERS("Raketenwerfer", false);
+  BLADES("Klingenwaffen", true, "Klingenwaffen"),
+  CLUBS("Knüppel", true, "Knüppel"),
+  EXOTIC_MELEE("Exotische Nahkampfwaffen", true, "Exotische Nahkampfwaffe"),
+  UNARMED("Waffenlos", true, "Waffenloser Kampf"),
+  BOWS("Bögen", false, "Projektilwaffen"),
+  CROSSBOWS("Armbrüste", false, "Projektilwaffen"),
+  THROWING("Wurfwaffen", false, "Wurfwaffen"),
+  TASERS("Taser", false, "Pistolen"),
+  HOLDOUTS("Holdout-Pistolen", false, "Pistolen"),
+  LIGHT_PISTOLS("Leichte Pistolen", false, "Pistolen"),
+  HEAVY_PISTOLS("Schwere Pistolen", false, "Pistolen"),
+  MACHINE_PISTOLS("Automatikpistolen", false, "Schnellfeuerwaffen"),
+  SUBMACHINE_GUNS("Maschinenpistolen", false, "Schnellfeuerwaffen"),
+  ASSAULT_RIFLES("Sturmgewehre", false, "Schnellfeuerwaffen"),
+  SPORTS_RIFLES("Sportgewehre", false, "Gewehre"),
+  SNIPER_RIFLES("Scharfschützengewehre", false, "Gewehre"),
+  SHOTGUNS("Schrotflinten", false, "Gewehre"),
+  SPECIAL("Spezielle Waffen", false, "Exotische Fernkampfwaffe"),
+  LIGHT_MG("Leichte Maschinengewehre", false, "Schwere Waffen"),
+  MEDIUM_MG("Mittlere Maschinengewehre", false, "Schwere Waffen"),
+  HEAVY_MG("Schwere Maschinengewehre", false, "Schwere Waffen"),
+  ASSAULT_CANNONS("Sturmkanonen", false, "Schwere Waffen"),
+  GRENADE_LAUNCHERS("Granatwerfer", false, "Schwere Waffen"),
+  MISSILE_LAUNCHERS("Raketenwerfer", false, "Schwere Waffen");
 
   private final @NonNull String displayName;
   private final boolean melee;
+  private final @NonNull String skillName;
 
-  WeaponCategory(@NonNull String displayName, boolean melee) {
+  WeaponCategory(@NonNull String displayName, boolean melee, @NonNull String skillName) {
     this.displayName = displayName;
     this.melee = melee;
+    this.skillName = skillName;
   }
 
   public @NonNull String getDisplayName() {
@@ -48,6 +50,23 @@ public enum WeaponCategory {
   /** Ob Waffen dieser Kategorie Nahkampfwaffen mit Reichweite (statt Fernkampf-Reichweiten) sind. */
   public boolean isMelee() {
     return melee;
+  }
+
+  /**
+   * Name der aktiven Kampffertigkeit, mit der Waffen dieser Kategorie geführt bzw. abgefeuert werden
+   * (Fertigkeiten GRW S. 147/148, Zuordnung laut Kategorietexten S. 360–366, z.B. S. 362 "Taser …
+   * werden mit der Fertigkeit Pistolen abgefeuert", S. 363 "Maschinenpistolen werden mit der
+   * Fertigkeit Schnellfeuerwaffen abgefeuert", S. 365 "Schrotflinten werden mit der Fertigkeit
+   * Gewehre abgefeuert", S. 365 "Diese Waffen werden mit der Fertigkeit Schwere Waffen abgefeuert").
+   * Bögen und Armbrüste nutzen Projektilwaffen, Wurfwaffen die gleichnamige Fertigkeit (S. 148).
+   *
+   * <p><b>Einschränkung:</b> Laut GRW S. 365 benötigt jede Spezielle Waffe "eine auf sie
+   * zugeschnittene Fertigkeit Exotische Fernkampfwaffe", und Exotische Nahkampfwaffen müssen ebenfalls
+   * je Waffe gelernt werden (S. 148). Das Fertigkeitsmodell kennt bisher nur je eine gemeinsame
+   * exotische Fertigkeit; deren Wert gilt hier für alle exotischen Waffen.
+   */
+  public @NonNull String skillName() {
+    return skillName;
   }
 
   /**

@@ -118,4 +118,33 @@ class WeaponDataLoaderTest {
     }
     assertFalse(find("Shuriken").category().isMelee());
   }
+
+  @Test
+  void exactlyTheRangedWeaponsHaveARangeRow() {
+    for (WeaponData data : all()) {
+      assertEquals(!data.category().isMelee(), data.range() != null, data.name());
+    }
+  }
+
+  @Test
+  void rangeRowsFollowTheCategory() {
+    assertEquals(WeaponRange.HEAVY_PISTOL, find("Ares Predator IV").range());
+    assertEquals(WeaponRange.SHOTGUN_SLUG, find("Remington 990").range());
+    assertEquals(WeaponRange.MEDIUM_HEAVY_MG, find("Ultimax HMG-2").range());
+    assertEquals(WeaponRange.BOW, find("Bogen").range());
+    assertEquals(WeaponRange.THROWING_KNIFE, find("Wurfmesser").range());
+  }
+
+  @Test
+  void weaponTextsOverrideTheCategoryRange() {
+    // GRW S. 362: "verwenden Sie die Reichweiten für schwere Pistolen"
+    assertEquals(WeaponRange.HEAVY_PISTOL, find("Hämmerli 620S").range());
+    // GRW S. 365: "Sie verschießt ausschließlich Flechettemunition"
+    assertEquals(WeaponRange.SHOTGUN_FLECHETTE, find("Mossberg AM-CMDT").range());
+    // GRW S. 365: Spezielle Waffen
+    assertEquals(WeaponRange.LIGHT_PISTOL, find("Ares S-III Super-Squirt").range());
+    assertEquals(WeaponRange.LIGHT_PISTOL, find("Fichetti Pain Inducer").range());
+    assertEquals(WeaponRange.HEAVY_PISTOL, find("Parashield Pfeilpistole").range());
+    assertEquals(WeaponRange.SPORTS_RIFLE, find("Parashield Pfeilgewehr").range());
+  }
 }

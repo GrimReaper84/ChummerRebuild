@@ -1,6 +1,6 @@
 ---
 name: java-code-quality-reviewer
-description: Reviewt Java/JavaFX-Code im Chummer-Rebuild auf Codequalität, Wartbarkeit, Testbarkeit, Projektkonventionen und Regelwerkstreue und liefert priorisierte, belegte Befunde – wahlweise als Review für den Nutzer oder als abgegrenzte Umsetzungsaufträge für java-developer. Verwende diesen Skill, wenn der Nutzer Code bewerten lassen will ("schau dir mal die Klasse an", "wie ist die Codequalität", "was sollten wir aufräumen", SonarQube-Befunde durchgehen, Review nach einem Feature), ohne dass Code direkt geändert werden soll.
+description: Reviewt Java/JavaFX-Code im Chummer-Rebuild auf Codequalität, Wartbarkeit, Testbarkeit, Projektkonventionen und Regelwerkstreue und liefert priorisierte, belegte Befunde – wahlweise als Review für den Nutzer oder als abgegrenzte Umsetzungsaufträge für java-developer. Verwende diesen Skill, wenn der Nutzer Code bewerten lassen will ("schau dir mal die Klasse an", "wie ist die Codequalität", "was sollten wir aufräumen", SonarQube-Befunde durchgehen, Review nach einem Feature), ohne dass Code direkt geändert werden soll. Läuft außerdem als automatischer Abschluss-Review im Diff-Modus (frischer Agent, Fokus unnötige Komplexität) am Ende jeder Umsetzung durch java-developer.
 ---
 
 # Codequalitäts-Review
@@ -11,6 +11,28 @@ Nutzer entscheidet, was davon gemacht wird. Die Umsetzung übernimmt danach `jav
 **Zuerst lesen:** `.claude/skills/_gemeinsam/projektregeln.md`. Die Abschnitte 6 (Code), 7
 (Bausteine) und 8 (UI) sind hier der Prüfmaßstab. Ein Befund gegen eine Projektkonvention wiegt mehr
 als ein allgemeiner Best-Practice-Hinweis.
+
+## Diff-Modus (Abschluss-Review nach einer Umsetzung)
+
+Standardmäßig der fünfte Workflow-Schritt: `java-developer` startet dafür einen eigenen Agenten mit
+frischem Kontext (siehe Projektregeln Abschnitt 2). Dann gilt zusätzlich:
+
+- **Umfang = nur der Diff** der Umsetzung (`git diff <basis>` bzw. uncommittete Änderungen inkl. neuer
+  Dateien), dazu so viel umliegender Bestand, wie zum Verständnis nötig ist. Keine Befunde zu altem Code,
+  außer der neue Code verschlimmert ein bestehendes Problem.
+- **Schwerpunkt Einfachheit.** Aktiv danach fragen:
+  - Gibt es Code, Typen oder öffentliche Methoden, die nur einem einzigen Aufrufer dienen und sich
+    durch vorhandene Information ersetzen ließen?
+  - Steht dieselbe Regel oder Fallunterscheidung an mehr als einer Stelle (Modell *und* View)?
+  - Wurde eine Abstraktion, Konfigurierbarkeit oder ein Parameter eingeführt, den noch nichts braucht?
+  - Hätte sich ein bestehender Baustein (Projektregeln Abschnitt 7) statt neuem Code geeignet?
+  - Sind Tests redundant, falsch benannt oder prüfen Argumente, die keine Rolle spielen?
+- **Designentscheidungen dürfen infrage gestellt werden**, auch solche aus dem Plan, wenn eine einfachere
+  Lösung dasselbe fachliche Ziel erreicht. Solche Punkte als "Planentscheidung, Nutzer fragen" markieren.
+- **GRW-Zitate im neuen Javadoc stichprobenartig prüfen** (Seitenzahl = gedruckte Seite, Projektregeln
+  Abschnitt 4).
+- Ausgabe A in kompakter Form; höchstens 7 Befunde. "Keine relevanten Befunde" ist ein gültiges Ergebnis.
+- Keine Dateien ändern, nichts committen.
 
 ## Grundhaltung
 

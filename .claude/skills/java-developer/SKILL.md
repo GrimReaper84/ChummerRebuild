@@ -47,6 +47,16 @@ Bei Review-Befunden statt eines Plans gelten die Umsetzungsaufträge des `java-c
 6. **Verifizieren:** `./gradlew build`. Testanzahl und Ergebnis aus `build/test-results` ermitteln. Die
    App nicht starten.
 7. **Nacharbeiten** laut Projektregeln Abschnitt 10 (`docs/feature_checklist.md`).
+8. **Abschluss-Review im frischen Kontext.** Nach grünem Build einen eigenen Agenten (Agent-Tool,
+   `general-purpose`, ohne Kontext dieser Sitzung) starten, der den Skill `java-code-quality-reviewer`
+   im **Diff-Modus** auf die Änderungen dieser Umsetzung anwendet. Der Auftrag an den Agenten nennt:
+   den Plan (`docs/plaene/<feature>_plan.md`), den Basis-Commit bzw. "uncommittete Änderungen", die
+   Aufforderung, zuerst `.claude/skills/_gemeinsam/projektregeln.md` und die Reviewer-SKILL.md zu lesen,
+   und dass er **nichts ändern** darf, sondern nur berichtet. Grund: Wer den Code gerade geschrieben
+   hat, stellt seine eigenen Designentscheidungen kaum infrage; ein frischer Kontext ist kritischer.
+   Die Befunde werden **nicht** eigenmächtig umgesetzt, sondern im Abschlussbericht vorgelegt; der
+   Nutzer gibt sie frei. **Entfällt**, wenn der Auftrag selbst die Umsetzung von Review-Befunden war
+   (sonst Endlosschleife) oder der Nutzer ausdrücklich darauf verzichtet.
 
 ## Umgang mit Planabweichungen
 
@@ -80,7 +90,10 @@ Kurz und für den Nutzer lesbar (Deutsch), in dieser Reihenfolge:
 3. **Abweichungen vom Plan** mit Begründung (neue GRW-Funde, technische Zwänge, umbenannte
    Daten und deren Folgen). "Keine", wenn keine.
 4. **Offene Punkte:** was bewusst nicht gemacht wurde oder noch geklärt werden muss.
-5. Hinweis, dass nicht committet wurde und die UI nur kompiliert, nicht angeschaut wurde.
+5. **Abschluss-Review (Schritt 8):** die Befunde des Review-Agenten knapp mit Schweregrad, jeweils mit
+   eigener Einschätzung (zustimmen/widersprechen, kurz begründet), und die Frage, welche umgesetzt
+   werden sollen.
+6. Hinweis, dass nicht committet wurde und die UI nur kompiliert, nicht angeschaut wurde.
 
 Keine Dateiliste mit jeder geänderten Datei, außer der Nutzer fragt danach. Die wichtigen neuen
 Klassen dürfen im Fließtext genannt werden.

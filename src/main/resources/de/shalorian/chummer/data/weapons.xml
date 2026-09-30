@@ -8,7 +8,12 @@
   (f) Flechette, "÷" wie im Buch; Modus EM/HM/SM/AM; Munition mit Nachlademethode (s) Ladestreifen,
   (m) internes Magazin, (tr) Trommel, (k) Klapplademechanismus, (v) Vorderlader, (gurt) Gurt (GRW
   S. 357). "–" wie in der Tabelle; fehlende Elemente (reach/mode/rc/ammo) = die Tabelle der Kategorie
-  führt diese Spalte nicht. <avail>/<legality> wie armor.xml. Der Bogen hat die Mindeststärke als Stufe
+  führt diese Spalte nicht. <avail>/<legality> wie armor.xml.
+  <range> = Zeile der Tabelle Waffenreichweiten (GRW S. 179), nur bei Fernkampfwaffen. Abweichend von der
+  Kategorie laut Waffentext: Hämmerli 620S → Schwere Pistole (S. 362); Mossberg AM-CMDT → Schrotflinte
+  (Flechette), da sie ausschließlich Flechettemunition verschießt (S. 365); Ares S-III Super-Squirt und
+  Fichetti Pain Inducer → Leichte Pistole, Parashield Pfeilpistole → Schwere Pistole, Parashield
+  Pfeilgewehr → Sportgewehr (alle S. 365). Der Bogen hat die Mindeststärke als Stufe
   (Rating 1–8, GRW S. 361).
 
   Bewusst NICHT enthalten (siehe docs/plaene/waffen_plan.md Abschnitt 13):
@@ -216,6 +221,7 @@
         <category>Bögen</category>
         <damage>(STR Min + 2)K</damage>
         <ap>–</ap>
+        <range>Bogen</range>
         <avail>Rating * 2</avail>
         <cost>Rating * 100</cost>
         <rating>8</rating>
@@ -230,6 +236,7 @@
         <category>Armbrüste</category>
         <damage>3K</damage>
         <ap>–</ap>
+        <range>Leichte Armbrust</range>
         <avail>2</avail>
         <cost>300</cost>
         <source>SR4</source>
@@ -241,6 +248,7 @@
         <category>Armbrüste</category>
         <damage>5K</damage>
         <ap>–</ap>
+        <range>Mittlere Armbrust</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>500</cost>
@@ -253,6 +261,7 @@
         <category>Armbrüste</category>
         <damage>7K</damage>
         <ap>–1</ap>
+        <range>Schwere Armbrust</range>
         <avail>8</avail>
         <legality>E</legality>
         <cost>750</cost>
@@ -267,6 +276,7 @@
         <category>Wurfwaffen</category>
         <damage>(STR÷2)K</damage>
         <ap>–</ap>
+        <range>Shuriken</range>
         <avail>2</avail>
         <cost>30</cost>
         <source>SR4</source>
@@ -278,6 +288,7 @@
         <category>Wurfwaffen</category>
         <damage>(STR÷2+1)K</damage>
         <ap>–</ap>
+        <range>Geworfene Messer</range>
         <avail>2</avail>
         <cost>20</cost>
         <source>SR4</source>
@@ -294,6 +305,7 @@
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>4 (m)</ammo>
+        <range>Taser</range>
         <cost>150</cost>
         <source>SR4</source>
         <page>363</page>
@@ -307,6 +319,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>4 (m)</ammo>
+        <range>Taser</range>
         <cost>150</cost>
         <source>SR4</source>
         <page>363</page>
@@ -322,6 +335,7 @@
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>5 (s)</ammo>
+        <range>Holdout-Pistole</range>
         <avail>6</avail>
         <legality>E</legality>
         <cost>350</cost>
@@ -337,6 +351,7 @@
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>6 (s)</ammo>
+        <range>Holdout-Pistole</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>100</cost>
@@ -354,6 +369,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>11 (s)</ammo>
+        <range>Leichte Pistole</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>150</cost>
@@ -369,6 +385,7 @@
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>30 (s)</ammo>
+        <range>Leichte Pistole</range>
         <avail>6</avail>
         <legality>E</legality>
         <cost>450</cost>
@@ -384,6 +401,7 @@
         <mode>HM</mode>
         <rc>1</rc>
         <ammo>6 (s)</ammo>
+        <range>Schwere Pistole</range>
         <avail>8</avail>
         <legality>E</legality>
         <cost>650</cost>
@@ -399,6 +417,7 @@
         <mode>HM/SM</mode>
         <rc>(1)</rc>
         <ammo>10 (v) x 4</ammo>
+        <range>Leichte Pistole</range>
         <avail>10</avail>
         <legality>E</legality>
         <cost>2000</cost>
@@ -416,6 +435,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>15 (s)</ammo>
+        <range>Schwere Pistole</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>350</cost>
@@ -431,6 +451,7 @@
         <mode>HM/SM</mode>
         <rc>–</rc>
         <ammo>30 (s)</ammo>
+        <range>Schwere Pistole</range>
         <avail>5</avail>
         <legality>E</legality>
         <cost>500</cost>
@@ -446,6 +467,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>16 (s)</ammo>
+        <range>Schwere Pistole</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>300</cost>
@@ -461,6 +483,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>8 (m)</ammo>
+        <range>Schwere Pistole</range>
         <avail>6</avail>
         <legality>E</legality>
         <cost>250</cost>
@@ -477,6 +500,7 @@
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>6 (tr)</ammo>
+        <range>Schwere Pistole</range>
         <avail>3</avail>
         <legality>E</legality>
         <cost>250</cost>
@@ -494,6 +518,7 @@
         <mode>HM/SM</mode>
         <rc>(1)</rc>
         <ammo>35 (s)</ammo>
+        <range>Automatikpistole</range>
         <avail>8</avail>
         <legality>E</legality>
         <cost>550</cost>
@@ -509,6 +534,7 @@
         <mode>HM/SM/AM</mode>
         <rc>–</rc>
         <ammo>30 (s)</ammo>
+        <range>Automatikpistole</range>
         <avail>8</avail>
         <legality>E</legality>
         <cost>600</cost>
@@ -526,6 +552,7 @@
         <mode>HM/SM/AM</mode>
         <rc>(1)</rc>
         <ammo>30 (s)</ammo>
+        <range>Maschinenpistole</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>400</cost>
@@ -541,6 +568,7 @@
         <mode>HM/SM/AM</mode>
         <rc>(1)</rc>
         <ammo>28 (s)</ammo>
+        <range>Maschinenpistole</range>
         <avail>8</avail>
         <legality>E</legality>
         <cost>800</cost>
@@ -556,6 +584,7 @@
         <mode>HM/SM/AM</mode>
         <rc>2 (3)</rc>
         <ammo>20 (s)</ammo>
+        <range>Maschinenpistole</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>550</cost>
@@ -571,6 +600,7 @@
         <mode>SM/AM</mode>
         <rc>2 (3)</rc>
         <ammo>32 (s)</ammo>
+        <range>Maschinenpistole</range>
         <avail>6</avail>
         <legality>E</legality>
         <cost>650</cost>
@@ -586,6 +616,7 @@
         <mode>SM</mode>
         <rc>(1)</rc>
         <ammo>24 (s)</ammo>
+        <range>Maschinenpistole</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>500</cost>
@@ -603,6 +634,7 @@
         <mode>HM/SM/AM</mode>
         <rc>–</rc>
         <ammo>38 (s)</ammo>
+        <range>Sturmgewehr</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>500</cost>
@@ -618,6 +650,7 @@
         <mode>HM/SM/AM</mode>
         <rc>2</rc>
         <ammo>42 (s)</ammo>
+        <range>Sturmgewehr</range>
         <avail>12</avail>
         <legality>V</legality>
         <cost>1700</cost>
@@ -634,6 +667,7 @@
         <mode>HM/SM/AM</mode>
         <rc>2</rc>
         <ammo>35 (s)</ammo>
+        <range>Sturmgewehr</range>
         <avail>8</avail>
         <legality>E</legality>
         <cost>1000</cost>
@@ -649,6 +683,7 @@
         <mode>HM/SM/AM</mode>
         <rc>(1)</rc>
         <ammo>30 (s)</ammo>
+        <range>Sturmgewehr</range>
         <avail>15</avail>
         <legality>V</legality>
         <cost>2500</cost>
@@ -667,6 +702,7 @@
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>5 (m)</ammo>
+        <range>Sportgewehr</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>900</cost>
@@ -682,6 +718,7 @@
         <mode>EM</mode>
         <rc>(1)</rc>
         <ammo>2 (k)</ammo>
+        <range>Sportgewehr</range>
         <avail>12</avail>
         <legality>E</legality>
         <cost>6000</cost>
@@ -699,6 +736,7 @@
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>15 (s)</ammo>
+        <range>Scharfschützengewehr</range>
         <avail>16</avail>
         <legality>V</legality>
         <cost>6200</cost>
@@ -714,6 +752,7 @@
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>10 (m)</ammo>
+        <range>Scharfschützengewehr</range>
         <avail>10</avail>
         <legality>V</legality>
         <cost>5000</cost>
@@ -731,6 +770,7 @@
         <mode>HM/SM/AM</mode>
         <rc>–</rc>
         <ammo>10 (s)</ammo>
+        <range>Schrotflinte (Flechette)</range>
         <avail>12</avail>
         <legality>E</legality>
         <cost>1000</cost>
@@ -746,6 +786,7 @@
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>8 (m)</ammo>
+        <range>Schrotflinte (Massivgeschosse)</range>
         <avail>4</avail>
         <legality>E</legality>
         <cost>550</cost>
@@ -764,6 +805,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>20 (s)</ammo>
+        <range>Leichte Pistole</range>
         <avail>4</avail>
         <cost>500</cost>
         <source>SR4</source>
@@ -778,6 +820,7 @@
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>Speziell</ammo>
+        <range>Leichte Pistole</range>
         <avail>8</avail>
         <legality>E</legality>
         <cost>2000</cost>
@@ -793,6 +836,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>5 (s)</ammo>
+        <range>Schwere Pistole</range>
         <avail>6</avail>
         <legality>E</legality>
         <cost>600</cost>
@@ -808,6 +852,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>10 (s)</ammo>
+        <range>Sportgewehr</range>
         <avail>6</avail>
         <legality>E</legality>
         <cost>1700</cost>
@@ -825,6 +870,7 @@
         <mode>SM/AM</mode>
         <rc>5 (6)</rc>
         <ammo>50 (s) oder 100 (gurt)</ammo>
+        <range>Leichtes Maschinengewehr</range>
         <avail>12</avail>
         <legality>V</legality>
         <cost>2000</cost>
@@ -842,6 +888,7 @@
         <mode>AM</mode>
         <rc>–</rc>
         <ammo>50 (s) oder 100 (gurt)</ammo>
+        <range>Mittleres/Schweres Maschinengewehr</range>
         <avail>12</avail>
         <legality>V</legality>
         <cost>4500</cost>
@@ -859,6 +906,7 @@
         <mode>AM</mode>
         <rc>3 (10)</rc>
         <ammo>50 (s) oder 100 (gurt)</ammo>
+        <range>Mittleres/Schweres Maschinengewehr</range>
         <avail>15</avail>
         <legality>V</legality>
         <cost>7500</cost>
@@ -876,6 +924,7 @@
         <mode>EM</mode>
         <rc>(1)</rc>
         <ammo>15 (s)</ammo>
+        <range>Sturmkanone</range>
         <avail>20</avail>
         <legality>V</legality>
         <cost>5500</cost>
@@ -893,6 +942,7 @@
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>8 (m)</ammo>
+        <range>Granatwerfer</range>
         <avail>8</avail>
         <legality>V</legality>
         <cost>600</cost>
@@ -908,6 +958,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>12 (s)</ammo>
+        <range>Granatwerfer</range>
         <avail>10</avail>
         <legality>V</legality>
         <cost>2000</cost>
@@ -925,6 +976,7 @@
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>1 (v)</ammo>
+        <range>Raketenwerfer</range>
         <avail>10</avail>
         <legality>V</legality>
         <cost>1000</cost>
@@ -940,6 +992,7 @@
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>8 (m)</ammo>
+        <range>Raketenwerfer</range>
         <avail>20</avail>
         <legality>V</legality>
         <cost>12000</cost>

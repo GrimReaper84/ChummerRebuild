@@ -66,6 +66,7 @@ public class WeaponDataLoader {
 
   private static @NonNull WeaponData parseItem(@NonNull Element el) {
     String rating = childText(el, "rating");
+    String range = childText(el, "range");
     return new WeaponData(
         childText(el, "name"),
         WeaponCategory.fromDisplayName(childText(el, "category")),
@@ -75,6 +76,7 @@ public class WeaponDataLoader {
         childText(el, "mode"),
         childText(el, "rc"),
         childText(el, "ammo"),
+        range.isEmpty() ? null : WeaponRange.fromDisplayName(range),
         Availability.parse(childText(el, "avail"), childText(el, "legality")),
         childText(el, "cost"),
         rating.isEmpty() ? 0 : Integer.parseInt(rating),

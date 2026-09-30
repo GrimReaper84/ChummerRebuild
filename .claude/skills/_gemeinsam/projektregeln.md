@@ -30,14 +30,22 @@ Projektroot.
 
 ## 2. Workflow und Freigaben
 
-Ein Feature durchläuft vier Schritte, jeweils mit eigenem Skill:
+Ein Feature durchläuft fünf Schritte, jeweils mit eigenem Skill:
 
 ```
-csharp-legacy-analyzer → java-analyzer → javafx-planner → java-developer
-  (Ist-Verhalten C#)      (Ist-Stand Java)  (Plan)           (Umsetzung)
+csharp-legacy-analyzer → java-analyzer → javafx-planner → java-developer → java-code-quality-reviewer
+  (Ist-Verhalten C#)      (Ist-Stand Java)  (Plan)           (Umsetzung)     (Abschluss-Review, Diff)
 ```
 
-`java-code-quality-reviewer` steht außerhalb dieser Kette (Review von bestehendem Code).
+Der fünfte Schritt läuft **automatisch am Ende jeder Umsetzung** (Nutzervorgabe 2026-09-30):
+`java-developer` startet nach grünem Build einen eigenen Agenten mit frischem Kontext, der den Diff im
+Diff-Modus des Reviewers prüft, mit Schwerpunkt auf unnötiger Komplexität, Überabstraktion und
+Duplikaten. Frischer Kontext, weil der Autor des Codes die eigenen Entscheidungen kaum infrage stellt.
+Der Review-Agent ändert nichts; seine Befunde landen im Abschlussbericht, und der Nutzer gibt frei,
+welche umgesetzt werden. Das Abschluss-Review entfällt, wenn die Umsetzung selbst aus Review-Befunden
+bestand.
+
+Unabhängig davon kann `java-code-quality-reviewer` jederzeit für bestehenden Code aufgerufen werden.
 
 **Nach jedem Schritt anhalten und berichten.** Der Nutzer gibt jeden Schritt einzeln frei. Ein fertiger
 Plan ist *keine* Freigabe zur Umsetzung — Code wird nur geschrieben, wenn der Nutzer das ausdrücklich

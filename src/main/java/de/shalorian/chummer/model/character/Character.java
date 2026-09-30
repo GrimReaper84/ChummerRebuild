@@ -29,7 +29,9 @@ import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.model.character.skill.SkillDataLoader;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
+import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -1294,6 +1296,34 @@ public class Character {
   /** Gesamtpreis aller gekauften Waffen in Nuyen. */
   public int getWeaponNuyenCost() {
     return weapons.stream().mapToInt(Weapon::getNuyenCost).sum();
+  }
+
+  /**
+   * Aktive Fertigkeit, mit der die Waffe geführt bzw. abgefeuert wird ({@link
+   * WeaponCategory#skillName()}, GRW S. 147/148, 360–366). Der Wert einer noch gekoppelten
+   * Fertigkeitsgruppe steht bereits auf jeder Einzelfertigkeit, z.B. Gruppe Feuerwaffen 3 → Gewehre 3.
+   */
+  public @NonNull Skill getWeaponSkill(@NonNull Weapon weapon) {
+    String name = weapon.getData().category().skillName();
+    return Objects.requireNonNull(getSkill(name), () -> "Kampffertigkeit fehlt: " + name);
+  }
+
+  /**
+   * Schaden der Waffe für diesen Charakter (GRW S. 188: "Stärke ÷ 2 (aufgerundet), modifiziert durch
+   * die Waffe"; beim Bogen nach Mindeststärke). Grundlage ist die wirksame Stärke ({@link
+   * #getAugmentedAttributeValue(AttributeType)}), die derzeit der investierten entspricht, da es noch
+   * keine Stärkemodifikatoren gibt.
+   */
+  public @NonNull String getWeaponDamageText(@NonNull Weapon weapon) {
+    return weapon.getDamageText(getAugmentedAttributeValue(AttributeType.STR));
+  }
+
+  /**
+   * Reichweitenstufen der Waffe für diesen Charakter (GRW S. 179; Wurfwaffen nach Stärke, Bögen nach
+   * Mindeststärke), oder {@code null} bei Nahkampfwaffen.
+   */
+  public @Nullable RangeBands getWeaponRangeBands(@NonNull Weapon weapon) {
+    return weapon.getRangeBands(getAugmentedAttributeValue(AttributeType.STR));
   }
 
   // --- Lebensstil & Nuyen-Budget ---

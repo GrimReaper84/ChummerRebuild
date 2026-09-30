@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.weapon;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Eine gekaufte Waffe eines Charakters: referenziert einen {@link WeaponData}-Katalogeintrag und —
@@ -59,5 +60,32 @@ public class Weapon {
   /** Verfügbarkeit dieser Waffe in ihrer Stufe, wie im GRW angezeigt (z.B. "8" beim Bogen Stufe 4). */
   public @NonNull String getAvailabilityText() {
     return data.availability().displayText(rating);
+  }
+
+  /**
+   * Schaden für einen Träger mit der angegebenen Stärke (siehe {@link WeaponDamage}), z.B. "6K" beim
+   * Katana mit STR 5. Codes ohne Stärkebezug werden unverändert geliefert.
+   */
+  public @NonNull String getDamageText(int strength) {
+    return WeaponDamage.evaluate(data.damage(), effectiveStrength(strength));
+  }
+
+  /**
+   * Reichweitenstufen für einen Schützen bzw. Werfer mit der angegebenen Stärke, oder {@code null}
+   * bei Nahkampfwaffen.
+   */
+  public @Nullable RangeBands getRangeBands(int strength) {
+    WeaponRange range = data.range();
+    return range == null ? null : range.bands(effectiveStrength(strength));
+  }
+
+  /**
+   * Stärke, nach der Schaden und Reichweite berechnet werden: beim Bogen seine Mindeststärke (= Stufe),
+   * sonst die des Charakters. GRW S. 361: "Die Mindeststärke der Waffe wird auch für die Bestimmung
+   * des Schadens und der Reichweite benutzt". Pfeile sind noch nicht modelliert; ihre Stufe (S. 361:
+   * "Berechnen Sie den Schaden anhand der niedrigsten Stufe des Pfeils oder Bogens") bleibt außen vor.
+   */
+  private int effectiveStrength(int strength) {
+    return data.hasRating() ? rating : strength;
   }
 }

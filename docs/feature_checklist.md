@@ -202,7 +202,7 @@
 | Feature                     | Status | Anmerkung        |
 |-----------------------------|--------|------------------|
 | Waffen kaufen und verwalten | ✅      | Teil A umgesetzt 2026-09-28 (`docs/plaene/waffen_plan.md`): 63 GRW-Kern-Waffen (Tabellen S. 361/363/366, am Bild geprüft) mit Tabellenwerten als Text, Bogen mit Stufe 1–8 (Mindeststärke), Kauf/Entfernen, Nuyen-Budget, Verfügbarkeit ≤ 12 (sichtbar-deaktiviert), Karriere-Kauf über Nuyen-Log, Persistenz; Unter-Tab "Waffen" als `TreeTableView` |
-| Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ❌ | Teil B des Waffen-Plans |
+| Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ✅ | Teil B umgesetzt 2026-09-30: Schaden aus Stärke (GRW S. 188, STR÷2 aufgerundet; Bogen nach Mindeststärke S. 361), Reichweiten laut Tabelle S. 179 (am Bild geprüft; `<range>` je Waffe, Abweichungen laut Waffentext: Hämmerli 620S, Mossberg AM-CMDT, Spezielle Waffen S. 362/365), Fertigkeit mit Wert je Kategorie (S. 147/148, 360–366). Tabelle aktualisiert sich bei Attribut-/Fertigkeitsänderung. **Einschränkungen:** Exotische Waffen teilen sich je eine Fertigkeit (GRW: je Waffe eigene); Pfeilstufe nicht modelliert; kein Würfelpool (Roadmap Stufe 3) |
 | Zubehör mit Halterungen     | ❌      | Teil C des Waffen-Plans |
 | Waffenmodifikationen        | ❌      | Nur Arsenal, zurückgestellt |
 | Munition, Pfeile/Bolzen, Granaten/Raketen | ❌ | Gehören zum Gear-Feature |
@@ -291,6 +291,7 @@
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
 | Drucken / Export / Charakterbogen                                    | ❌      | **Niedrige Priorität** (2026-08-04): keine Charakterbogen-Vorlage/Formular im GRW-Text gefunden — reines Tool-Feature ohne Regelwerk-Bezug |
+| Einstellbare Zahlendarstellung (QoL)                                 | ❌      | **Notiz (Nutzerwunsch 2026-09-30):** später umschaltbar machen, ob Tausender mit Punkt gruppiert werden ("1.500" wie im GRW vs. "1500") und ob Dezimalzahlen Komma oder Punkt nutzen (z.B. Essenz "5,8" vs. "5.8"). Derzeit überall ohne Tausenderpunkt (Preise, Reichweiten). Umsetzung dann zentral über eine Formatierungsstelle statt verstreuter String-Verkettung |
 
 ---
 
@@ -310,14 +311,14 @@
 | Cyberware/Bioware      | 6 | 0  | 2 |
 | Rüstung                | 3 | 0  | 3 |
 | Lebensstil             | 1 | 0  | 2 |
-| Waffen                 | 1 | 0  | 4 |
+| Waffen                 | 2 | 0  | 3 |
 | Gear                   | 0 | 0  | 3 |
 | Fahrzeuge              | 0 | 0  | 1 |
 | Karrieremodus          | 5 | 0  | 4 |
 | Initiative             | 0 | 0  | 4 |
 | Condition Monitor      | 0 | 0  | 4 |
 | Persistenz             | 8 | 1  | 0 |
-| UI/Bedienbarkeit       | 4 | 0  | 1 |
+| UI/Bedienbarkeit       | 4 | 0  | 2 |
 
 ---
 
@@ -345,7 +346,7 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung (GRW-Kern S. 284, zurückgestellt)
 3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
 4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
-5. **Waffen** ⚠️ Teil A umgesetzt (2026-09-28, `docs/plaene/waffen_plan.md`); offen: Teil B (berechnete Werte), Teil C (Zubehör)
+5. **Waffen** ⚠️ Teil A (2026-09-28) und Teil B (2026-09-30) umgesetzt (`docs/plaene/waffen_plan.md`); offen: Teil C (Zubehör)
 6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen
 
 **Stufe 3 – Abgeleitete Werte & Gameplay**

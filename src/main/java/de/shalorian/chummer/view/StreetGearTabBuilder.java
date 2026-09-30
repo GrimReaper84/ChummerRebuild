@@ -47,9 +47,10 @@ import org.tbee.javafx.scene.layout.MigPane;
 /**
  * Baut den Tab "Straßenausrüstung" mit seinen Unter-Tabs Lebensstil, Rüstung und Waffen (Aufbau nach dem
  * alten {@code tabStreetGearTabs} aus {@code frmCreate.Designer.cs}; Gear folgt als weiterer Unter-Tab;
- * die Waffentabelle baut {@link WeaponTableBuilder}). Beide Unter-Tabs werden bei jeder Änderung komplett neu aufgebaut; nur die
- * Rüstungs-Kopfzeile hängt zusätzlich an der Konstitution und wird deshalb über {@link #refresh()}
- * beim Attribut-Refresh des {@link CharacterViewController} nachgezogen. Alles außerhalb dieses Tabs
+ * die Waffentabelle baut {@link WeaponTableBuilder}). Die Unter-Tabs werden bei jeder Änderung komplett
+ * neu aufgebaut; die Rüstungs-Kopfzeile (Konstitution) und die Waffenwerte (Stärke, Fertigkeiten)
+ * hängen zusätzlich am Charakter und werden deshalb über {@link #refresh()} beim Refresh des {@link
+ * CharacterViewController} nachgezogen. Alles außerhalb dieses Tabs
  * erreicht der Builder ausschließlich über den {@link StreetGearHost}.
  */
 final class StreetGearTabBuilder {
@@ -77,9 +78,13 @@ final class StreetGearTabBuilder {
     weaponTable.build(character);
   }
 
-  /** Zieht die von Attributen abhängigen Anzeigen (Schutz, Behinderung) nach. */
+  /**
+   * Zieht die von Attributen und Fertigkeiten abhängigen Anzeigen nach: Schutz/Behinderung der Rüstung
+   * sowie Schaden, Reichweiten und Fertigkeitswert der Waffen.
+   */
   void refresh() {
     armorRefreshers.forEach(Runnable::run);
+    weaponTable.refresh();
   }
 
   // ── Lebensstil ────────────────────────────────────────────
