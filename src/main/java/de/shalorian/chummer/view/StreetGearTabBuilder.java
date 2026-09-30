@@ -47,7 +47,7 @@ import org.tbee.javafx.scene.layout.MigPane;
 /**
  * Baut den Tab "Straßenausrüstung" mit seinen Unter-Tabs Lebensstil, Rüstung und Waffen (Aufbau nach dem
  * alten {@code tabStreetGearTabs} aus {@code frmCreate.Designer.cs}; Gear folgt als weiterer Unter-Tab;
- * die Waffentabelle baut {@link WeaponTableBuilder}). Die Unter-Tabs werden bei jeder Änderung komplett
+ * den Waffen-Unter-Tab baut {@link WeaponTabBuilder}). Die Unter-Tabs werden bei jeder Änderung komplett
  * neu aufgebaut; die Rüstungs-Kopfzeile (Konstitution) und die Waffenwerte (Stärke, Fertigkeiten)
  * hängen zusätzlich am Charakter und werden deshalb über {@link #refresh()} beim Refresh des {@link
  * CharacterViewController} nachgezogen. Alles außerhalb dieses Tabs
@@ -60,7 +60,7 @@ final class StreetGearTabBuilder {
   private final @NonNull VBox lifestyleContainer;
   private final @NonNull VBox armorContainer;
   private final @NonNull StreetGearHost host;
-  private final @NonNull WeaponTableBuilder weaponTable;
+  private final @NonNull WeaponTabBuilder weaponTab;
   private final @NonNull List<Runnable> armorRefreshers = new ArrayList<>();
 
   StreetGearTabBuilder(@NonNull VBox lifestyleContainer, @NonNull VBox armorContainer,
@@ -68,23 +68,23 @@ final class StreetGearTabBuilder {
     this.lifestyleContainer = lifestyleContainer;
     this.armorContainer = armorContainer;
     this.host = host;
-    this.weaponTable = new WeaponTableBuilder(weaponContainer, host);
+    this.weaponTab = new WeaponTabBuilder(weaponContainer, host);
   }
 
   /** Baut alle Unter-Tabs für {@code character} neu auf. */
   void build(@NonNull Character character) {
     buildLifestyleTab(character);
     buildArmorTab(character);
-    weaponTable.build(character);
+    weaponTab.build(character);
   }
 
   /**
    * Zieht die von Attributen und Fertigkeiten abhängigen Anzeigen nach: Schutz/Behinderung der Rüstung
-   * sowie Schaden, Reichweiten und Fertigkeitswert der Waffen.
+   * sowie der Detailbereich der gewählten Waffe (Schaden, Reichweiten, Fertigkeitswert).
    */
   void refresh() {
     armorRefreshers.forEach(Runnable::run);
-    weaponTable.refresh();
+    weaponTab.refresh();
   }
 
   // ── Lebensstil ────────────────────────────────────────────

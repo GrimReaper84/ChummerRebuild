@@ -543,62 +543,60 @@
     -fx-text-fill: #555555;
 }
 
-/* ── TreeTableView (Dark Theme, analog TableView) ─────── */
+/* ── TreeView + SplitPane (Waffen-Unter-Tab, Baum links / Details rechts) ── */
 
-.tree-table-view {
+.tree-view {
     -fx-background-color: #252526;
     -fx-border-color: #3c3c3c;
     -fx-border-width: 1;
 }
 
-.tree-table-view .column-header-background {
-    -fx-background-color: #2d2d2d;
-}
-
-.tree-table-view .column-header,
-.tree-table-view .filler {
-    -fx-background-color: #2d2d2d;
-    -fx-border-color: transparent #3c3c3c transparent transparent;
-    -fx-border-width: 0 1 0 0;
-    -fx-size: 28;
-}
-
-.tree-table-view .column-header .label {
-    -fx-text-fill: #888888;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-alignment: CENTER-LEFT;
-    -fx-padding: 0 4 0 4;
-}
-
-.tree-table-row-cell {
+.tree-view .tree-cell {
     -fx-background-color: #252526;
-    -fx-border-color: transparent transparent #2d2d2d transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-cell-size: 28px;
-}
-
-.tree-table-row-cell:odd {
-    -fx-background-color: #232323;
-}
-
-.tree-table-row-cell:selected {
-    -fx-background-color: #094771;
-}
-
-.tree-table-row-cell .tree-table-cell {
     -fx-text-fill: #cccccc;
     -fx-font-size: 13px;
-    -fx-padding: 0 4 0 4;
-    -fx-border-color: transparent;
+    -fx-padding: 4 6 4 6;
 }
 
-.tree-table-row-cell .tree-disclosure-node .arrow {
+.tree-view .tree-cell:filled:hover {
+    -fx-background-color: #2d2d2d;
+}
+
+.tree-view .tree-cell:filled:selected {
+    -fx-background-color: #094771;
+    -fx-text-fill: #ffffff;
+}
+
+.tree-view .tree-cell .tree-disclosure-node .arrow {
     -fx-background-color: #888888;
 }
 
-.tree-table-view .placeholder .label {
-    -fx-text-fill: #555555;
+.split-pane {
+    -fx-background-color: #1e1e1e;
+    -fx-padding: 0;
+    -fx-box-border: transparent;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: #1e1e1e;
+    -fx-padding: 0 3 0 3;
+}
+
+.detail-key {
+    -fx-font-size: 12px;
+    -fx-text-fill: #888888;
+}
+
+.detail-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e8e8e8;
+}
+
+.detail-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: #777777;
+    -fx-font-style: italic;
 }
 
 /* ── TextArea ────────────────────────────────────────── */

@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character.weapon;
 
+import java.util.List;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -16,10 +17,10 @@ import org.jspecify.annotations.NonNull;
  */
 public record RangeBands(int minimum, int shortMax, int mediumMax, int longMax, int extremeMax) {
 
-  /** Anzeige wie in der GRW-Tabelle, Stufen durch "/" getrennt, z.B. "0–5/6–20/21–40/41–60". */
-  public @NonNull String displayText() {
-    return band(minimum, shortMax) + "/" + band(shortMax + 1, mediumMax) + "/"
-        + band(mediumMax + 1, longMax) + "/" + band(longMax + 1, extremeMax);
+  /** Die vier Stufen als Anzeigetexte wie in der GRW-Tabelle: Kurz, Mittel, Weit, Extrem weit. */
+  public @NonNull List<String> bandTexts() {
+    return List.of(band(minimum, shortMax), band(shortMax + 1, mediumMax),
+        band(mediumMax + 1, longMax), band(longMax + 1, extremeMax));
   }
 
   private static @NonNull String band(int from, int to) {

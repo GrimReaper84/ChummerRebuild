@@ -21,6 +21,11 @@ public final class StyleClasses {
   public static final String STYLE_BP_LABEL = "bp-label";
   public static final String STYLE_BP_VALUE = "bp-value";
   public static final String STYLE_BP_VALUE_WARN = "bp-value-warn";
+  public static final String STYLE_ATTR_SCROLL = "attr-scroll";
+  /** Label/Wert-Paare und Hinweise in Detailbereichen (z.B. Waffen-Unter-Tab). */
+  public static final String STYLE_DETAIL_KEY = "detail-key";
+  public static final String STYLE_DETAIL_VALUE = "detail-value";
+  public static final String STYLE_DETAIL_HINT = "detail-hint";
   public static final String MIGPANE_HIDEMODE_3 = "hidemode 3";
 
   private StyleClasses() {

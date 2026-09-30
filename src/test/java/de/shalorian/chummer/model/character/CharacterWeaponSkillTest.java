@@ -10,6 +10,7 @@ import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
+import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
@@ -80,7 +81,7 @@ class CharacterWeaponSkillTest {
     RangeBands bands = c.getWeaponRangeBands(weapon("Wurfmesser"));
 
     assertNotNull(bands);
-    assertEquals("0–5/6–10/11–15/16–25", bands.displayText());
+    assertEquals(List.of("0–5", "6–10", "11–15", "16–25"), bands.bandTexts());
   }
 
   @Test
