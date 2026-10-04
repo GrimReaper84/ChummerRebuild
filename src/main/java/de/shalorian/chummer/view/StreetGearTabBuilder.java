@@ -45,13 +45,13 @@ import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.tbee.javafx.scene.layout.MigPane;
 
 /**
- * Baut den Tab "Straßenausrüstung" mit seinen Unter-Tabs Lebensstil, Rüstung und Waffen (Aufbau nach dem
- * alten {@code tabStreetGearTabs} aus {@code frmCreate.Designer.cs}; Gear folgt als weiterer Unter-Tab;
- * den Waffen-Unter-Tab baut {@link WeaponTabBuilder}). Die Unter-Tabs werden bei jeder Änderung komplett
- * neu aufgebaut; die Rüstungs-Kopfzeile (Konstitution) und die Waffenwerte (Stärke, Fertigkeiten)
- * hängen zusätzlich am Charakter und werden deshalb über {@link #refresh()} beim Refresh des {@link
- * CharacterViewController} nachgezogen. Alles außerhalb dieses Tabs
- * erreicht der Builder ausschließlich über den {@link StreetGearHost}.
+ * Baut den Tab "Straßenausrüstung" mit seinen Unter-Tabs Lebensstil, Rüstung, Waffen und
+ * Ausrüstung (Aufbau nach dem alten {@code tabStreetGearTabs} aus {@code frmCreate.Designer.cs}; den
+ * Waffen-Unter-Tab baut {@link WeaponTabBuilder}, den Ausrüstungs-Unter-Tab {@link GearTabBuilder}).
+ * Die Unter-Tabs werden bei jeder Änderung komplett neu aufgebaut; die Rüstungs-Kopfzeile
+ * (Konstitution) und die Waffenwerte (Stärke, Fertigkeiten) hängen zusätzlich am Charakter und werden
+ * deshalb über {@link #refresh()} beim Refresh des {@link CharacterViewController} nachgezogen. Alles
+ * außerhalb dieses Tabs erreicht der Builder ausschließlich über den {@link StreetGearHost}.
  */
 final class StreetGearTabBuilder {
 
@@ -61,14 +61,16 @@ final class StreetGearTabBuilder {
   private final @NonNull VBox armorContainer;
   private final @NonNull StreetGearHost host;
   private final @NonNull WeaponTabBuilder weaponTab;
+  private final @NonNull GearTabBuilder gearTab;
   private final @NonNull List<Runnable> armorRefreshers = new ArrayList<>();
 
   StreetGearTabBuilder(@NonNull VBox lifestyleContainer, @NonNull VBox armorContainer,
-      @NonNull VBox weaponContainer, @NonNull StreetGearHost host) {
+      @NonNull VBox weaponContainer, @NonNull VBox gearContainer, @NonNull StreetGearHost host) {
     this.lifestyleContainer = lifestyleContainer;
     this.armorContainer = armorContainer;
     this.host = host;
     this.weaponTab = new WeaponTabBuilder(weaponContainer, host);
+    this.gearTab = new GearTabBuilder(gearContainer, host);
   }
 
   /** Baut alle Unter-Tabs für {@code character} neu auf. */
@@ -76,6 +78,7 @@ final class StreetGearTabBuilder {
     buildLifestyleTab(character);
     buildArmorTab(character);
     weaponTab.build(character);
+    gearTab.build(character);
   }
 
   /**

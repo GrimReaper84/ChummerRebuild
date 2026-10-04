@@ -214,11 +214,15 @@
 
 | Feature                      | Status | Anmerkung        |
 |------------------------------|--------|------------------|
-| Allgemeine Ausrüstung kaufen | ❌      | Komplett fehlend |
-| Commlink mit Response/Signal | ❌      |                  |
-| Orte/Lager-Kategorien        | ❌      |                  |
-| Holster, Versteckte Armhalterung, Smart-Feuerplattform | ❌ | Aus dem Waffenzubehör (GRW S. 367/368) hierher verschoben (Nutzerentscheidung 2026-09-30) |
-| Munition, Pfeile/Bolzen, Granaten/Raketen | ❌ | Aus dem Waffen-Feature hierher verschoben (`waffen_plan.md`) |
+| Allgemeine Ausrüstung kaufen | ✅ | Gear Teil A (`docs/plaene/gear_plan.md`, 2026-10-04): Unter-Tab "Ausrüstung" (Baum nach Bereich + Detailbereich), 140 Einträge aus 28 GRW-Tabellen (S. 368, 374–385, 395, am Bild übertragen), Menge in Packungsschritten mit Zusammenführen, Pflicht-Zusatztext (Lizenz mit Vorauswahl), Preisspannen mit Mindestpreis, Karriere-Kauf/Mengenerhöhung über das Nuyen-Log, Persistenz. UI vom Nutzer noch nicht angesehen |
+| Stufe ≤ 6 bei Erschaffung (allgemein) | ✅ | `Equipment.isAvailableForPurchase` (GRW S. 111), gilt für alle Kaufkategorien mit Stufe |
+| Kommlink mit Prozessor/Signal + Betriebssystem (Firewall/System) | ❌ | Gear Teil B; GRW-Begriffe S. 374 (C#: "Response"); Analyse `docs/analysen/gear_analyse.md` |
+| Sensoren, Sicht-/Audioverstärkung, Magschloss-Zusätze (Kapazität) | ❌ | Gear Teil C |
+| Orte/Lager-Kategorien        | ❌      | Zurückgestellt (später gemeinsam für Gear, Waffen, Rüstung) |
+| Holster, Versteckte Armhalterung, Smart-Feuerplattform | ✅ | Als Gear in Teil A (Tabelle Feuerwaffenzubehör, GRW S. 368); Smart-Feuerplattform ohne Waffenbezug, Werte als Hinweis |
+| Foki kaufen | ✅ | Nur Kauf (Stufe = Kraft 1–6); Bindung (GP/Karma) und Wirkung folgen mit dem Magie-Feature |
+| Munition, Pfeile/Bolzen, Granaten/Raketen | ❌ | Gear Teil D; aus dem Waffen-Feature hierher verschoben (`waffen_plan.md`) |
+| DIY/Hacked/Gratis/Aufschlag/Schwarzmarkt, Verkauf, "ausgerüstet" | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
 
 ---
 
@@ -315,7 +319,7 @@
 | Rüstung                | 3 | 0  | 4 |
 | Lebensstil             | 1 | 0  | 2 |
 | Waffen                 | 3 | 0  | 2 |
-| Gear                   | 0 | 0  | 5 |
+| Gear                   | 4 | 0  | 5 |
 | Fahrzeuge              | 0 | 0  | 1 |
 | Karrieremodus          | 5 | 0  | 4 |
 | Initiative             | 0 | 0  | 4 |
@@ -350,7 +354,7 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
 4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
 5. **Waffen** ✅ Teil A (2026-09-28), Teil B (2026-09-30) und Teil C Zubehör (2026-10-04) umgesetzt (`docs/plaene/waffen_plan.md`)
-6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen. **Vorarbeit erledigt (2026-10-04):** alle Kaufkategorien liegen in `model.character.equipment.Equipment` (`character.getEquipment()`, `docs/plaene/character_aufteilung_plan.md`, Sonar S6539) — Gear gehört dorthin, nicht nach `Character`
+6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen. **Vorarbeit erledigt (2026-10-04):** alle Kaufkategorien liegen in `model.character.equipment.Equipment` (`character.getEquipment()`, `docs/plaene/character_aufteilung_plan.md`, Sonar S6539) — Gear gehört dorthin, nicht nach `Character`. **Teil A umgesetzt (2026-10-04)**, offen: Teil B (Kommlinks/Matrix), C (Kapazität), D (Munition/Pfeile/Granaten/Sprengstoffe)
 
 **Stufe 3 – Abgeleitete Werte & Gameplay**
 

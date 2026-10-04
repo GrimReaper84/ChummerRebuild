@@ -1,0 +1,1339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Allgemeine Ausrüstung des SR4-Grundregelwerks, Gear Teil A (docs/plaene/gear_plan.md): alle Tabellen der
+  Ausrüstungsliste ohne Sondermechanik (S. 368, 374, 376-378, 382-385, 395) - jeder Wert direkt vom
+  PDF-Bild übertragen, nicht aus dem OCR-Text.
+
+  <rating>min-max</rating> = Stufe bzw. Kraft laut Tabelle ("Stufe 1-6"); fehlt = ohne Stufe.
+  <device> = feste Gerätestufe der Elektroniktabellen (S. 374).
+  <avail>/<legality> wie armor.xml ("–" = leer). <cost> = Preis je Packung als Formel ("Stufe x 200 ¥" →
+  "Rating * 200"). <costfor> = Packungsgröße (Standard 1), <unit> = Einheit der Menge (Standard Stück).
+  <variablecost>true</variablecost> = Preisspanne ("5-200+ ¥", "100+ ¥"): <cost> ist der Mindestpreis.
+  <extra> = Pflicht-Zusatztext beim Kauf mit Feldbezeichnung; kind="LICENSE" = Lizenz-Vorauswahl.
+
+  Bewusst NICHT enthalten (spätere Gear-Teile): Kommlinks, Betriebssysteme, Matrixprogramme (B);
+  Sensoren, Sicht-/Audioverstärkungen, Magschloss-Zusätze (C); Munition, Pfeile, Bolzen, Granaten,
+  Raketen, Sprengstoffe (D). Kleidung gehört zum Rüstungs-Feature.
+  Namen: Einträge, die im GRW nur unter ihrer Tabelle stehen ("Kiste", "Metall", "Heilung", "Gold"),
+  sind um den Tabellennamen ergänzt, damit der Katalogname eindeutig ist.
+-->
+<gear>
+
+    <!-- ── Feuerwaffenzubehör (nur die Gear-Teile; Waffenzubehör steht in weapon_accessories.xml) (S. 368) ── -->
+    <item>
+        <name>Schnellziehholster</name>
+        <category>Feuerwaffenzubehör</category>
+        <avail>4</avail>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+    <item>
+        <name>Tarnholster</name>
+        <category>Feuerwaffenzubehör</category>
+        <avail>2</avail>
+        <cost>75</cost>
+        <note>Erhöht den Tarn-Modifikator des enthaltenen Gegenstandes um −1 (GRW S. 368).</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+    <item>
+        <name>Versteckte Armhalterung</name>
+        <category>Feuerwaffenzubehör</category>
+        <avail>4</avail>
+        <cost>350</cost>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+    <item>
+        <name>Smart-Feuerplattform</name>
+        <category>Feuerwaffenzubehör</category>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>2000</cost>
+        <note>Stationäres Roboter-Dreibein für eine Smartgun-Waffe (Halterung Unterlauf); Pilot 3, Sensor 3, Zielerfassung-Autosoft Stufe 3 (GRW S. 368).</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <!-- ── Elektronik: Zubehör (Gerätestufe laut Tabelle) (S. 374) ── -->
+    <item>
+        <name>AR-Handschuhe</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <cost>250</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Biometrischer Scanner</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <avail>4</avail>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Drucker</name>
+        <category>Elektronik-Zubehör</category>
+        <device>1</device>
+        <cost>5</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Elektroden</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Nanitencreme-Troden</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <avail>2</avail>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Satelliten-Verbindung</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <avail>4</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Sim-Modul</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <cost>100</cost>
+        <variablecost>true</variablecost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Sim-Modul (für BTL/heißes Sim modifiziert)</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <avail>4</avail>
+        <legality>V</legality>
+        <cost>250</cost>
+        <variablecost>true</variablecost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Simrig</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <avail>12</avail>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Skinlink</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <avail>6</avail>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Subvokales Mikrofon</name>
+        <category>Elektronik-Zubehör</category>
+        <device>3</device>
+        <avail>6</avail>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+
+    <!-- ── Sonstige Elektronik (S. 374) ── -->
+    <item>
+        <name>Elektronisches Papier</name>
+        <category>Sonstige Elektronik</category>
+        <device>1</device>
+        <cost>20</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Holoprojektor</name>
+        <category>Sonstige Elektronik</category>
+        <device>3</device>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+
+    <!-- ── RFID-Marker (pro 20 Stück) (S. 374) ── -->
+    <item>
+        <name>Standard-RFID-Marker</name>
+        <category>RFID-Marker</category>
+        <device>1</device>
+        <cost>1</cost>
+        <costfor>20</costfor>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Sensor-RFID (ohne Sensor)</name>
+        <category>RFID-Marker</category>
+        <device>3</device>
+        <avail>4</avail>
+        <cost>500</cost>
+        <costfor>20</costfor>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Sicherheits-RFID</name>
+        <category>RFID-Marker</category>
+        <device>3</device>
+        <avail>4</avail>
+        <cost>100</cost>
+        <costfor>20</costfor>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Spionage-RFID</name>
+        <category>RFID-Marker</category>
+        <device>3</device>
+        <avail>6</avail>
+        <cost>5</cost>
+        <costfor>20</costfor>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+
+    <!-- ── Kommunikationssystem (S. 376) ── -->
+    <item>
+        <name>Headkom-Blocker</name>
+        <category>Kommunikationssystem</category>
+        <rating>1-6</rating>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>Rating * 250</cost>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Mikro-Transceiver</name>
+        <category>Kommunikationssystem</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 200</cost>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>RFID-Löscher</name>
+        <category>Kommunikationssystem</category>
+        <avail>6</avail>
+        <legality>V</legality>
+        <cost>150</cost>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Störsender, Bereich</name>
+        <category>Kommunikationssystem</category>
+        <rating>1-10</rating>
+        <avail>Rating * 3</avail>
+        <legality>V</legality>
+        <cost>Rating * 500</cost>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Störsender, zielgerichtet</name>
+        <category>Kommunikationssystem</category>
+        <rating>1-10</rating>
+        <avail>Rating * 2</avail>
+        <legality>V</legality>
+        <cost>Rating * 500</cost>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>White-Noise-Generator</name>
+        <category>Kommunikationssystem</category>
+        <rating>1-6</rating>
+        <avail>Rating + 1</avail>
+        <cost>Rating * 50</cost>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+
+    <!-- ── Speichermedien (S. 377) ── -->
+    <item>
+        <name>Datenchip</name>
+        <category>Speichermedien</category>
+        <cost>1</cost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+
+    <!-- ── Software (S. 377) ── -->
+    <item>
+        <name>Datasoft</name>
+        <category>Software</category>
+        <rating>1-6</rating>
+        <cost>Rating * 10</cost>
+        <extra>Thema</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Kartensoft</name>
+        <category>Software</category>
+        <rating>1-6</rating>
+        <cost>Rating * 5</cost>
+        <extra>Thema</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Lehrsoft</name>
+        <category>Software</category>
+        <rating>1-5</rating>
+        <cost>Rating * 500</cost>
+        <extra>Fertigkeit</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+
+    <!-- ── Talentsoft (S. 377) ── -->
+    <item>
+        <name>Aktionssoft</name>
+        <category>Talentsoft</category>
+        <rating>1-4</rating>
+        <avail>8</avail>
+        <cost>Rating * 10000</cost>
+        <extra>Fertigkeit</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Linguasoft</name>
+        <category>Talentsoft</category>
+        <rating>1-5</rating>
+        <avail>2</avail>
+        <cost>Rating * 500</cost>
+        <extra>Sprache</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Wissenssoft</name>
+        <category>Talentsoft</category>
+        <rating>1-5</rating>
+        <avail>4</avail>
+        <cost>Rating * 2000</cost>
+        <extra>Fertigkeit</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+
+    <!-- ── ID/Credsticks (S. 377) ── -->
+    <item>
+        <name>Beglaubigter Credstick</name>
+        <category>ID/Credsticks</category>
+        <cost>25</cost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Gefälschte Lizenz</name>
+        <category>ID/Credsticks</category>
+        <rating>1-6</rating>
+        <avail>Rating * 3</avail>
+        <legality>V</legality>
+        <cost>Rating * 100</cost>
+        <extra kind="LICENSE">Lizenz</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Gefälschte SIN</name>
+        <category>ID/Credsticks</category>
+        <rating>1-6</rating>
+        <avail>Rating * 3</avail>
+        <legality>V</legality>
+        <cost>Rating * 1000</cost>
+        <extra>Name</extra>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+
+    <!-- ── SimSinn (Preisspannen: Spieler legt den Preis fest, mindestens der GRW-Mindestpreis) (S. 377) ── -->
+    <item>
+        <name>Sim-Aufzeichnung</name>
+        <category>SimSinn</category>
+        <cost>5</cost>
+        <variablecost>true</variablecost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>BTL-Aufzeichnung</name>
+        <category>SimSinn</category>
+        <avail>4</avail>
+        <legality>V</legality>
+        <cost>20</cost>
+        <variablecost>true</variablecost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>VR-Spiele</name>
+        <category>SimSinn</category>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+
+    <!-- ── ARE-Programme (S. 377) ── -->
+    <item>
+        <name>Miracle Shooter</name>
+        <category>ARE-Programme</category>
+        <cost>50</cost>
+        <note>Zuzüglich 10 ¥ Monatsbeitrag (GRW S. 377).</note>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Virtuelle Person</name>
+        <category>ARE-Programme</category>
+        <cost>150</cost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Virtuelle Surround-Musik</name>
+        <category>ARE-Programme</category>
+        <cost>1</cost>
+        <unit>Simchip</unit>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Virtuelles Haustier</name>
+        <category>ARE-Programme</category>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Virtuelles Wetter</name>
+        <category>ARE-Programme</category>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+    <item>
+        <name>Wand-Dekorierer</name>
+        <category>ARE-Programme</category>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>377</page>
+    </item>
+
+    <!-- ── Werkzeug (Tabelle: Kiste, Laden, Werkstatt; je Fertigkeit separat, GRW S. 378) (S. 378) ── -->
+    <item>
+        <name>Werkzeugkiste</name>
+        <category>Werkzeug</category>
+        <cost>500</cost>
+        <extra>Fertigkeit</extra>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Werkzeugladen</name>
+        <category>Werkzeug</category>
+        <avail>8</avail>
+        <cost>5000</cost>
+        <extra>Fertigkeit</extra>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Werkstatt</name>
+        <category>Werkzeug</category>
+        <avail>12</avail>
+        <cost>100000</cost>
+        <extra>Fertigkeit</extra>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+
+    <!-- ── Sicherheitsgeräte (ohne die Magschloss-Zusätze, die kommen mit Gear Teil C) (S. 382) ── -->
+    <item>
+        <name>Magschloss</name>
+        <category>Sicherheitsgeräte</category>
+        <rating>1-6</rating>
+        <cost>Rating * 100</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Schloss</name>
+        <category>Sicherheitsgeräte</category>
+        <rating>1-6</rating>
+        <cost>Rating * 10</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+
+    <!-- ── Handschellen (S. 382) ── -->
+    <item>
+        <name>Cyberwareblocker</name>
+        <category>Handschellen</category>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Metall-Handschellen</name>
+        <category>Handschellen</category>
+        <cost>20</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Plastik-Handschellen</name>
+        <category>Handschellen</category>
+        <cost>1</cost>
+        <costfor>10</costfor>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Plasstahl-Handschellen</name>
+        <category>Handschellen</category>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+
+    <!-- ── Einbruchswerkzeug (S. 382) ── -->
+    <item>
+        <name>Automatischer Dietrich</name>
+        <category>Einbruchswerkzeug</category>
+        <rating>1-6</rating>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>Rating * 200</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Brecheisen</name>
+        <category>Einbruchswerkzeug</category>
+        <cost>20</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Dietrich-Set</name>
+        <category>Einbruchswerkzeug</category>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>300</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Drahtzange</name>
+        <category>Einbruchswerkzeug</category>
+        <cost>25</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Gussform für Abdruckhandschuh</name>
+        <category>Einbruchswerkzeug</category>
+        <rating>1-3</rating>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>Rating * 200</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Magschlosskarten-Kopierer</name>
+        <category>Einbruchswerkzeug</category>
+        <rating>1-6</rating>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>Rating * 300</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Magschlossknacker</name>
+        <category>Einbruchswerkzeug</category>
+        <rating>1-6</rating>
+        <avail>Rating * 3</avail>
+        <legality>V</legality>
+        <cost>Rating * 2000</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Mini-Schweißgerät</name>
+        <category>Einbruchswerkzeug</category>
+        <avail>2</avail>
+        <cost>250</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Monofilament-Kettensäge</name>
+        <category>Einbruchswerkzeug</category>
+        <avail>4</avail>
+        <cost>300</cost>
+        <note>Als Waffe: Exotische Nahkampfwaffe, Reichweite 1, Schaden 5K, PB −2; Würfelpoolmodifikator −2 auf Angriffs- und Paradeproben, Schadenscode gegen Barrieren verdoppelt (GRW S. 382).</note>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Sequencer</name>
+        <category>Einbruchswerkzeug</category>
+        <rating>1-6</rating>
+        <avail>Rating * 3</avail>
+        <legality>V</legality>
+        <cost>Rating * 200</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+
+    <!-- ── Drogen (pro Dosis) (S. 382) ── -->
+    <item>
+        <name>Cram</name>
+        <category>Drogen</category>
+        <avail>2</avail>
+        <legality>E</legality>
+        <cost>10</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Deepweed</name>
+        <category>Drogen</category>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>400</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Jazz</name>
+        <category>Drogen</category>
+        <avail>2</avail>
+        <legality>E</legality>
+        <cost>75</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Kamikaze</name>
+        <category>Drogen</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>100</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Long Haul</name>
+        <category>Drogen</category>
+        <cost>50</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Nitro</name>
+        <category>Drogen</category>
+        <avail>2</avail>
+        <legality>E</legality>
+        <cost>50</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Novacoke</name>
+        <category>Drogen</category>
+        <avail>2</avail>
+        <legality>E</legality>
+        <cost>10</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Psyche</name>
+        <category>Drogen</category>
+        <cost>200</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Zen</name>
+        <category>Drogen</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>5</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+
+    <!-- ── Chemikalien (pro Dosis) (S. 382) ── -->
+    <item>
+        <name>Sprühkleber</name>
+        <category>Chemikalien</category>
+        <avail>2</avail>
+        <cost>150</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Thermit-Brennstab</name>
+        <category>Chemikalien</category>
+        <avail>16</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+
+    <!-- ── Toxine (pro Dosis) (S. 382) ── -->
+    <item>
+        <name>Brechreiz-Gas</name>
+        <category>Toxine</category>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>25</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>CS/Tränengas</name>
+        <category>Toxine</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>20</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Gamma-Skopolamin</name>
+        <category>Toxine</category>
+        <avail>14</avail>
+        <legality>V</legality>
+        <cost>200</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Narcoject</name>
+        <category>Toxine</category>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>50</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Neuro-Stun</name>
+        <category>Toxine</category>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>60</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Pepper Punch</name>
+        <category>Toxine</category>
+        <cost>5</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Seven-7</name>
+        <category>Toxine</category>
+        <avail>20</avail>
+        <legality>V</legality>
+        <cost>1000</cost>
+        <unit>Dosis</unit>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+
+    <!-- ── Überlebensausrüstung (S. 383) ── -->
+    <item>
+        <name>Atemgerät</name>
+        <category>Überlebensausrüstung</category>
+        <rating>1-6</rating>
+        <cost>Rating * 25</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Chemoanzug</name>
+        <category>Überlebensausrüstung</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 100</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Gasmaske</name>
+        <category>Überlebensausrüstung</category>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Gecko-Tape-Handschuhe</name>
+        <category>Überlebensausrüstung</category>
+        <avail>12</avail>
+        <cost>250</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>GPS</name>
+        <category>Überlebensausrüstung</category>
+        <avail>3</avail>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Hazmat-Anzug</name>
+        <category>Überlebensausrüstung</category>
+        <avail>8</avail>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Kletterausrüstung</name>
+        <category>Überlebensausrüstung</category>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Kletterhandschuhe</name>
+        <category>Überlebensausrüstung</category>
+        <cost>70</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Leuchtstab</name>
+        <category>Überlebensausrüstung</category>
+        <cost>5</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Magnesiumfackel</name>
+        <category>Überlebensausrüstung</category>
+        <cost>20</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Mini-Signalrakete</name>
+        <category>Überlebensausrüstung</category>
+        <cost>25</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Mini-Signalraketenkanone</name>
+        <category>Überlebensausrüstung</category>
+        <cost>50</cost>
+        <note>Als Waffe: Exotische Fernkampfwaffe, Schaden 3K, PB –, Modus EM, Munition 1 (v) (GRW S. 384).</note>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Survival-Kit</name>
+        <category>Überlebensausrüstung</category>
+        <avail>4</avail>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Taschenlampe</name>
+        <category>Überlebensausrüstung</category>
+        <cost>25</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Taucherausrüstung</name>
+        <category>Überlebensausrüstung</category>
+        <avail>6</avail>
+        <cost>2000</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+
+    <!-- ── Enterhakenkanone (Seile pro 100 m bzw. 10 m) (S. 383) ── -->
+    <item>
+        <name>Enterhakenkanone</name>
+        <category>Enterhakenkanone</category>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <note>Als Waffe: Exotische Fernkampfwaffe, Schaden 5G, PB –, Modus EM, Munition 1 (v) (GRW S. 384).</note>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Camouflageseil</name>
+        <category>Enterhakenkanone</category>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>85</cost>
+        <costfor>100</costfor>
+        <unit>m</unit>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Katalysatorstab</name>
+        <category>Enterhakenkanone</category>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>120</cost>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Microwire</name>
+        <category>Enterhakenkanone</category>
+        <avail>4</avail>
+        <cost>50</cost>
+        <costfor>100</costfor>
+        <unit>m</unit>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Myomerisches Seil</name>
+        <category>Enterhakenkanone</category>
+        <avail>10</avail>
+        <cost>200</cost>
+        <costfor>10</costfor>
+        <unit>m</unit>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+    <item>
+        <name>Standardseil</name>
+        <category>Enterhakenkanone</category>
+        <cost>50</cost>
+        <costfor>100</costfor>
+        <unit>m</unit>
+        <source>SR4</source>
+        <page>383</page>
+    </item>
+
+    <!-- ── Biotech (S. 384) ── -->
+    <item>
+        <name>Einweg-Spritze</name>
+        <category>Biotech</category>
+        <avail>4</avail>
+        <cost>10</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>Medkit</name>
+        <category>Biotech</category>
+        <rating>1-6</rating>
+        <cost>Rating * 100</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>Medkit-Nachfüllpack</name>
+        <category>Biotech</category>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>Vitalmonitor</name>
+        <category>Biotech</category>
+        <cost>300</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+
+    <!-- ── DocWagon-Vertrag (Preis pro Jahr, Menge in Jahren) (S. 384) ── -->
+    <item>
+        <name>DocWagon-Vertrag (Standard)</name>
+        <category>DocWagon-Vertrag</category>
+        <cost>5000</cost>
+        <unit>Jahr</unit>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>DocWagon-Vertrag (Gold)</name>
+        <category>DocWagon-Vertrag</category>
+        <cost>25000</cost>
+        <unit>Jahr</unit>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>DocWagon-Vertrag (Platin)</name>
+        <category>DocWagon-Vertrag</category>
+        <cost>50000</cost>
+        <unit>Jahr</unit>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>DocWagon-Vertrag (Superplatin)</name>
+        <category>DocWagon-Vertrag</category>
+        <cost>100000</cost>
+        <unit>Jahr</unit>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+
+    <!-- ── Slap-Patches (S. 384) ── -->
+    <item>
+        <name>Antidot-Patch</name>
+        <category>Slap-Patches</category>
+        <rating>1-6</rating>
+        <avail>Rating</avail>
+        <cost>Rating * 50</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>Stimulanz-Patch</name>
+        <category>Slap-Patches</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 25</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>Tranq-Patch</name>
+        <category>Slap-Patches</category>
+        <rating>1-10</rating>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 20</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+    <item>
+        <name>Trauma-Patch</name>
+        <category>Slap-Patches</category>
+        <avail>2</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>384</page>
+    </item>
+
+    <!-- ── Verkleidung (S. 385) ── -->
+    <item>
+        <name>Latex-Gesichtsmaske</name>
+        <category>Verkleidung</category>
+        <avail>8</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>385</page>
+    </item>
+    <item>
+        <name>Nanitencreme-Verkleidung (kleiner Behälter)</name>
+        <category>Verkleidung</category>
+        <avail>12</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>385</page>
+    </item>
+    <item>
+        <name>Nanitencreme-Verkleidung (großer Behälter)</name>
+        <category>Verkleidung</category>
+        <avail>16</avail>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>385</page>
+    </item>
+
+    <!-- ── Foki (Stufe = Kraft) (S. 395) ── -->
+    <item>
+        <name>Bindungsfokus</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 4</avail>
+        <legality>E</legality>
+        <cost>Rating * 10000</cost>
+        <extra>Geisterart</extra>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Herbeirufungsfokus</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 4</avail>
+        <legality>E</legality>
+        <cost>Rating * 15000</cost>
+        <extra>Geisterart</extra>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Kraftfokus</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 5</avail>
+        <legality>E</legality>
+        <cost>Rating * 25000</cost>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Spruchabwehrfokus</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 4</avail>
+        <legality>E</legality>
+        <cost>Rating * 5000</cost>
+        <extra>Zauberkategorie</extra>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Verbannungsfokus</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 4</avail>
+        <legality>E</legality>
+        <cost>Rating * 5000</cost>
+        <extra>Geisterart</extra>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Waffenfokus</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 5</avail>
+        <legality>E</legality>
+        <cost>Rating * 10000</cost>
+        <extra>Waffe</extra>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Zauberspeicher</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 4</avail>
+        <legality>E</legality>
+        <cost>Rating * 10000</cost>
+        <extra>Zauberkategorie</extra>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Zauberspruchfokus</name>
+        <category>Foki</category>
+        <rating>1-6</rating>
+        <avail>Rating * 4</avail>
+        <legality>E</legality>
+        <cost>Rating * 15000</cost>
+        <extra>Zauberkategorie</extra>
+        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+
+    <!-- ── Magisches Zubehör (Stufe = Kraft) (S. 395) ── -->
+    <item>
+        <name>Bindungsmaterialien</name>
+        <category>Magisches Zubehör</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 500</cost>
+        <note>Kraft wie bei magischen Gegenständen üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Biofasern</name>
+        <category>Magisches Zubehör</category>
+        <rating>1-6</rating>
+        <avail>Rating * 3</avail>
+        <cost>Rating * 100</cost>
+        <unit>m²</unit>
+        <note>Kraft wie bei magischen Gegenständen üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Materialien für Magische Refugien</name>
+        <category>Magisches Zubehör</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 500</cost>
+        <note>Kraft wie bei magischen Gegenständen üblich 1 bis 6 (GRW S. 208).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+
+    <!-- ── Fetische (je Zauberkategorie) (S. 395) ── -->
+    <item>
+        <name>Fetisch (Heilung)</name>
+        <category>Fetische</category>
+        <avail>2</avail>
+        <cost>500</cost>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Fetisch (Illusion)</name>
+        <category>Fetische</category>
+        <avail>2</avail>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Fetisch (Kampf)</name>
+        <category>Fetische</category>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Fetisch (Manipulation)</name>
+        <category>Fetische</category>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>300</cost>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Fetisch (Wahrnehmung)</name>
+        <category>Fetische</category>
+        <avail>2</avail>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+
+    <!-- ── Zauberformeln (GRW-Tabelle "Spruchkategorie", Formelkosten) (S. 395) ── -->
+    <item>
+        <name>Zauberformel (Heilung)</name>
+        <category>Zauberformeln</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <extra>Zauber</extra>
+        <note>Persönlicher Unterricht: Unterrichtsfertigkeit x 250 ¥ (GRW S. 395).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Zauberformel (Illusion)</name>
+        <category>Zauberformeln</category>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>1000</cost>
+        <extra>Zauber</extra>
+        <note>Persönlicher Unterricht: Unterrichtsfertigkeit x 500 ¥ (GRW S. 395).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Zauberformel (Kampf)</name>
+        <category>Zauberformeln</category>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>2000</cost>
+        <extra>Zauber</extra>
+        <note>Persönlicher Unterricht: Unterrichtsfertigkeit x 1.500 ¥ (GRW S. 395).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Zauberformel (Manipulation)</name>
+        <category>Zauberformeln</category>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>1500</cost>
+        <extra>Zauber</extra>
+        <note>Persönlicher Unterricht: Unterrichtsfertigkeit x 1.000 ¥ (GRW S. 395).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+    <item>
+        <name>Zauberformel (Wahrnehmung)</name>
+        <category>Zauberformeln</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <extra>Zauber</extra>
+        <note>Persönlicher Unterricht: Unterrichtsfertigkeit x 250 ¥ (GRW S. 395).</note>
+        <source>SR4</source>
+        <page>395</page>
+    </item>
+</gear>

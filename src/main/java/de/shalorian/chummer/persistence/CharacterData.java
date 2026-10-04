@@ -34,6 +34,7 @@ public class CharacterData {
   public @NonNull List<CyberwareEntry> cyberware = new ArrayList<>();
   public @NonNull List<ArmorEntry> armor = new ArrayList<>();
   public @NonNull List<WeaponEntry> weapons = new ArrayList<>();
+  public @NonNull List<GearEntry> gear = new ArrayList<>();
   public @NonNull LifestyleEntry lifestyle = new LifestyleEntry();
 
   public CharacterData() {

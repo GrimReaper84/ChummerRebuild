@@ -156,6 +156,13 @@
               </padding>
             </VBox>
           </Tab>
+          <Tab text="Ausrüstung">
+            <VBox styleClass="attr-container" fx:id="gearContainer">
+              <padding>
+                <Insets bottom="20" left="36" right="36" top="20"/>
+              </padding>
+            </VBox>
+          </Tab>
         </TabPane>
       </Tab>
 

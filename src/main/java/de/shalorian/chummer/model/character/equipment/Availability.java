@@ -22,6 +22,9 @@ public record Availability(@NonNull String formula, @NonNull Legality legality) 
   /** Höchste bei der Charaktererschaffung zulässige Verfügbarkeit (GRW S. 111). */
   public static final int MAX_AVAILABILITY_AT_CREATION = 12;
 
+  /** Höchste bei der Charaktererschaffung zulässige Stufe eines Gegenstands (GRW S. 111). */
+  public static final int MAX_RATING_AT_CREATION = 6;
+
   /** Verfügbarkeit von Einträgen ohne Angabe (GRW "–"). */
   public static final Availability NONE = new Availability("0", Legality.LEGAL);
 

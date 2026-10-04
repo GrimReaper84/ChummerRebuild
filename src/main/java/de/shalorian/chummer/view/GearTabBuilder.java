@@ -1,0 +1,296 @@
+package de.shalorian.chummer.view;
+
+import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_KEY;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
+
+import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearArea;
+import de.shalorian.chummer.model.character.gear.GearData;
+import de.shalorian.chummer.view.dialog.DialogHandle;
+import de.shalorian.chummer.view.dialog.GearSelectDialogController;
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.Map;
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
+import org.tbee.javafx.scene.layout.MigPane;
+
+/**
+ * Baut den Unter-Tab "Ausrüstung" der Straßenausrüstung nach dem Vorbild von {@code tabGear} aus
+ * {@code frmCreate.Designer.cs}: Kopfzeile mit Kosten, Werkzeugleiste (Gegenstand hinzufügen,
+ * Auswahl entfernen), links ein Baum der gekauften Gegenstände, rechts ein Detailbereich mit den
+ * Werten und einem Mengen-Stepper. Abweichend vom Original gruppiert der Baum nach Bereich der
+ * GRW-Ausrüstungsliste ({@link GearArea}); Lagerorte, "Equipped", Kommlink-Schalter und Fokusbindung
+ * fehlen bewusst ({@code docs/plaene/gear_plan.md} Abschnitt 7).
+ *
+ * <p>Nach jeder Änderung wird der Tab neu aufgebaut und die Auswahl erhalten. Gear hängt nicht an
+ * Attributen oder Fertigkeiten, daher gibt es keinen Refresh des Detailbereichs.
+ */
+final class GearTabBuilder {
+
+  private final @NonNull VBox container;
+  private final @NonNull StreetGearHost host;
+
+  GearTabBuilder(@NonNull VBox container, @NonNull StreetGearHost host) {
+    this.container = container;
+    this.host = host;
+  }
+
+  void build(@NonNull Character character) {
+    build(character, null);
+  }
+
+  /** Baut den Tab neu auf und wählt {@code selected} aus, falls angegeben. */
+  private void build(@NonNull Character character, @Nullable Gear selected) {
+    container.getChildren().clear();
+    TreeView<GearTreeEntry> tree = new TreeView<>();
+    tree.setShowRoot(false);
+    tree.setMinWidth(220);
+
+    VBox details = new VBox(12);
+    details.setPadding(new Insets(0, 0, 0, 16));
+    Runnable showSelected = () -> showDetails(details, selectedGear(tree), character);
+    tree.getSelectionModel().selectedItemProperty().addListener((obs, old, now) -> showSelected.run());
+
+    TreeItem<GearTreeEntry> toSelect = fillTree(tree, character, selected);
+    if (toSelect != null) {
+      tree.getSelectionModel().select(toSelect); // Listener füllt den Detailbereich
+      tree.scrollTo(tree.getRow(toSelect));
+    } else {
+      showSelected.run();
+    }
+
+    ScrollPane detailScroll = new ScrollPane(details);
+    detailScroll.setFitToWidth(true);
+    detailScroll.getStyleClass().add(STYLE_ATTR_SCROLL);
+    SplitPane split = new SplitPane(tree, detailScroll);
+    split.setDividerPositions(0.3);
+    VBox.setVgrow(split, Priority.ALWAYS);
+
+    container.getChildren().addAll(buildHeader(character), buildToolbar(character, tree), split);
+  }
+
+  /**
+   * Füllt den Baum: je belegtem Bereich ein aufgeklappter Knoten in GRW-Reihenfolge, darunter die
+   * Gegenstände in Kaufreihenfolge.
+   *
+   * @return der Knoten von {@code selected}, oder {@code null}
+   */
+  private static @Nullable TreeItem<GearTreeEntry> fillTree(@NonNull TreeView<GearTreeEntry> tree,
+      @NonNull Character character, @Nullable Gear selected) {
+    Map<GearArea, TreeItem<GearTreeEntry>> groups = new EnumMap<>(GearArea.class);
+    TreeItem<GearTreeEntry> selectedItem = null;
+    for (Gear gear : character.getEquipment().getGear()) {
+      TreeItem<GearTreeEntry> group = groups.computeIfAbsent(gear.getData().category().area(),
+          area -> {
+            TreeItem<GearTreeEntry> item = new TreeItem<>(GearTreeEntry.ofArea(area));
+            item.setExpanded(true);
+            return item;
+          });
+      TreeItem<GearTreeEntry> item = new TreeItem<>(GearTreeEntry.ofGear(gear));
+      group.getChildren().add(item);
+      if (gear == selected) {
+        selectedItem = item;
+      }
+    }
+    TreeItem<GearTreeEntry> root = new TreeItem<>();
+    root.getChildren().addAll(groups.values());
+    tree.setRoot(root);
+    return selectedItem;
+  }
+
+  /** Der gewählte Gegenstand, oder {@code null} (nichts bzw. ein Bereichsknoten gewählt). */
+  private static @Nullable Gear selectedGear(@NonNull TreeView<GearTreeEntry> tree) {
+    TreeItem<GearTreeEntry> item = tree.getSelectionModel().getSelectedItem();
+    return item == null ? null : item.getValue().gear();
+  }
+
+  private @NonNull HBox buildHeader(@NonNull Character character) {
+    Label title = new Label("Ausrüstung");
+    title.getStyleClass().add(STYLE_SECTION_TITLE);
+    Label costLabel = new Label("Kosten: " + character.getEquipment().getGearNuyenCost() + " ¥");
+    costLabel.getStyleClass().add(STYLE_BP_LABEL);
+
+    HBox header = new HBox(12);
+    header.setAlignment(Pos.CENTER_LEFT);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().addAll(title, spacer, costLabel);
+    VBox.setMargin(header, new Insets(0, 0, 12, 0));
+    return header;
+  }
+
+  private @NonNull HBox buildToolbar(@NonNull Character character,
+      @NonNull TreeView<GearTreeEntry> tree) {
+    Button addBtn = new Button("Gegenstand hinzufügen");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    addBtn.setOnAction(e -> onAddGear(character));
+
+    Button removeBtn = new Button("Ausgewählten Gegenstand entfernen");
+    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(removeBtn, FontAwesomeSolid.TRASH);
+    // Bindung an die Baumauswahl (UI-Zustand): Bereichsknoten lassen sich nicht entfernen.
+    removeBtn.disableProperty().bind(Bindings.createBooleanBinding(
+        () -> selectedGear(tree) == null, tree.getSelectionModel().selectedItemProperty()));
+    removeBtn.setOnAction(e -> {
+      Gear gear = selectedGear(tree);
+      if (gear != null) {
+        character.getEquipment().removeGear(gear);
+        onGearChanged(character, null);
+      }
+    });
+
+    HBox toolbar = new HBox(8);
+    toolbar.setAlignment(Pos.CENTER_LEFT);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    toolbar.getChildren().addAll(spacer, removeBtn, addBtn);
+    VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
+    return toolbar;
+  }
+
+  // ── Detailbereich ─────────────────────────────────────────
+
+  private void showDetails(@NonNull VBox details, @Nullable Gear gear,
+      @NonNull Character character) {
+    details.getChildren().clear();
+    if (gear == null) {
+      details.getChildren().add(hint(character.getEquipment().getGear().isEmpty()
+          ? "Keine Ausrüstung gekauft"
+          : "Gegenstand auswählen, um seine Werte zu sehen"));
+      return;
+    }
+    GearDetails d = GearDetails.of(gear);
+    Label title = new Label(d.name());
+    title.getStyleClass().add(STYLE_SECTION_TITLE);
+
+    MigPane grid = new MigPane("", "[][]24[][]");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
+    addRowCells(grid, 0, key("Tabelle"), value(d.category()), key("Stufe"), value(d.rating()));
+    addRowCells(grid, 1, key("Gerätestufe"), value(d.deviceRating()), key("Verf."),
+        value(d.availability()));
+    addRowCells(grid, 2, key("Menge"), buildQuantityStepper(gear, character), key("Preis"),
+        value(d.packPrice()));
+    addRowCells(grid, 3, key("Gesamtpreis"), value(d.totalCost()), key("Quelle"),
+        value(d.source()));
+    if (!d.extraLabel().isEmpty()) {
+      addRowCells(grid, 4, key(d.extraLabel()), value(d.extra()));
+    }
+    details.getChildren().addAll(title, grid);
+    if (!d.note().isEmpty()) {
+      Label note = hint(d.note());
+      note.setWrapText(true);
+      details.getChildren().add(note);
+    }
+  }
+
+  /**
+   * Mengen-Stepper in Packungsschritten. Erhöhen kostet im Karrieremodus Nuyen über das Log,
+   * Verringern gilt als Verbrauch und erstattet nichts (Nutzerentscheidung 2026-10-04). Mindestens
+   * eine Packung bleibt; ganz entfernen geht über die Werkzeugleiste.
+   */
+  private @NonNull HBox buildQuantityStepper(@NonNull Gear gear, @NonNull Character character) {
+    GearData data = gear.getData();
+    int pack = data.packSize();
+    Button minus = new Button("−");
+    Label quantity = new Label(data.unit().format(gear.getQuantity()));
+    Button plus = new Button("+");
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    quantity.getStyleClass().add(STYLE_DETAIL_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    // Der Tab wird nach jeder Mengenänderung neu aufgebaut, daher bleibt dieser Zustand aktuell.
+    minus.setDisable(gear.getQuantity() <= pack);
+    minus.setOnAction(e -> {
+      if (gear.getQuantity() > pack) {
+        gear.setQuantity(gear.getQuantity() - pack);
+        onGearChanged(character, gear);
+      }
+    });
+    plus.setOnAction(e -> {
+      if (character.isCreated() && host.nuyenChargeFailed(character,
+          "Kauf: " + data.name() + " +" + data.unit().format(pack), gear.getNuyenCostFor(pack))) {
+        return;
+      }
+      gear.setQuantity(gear.getQuantity() + pack);
+      onGearChanged(character, gear);
+    });
+    HBox box = new HBox(6, minus, quantity, plus);
+    box.setAlignment(Pos.CENTER_LEFT);
+    return box;
+  }
+
+  private static @NonNull Label key(@NonNull String text) {
+    Label label = new Label(text + ":");
+    label.getStyleClass().add(STYLE_DETAIL_KEY);
+    return label;
+  }
+
+  private static @NonNull Label value(@NonNull String text) {
+    Label label = new Label(text);
+    label.getStyleClass().add(STYLE_DETAIL_VALUE);
+    return label;
+  }
+
+  private static @NonNull Label hint(@NonNull String text) {
+    Label label = new Label(text);
+    label.getStyleClass().add(STYLE_DETAIL_HINT);
+    return label;
+  }
+
+  // ── Aktionen ──────────────────────────────────────────────
+
+  /**
+   * Öffnet den Auswahldialog und kauft die Auswahl; gleiche Gegenstände werden zusammengeführt
+   * ({@code Equipment#addGear}). Im Karrieremodus wird der Preis nach Bestätigung vom Nuyen-Guthaben
+   * abgebucht.
+   */
+  private void onAddGear(@NonNull Character character) {
+    try {
+      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml", "Gegenstand hinzufügen");
+      GearSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(character);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(gear -> {
+        if (character.isCreated() && host.nuyenChargeFailed(character,
+            "Kauf: " + gear.getDisplayName(), gear.getNuyenCost())) {
+          return;
+        }
+        onGearChanged(character, character.getEquipment().addGear(gear));
+      });
+    } catch (IOException e) {
+      host.showDialogLoadError();
+    }
+  }
+
+  private void onGearChanged(@NonNull Character character, @Nullable Gear selected) {
+    build(character, selected);
+    host.onNuyenSpentChanged();
+  }
+}

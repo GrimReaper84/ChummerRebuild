@@ -15,6 +15,9 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearData;
+import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
@@ -117,6 +120,10 @@ public class CharacterStore {
             .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
             .toList()))
         .toList();
+    data.gear = character.getEquipment().getGear().stream()
+        .map(g -> new GearEntry(g.getName(), g.getRating(), g.getQuantity(), g.getExtra(),
+            g.getChosenPackPrice()))
+        .toList();
     Lifestyle lifestyle = character.getEquipment().getLifestyle();
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
 
@@ -166,6 +173,7 @@ public class CharacterStore {
     applyCyberware(character, data);
     applyArmor(character, data);
     applyWeapons(character, data);
+    applyGear(character, data);
     applyLifestyle(character, data);
 
     return character;
@@ -244,6 +252,25 @@ public class CharacterStore {
         Weapon weapon = new Weapon(weaponData, entry.rating);
         entry.accessories.forEach(a -> applyAccessory(weapon, a));
         character.getEquipment().addWeapon(weapon);
+      }
+    }
+  }
+
+  /**
+   * Stellt die gekaufte Ausrüstung wieder her; unbekannte Katalognamen und Einträge mit unzulässiger
+   * Stufe, Menge, Zusatztext oder Preis werden übersprungen statt die ganze Datei abzulehnen.
+   */
+  private static void applyGear(@NonNull Character character, @NonNull CharacterData data) {
+    for (GearEntry entry : data.gear) {
+      GearData gearData = GearDataLoader.findByName(entry.name);
+      if (gearData == null) {
+        continue;
+      }
+      try {
+        character.getEquipment().addGear(
+            new Gear(gearData, entry.rating, entry.quantity, entry.extra, entry.packPrice));
+      } catch (IllegalArgumentException e) {
+        // Werte passen nicht (mehr) zum Katalog: überspringen
       }
     }
   }

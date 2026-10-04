@@ -117,6 +117,41 @@
     -fx-background-color: #888888;
 }
 
+/* Editierbare ComboBox: Textfeld ohne eigenen Rahmen im ComboBox-Rahmen */
+.combo-box .text-field {
+    -fx-border-color: transparent;
+    -fx-background-radius: 3 0 0 3;
+}
+
+/* ── Spinner ─────────────────────────────────────────── */
+
+.spinner {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.spinner .text-field {
+    -fx-border-color: transparent;
+    -fx-background-radius: 3 0 0 3;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: #3c3c3c;
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: #094771;
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: #888888;
+}
+
 .combo-box-popup .list-view {
     -fx-background-color: #2d2d2d;
     -fx-border-color: #555555;

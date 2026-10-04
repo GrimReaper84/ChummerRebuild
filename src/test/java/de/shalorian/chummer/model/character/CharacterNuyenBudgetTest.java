@@ -10,6 +10,8 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.weapon.Weapon;
@@ -107,6 +109,18 @@ class CharacterNuyenBudgetTest {
 
     assertEquals(900 + 350, c.getEquipment().getSpentNuyen());
     assertEquals(5_000 - 1_250, c.getRemainingNuyen());
+  }
+
+  @Test
+  void gearCountsTowardsSpentNuyen() {
+    Character c = mensch();
+    c.setNuyenBP(1);
+    c.getEquipment().addArmor(armor("Panzerjacke"));
+    c.getEquipment().addGear(
+        new Gear(Objects.requireNonNull(GearDataLoader.findByName("Survival-Kit")), 0));
+
+    assertEquals(900 + 100, c.getEquipment().getSpentNuyen());
+    assertEquals(5_000 - 1_000, c.getRemainingNuyen());
   }
 
   @Test

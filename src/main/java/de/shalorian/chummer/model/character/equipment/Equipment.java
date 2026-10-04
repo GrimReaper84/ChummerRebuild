@@ -8,6 +8,7 @@ import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
@@ -24,10 +25,10 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Ausrüstung eines Charakters: alle Kaufkategorien (Cyber- und Bioware, Rüstung, Waffen, Lebensstil)
- * samt Kaufprüfung, Schutzwerten, Waffenwerten und der Summe der ausgegebenen Nuyen. Komponente des
- * Aggregats {@link Character}, erreichbar über {@link Character#getEquipment()}; künftige
- * Kaufkategorien (Gear) gehören hierher. Ausgelagert, damit {@code Character} nicht mit jeder
+ * Ausrüstung eines Charakters: alle Kaufkategorien (Cyber- und Bioware, Rüstung, Waffen, übrige
+ * Ausrüstung, Lebensstil) samt Kaufprüfung, Schutzwerten, Waffenwerten und der Summe der ausgegebenen
+ * Nuyen. Komponente des Aggregats {@link Character}, erreichbar über {@link Character#getEquipment()};
+ * künftige Kaufkategorien gehören hierher. Ausgelagert, damit {@code Character} nicht mit jeder
  * Kaufkategorie wächst (SonarQube S6539, {@code docs/plaene/character_aufteilung_plan.md}).
  *
  * <p>Die Rückreferenz {@code owner} liefert, was die Ausrüstungsregeln vom Charakter brauchen:
@@ -45,6 +46,7 @@ public class Equipment {
   private final List<Cyberware> cyberware = new ArrayList<>();
   private final List<Armor> armor = new ArrayList<>();
   private final List<Weapon> weapons = new ArrayList<>();
+  private final List<Gear> gear = new ArrayList<>();
   private final @NonNull Lifestyle lifestyle = new Lifestyle();
 
   /** Leere Ausrüstung für {@code owner}; ruft im Konstruktor nichts auf dem Charakter auf. */
@@ -111,13 +113,18 @@ public class Equipment {
 
   /**
    * Ob ein Gegenstand mit dieser Verfügbarkeit in dieser Stufe aktuell gekauft werden darf: bei der
-   * Charaktererschaffung nur bis Verfügbarkeit {@value Availability#MAX_AVAILABILITY_AT_CREATION}
-   * (SR4-Grundregelwerk S. 111: "Die höchste Verfügbarkeit ist 12"), im Karrieremodus immer. Wie
-   * bei {@link #isCyberwareGradeAvailable(CyberwareGrade)} prüft die UI diese Regel, nicht {@code
-   * add…()}, damit der Persistenz-Pfad unverändert laden kann.
+   * Charaktererschaffung nur bis Stufe {@value Availability#MAX_RATING_AT_CREATION} und
+   * Verfügbarkeit {@value Availability#MAX_AVAILABILITY_AT_CREATION} (SR4-Grundregelwerk S. 111: "Die
+   * Maximalstufe, die ein während der Charaktererschaffung erworbener Ausrüstungsgegenstand aufweisen
+   * darf, beträgt 6. Die höchste Verfügbarkeit ist 12."), im Karrieremodus immer. Gilt für alle
+   * Kaufkategorien mit Stufe; Gegenstände ohne Stufe übergeben {@code 0}. Wie bei {@link
+   * #isCyberwareGradeAvailable(CyberwareGrade)} prüft die UI diese Regel, nicht {@code add…()}, damit
+   * der Persistenz-Pfad unverändert laden kann.
    */
   public boolean isAvailableForPurchase(@NonNull Availability availability, int rating) {
-    return owner.isCreated() || availability.isAllowedAtCreation(rating);
+    return owner.isCreated()
+        || (rating <= Availability.MAX_RATING_AT_CREATION
+            && availability.isAllowedAtCreation(rating));
   }
 
   /** Wie {@link #isAvailableForPurchase(Availability, int)} für Rüstung, die keine Stufe hat. */
@@ -258,6 +265,42 @@ public class Equipment {
     return weapon.getRangeBands(owner.getAugmentedAttributeValue(AttributeType.STR));
   }
 
+  // --- Übrige Ausrüstung (Gear) ---
+
+  /** Alle gekauften Ausrüstungsgegenstände in Kaufreihenfolge. */
+  public @NonNull List<Gear> getGear() {
+    return Collections.unmodifiableList(gear);
+  }
+
+  /**
+   * Kauft einen Ausrüstungsgegenstand. Gibt es schon einen Gegenstand derselben Art ({@link
+   * Gear#isSameKind(Gear)}: Eintrag, Stufe, Zusatztext, gewählter Preis), wird nur dessen Menge erhöht
+   * (Nutzerentscheidung 2026-10-04), sonst wird {@code item} angelegt. Verfügbarkeit und Stufengrenze
+   * prüft die UI über {@link #isAvailableForPurchase(Availability, int)}.
+   *
+   * @return der Gegenstand, der die Menge jetzt enthält ({@code item} oder der vorhandene)
+   */
+  public @NonNull Gear addGear(@NonNull Gear item) {
+    for (Gear existing : gear) {
+      if (existing.isSameKind(item)) {
+        existing.setQuantity(existing.getQuantity() + item.getQuantity());
+        return existing;
+      }
+    }
+    gear.add(item);
+    return item;
+  }
+
+  /** Entfernt genau diesen Gegenstand samt seiner ganzen Menge. */
+  public void removeGear(@NonNull Gear item) {
+    gear.remove(item);
+  }
+
+  /** Gesamtpreis aller gekauften Ausrüstungsgegenstände in Nuyen. */
+  public int getGearNuyenCost() {
+    return gear.stream().mapToInt(Gear::getNuyenCost).sum();
+  }
+
   // --- Lebensstil & Nuyen-Summe ---
 
   /**
@@ -269,13 +312,13 @@ public class Equipment {
   }
 
   /**
-   * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung, Waffen und
-   * Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige Kaufkategorien (Gear) werden
-   * hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
+   * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung, Waffen,
+   * übrige Ausrüstung und Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige
+   * Kaufkategorien werden hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
    * Ausrüstungsgegenstände vollständig bezahlen."
    */
   public int getSpentNuyen() {
     return getCyberwareNuyenCost() + getArmorNuyenCost() + getWeaponNuyenCost()
-        + lifestyle.getNuyenCost();
+        + getGearNuyenCost() + lifestyle.getNuyenCost();
   }
 }
