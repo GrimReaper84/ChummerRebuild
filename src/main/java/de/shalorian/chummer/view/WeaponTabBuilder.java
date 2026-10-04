@@ -2,14 +2,15 @@ package de.shalorian.chummer.view;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
+import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
+import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_KEY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
@@ -21,6 +22,7 @@ import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import de.shalorian.chummer.view.dialog.AccessorySelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
+import de.shalorian.chummer.view.grid.GridSupport;
 import de.shalorian.chummer.view.dialog.WeaponSelectDialogController;
 import java.io.IOException;
 import java.util.EnumMap;
@@ -241,7 +243,7 @@ final class WeaponTabBuilder {
     details.getChildren().clear();
     Weapon weapon = entry == null ? null : entry.weapon();
     if (entry == null || weapon == null) {
-      details.getChildren().add(hint(character.getEquipment().getWeapons().isEmpty()
+      details.getChildren().add(detailHint(character.getEquipment().getWeapons().isEmpty()
           ? "Keine Waffen gekauft"
           : "Waffe auswählen, um ihre Werte zu sehen"));
     } else if (entry.accessory() != null) {
@@ -260,7 +262,7 @@ final class WeaponTabBuilder {
     title.getStyleClass().add(STYLE_SECTION_TITLE);
     details.getChildren().addAll(title, buildValueGrid(d), buildRangeSection(d));
     if (!d.note().isEmpty()) {
-      Label note = hint(d.note());
+      Label note = detailHint(d.note());
       note.setWrapText(true);
       details.getChildren().add(note);
     }
@@ -275,18 +277,19 @@ final class WeaponTabBuilder {
     title.getStyleClass().add(STYLE_SECTION_TITLE);
     MigPane grid = new MigPane("", "[][]24[][]24[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
-    addRowCells(grid, 0, key("Waffe"), value(weapon.getDisplayName()),
-        key("Halterung"), value(mount == null ? "–" : mount.getDisplayName()),
-        key("RK"), value(data.rcText()));
-    addRowCells(grid, 1, key("Verf."), value(data.availability().displayText(0)),
-        key("Preis"), value(weapon.getAccessoryNuyenCost(data) + " ¥"),
-        key("Quelle"), value(data.source() + " S. " + data.page()));
+    addRowCells(grid, 0, detailKey("Waffe"), detailValue(weapon.getDisplayName()),
+        detailKey("Halterung"), detailValue(mount == null ? "–" : mount.getDisplayName()),
+        detailKey("RK"), detailValue(data.rcText()));
+    addRowCells(grid, 1, detailKey("Verf."), detailValue(data.availability().displayText(0)),
+        detailKey("Preis"), detailValue(weapon.getAccessoryNuyenCost(data) + " ¥"),
+        detailKey("Quelle"), detailValue(data.source() + " S. " + data.page()));
     details.getChildren().addAll(title, grid);
     if (data.isPermanent()) {
-      details.getChildren().add(hint("Fest eingebaut, kann nicht mehr entfernt werden (GRW S. 367)"));
+      details.getChildren().add(
+          detailHint("Fest eingebaut, kann nicht mehr entfernt werden (GRW S. 367)"));
     }
     if (!data.note().isEmpty()) {
-      Label note = hint(data.note());
+      Label note = detailHint(data.note());
       note.setWrapText(true);
       details.getChildren().add(note);
     }
@@ -297,8 +300,9 @@ final class WeaponTabBuilder {
       @NonNull IncludedAccessory included) {
     Label title = new Label(included.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
-    Label text = hint("Mit der Waffe " + weapon.getDisplayName() + " geliefert: im Preis enthalten, "
-        + "belegt keine Halterung, RK ist im Tabellenwert der Waffe bereits enthalten (GRW S. 357).");
+    Label text = detailHint("Mit der Waffe " + weapon.getDisplayName()
+        + " geliefert: im Preis enthalten, belegt keine Halterung, RK ist im Tabellenwert der "
+        + "Waffe bereits enthalten (GRW S. 357).");
     text.setWrapText(true);
     details.getChildren().addAll(title, text);
   }
@@ -307,22 +311,26 @@ final class WeaponTabBuilder {
   private static @NonNull MigPane buildValueGrid(@NonNull WeaponDetails d) {
     MigPane grid = new MigPane("", "[][]24[][]24[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
-    addRowCells(grid, 0, key("Kategorie"), value(d.category()), key("Fertigkeit"), value(d.skill()));
-    addRowCells(grid, 1, key("Schaden"), damage(d), key("RK"), value(d.recoil()),
-        key("PB"), value(d.armorPiercing()));
-    addRowCells(grid, 2, key("RW"), value(d.reach()), key("Modus"), value(d.mode()),
-        key("Munition"), value(d.ammo()));
-    addRowCells(grid, 3, key("Verf."), value(d.availability()), key("Preis"), value(d.cost()),
-        key("Quelle"), value(d.source()));
+    addRowCells(grid, 0, detailKey("Kategorie"), detailValue(d.category()),
+        detailKey("Fertigkeit"), detailValue(d.skill()));
+    addRowCells(grid, 1, detailKey("Schaden"), damage(d),
+        detailKey("RK"), detailValue(d.recoil()),
+        detailKey("PB"), detailValue(d.armorPiercing()));
+    addRowCells(grid, 2, detailKey("RW"), detailValue(d.reach()),
+        detailKey("Modus"), detailValue(d.mode()),
+        detailKey("Munition"), detailValue(d.ammo()));
+    addRowCells(grid, 3, detailKey("Verf."), detailValue(d.availability()),
+        detailKey("Preis"), detailValue(d.cost()),
+        detailKey("Quelle"), detailValue(d.source()));
     return grid;
   }
 
   /** Berechneter Schaden, bei einer GRW-Formel mit dieser klein dahinter. */
   private static @NonNull Node damage(@NonNull WeaponDetails d) {
     if (d.damageFormula().isEmpty()) {
-      return value(d.damage());
+      return detailValue(d.damage());
     }
-    HBox box = new HBox(6, value(d.damage()), hint("(GRW: " + d.damageFormula() + ")"));
+    HBox box = new HBox(6, detailValue(d.damage()), detailHint("(GRW: " + d.damageFormula() + ")"));
     box.setAlignment(Pos.BASELINE_LEFT);
     return box;
   }
@@ -332,32 +340,16 @@ final class WeaponTabBuilder {
     Label title = new Label("Reichweiten");
     title.getStyleClass().add(STYLE_DETAIL_KEY);
     if (d.rangeBands().isEmpty()) {
-      return new VBox(4, title, hint("Nahkampfwaffe, Reichweite siehe RW"));
+      return new VBox(4, title, detailHint("Nahkampfwaffe, Reichweite siehe RW"));
     }
     MigPane grid = new MigPane("", "[center]24[center]24[center]24[center]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     addHeaderRow(grid, RANGE_HEADERS);
-    addRowCells(grid, 1, d.rangeBands().stream().map(WeaponTabBuilder::value).toArray(Node[]::new));
-    return new VBox(4, title, grid, hint(d.rangeNote()));
+    addRowCells(grid, 1,
+        d.rangeBands().stream().map(GridSupport::detailValue).toArray(Node[]::new));
+    return new VBox(4, title, grid, detailHint(d.rangeNote()));
   }
 
-  private static @NonNull Label key(@NonNull String text) {
-    Label label = new Label(text + ":");
-    label.getStyleClass().add(STYLE_DETAIL_KEY);
-    return label;
-  }
-
-  private static @NonNull Label value(@NonNull String text) {
-    Label label = new Label(text);
-    label.getStyleClass().add(STYLE_DETAIL_VALUE);
-    return label;
-  }
-
-  private static @NonNull Label hint(@NonNull String text) {
-    Label label = new Label(text);
-    label.getStyleClass().add(STYLE_DETAIL_HINT);
-    return label;
-  }
 
   // ── Aktionen ──────────────────────────────────────────────
 

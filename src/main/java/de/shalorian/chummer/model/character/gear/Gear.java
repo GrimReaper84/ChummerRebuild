@@ -131,6 +131,33 @@ public class Gear {
     this.quantity = quantity;
   }
 
+  /** Ob sich eine Packung abziehen lässt; mindestens eine Packung bleibt immer. */
+  public boolean canRemovePack() {
+    return quantity > data.packSize();
+  }
+
+  /**
+   * Erhöht die Menge um eine Packung (Nachkauf; kostet {@link #getPackPrice()}).
+   *
+   * @throws IllegalArgumentException wenn der Gesamtpreis zu groß würde
+   */
+  public void addPack() {
+    setQuantity(quantity + data.packSize());
+  }
+
+  /**
+   * Verringert die Menge um eine Packung (Verbrauch, ohne Erstattung — Nutzerentscheidung
+   * 2026-10-04).
+   *
+   * @throws IllegalStateException wenn nur noch eine Packung übrig ist ({@link #canRemovePack()})
+   */
+  public void removePack() {
+    if (!canRemovePack()) {
+      throw new IllegalStateException(data.name() + ": mindestens eine Packung bleibt");
+    }
+    quantity -= data.packSize();
+  }
+
   /** Preis einer Packung: gewählter Preis bei Preisspanne, sonst laut Stufenformel. */
   public int getPackPrice() {
     return chosenPackPrice != null ? chosenPackPrice : data.packCostFor(rating);
@@ -138,12 +165,7 @@ public class Gear {
 
   /** Preis der aktuellen Menge. */
   public int getNuyenCost() {
-    return getNuyenCostFor(quantity);
-  }
-
-  /** Preis für {@code units} Einheiten dieses Gegenstands (Vielfaches der Packungsgröße). */
-  public int getNuyenCostFor(int units) {
-    return getPackPrice() * units / data.packSize();
+    return getPackPrice() * quantity / data.packSize();
   }
 
   /** Verfügbarkeit in der gewählten Stufe, wie im GRW angezeigt. */

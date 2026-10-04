@@ -37,6 +37,23 @@ class GearTest {
   }
 
   @Test
+  void packStepsKeepAtLeastOnePack() {
+    // Standardseil: 50 ¥ pro 100 m (GRW S. 383)
+    Gear rope = new Gear(find("Standardseil"), 0);
+    assertFalse(rope.canRemovePack());
+    assertThrows(IllegalStateException.class, rope::removePack);
+
+    rope.addPack();
+    assertEquals(200, rope.getQuantity());
+    assertEquals(100, rope.getNuyenCost());
+    assertTrue(rope.canRemovePack());
+
+    rope.removePack();
+    assertEquals(100, rope.getQuantity());
+    assertEquals(50, rope.getPackPrice());
+  }
+
+  @Test
   void ratingMustBeInRange() {
     GearData lockpick = find("Automatischer Dietrich");
 

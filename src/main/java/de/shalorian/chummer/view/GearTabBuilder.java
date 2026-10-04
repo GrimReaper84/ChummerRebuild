@@ -1,14 +1,15 @@
 package de.shalorian.chummer.view;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
+import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
+import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_KEY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
@@ -180,7 +181,7 @@ final class GearTabBuilder {
       @NonNull Character character) {
     details.getChildren().clear();
     if (gear == null) {
-      details.getChildren().add(hint(character.getEquipment().getGear().isEmpty()
+      details.getChildren().add(detailHint(character.getEquipment().getGear().isEmpty()
           ? "Keine Ausrüstung gekauft"
           : "Gegenstand auswählen, um seine Werte zu sehen"));
       return;
@@ -191,19 +192,20 @@ final class GearTabBuilder {
 
     MigPane grid = new MigPane("", "[][]24[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
-    addRowCells(grid, 0, key("Tabelle"), value(d.category()), key("Stufe"), value(d.rating()));
-    addRowCells(grid, 1, key("Gerätestufe"), value(d.deviceRating()), key("Verf."),
-        value(d.availability()));
-    addRowCells(grid, 2, key("Menge"), buildQuantityStepper(gear, character), key("Preis"),
-        value(d.packPrice()));
-    addRowCells(grid, 3, key("Gesamtpreis"), value(d.totalCost()), key("Quelle"),
-        value(d.source()));
+    addRowCells(grid, 0, detailKey("Tabelle"), detailValue(d.category()),
+        detailKey("Stufe"), detailValue(d.rating()));
+    addRowCells(grid, 1, detailKey("Gerätestufe"), detailValue(d.deviceRating()),
+        detailKey("Verf."), detailValue(d.availability()));
+    addRowCells(grid, 2, detailKey("Menge"), buildQuantityStepper(gear, character),
+        detailKey("Preis"), detailValue(d.packPrice()));
+    addRowCells(grid, 3, detailKey("Gesamtpreis"), detailValue(d.totalCost()),
+        detailKey("Quelle"), detailValue(d.source()));
     if (!d.extraLabel().isEmpty()) {
-      addRowCells(grid, 4, key(d.extraLabel()), value(d.extra()));
+      addRowCells(grid, 4, detailKey(d.extraLabel()), detailValue(d.extra()));
     }
     details.getChildren().addAll(title, grid);
     if (!d.note().isEmpty()) {
-      Label note = hint(d.note());
+      Label note = detailHint(d.note());
       note.setWrapText(true);
       details.getChildren().add(note);
     }
@@ -216,7 +218,6 @@ final class GearTabBuilder {
    */
   private @NonNull HBox buildQuantityStepper(@NonNull Gear gear, @NonNull Character character) {
     GearData data = gear.getData();
-    int pack = data.packSize();
     Button minus = new Button("−");
     Label quantity = new Label(data.unit().format(gear.getQuantity()));
     Button plus = new Button("+");
@@ -224,19 +225,20 @@ final class GearTabBuilder {
     quantity.getStyleClass().add(STYLE_DETAIL_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
     // Der Tab wird nach jeder Mengenänderung neu aufgebaut, daher bleibt dieser Zustand aktuell.
-    minus.setDisable(gear.getQuantity() <= pack);
+    minus.setDisable(!gear.canRemovePack());
     minus.setOnAction(e -> {
-      if (gear.getQuantity() > pack) {
-        gear.setQuantity(gear.getQuantity() - pack);
+      if (gear.canRemovePack()) {
+        gear.removePack();
         onGearChanged(character, gear);
       }
     });
     plus.setOnAction(e -> {
       if (character.isCreated() && host.nuyenChargeFailed(character,
-          "Kauf: " + data.name() + " +" + data.unit().format(pack), gear.getNuyenCostFor(pack))) {
+          "Kauf: " + data.name() + " +" + data.unit().format(data.packSize()),
+          gear.getPackPrice())) {
         return;
       }
-      gear.setQuantity(gear.getQuantity() + pack);
+      gear.addPack();
       onGearChanged(character, gear);
     });
     HBox box = new HBox(6, minus, quantity, plus);
@@ -244,23 +246,6 @@ final class GearTabBuilder {
     return box;
   }
 
-  private static @NonNull Label key(@NonNull String text) {
-    Label label = new Label(text + ":");
-    label.getStyleClass().add(STYLE_DETAIL_KEY);
-    return label;
-  }
-
-  private static @NonNull Label value(@NonNull String text) {
-    Label label = new Label(text);
-    label.getStyleClass().add(STYLE_DETAIL_VALUE);
-    return label;
-  }
-
-  private static @NonNull Label hint(@NonNull String text) {
-    Label label = new Label(text);
-    label.getStyleClass().add(STYLE_DETAIL_HINT);
-    return label;
-  }
 
   // ── Aktionen ──────────────────────────────────────────────
 

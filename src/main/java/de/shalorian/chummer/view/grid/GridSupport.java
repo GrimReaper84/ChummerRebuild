@@ -2,6 +2,9 @@ package de.shalorian.chummer.view.grid;
 
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_HEADER;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_VALUE_WARN;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_KEY;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -17,7 +20,8 @@ import org.tbee.javafx.scene.layout.MigPane;
 
 /**
  * Gemeinsame Bausteine der inhaltsbasierten Grid-Layouts (MigPane) aller Tabs: Zellen und Kopfzeilen
- * einfügen, Schrumpfen verhindern, Icon-Buttons und Warnstil.
+ * einfügen, Schrumpfen verhindern, Icon-Buttons, Warnstil und die Labels der Detailbereiche (Waffen,
+ * Ausrüstung).
  */
 public final class GridSupport {
 
@@ -88,5 +92,26 @@ public final class GridSupport {
     if (warn) {
       label.getStyleClass().add(STYLE_BP_VALUE_WARN);
     }
+  }
+
+  /** Beschriftung eines Werts im Detailbereich, z.B. "Preis:". */
+  public static @NonNull Label detailKey(@NonNull String text) {
+    Label label = new Label(text + ":");
+    label.getStyleClass().add(STYLE_DETAIL_KEY);
+    return label;
+  }
+
+  /** Wert im Detailbereich. */
+  public static @NonNull Label detailValue(@NonNull String text) {
+    Label label = new Label(text);
+    label.getStyleClass().add(STYLE_DETAIL_VALUE);
+    return label;
+  }
+
+  /** Hinweistext im Detailbereich (gedämpft). */
+  public static @NonNull Label detailHint(@NonNull String text) {
+    Label label = new Label(text);
+    label.getStyleClass().add(STYLE_DETAIL_HINT);
+    return label;
   }
 }
