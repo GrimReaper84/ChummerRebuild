@@ -51,11 +51,11 @@ class CharacterNuyenBudgetTest {
     c.setNuyenBP(10);
     Cyberware smartlink = cyberware("Smartlink");
 
-    c.addCyberware(smartlink);
-    assertEquals(1_000, c.getSpentNuyen());
+    c.getEquipment().addCyberware(smartlink);
+    assertEquals(1_000, c.getEquipment().getSpentNuyen());
     assertEquals(49_000, c.getRemainingNuyen());
 
-    c.removeCyberware(smartlink);
+    c.getEquipment().removeCyberware(smartlink);
     assertEquals(50_000, c.getRemainingNuyen());
   }
 
@@ -63,10 +63,10 @@ class CharacterNuyenBudgetTest {
   void lifestyleCostTimesMonthsCounts() {
     Character c = mensch();
     c.setNuyenBP(10);
-    c.getLifestyle().setLevel(LifestyleLevel.LOW);
-    c.getLifestyle().setMonths(3);
+    c.getEquipment().getLifestyle().setLevel(LifestyleLevel.LOW);
+    c.getEquipment().getLifestyle().setMonths(3);
 
-    assertEquals(6_000, c.getSpentNuyen());
+    assertEquals(6_000, c.getEquipment().getSpentNuyen());
     assertEquals(44_000, c.getRemainingNuyen());
   }
 
@@ -78,10 +78,10 @@ class CharacterNuyenBudgetTest {
     Armor helm = armor("Helm");
     helm.setEquipped(false);
 
-    c.addArmor(jacke);
-    c.addArmor(helm);
+    c.getEquipment().addArmor(jacke);
+    c.getEquipment().addArmor(helm);
 
-    assertEquals(1_000, c.getArmorNuyenCost());
+    assertEquals(1_000, c.getEquipment().getArmorNuyenCost());
     assertEquals(4_000, c.getRemainingNuyen());
   }
 
@@ -89,11 +89,11 @@ class CharacterNuyenBudgetTest {
   void allCategoriesAddUpAndMayGoNegative() {
     Character c = mensch();
     c.setNuyenBP(1);
-    c.addCyberware(cyberware("Smartlink"));
-    c.addArmor(armor("Panzerjacke"));
-    c.getLifestyle().setLevel(LifestyleLevel.MIDDLE);
+    c.getEquipment().addCyberware(cyberware("Smartlink"));
+    c.getEquipment().addArmor(armor("Panzerjacke"));
+    c.getEquipment().getLifestyle().setLevel(LifestyleLevel.MIDDLE);
 
-    assertEquals(1_000 + 900 + 5_000, c.getSpentNuyen());
+    assertEquals(1_000 + 900 + 5_000, c.getEquipment().getSpentNuyen());
     assertEquals(5_000 - 6_900, c.getRemainingNuyen());
   }
 
@@ -101,10 +101,11 @@ class CharacterNuyenBudgetTest {
   void weaponsCountTowardsSpentNuyen() {
     Character c = mensch();
     c.setNuyenBP(1);
-    c.addArmor(armor("Panzerjacke"));
-    c.addWeapon(new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Ares Predator IV"))));
+    c.getEquipment().addArmor(armor("Panzerjacke"));
+    c.getEquipment().addWeapon(
+        new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Ares Predator IV"))));
 
-    assertEquals(900 + 350, c.getSpentNuyen());
+    assertEquals(900 + 350, c.getEquipment().getSpentNuyen());
     assertEquals(5_000 - 1_250, c.getRemainingNuyen());
   }
 
@@ -113,7 +114,7 @@ class CharacterNuyenBudgetTest {
     Character c = mensch();
     int before = c.getSpentBP();
     c.setNuyenBP(5);
-    c.addArmor(armor("Panzerjacke"));
+    c.getEquipment().addArmor(armor("Panzerjacke"));
 
     assertEquals(before + 5, c.getSpentBP());
   }

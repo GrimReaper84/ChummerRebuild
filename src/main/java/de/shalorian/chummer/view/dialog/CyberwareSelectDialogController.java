@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.view.converter.CyberwareGradeStringConverter;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import java.util.List;
@@ -26,9 +27,9 @@ import org.jspecify.annotations.Nullable;
  * generische Katalog-Fundament um eine Grade-Auswahl und — bei stufenbehafteten Implantaten — eine
  * Stufen-Auswahl, jeweils mit Live-Vorschau der resultierenden Essenz- und Nuyen-Kosten. Grades, die
  * aktuell nicht gekauft werden dürfen (Beta-/Deltaware bei der Charaktererschaffung, siehe {@link
- * Character#isCyberwareGradeAvailable(CyberwareGrade)}), bleiben sichtbar, aber deaktiviert. Dasselbe
+ * Equipment#isCyberwareGradeAvailable(CyberwareGrade)}), bleiben sichtbar, aber deaktiviert. Dasselbe
  * gilt für Implantate und einzelne Stufen, deren Verfügbarkeit bei der Charaktererschaffung über 12
- * liegt (GRW S. 111, siehe {@link Character#isAvailableForPurchase(Availability, int)}).
+ * liegt (GRW S. 111, siehe {@link Equipment#isAvailableForPurchase(Availability, int)}).
  */
 public class CyberwareSelectDialogController extends CatalogSelectDialogController<CyberwareData> {
 
@@ -101,7 +102,7 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   }
 
   private boolean isGradeAvailable(@NonNull CyberwareGrade grade) {
-    return character == null || character.isCyberwareGradeAvailable(grade);
+    return character == null || character.getEquipment().isCyberwareGradeAvailable(grade);
   }
 
   /** Ob die gewählte Stufe des markierten Implantats wegen ihrer Verfügbarkeit gekauft werden darf. */
@@ -111,7 +112,8 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   }
 
   private boolean isAvailable(@NonNull CyberwareData data, int rating) {
-    return character == null || character.isAvailableForPurchase(data.availability(), rating);
+    return character == null
+        || character.getEquipment().isAvailableForPurchase(data.availability(), rating);
   }
 
   /** Ein Implantat ist wählbar, wenn wenigstens seine niedrigste Stufe verfügbar ist. */

@@ -25,8 +25,10 @@ class WeaponTest {
 
   @Test
   void bowRatingMustBeOneToEight() {
-    assertThrows(IllegalArgumentException.class, () -> new Weapon(bow(), 0));
-    assertThrows(IllegalArgumentException.class, () -> new Weapon(bow(), 9));
+    WeaponData bow = bow();
+
+    assertThrows(IllegalArgumentException.class, () -> new Weapon(bow, 0));
+    assertThrows(IllegalArgumentException.class, () -> new Weapon(bow, 9));
   }
 
   @Test

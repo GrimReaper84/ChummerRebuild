@@ -37,7 +37,7 @@ class CharacterWeaponSkillTest {
     Character c = mensch();
     skill(c, "Pistolen").setRating(4);
 
-    Skill used = c.getWeaponSkill(weapon("Ares Predator IV"));
+    Skill used = c.getEquipment().getWeaponSkill(weapon("Ares Predator IV"));
 
     assertEquals("Pistolen", used.getName());
     assertEquals(4, used.getRating());
@@ -50,7 +50,7 @@ class CharacterWeaponSkillTest {
     c.raiseGroup("Feuerwaffen");
     c.raiseGroup("Feuerwaffen");
 
-    Skill used = c.getWeaponSkill(weapon("Remington 990"));
+    Skill used = c.getEquipment().getWeaponSkill(weapon("Remington 990"));
 
     assertEquals("Gewehre", used.getName());
     assertEquals(3, used.getRating());
@@ -59,7 +59,7 @@ class CharacterWeaponSkillTest {
   @Test
   void specialWeaponsUseExoticRangedWeapon() {
     assertEquals("Exotische Fernkampfwaffe",
-        mensch().getWeaponSkill(weapon("Parashield Pfeilpistole")).getName());
+        mensch().getEquipment().getWeaponSkill(weapon("Parashield Pfeilpistole")).getName());
   }
 
   @Test
@@ -67,10 +67,10 @@ class CharacterWeaponSkillTest {
     Character c = mensch();
     Weapon katana = weapon("Katana");
     c.getAttribute(AttributeType.STR).setValue(5);
-    assertEquals("6K", c.getWeaponDamageText(katana));
+    assertEquals("6K", c.getEquipment().getWeaponDamageText(katana));
 
     c.getAttribute(AttributeType.STR).setValue(4);
-    assertEquals("5K", c.getWeaponDamageText(katana));
+    assertEquals("5K", c.getEquipment().getWeaponDamageText(katana));
   }
 
   @Test
@@ -78,7 +78,7 @@ class CharacterWeaponSkillTest {
     Character c = mensch();
     c.getAttribute(AttributeType.STR).setValue(5);
 
-    RangeBands bands = c.getWeaponRangeBands(weapon("Wurfmesser"));
+    RangeBands bands = c.getEquipment().getWeaponRangeBands(weapon("Wurfmesser"));
 
     assertNotNull(bands);
     assertEquals(List.of("0–5", "6–10", "11–15", "16–25"), bands.bandTexts());
@@ -86,6 +86,6 @@ class CharacterWeaponSkillTest {
 
   @Test
   void meleeWeaponHasNoRangeBands() {
-    assertNull(mensch().getWeaponRangeBands(weapon("Katana")));
+    assertNull(mensch().getEquipment().getWeaponRangeBands(weapon("Katana")));
   }
 }

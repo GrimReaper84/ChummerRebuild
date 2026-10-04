@@ -5,8 +5,8 @@ import org.jspecify.annotations.NonNull;
 /**
  * Ein gekauftes Rüstungsteil eines Charakters: referenziert einen {@link ArmorData}-Katalogeintrag
  * und merkt sich, ob es gerade angelegt ist. Nur angelegte Teile zählen für Schutzwert und
- * Panzerungsbehinderung (siehe {@code Character#getArmorBallistic()}). Dasselbe Teil darf mehrfach
- * gekauft werden, daher arbeitet {@code Character#removeArmor} über die Objektreferenz.
+ * Panzerungsbehinderung (siehe {@code Equipment#getArmorBallistic()}). Dasselbe Teil darf mehrfach
+ * gekauft werden, daher arbeitet {@code Equipment#removeArmor} über die Objektreferenz.
  */
 public class Armor {
 

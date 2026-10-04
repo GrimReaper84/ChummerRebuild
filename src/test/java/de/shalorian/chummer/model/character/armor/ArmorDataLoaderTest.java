@@ -72,11 +72,11 @@ class ArmorDataLoaderTest {
     Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
     ArmorData gkp = find("Ganzkörperpanzerung");
 
-    assertFalse(c.isAvailableForPurchase(gkp));
-    assertTrue(c.isAvailableForPurchase(find("Panzerjacke")));
+    assertFalse(c.getEquipment().isAvailableForPurchase(gkp));
+    assertTrue(c.getEquipment().isAvailableForPurchase(find("Panzerjacke")));
 
     c.setCreated(true);
-    assertTrue(c.isAvailableForPurchase(gkp));
+    assertTrue(c.getEquipment().isAvailableForPurchase(gkp));
   }
 
   @Test

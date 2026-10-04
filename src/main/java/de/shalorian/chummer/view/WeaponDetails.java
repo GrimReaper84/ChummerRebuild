@@ -49,9 +49,9 @@ record WeaponDetails(
 
   static @NonNull WeaponDetails of(@NonNull Weapon weapon, @NonNull Character character) {
     WeaponData data = weapon.getData();
-    String damage = character.getWeaponDamageText(weapon);
-    Skill skill = character.getWeaponSkill(weapon);
-    RangeBands bands = character.getWeaponRangeBands(weapon);
+    String damage = character.getEquipment().getWeaponDamageText(weapon);
+    Skill skill = character.getEquipment().getWeaponSkill(weapon);
+    RangeBands bands = character.getEquipment().getWeaponRangeBands(weapon);
     WeaponRange range = data.range();
     return new WeaponDetails(
         weapon.getDisplayName(),

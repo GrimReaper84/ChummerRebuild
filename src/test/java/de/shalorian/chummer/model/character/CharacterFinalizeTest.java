@@ -30,7 +30,7 @@ class CharacterFinalizeTest {
   void negativeRemainingNuyenBlocksFinalization() {
     Character c = mensch();
     c.setNuyenBP(1);
-    c.addCyberware(implant("0.1", "6000"));
+    c.getEquipment().addCyberware(implant("0.1", "6000"));
 
     assertEquals(1, c.getFinalizeProblems().size());
     assertThrows(IllegalStateException.class, () -> c.finalizeCreation(3));
@@ -42,7 +42,7 @@ class CharacterFinalizeTest {
   void essenceAtZeroIsNoFinalizeProblem() {
     Character c = mensch();
     c.setNuyenBP(10);
-    c.addCyberware(implant("6", "100"));
+    c.getEquipment().addCyberware(implant("6", "100"));
 
     assertTrue(c.isEssenceBelowCreationMinimum());
     assertTrue(c.getFinalizeProblems().isEmpty());
@@ -52,8 +52,8 @@ class CharacterFinalizeTest {
   void finalizationBooksOnlyLifestyleStartingCapital() {
     Character c = mensch();
     c.setNuyenBP(10);
-    c.getLifestyle().setLevel(LifestyleLevel.MIDDLE);
-    c.addCyberware(implant("0.1", "43750"));
+    c.getEquipment().getLifestyle().setLevel(LifestyleLevel.MIDDLE);
+    c.getEquipment().addCyberware(implant("0.1", "43750"));
     // Rest: 50.000 − 5.000 (Lebensstil) − 43.750 = 1.250 ¥ → Bonus 12
 
     int capital = c.finalizeCreation(14);

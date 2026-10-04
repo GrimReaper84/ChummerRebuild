@@ -33,8 +33,8 @@ class CharacterEssenceCombinationTest {
   @Test
   void rulebookExampleOnePointFiveCyberAndTwoPointFiveBio() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.5"));
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "2.5"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.5"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "2.5"));
 
     // 6 − 2,5 (volle Bioware) − 0,75 (halbe Cyberware) = 2,75
     assertEquals(2.75, c.getEssence());
@@ -43,8 +43,8 @@ class CharacterEssenceCombinationTest {
   @Test
   void onlyCyberwareIsDeductedFully() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.2"));
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "0.3"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.2"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "0.3"));
 
     assertEquals(4.5, c.getEssence());
   }
@@ -52,7 +52,7 @@ class CharacterEssenceCombinationTest {
   @Test
   void onlyBiowareIsDeductedFully() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "0.4"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "0.4"));
 
     assertEquals(5.6, c.getEssence());
   }
@@ -60,8 +60,8 @@ class CharacterEssenceCombinationTest {
   @Test
   void exactTieDeductsOneSumFullyAndTheOtherHalf() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "1.0"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "1.0"));
 
     assertEquals(4.5, c.getEssence());
   }
@@ -69,8 +69,8 @@ class CharacterEssenceCombinationTest {
   @Test
   void separateLossesAreReportedBeforeCombination() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.5"));
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "2.5"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.5"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "2.5"));
 
     assertEquals(1.5, c.getCyberwareEssenceLoss());
     assertEquals(2.5, c.getBiowareEssenceLoss());
@@ -80,9 +80,9 @@ class CharacterEssenceCombinationTest {
   void removingImplantRestoresEssence() {
     Character c = mensch();
     Cyberware implant = implant(EquipmentKind.CYBERWARE, "0.5");
-    c.addCyberware(implant);
+    c.getEquipment().addCyberware(implant);
 
-    c.removeCyberware(implant);
+    c.getEquipment().removeCyberware(implant);
 
     assertEquals(6.0, c.getEssence());
   }
@@ -92,7 +92,7 @@ class CharacterEssenceCombinationTest {
     Character c = mensch();
     Cyberware implant = implant(EquipmentKind.CYBERWARE, "1.0");
     implant.setGrade(CyberwareGrade.ALPHAWARE);
-    c.addCyberware(implant);
+    c.getEquipment().addCyberware(implant);
 
     assertEquals(5.2, c.getEssence());
   }

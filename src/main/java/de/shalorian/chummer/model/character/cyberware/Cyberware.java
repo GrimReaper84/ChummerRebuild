@@ -14,7 +14,7 @@ import org.jspecify.annotations.NonNull;
  * Cyberware und Bioware gelten für die Standardvarianten"). Die Essenzkosten werden hier bewusst
  * <b>nicht</b> gerundet — gerundet wird einheitlich erst bei der Gesamt-Essenz auf Charakterebene.
  * Anders als Zauber/Komplexe Formen darf dasselbe Implantat mehrfach eingebaut werden, daher arbeitet
- * {@code Character#removeCyberware} über die Objektreferenz.
+ * {@code Equipment#removeCyberware} über die Objektreferenz.
  */
 public class Cyberware {
 

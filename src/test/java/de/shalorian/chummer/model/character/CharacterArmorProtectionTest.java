@@ -26,40 +26,40 @@ class CharacterArmorProtectionTest {
   void noArmorGivesZero() {
     Character c = mensch();
 
-    assertEquals(0, c.getArmorBallistic());
-    assertEquals(0, c.getArmorImpact());
+    assertEquals(0, c.getEquipment().getArmorBallistic());
+    assertEquals(0, c.getEquipment().getArmorImpact());
   }
 
   @Test
   void onlyHighestPieceCountsPerValue() {
     Character c = mensch();
-    c.addArmor(armor("Panzerjacke"));
-    c.addArmor(armor("Panzerweste"));
+    c.getEquipment().addArmor(armor("Panzerjacke"));
+    c.getEquipment().addArmor(armor("Panzerweste"));
 
-    assertEquals(8, c.getArmorBallistic());
-    assertEquals(6, c.getArmorImpact());
+    assertEquals(8, c.getEquipment().getArmorBallistic());
+    assertEquals(6, c.getEquipment().getArmorImpact());
   }
 
   @Test
   void highestIsDeterminedSeparatelyForBallisticAndImpact() {
     Character c = mensch();
-    c.addArmor(armor("Panzerkleidung"));          // 4/0
-    c.addArmor(armor("Urban Explorer Overall"));  // 6/6
-    c.addArmor(armor("Actioneer-Geschäftskleidung")); // 5/3
+    c.getEquipment().addArmor(armor("Panzerkleidung"));          // 4/0
+    c.getEquipment().addArmor(armor("Urban Explorer Overall"));  // 6/6
+    c.getEquipment().addArmor(armor("Actioneer-Geschäftskleidung")); // 5/3
 
-    assertEquals(6, c.getArmorBallistic());
-    assertEquals(6, c.getArmorImpact());
+    assertEquals(6, c.getEquipment().getArmorBallistic());
+    assertEquals(6, c.getEquipment().getArmorImpact());
   }
 
   @Test
   void helmetAddsItsBonus() {
     Character c = mensch();
-    c.addArmor(armor("Panzerjacke"));
-    c.addArmor(armor("Panzerweste"));
-    c.addArmor(armor("Helm"));
+    c.getEquipment().addArmor(armor("Panzerjacke"));
+    c.getEquipment().addArmor(armor("Panzerweste"));
+    c.getEquipment().addArmor(armor("Helm"));
 
-    assertEquals(9, c.getArmorBallistic());
-    assertEquals(8, c.getArmorImpact());
+    assertEquals(9, c.getEquipment().getArmorBallistic());
+    assertEquals(8, c.getEquipment().getArmorImpact());
   }
 
   @Test
@@ -67,23 +67,23 @@ class CharacterArmorProtectionTest {
     Character c = mensch();
     Armor jacke = armor("Panzerjacke");
     Armor helm = armor("Helm");
-    c.addArmor(jacke);
-    c.addArmor(helm);
-    c.addArmor(armor("Panzerweste"));
+    c.getEquipment().addArmor(jacke);
+    c.getEquipment().addArmor(helm);
+    c.getEquipment().addArmor(armor("Panzerweste"));
 
     jacke.setEquipped(false);
     helm.setEquipped(false);
 
-    assertEquals(6, c.getArmorBallistic());
-    assertEquals(4, c.getArmorImpact());
+    assertEquals(6, c.getEquipment().getArmorBallistic());
+    assertEquals(4, c.getEquipment().getArmorImpact());
   }
 
   @Test
   void helmetAloneGivesItsBonus() {
     Character c = mensch();
-    c.addArmor(armor("Helm"));
+    c.getEquipment().addArmor(armor("Helm"));
 
-    assertEquals(1, c.getArmorBallistic());
-    assertEquals(2, c.getArmorImpact());
+    assertEquals(1, c.getEquipment().getArmorBallistic());
+    assertEquals(2, c.getEquipment().getArmorImpact());
   }
 }

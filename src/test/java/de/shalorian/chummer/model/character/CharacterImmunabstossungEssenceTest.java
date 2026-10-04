@@ -52,7 +52,7 @@ class CharacterImmunabstossungEssenceTest {
   @Test
   void cyberwareLossIsDoubled() {
     Character c = withImmunabstossung();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
 
     assertEquals(2.0, c.getCyberwareEssenceLoss());
     assertEquals(4.0, c.getEssence());
@@ -61,7 +61,7 @@ class CharacterImmunabstossungEssenceTest {
   @Test
   void biowareLossIsNotAffected() {
     Character c = withImmunabstossung();
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "1.0"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "1.0"));
 
     assertEquals(1.0, c.getBiowareEssenceLoss());
     assertEquals(5.0, c.getEssence());
@@ -70,8 +70,8 @@ class CharacterImmunabstossungEssenceTest {
   @Test
   void doubledCyberwareSumEntersCombinationRule() {
     Character c = withImmunabstossung();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "2.0"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "2.0"));
 
     // Cyberware verdoppelt 2,0, Bioware 2,0 → 6 − 2,0 − 2,0/2 = 3,0
     assertEquals(3.0, c.getEssence());
@@ -80,8 +80,8 @@ class CharacterImmunabstossungEssenceTest {
   @Test
   void doubledCyberwareCanBecomeTheHigherSum() {
     Character c = withImmunabstossung();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.5"));
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "2.5"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.5"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "2.5"));
 
     // Ohne Handicap 2,75 — mit Handicap: Cyberware 3,0 (voll), Bioware 2,5 (halb) → 6 − 3 − 1,25 = 1,75
     assertEquals(1.75, c.getEssence());
@@ -90,7 +90,7 @@ class CharacterImmunabstossungEssenceTest {
   @Test
   void removingQualityRestoresNormalEssence() {
     Character c = withImmunabstossung();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
 
     c.removeQuality(IMMUNABSTOSSUNG);
 

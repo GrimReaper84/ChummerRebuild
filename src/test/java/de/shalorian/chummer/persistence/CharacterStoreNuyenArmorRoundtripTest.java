@@ -30,23 +30,25 @@ class CharacterStoreNuyenArmorRoundtripTest {
   @Test
   void roundtripPreservesArmorAndLifestyle() throws IOException {
     Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
-    original.addArmor(new Armor(Objects.requireNonNull(ArmorDataLoader.findByName("Panzerjacke"))));
-    original.addArmor(new Armor(Objects.requireNonNull(ArmorDataLoader.findByName("Helm")), false));
-    original.getLifestyle().setLevel(LifestyleLevel.MIDDLE);
-    original.getLifestyle().setMonths(3);
+    original.getEquipment().addArmor(
+        new Armor(Objects.requireNonNull(ArmorDataLoader.findByName("Panzerjacke"))));
+    original.getEquipment().addArmor(
+        new Armor(Objects.requireNonNull(ArmorDataLoader.findByName("Helm")), false));
+    original.getEquipment().getLifestyle().setLevel(LifestyleLevel.MIDDLE);
+    original.getEquipment().getLifestyle().setMonths(3);
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
-    List<Armor> armor = loaded.getArmor();
+    List<Armor> armor = loaded.getEquipment().getArmor();
     assertEquals(2, armor.size());
     assertEquals("Panzerjacke", armor.get(0).getName());
     assertTrue(armor.get(0).isEquipped());
     assertEquals("Helm", armor.get(1).getName());
     assertFalse(armor.get(1).isEquipped());
-    assertEquals(LifestyleLevel.MIDDLE, loaded.getLifestyle().getLevel());
-    assertEquals(3, loaded.getLifestyle().getMonths());
-    assertEquals(original.getSpentNuyen(), loaded.getSpentNuyen());
+    assertEquals(LifestyleLevel.MIDDLE, loaded.getEquipment().getLifestyle().getLevel());
+    assertEquals(3, loaded.getEquipment().getLifestyle().getMonths());
+    assertEquals(original.getEquipment().getSpentNuyen(), loaded.getEquipment().getSpentNuyen());
   }
 
   @Test
@@ -56,9 +58,9 @@ class CharacterStoreNuyenArmorRoundtripTest {
 
     Character loaded = CharacterStore.load(tempFile());
 
-    assertTrue(loaded.getArmor().isEmpty());
-    assertEquals(LifestyleLevel.STREET, loaded.getLifestyle().getLevel());
-    assertEquals(1, loaded.getLifestyle().getMonths());
+    assertTrue(loaded.getEquipment().getArmor().isEmpty());
+    assertEquals(LifestyleLevel.STREET, loaded.getEquipment().getLifestyle().getLevel());
+    assertEquals(1, loaded.getEquipment().getLifestyle().getMonths());
   }
 
   @Test
@@ -71,8 +73,8 @@ class CharacterStoreNuyenArmorRoundtripTest {
 
     Character loaded = CharacterStore.load(tempFile());
 
-    assertEquals(1, loaded.getArmor().size());
-    assertEquals(LifestyleLevel.STREET, loaded.getLifestyle().getLevel());
-    assertEquals(1, loaded.getLifestyle().getMonths());
+    assertEquals(1, loaded.getEquipment().getArmor().size());
+    assertEquals(LifestyleLevel.STREET, loaded.getEquipment().getLifestyle().getLevel());
+    assertEquals(1, loaded.getEquipment().getLifestyle().getMonths());
   }
 }

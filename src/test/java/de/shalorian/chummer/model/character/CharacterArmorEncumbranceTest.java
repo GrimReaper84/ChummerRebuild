@@ -33,10 +33,10 @@ class CharacterArmorEncumbranceTest {
   @Test
   void rulebookExampleGivesMinusFour() {
     Character c = withBody(3);
-    c.addArmor(catalog("Actioneer-Geschäftskleidung")); // 5/3
-    c.addArmor(catalog("Gefütterter Mantel"));          // 6/4
+    c.getEquipment().addArmor(catalog("Actioneer-Geschäftskleidung")); // 5/3
+    c.getEquipment().addArmor(catalog("Gefütterter Mantel"));          // 6/4
 
-    assertEquals(-4, c.getArmorEncumbrancePenalty());
+    assertEquals(-4, c.getEquipment().getArmorEncumbrancePenalty());
   }
 
   @Test
@@ -46,29 +46,30 @@ class CharacterArmorEncumbranceTest {
     int[] expected = {0, -1, -1, -2};
     for (int i = 0; i < excess.length; i++) {
       Character c = withBody(3);
-      c.addArmor(synthetic(6 + excess[i], 0));
-      assertEquals(expected[i], c.getArmorEncumbrancePenalty(), "Überschuss " + excess[i]);
+      c.getEquipment().addArmor(synthetic(6 + excess[i], 0));
+      assertEquals(expected[i], c.getEquipment().getArmorEncumbrancePenalty(),
+          "Überschuss " + excess[i]);
     }
   }
 
   @Test
   void helmetCountsTowardsTheSum() {
     Character c = withBody(2); // Grenze 4
-    c.addArmor(synthetic(4, 4));
-    assertEquals(0, c.getArmorEncumbrancePenalty());
+    c.getEquipment().addArmor(synthetic(4, 4));
+    assertEquals(0, c.getEquipment().getArmorEncumbrancePenalty());
 
-    c.addArmor(catalog("Helm")); // +1/+2 → 5/6
-    assertEquals(-2, c.getArmorEncumbrancePenalty());
+    c.getEquipment().addArmor(catalog("Helm")); // +1/+2 → 5/6
+    assertEquals(-2, c.getEquipment().getArmorEncumbrancePenalty());
   }
 
   @Test
   void unequippedArmorDoesNotEncumber() {
     Character c = withBody(1);
     Armor jacke = catalog("Panzerjacke");
-    c.addArmor(jacke);
+    c.getEquipment().addArmor(jacke);
     jacke.setEquipped(false);
 
-    assertEquals(0, c.getArmorEncumbrancePenalty());
+    assertEquals(0, c.getEquipment().getArmorEncumbrancePenalty());
   }
 
   @Test
@@ -77,8 +78,8 @@ class CharacterArmorEncumbranceTest {
     c.getAttribute(AttributeType.AGI).setValue(5);
     c.getAttribute(AttributeType.REA).setValue(4);
     c.getAttribute(AttributeType.STR).setValue(4);
-    c.addArmor(catalog("Actioneer-Geschäftskleidung"));
-    c.addArmor(catalog("Gefütterter Mantel"));
+    c.getEquipment().addArmor(catalog("Actioneer-Geschäftskleidung"));
+    c.getEquipment().addArmor(catalog("Gefütterter Mantel"));
 
     assertEquals(1, c.getAugmentedAttributeValue(AttributeType.AGI));
     assertEquals(1, c.getAugmentedAttributeValue(AttributeType.REA)); // 4 − 4 = 0 → Untergrenze 1

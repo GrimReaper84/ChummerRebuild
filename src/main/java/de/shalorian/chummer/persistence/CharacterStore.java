@@ -106,18 +106,18 @@ public class CharacterStore {
     data.complexForms = character.getComplexForms().stream()
         .map(cf -> new ComplexFormEntry(cf.getName(), cf.getRating()))
         .toList();
-    data.cyberware = character.getCyberware().stream()
+    data.cyberware = character.getEquipment().getCyberware().stream()
         .map(c -> new CyberwareEntry(c.getName(), c.getGrade().name(), c.getRating()))
         .toList();
-    data.armor = character.getArmor().stream()
+    data.armor = character.getEquipment().getArmor().stream()
         .map(a -> new ArmorEntry(a.getName(), a.isEquipped()))
         .toList();
-    data.weapons = character.getWeapons().stream()
+    data.weapons = character.getEquipment().getWeapons().stream()
         .map(w -> new WeaponEntry(w.getName(), w.getRating(), w.getAccessories().stream()
             .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
             .toList()))
         .toList();
-    Lifestyle lifestyle = character.getLifestyle();
+    Lifestyle lifestyle = character.getEquipment().getLifestyle();
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
 
     return data;
@@ -217,7 +217,8 @@ public class CharacterStore {
       if (cyberwareData == null) {
         continue;
       }
-      character.addCyberware(new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating));
+      character.getEquipment().addCyberware(
+          new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating));
     }
   }
 
@@ -226,7 +227,7 @@ public class CharacterStore {
     for (ArmorEntry entry : data.armor) {
       ArmorData armorData = ArmorDataLoader.findByName(entry.name);
       if (armorData != null) {
-        character.addArmor(new Armor(armorData, entry.equipped));
+        character.getEquipment().addArmor(new Armor(armorData, entry.equipped));
       }
     }
   }
@@ -242,7 +243,7 @@ public class CharacterStore {
       if (weaponData != null && weaponData.isValidRating(entry.rating)) {
         Weapon weapon = new Weapon(weaponData, entry.rating);
         entry.accessories.forEach(a -> applyAccessory(weapon, a));
-        character.addWeapon(weapon);
+        character.getEquipment().addWeapon(weapon);
       }
     }
   }
@@ -265,7 +266,7 @@ public class CharacterStore {
    * lässt den Default Straße stehen; weniger als ein Monat wird auf das Minimum angehoben.
    */
   private static void applyLifestyle(@NonNull Character character, @NonNull CharacterData data) {
-    Lifestyle lifestyle = character.getLifestyle();
+    Lifestyle lifestyle = character.getEquipment().getLifestyle();
     for (LifestyleLevel level : LifestyleLevel.values()) {
       if (level.name().equals(data.lifestyle.level)) {
         lifestyle.setLevel(level);

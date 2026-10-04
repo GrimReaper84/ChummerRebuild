@@ -32,10 +32,10 @@ class CharacterWeaponTest {
     c.setNuyenBP(10);
     Weapon predator = new Weapon(catalog("Ares Predator IV"));
 
-    c.addWeapon(predator);
+    c.getEquipment().addWeapon(predator);
     assertEquals(49_650, c.getRemainingNuyen());
 
-    c.removeWeapon(predator);
+    c.getEquipment().removeWeapon(predator);
     assertEquals(50_000, c.getRemainingNuyen());
   }
 
@@ -44,23 +44,23 @@ class CharacterWeaponTest {
     Character c = mensch();
     Weapon first = new Weapon(catalog("Messer"));
     Weapon second = new Weapon(catalog("Messer"));
-    c.addWeapon(first);
-    c.addWeapon(second);
+    c.getEquipment().addWeapon(first);
+    c.getEquipment().addWeapon(second);
 
-    c.removeWeapon(first);
+    c.getEquipment().removeWeapon(first);
 
-    assertEquals(1, c.getWeapons().size());
-    assertSame(second, c.getWeapons().get(0));
+    assertEquals(1, c.getEquipment().getWeapons().size());
+    assertSame(second, c.getEquipment().getWeapons().get(0));
   }
 
   @Test
   void weaponCostsSumIncludingBowRating() {
     Character c = mensch();
-    c.addWeapon(new Weapon(catalog("Katana")));
-    c.addWeapon(new Weapon(catalog("Bogen"), 3));
+    c.getEquipment().addWeapon(new Weapon(catalog("Katana")));
+    c.getEquipment().addWeapon(new Weapon(catalog("Bogen"), 3));
 
-    assertEquals(1_300, c.getWeaponNuyenCost());
-    assertEquals(1_300, c.getSpentNuyen());
+    assertEquals(1_300, c.getEquipment().getWeaponNuyenCost());
+    assertEquals(1_300, c.getEquipment().getSpentNuyen());
   }
 
   @Test
@@ -68,7 +68,7 @@ class CharacterWeaponTest {
     Character c = mensch();
     int before = c.getSpentBP();
 
-    c.addWeapon(new Weapon(catalog("Ares Alpha")));
+    c.getEquipment().addWeapon(new Weapon(catalog("Ares Alpha")));
 
     assertEquals(before, c.getSpentBP());
   }
@@ -78,14 +78,14 @@ class CharacterWeaponTest {
     Character c = mensch();
     WeaponData bow = catalog("Bogen");
 
-    assertTrue(c.isAvailableForPurchase(catalog("Ares Alpha").availability(), 0));   // 12V
-    assertFalse(c.isAvailableForPurchase(catalog("HK XM30").availability(), 0));     // 15V
-    assertTrue(c.isAvailableForPurchase(bow.availability(), 6));                       // 12
-    assertFalse(c.isAvailableForPurchase(bow.availability(), 7));                      // 14
+    assertTrue(c.getEquipment().isAvailableForPurchase(catalog("Ares Alpha").availability(), 0)); // 12V
+    assertFalse(c.getEquipment().isAvailableForPurchase(catalog("HK XM30").availability(), 0)); // 15V
+    assertTrue(c.getEquipment().isAvailableForPurchase(bow.availability(), 6)); // 12
+    assertFalse(c.getEquipment().isAvailableForPurchase(bow.availability(), 7)); // 14
 
     c.setCreated(true);
-    assertTrue(c.isAvailableForPurchase(catalog("HK XM30").availability(), 0));
-    assertTrue(c.isAvailableForPurchase(bow.availability(), 8));
+    assertTrue(c.getEquipment().isAvailableForPurchase(catalog("HK XM30").availability(), 0));
+    assertTrue(c.getEquipment().isAvailableForPurchase(bow.availability(), 8));
   }
 
   @Test
@@ -95,9 +95,9 @@ class CharacterWeaponTest {
     Weapon predator = new Weapon(catalog("Ares Predator IV"));
     predator.addAccessory(new WeaponAccessory(
         Objects.requireNonNull(AccessoryDataLoader.findByName("Schalldämpfer")), Mount.BARREL));
-    c.addWeapon(predator);
+    c.getEquipment().addWeapon(predator);
 
-    assertEquals(550, c.getWeaponNuyenCost());
+    assertEquals(550, c.getEquipment().getWeaponNuyenCost());
     assertEquals(49_450, c.getRemainingNuyen());
   }
 }

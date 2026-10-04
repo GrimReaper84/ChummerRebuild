@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.armor.ArmorCategory;
 import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.armor.ArmorDataLoader;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.equipment.Equipment;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,7 @@ import org.jspecify.annotations.Nullable;
  * Auswahl-Dialog für Rüstung (GRW-Tabelle Panzerung, S. 373) mit Kategorie-Filter und Info-Panel
  * (Schutz, Verfügbarkeit, Preis, Quelle). Rüstung mit Verfügbarkeit über 12 bleibt bei der
  * Charaktererschaffung sichtbar, aber deaktiviert (GRW S. 111, siehe {@link
- * Character#isAvailableForPurchase(Availability, int)}).
+ * Equipment#isAvailableForPurchase(Availability, int)}).
  */
 public class ArmorSelectDialogController extends CatalogSelectDialogController<ArmorData> {
 
@@ -66,7 +67,7 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
 
   @Override
   protected boolean isSelectable(@NonNull ArmorData data) {
-    return character == null || character.isAvailableForPurchase(data);
+    return character == null || character.getEquipment().isAvailableForPurchase(data);
   }
 
   @Override

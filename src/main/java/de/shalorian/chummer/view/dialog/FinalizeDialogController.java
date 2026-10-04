@@ -52,7 +52,7 @@ public class FinalizeDialogController {
 
   /** Übernimmt Lebensstil und Restgeld des Charakters und würfelt einen ersten Wurf. */
   public void setCharacter(@NonNull Character character) {
-    this.level = character.getLifestyle().getLevel();
+    this.level = character.getEquipment().getLifestyle().getLevel();
     this.remainingNuyen = character.getRemainingNuyen();
     lifestyleLabel.setText(level.getDisplayName());
     diceLabel.setText(level.getDice() + "W6 × " + level.getMultiplier() + " ¥"

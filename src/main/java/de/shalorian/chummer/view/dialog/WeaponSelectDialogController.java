@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import de.shalorian.chummer.model.character.weapon.WeaponData;
@@ -24,7 +25,7 @@ import org.jspecify.annotations.Nullable;
  * und Info-Bereich mit den Tabellenwerten. Nur der Bogen hat eine Stufen-Auswahl (Mindeststärke).
  * Waffen und einzelne Bogenstufen, deren Verfügbarkeit bei der Charaktererschaffung über 12 liegt,
  * bleiben sichtbar, aber deaktiviert (GRW S. 111, siehe {@link
- * Character#isAvailableForPurchase(Availability, int)}).
+ * Equipment#isAvailableForPurchase(Availability, int)}).
  */
 public class WeaponSelectDialogController extends CatalogSelectDialogController<WeaponData> {
 
@@ -82,7 +83,8 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
   }
 
   private boolean isAvailable(@NonNull WeaponData data, int rating) {
-    return character == null || character.isAvailableForPurchase(data.availability(), rating);
+    return character == null
+        || character.getEquipment().isAvailableForPurchase(data.availability(), rating);
   }
 
   private boolean isRatingAvailable(int rating) {

@@ -107,14 +107,14 @@ final class StreetGearTabBuilder {
     lifestyleContainer.getChildren().add(withRightFiller(grid));
 
     if (character.isCreated()) {
-      fillLifestyleInCareerMode(grid, character.getLifestyle());
+      fillLifestyleInCareerMode(grid, character.getEquipment().getLifestyle());
     } else {
       fillLifestyleInCreationMode(grid, character);
     }
   }
 
   private void fillLifestyleInCreationMode(@NonNull MigPane grid, @NonNull Character character) {
-    Lifestyle lifestyle = character.getLifestyle();
+    Lifestyle lifestyle = character.getEquipment().getLifestyle();
     LifestyleLevel level = lifestyle.getLevel();
     addLifestyleRow(grid, 0, "Stufe:", buildLifestyleLevelBox(character));
     addLifestyleRow(grid, 1, "Monate im Voraus:", buildLifestyleMonthsStepper(character));
@@ -140,7 +140,7 @@ final class StreetGearTabBuilder {
   }
 
   private @NonNull ComboBox<LifestyleLevel> buildLifestyleLevelBox(@NonNull Character character) {
-    Lifestyle lifestyle = character.getLifestyle();
+    Lifestyle lifestyle = character.getEquipment().getLifestyle();
     ComboBox<LifestyleLevel> levelBox = new ComboBox<>();
     levelBox.getItems().setAll(LifestyleLevel.values());
     levelBox.setConverter(new LifestyleLevelStringConverter());
@@ -155,7 +155,7 @@ final class StreetGearTabBuilder {
   }
 
   private @NonNull HBox buildLifestyleMonthsStepper(@NonNull Character character) {
-    Lifestyle lifestyle = character.getLifestyle();
+    Lifestyle lifestyle = character.getEquipment().getLifestyle();
     Button minus = new Button("−");
     Label value = new Label(String.valueOf(lifestyle.getMonths()));
     Button plus = new Button("+");
@@ -215,7 +215,7 @@ final class StreetGearTabBuilder {
     armorContainer.getChildren().addAll(buildArmorSummaryHeader(character),
         buildArmorToolbar(character));
 
-    List<Armor> pieces = character.getArmor();
+    List<Armor> pieces = character.getEquipment().getArmor();
     if (pieces.isEmpty()) {
       Label empty = new Label("Keine Rüstung gekauft");
       empty.getStyleClass().add(STYLE_ATTR_RANGE);
@@ -234,13 +234,15 @@ final class StreetGearTabBuilder {
     protectionLabel.getStyleClass().add(STYLE_BP_VALUE);
     Label encumbranceLabel = new Label();
     encumbranceLabel.getStyleClass().add(STYLE_BP_LABEL);
-    Label costLabel = new Label("Kosten: " + character.getArmorNuyenCost() + NUYEN_SUFFIX);
+    Label costLabel =
+        new Label("Kosten: " + character.getEquipment().getArmorNuyenCost() + NUYEN_SUFFIX);
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     Runnable refreshSummary = () -> {
       protectionLabel.setText(
-          "Schutz: " + character.getArmorBallistic() + "/" + character.getArmorImpact());
-      int penalty = character.getArmorEncumbrancePenalty();
+          "Schutz: " + character.getEquipment().getArmorBallistic() + "/"
+              + character.getEquipment().getArmorImpact());
+      int penalty = character.getEquipment().getArmorEncumbrancePenalty();
       encumbranceLabel.setText(penalty == 0
           ? "Keine Behinderung"
           : "Behinderung: " + penalty + " (GES/REA)");
@@ -323,7 +325,7 @@ final class StreetGearTabBuilder {
       onArmorChanged(character);
     });
     removeBtn.setOnAction(e -> {
-      character.removeArmor(piece);
+      character.getEquipment().removeArmor(piece);
       onArmorChanged(character);
     });
 
@@ -348,7 +350,7 @@ final class StreetGearTabBuilder {
             && host.nuyenChargeFailed(character, "Kauf: " + data.name(), data.cost())) {
           return;
         }
-        character.addArmor(new Armor(data));
+        character.getEquipment().addArmor(new Armor(data));
         onArmorChanged(character);
       });
     } catch (IOException e) {
@@ -357,7 +359,7 @@ final class StreetGearTabBuilder {
   }
 
   private void onSetAllArmorEquipped(@NonNull Character character, boolean equipped) {
-    character.getArmor().forEach(piece -> piece.setEquipped(equipped));
+    character.getEquipment().getArmor().forEach(piece -> piece.setEquipped(equipped));
     onArmorChanged(character);
   }
 

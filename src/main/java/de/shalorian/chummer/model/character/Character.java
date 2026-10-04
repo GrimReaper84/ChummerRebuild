@@ -1,18 +1,11 @@
 package de.shalorian.chummer.model.character;
 
-import de.shalorian.chummer.model.character.CatalogEntry;
-import de.shalorian.chummer.model.character.armor.Armor;
-import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.attribute.AttributeRange;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
-import de.shalorian.chummer.model.character.cyberware.Cyberware;
-import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
-import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
-import de.shalorian.chummer.model.character.equipment.Availability;
-import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
+import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -29,9 +22,6 @@ import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.model.character.skill.SkillDataLoader;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
-import de.shalorian.chummer.model.character.weapon.RangeBands;
-import de.shalorian.chummer.model.character.weapon.Weapon;
-import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -46,8 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.ToIntFunction;
-import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -78,8 +66,6 @@ public class Character {
   private static final BigDecimal BASE_ESSENCE = BigDecimal.valueOf(6);
   private static final int ESSENCE_DECIMALS = 2;
   private static final BigDecimal TWO = BigDecimal.valueOf(2);
-  private static final int ARMOR_ENCUMBRANCE_BOD_MULTIPLIER = 2;
-  private static final int ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY = 2;
   private static final int MIN_ENCUMBERED_ATTRIBUTE_VALUE = 1;
 
   private final Map<AttributeType, CharacterAttribute> attributes;
@@ -90,10 +76,7 @@ public class Character {
   private final List<Contact> contacts = new ArrayList<>();
   private final List<SpellData> spells = new ArrayList<>();
   private final List<ComplexForm> complexForms = new ArrayList<>();
-  private final List<Cyberware> cyberware = new ArrayList<>();
-  private final List<Armor> armor = new ArrayList<>();
-  private final List<Weapon> weapons = new ArrayList<>();
-  private final @NonNull Lifestyle lifestyle = new Lifestyle();
+  private final @NonNull Equipment equipment = new Equipment(this);
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private final @NonNull CharacterBiography biography = new CharacterBiography();
@@ -229,7 +212,7 @@ public class Character {
   /**
    * Wirksamer Attributwert inkl. aller modellierten Modifikatoren — derzeit ausschließlich die
    * Panzerungsbehinderung auf Geschicklichkeit und Reaktion (siehe {@link
-   * #getArmorEncumbrancePenalty()}). Der investierte Wert ({@link CharacterAttribute#getValue()})
+   * Equipment#getArmorEncumbrancePenalty()}). Der investierte Wert ({@link CharacterAttribute#getValue()})
    * bleibt unverändert, BP- und Karma-Kosten richten sich weiter nach ihm (analog {@link
    * #getEffectiveMagicOrResonanceValue()}).
    *
@@ -240,7 +223,7 @@ public class Character {
    */
   public int getAugmentedAttributeValue(@NonNull AttributeType type) {
     int base = getAttribute(type).getValue();
-    int penalty = getArmorEncumbrancePenalty();
+    int penalty = equipment.getArmorEncumbrancePenalty();
     if (penalty == 0 || (type != AttributeType.AGI && type != AttributeType.REA)) {
       return base;
     }
@@ -318,11 +301,21 @@ public class Character {
 
   private @NonNull BigDecimal getExactEssence() {
     BigDecimal cyber = getExactCyberwareEssenceLoss();
-    BigDecimal bio = sumEssenceCost(EquipmentKind.BIOWARE);
+    BigDecimal bio = equipment.getBiowareEssenceCost();
     BigDecimal higher = cyber.max(bio);
     BigDecimal lower = cyber.min(bio);
     return BASE_ESSENCE.subtract(higher).subtract(lower.divide(TWO))
         .setScale(ESSENCE_DECIMALS, RoundingMode.HALF_UP);
+  }
+
+  /**
+   * Ob die Essenz während der Charaktererschaffung auf 0 oder darunter gefallen ist, was das GRW für
+   * Startcharaktere nicht erlaubt. Wird bewusst nur als Warnung angezeigt, nicht als harte Sperre
+   * (konsistent mit der übrigen Validierung, siehe {@code docs/plaene/cyberware_plan.md} Abschnitt 13).
+   * Im Karrieremodus immer {@code false}.
+   */
+  public boolean isEssenceBelowCreationMinimum() {
+    return !created && getExactEssence().signum() <= 0;
   }
 
   /**
@@ -336,19 +329,12 @@ public class Character {
 
   /** Essenzverlust durch Bioware (vor Anwendung der Kombinationsregel), Gegenstück zu {@link #getCyberwareEssenceLoss()}. */
   public double getBiowareEssenceLoss() {
-    return sumEssenceCost(EquipmentKind.BIOWARE).doubleValue();
+    return equipment.getBiowareEssenceCost().doubleValue();
   }
 
   private @NonNull BigDecimal getExactCyberwareEssenceLoss() {
-    BigDecimal loss = sumEssenceCost(EquipmentKind.CYBERWARE);
+    BigDecimal loss = equipment.getCyberwareEssenceCost();
     return hasDoubledCyberwareEssence() ? loss.multiply(TWO) : loss;
-  }
-
-  private @NonNull BigDecimal sumEssenceCost(@NonNull EquipmentKind kind) {
-    return cyberware.stream()
-        .filter(c -> c.getKind() == kind)
-        .map(Cyberware::getEssenceCost)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
   private boolean hasDoubledCyberwareEssence() {
@@ -1130,210 +1116,14 @@ public class Character {
     return hasResonance() && getEffectiveMagicOrResonanceValue() >= ComplexForm.MIN_RATING;
   }
 
-  // --- Cyberware & Bioware ---
-
-  /** Alle eingebauten Implantate (Cyberware und Bioware gemeinsam, siehe {@link Cyberware#getKind()}). */
-  public @NonNull List<Cyberware> getCyberware() {
-    return Collections.unmodifiableList(cyberware);
-  }
+  // --- Ausrüstung & Nuyen-Budget ---
 
   /**
-   * Baut ein Implantat ein. Dasselbe Implantat darf mehrfach eingebaut werden (z.B. mehrere
-   * Schmuggelbehälter), daher keine Duplikatprüfung. Keine Prüfung der Grade-Verfügbarkeit oder der
-   * Mindest-Essenz an dieser Stelle — beides sind Erschaffungsregeln, die die UI über {@link
-   * #isCyberwareGradeAvailable(CyberwareGrade)} bzw. {@link #isEssenceBelowCreationMinimum()} prüft
-   * (analog {@link #canAddSpellAtCreation()}); der Persistenz-Pfad lädt so auch im Karrieremodus
-   * erworbene Beta-/Deltaware ohne Sonderbehandlung.
+   * Die Ausrüstung des Charakters (Cyber-/Bioware, Rüstung, Waffen, Lebensstil) — immer vorhanden,
+   * Aufrufer kaufen und entfernen direkt dort (analog {@link #getBiography()}).
    */
-  public void addCyberware(@NonNull Cyberware implant) {
-    cyberware.add(implant);
-  }
-
-  /** Entfernt genau dieses Implantat (Objektreferenz, da Duplikate erlaubt sind — analog {@link #removeContact(Contact)}). */
-  public void removeCyberware(@NonNull Cyberware implant) {
-    cyberware.remove(implant);
-  }
-
-  /**
-   * Ob Implantate dieser Kategorie aktuell gekauft werden dürfen: bei der Charaktererschaffung nur
-   * Standard- und Alphaware (SR4-Grundregelwerk S. 359), im Karrieremodus alle Kategorien.
-   */
-  public boolean isCyberwareGradeAvailable(@NonNull CyberwareGrade grade) {
-    return created || grade.isAvailableAtCreation();
-  }
-
-  /**
-   * Ob die Essenz während der Charaktererschaffung auf 0 oder darunter gefallen ist, was das GRW für
-   * Startcharaktere nicht erlaubt. Wird bewusst nur als Warnung angezeigt, nicht als harte Sperre
-   * (konsistent mit der übrigen Validierung, siehe {@code docs/plaene/cyberware_plan.md} Abschnitt 13).
-   * Im Karrieremodus immer {@code false}.
-   */
-  public boolean isEssenceBelowCreationMinimum() {
-    return !created && getExactEssence().signum() <= 0;
-  }
-
-  /** Gesamtpreis aller eingebauten Implantate in Nuyen (inkl. Grade-Multiplikatoren). */
-  public int getCyberwareNuyenCost() {
-    return cyberware.stream().mapToInt(Cyberware::getNuyenCost).sum();
-  }
-
-  /**
-   * Ob ein Gegenstand mit dieser Verfügbarkeit in dieser Stufe aktuell gekauft werden darf: bei der
-   * Charaktererschaffung nur bis Verfügbarkeit {@value Availability#MAX_AVAILABILITY_AT_CREATION}
-   * (SR4-Grundregelwerk S. 111: "Die höchste Verfügbarkeit ist 12"), im Karrieremodus immer. Wie
-   * bei {@link #isCyberwareGradeAvailable(CyberwareGrade)} prüft die UI diese Regel, nicht {@code
-   * add…()}, damit der Persistenz-Pfad unverändert laden kann.
-   */
-  public boolean isAvailableForPurchase(@NonNull Availability availability, int rating) {
-    return created || availability.isAllowedAtCreation(rating);
-  }
-
-  /** Wie {@link #isAvailableForPurchase(Availability, int)} für Rüstung, die keine Stufe hat. */
-  public boolean isAvailableForPurchase(@NonNull ArmorData armorData) {
-    return created || armorData.isAllowedAtCreation();
-  }
-
-  // --- Rüstung ---
-
-  /** Alle gekauften Rüstungsteile, angelegt oder nicht. */
-  public @NonNull List<Armor> getArmor() {
-    return Collections.unmodifiableList(armor);
-  }
-
-  /** Kauft ein Rüstungsteil. Dasselbe Teil darf mehrfach gekauft werden (keine Duplikatprüfung). */
-  public void addArmor(@NonNull Armor piece) {
-    armor.add(piece);
-  }
-
-  /** Entfernt genau dieses Rüstungsteil (Objektreferenz, da Duplikate erlaubt sind). */
-  public void removeArmor(@NonNull Armor piece) {
-    armor.remove(piece);
-  }
-
-  /** Gesamtpreis aller gekauften Rüstungsteile in Nuyen (angelegt oder nicht). */
-  public int getArmorNuyenCost() {
-    return armor.stream().mapToInt(Armor::getNuyenCost).sum();
-  }
-
-  /**
-   * Ballistik-Schutzwert der angelegten Rüstung. SR4-Grundregelwerk S. 190: "Wenn ein Charakter mehr
-   * als ein Panzerungsstück gleichzeitig trägt, wird nur der höchste Wert (für jeweils Ballistik oder
-   * Stoß) beachtet. Einige Panzerungsgegenstände, wie Helme und Schilde, liefern einen Bonus auf die
-   * Panzerungsstufe" — und S. 372: Helme und Schilde "erhöhen den Wert der getragenen Panzerung um
-   * ihre Stufe". Also höchstes angelegtes Panzerungsteil + Summe aller angelegten Helm-/Schild-Boni.
-   */
-  public int getArmorBallistic() {
-    return protectionValue(ArmorData::ballistic);
-  }
-
-  /** Stoß-Schutzwert der angelegten Rüstung, Regel wie {@link #getArmorBallistic()}. */
-  public int getArmorImpact() {
-    return protectionValue(ArmorData::impact);
-  }
-
-  private int protectionValue(@NonNull ToIntFunction<ArmorData> value) {
-    int highest = equippedArmor()
-        .filter(a -> !a.getData().category().isBonus())
-        .mapToInt(a -> value.applyAsInt(a.getData()))
-        .max().orElse(0);
-    int bonus = equippedArmor()
-        .filter(a -> a.getData().category().isBonus())
-        .mapToInt(a -> value.applyAsInt(a.getData()))
-        .sum();
-    return highest + bonus;
-  }
-
-  /**
-   * Panzerungsbehinderung als (nicht positiver) Modifikator auf Geschicklichkeit und Reaktion.
-   * SR4-Grundregelwerk S. 190: Übersteigt die Summe der getragenen Panzerung (je Ballistik und Stoß)
-   * die doppelte Konstitution, gibt es je angefangene 2 Punkte darüber −1 auf GES und REA; die
-   * Modifikatoren aus Ballistik und Stoß addieren sich. GRW-Beispiel: KON 3, Actioneer-
-   * Geschäftskleidung 5/3 + Gefütterter Mantel 6/4 → Ballistik 11 (5 über 6 → −3), Stoß 7 (1 über 6 →
-   * −1), zusammen −4.
-   *
-   * <p>Helme und Schilde zählen in die Summe mit (Nutzerentscheidung, wie im C#-Original; GRW S. 372
-   * verweist bei ihnen ausdrücklich auf die Panzerungsbehinderung). Grundlage ist die investierte
-   * Konstitution — sobald Attributboni modelliert sind, muss hier der modifizierte Wert verwendet
-   * werden.
-   */
-  public int getArmorEncumbrancePenalty() {
-    int limit = getAttribute(AttributeType.BOD).getValue() * ARMOR_ENCUMBRANCE_BOD_MULTIPLIER;
-    return -(encumbranceSteps(ArmorData::ballistic, limit)
-        + encumbranceSteps(ArmorData::impact, limit));
-  }
-
-  private int encumbranceSteps(@NonNull ToIntFunction<ArmorData> value, int limit) {
-    int total = equippedArmor().mapToInt(a -> value.applyAsInt(a.getData())).sum();
-    int excess = Math.max(0, total - limit);
-    return (excess + ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY - 1) / ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY;
-  }
-
-  private @NonNull Stream<Armor> equippedArmor() {
-    return armor.stream().filter(Armor::isEquipped);
-  }
-
-  // --- Waffen ---
-
-  /** Alle gekauften Waffen. */
-  public @NonNull List<Weapon> getWeapons() {
-    return Collections.unmodifiableList(weapons);
-  }
-
-  /**
-   * Kauft eine Waffe. Dieselbe Waffe darf mehrfach gekauft werden (keine Duplikatprüfung). Die
-   * Verfügbarkeit prüft die UI über {@link #isAvailableForPurchase(Availability, int)} — wie bei
-   * Rüstung, damit der Persistenz-Pfad unverändert laden kann.
-   */
-  public void addWeapon(@NonNull Weapon weapon) {
-    weapons.add(weapon);
-  }
-
-  /** Entfernt genau diese Waffe (Objektreferenz, da Duplikate erlaubt sind). */
-  public void removeWeapon(@NonNull Weapon weapon) {
-    weapons.remove(weapon);
-  }
-
-  /** Gesamtpreis aller gekauften Waffen in Nuyen. */
-  public int getWeaponNuyenCost() {
-    return weapons.stream().mapToInt(Weapon::getTotalNuyenCost).sum();
-  }
-
-  /**
-   * Aktive Fertigkeit, mit der die Waffe geführt bzw. abgefeuert wird ({@link
-   * WeaponCategory#skillName()}, GRW S. 147/148, 360–366). Der Wert einer noch gekoppelten
-   * Fertigkeitsgruppe steht bereits auf jeder Einzelfertigkeit, z.B. Gruppe Feuerwaffen 3 → Gewehre 3.
-   */
-  public @NonNull Skill getWeaponSkill(@NonNull Weapon weapon) {
-    String name = weapon.getData().category().skillName();
-    return Objects.requireNonNull(getSkill(name), () -> "Kampffertigkeit fehlt: " + name);
-  }
-
-  /**
-   * Schaden der Waffe für diesen Charakter (GRW S. 188: "Stärke ÷ 2 (aufgerundet), modifiziert durch
-   * die Waffe"; beim Bogen nach Mindeststärke). Grundlage ist die wirksame Stärke ({@link
-   * #getAugmentedAttributeValue(AttributeType)}), die derzeit der investierten entspricht, da es noch
-   * keine Stärkemodifikatoren gibt.
-   */
-  public @NonNull String getWeaponDamageText(@NonNull Weapon weapon) {
-    return weapon.getDamageText(getAugmentedAttributeValue(AttributeType.STR));
-  }
-
-  /**
-   * Reichweitenstufen der Waffe für diesen Charakter (GRW S. 179; Wurfwaffen nach Stärke, Bögen nach
-   * Mindeststärke), oder {@code null} bei Nahkampfwaffen.
-   */
-  public @Nullable RangeBands getWeaponRangeBands(@NonNull Weapon weapon) {
-    return weapon.getRangeBands(getAugmentedAttributeValue(AttributeType.STR));
-  }
-
-  // --- Lebensstil & Nuyen-Budget ---
-
-  /**
-   * Der Lebensstil des Charakters — immer vorhanden, Default Straße/1 Monat. Aufrufer ändern Stufe
-   * und Monate direkt am zurückgegebenen Objekt (analog {@link #getBiography()}).
-   */
-  public @NonNull Lifestyle getLifestyle() {
-    return lifestyle;
+  public @NonNull Equipment getEquipment() {
+    return equipment;
   }
 
   /**
@@ -1347,23 +1137,12 @@ public class Character {
   }
 
   /**
-   * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung, Waffen und
-   * Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige Kaufkategorien (Gear) werden
-   * hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
-   * Ausrüstungsgegenstände vollständig bezahlen."
-   */
-  public int getSpentNuyen() {
-    return getCyberwareNuyenCost() + getArmorNuyenCost() + getWeaponNuyenCost()
-        + lifestyle.getNuyenCost();
-  }
-
-  /**
    * Nicht ausgegebenes Ressourcengeld — eine reine Ableitung ohne Buchungsliste, Entfernen eines
    * Gegenstands "erstattet" also automatisch. Darf zwischenzeitlich negativ sein; ein Abschluss ist
    * dann nicht möglich (siehe {@link #getFinalizeProblems()}).
    */
   public int getRemainingNuyen() {
-    return getResourceNuyen() - getSpentNuyen();
+    return getResourceNuyen() - equipment.getSpentNuyen();
   }
 
   // --- Abschluss der Charaktererschaffung ---
@@ -1408,9 +1187,9 @@ public class Character {
     if (!problems.isEmpty()) {
       throw new IllegalStateException(String.join(" ", problems));
     }
-    int startingCapital = lifestyle.getLevel().startingCapital(diceSum, getRemainingNuyen());
+    int startingCapital = equipment.getLifestyle().getLevel().startingCapital(diceSum, getRemainingNuyen());
     nuyenLog.add(new LogEntry(
-        "Startkapital (Lebensstil " + lifestyle.getLevel().getDisplayName() + ")",
+        "Startkapital (Lebensstil " + equipment.getLifestyle().getLevel().getDisplayName() + ")",
         startingCapital, LocalDate.now(ZoneId.systemDefault())));
     nuyenBP = 0;
     created = true;

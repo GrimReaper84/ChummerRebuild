@@ -132,7 +132,7 @@ final class WeaponTabBuilder {
       @Nullable WeaponAccessory selectedAccessory) {
     Map<WeaponCategory, TreeItem<WeaponTreeEntry>> groups = new EnumMap<>(WeaponCategory.class);
     TreeItem<WeaponTreeEntry> selectedItem = null;
-    for (Weapon weapon : character.getWeapons()) {
+    for (Weapon weapon : character.getEquipment().getWeapons()) {
       TreeItem<WeaponTreeEntry> group = groups.computeIfAbsent(weapon.getData().category(),
           category -> {
             TreeItem<WeaponTreeEntry> item = new TreeItem<>(WeaponTreeEntry.ofCategory(category));
@@ -177,7 +177,7 @@ final class WeaponTabBuilder {
   private @NonNull HBox buildHeader(@NonNull Character character) {
     Label title = new Label("Waffen");
     title.getStyleClass().add(STYLE_SECTION_TITLE);
-    Label costLabel = new Label("Kosten: " + character.getWeaponNuyenCost() + " ¥");
+    Label costLabel = new Label("Kosten: " + character.getEquipment().getWeaponNuyenCost() + " ¥");
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     HBox header = new HBox(12);
@@ -241,7 +241,7 @@ final class WeaponTabBuilder {
     details.getChildren().clear();
     Weapon weapon = entry == null ? null : entry.weapon();
     if (entry == null || weapon == null) {
-      details.getChildren().add(hint(character.getWeapons().isEmpty()
+      details.getChildren().add(hint(character.getEquipment().getWeapons().isEmpty()
           ? "Keine Waffen gekauft"
           : "Waffe auswählen, um ihre Werte zu sehen"));
     } else if (entry.accessory() != null) {
@@ -374,7 +374,7 @@ final class WeaponTabBuilder {
             "Kauf: " + weapon.getDisplayName(), weapon.getNuyenCost())) {
           return;
         }
-        character.addWeapon(weapon);
+        character.getEquipment().addWeapon(weapon);
         onWeaponsChanged(character, weapon, null);
       });
     } catch (IOException e) {
@@ -421,7 +421,7 @@ final class WeaponTabBuilder {
     WeaponAccessory accessory = entry.accessory();
     if (accessory == null) {
       if (entry.isWeapon()) {
-        character.removeWeapon(weapon);
+        character.getEquipment().removeWeapon(weapon);
         onWeaponsChanged(character, null, null);
       }
       return;

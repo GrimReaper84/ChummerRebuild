@@ -32,19 +32,22 @@ class CharacterStoreWeaponRoundtripTest {
   @Test
   void roundtripPreservesWeaponsAndBowRating() throws IOException {
     Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
-    original.addWeapon(new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Katana"))));
-    original.addWeapon(new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Bogen")), 5));
+    original.getEquipment().addWeapon(
+        new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Katana"))));
+    original.getEquipment().addWeapon(
+        new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Bogen")), 5));
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
-    List<Weapon> weapons = loaded.getWeapons();
+    List<Weapon> weapons = loaded.getEquipment().getWeapons();
     assertEquals(2, weapons.size());
     assertEquals("Katana", weapons.get(0).getName());
     assertEquals(0, weapons.get(0).getRating());
     assertEquals("Bogen", weapons.get(1).getName());
     assertEquals(5, weapons.get(1).getRating());
-    assertEquals(original.getWeaponNuyenCost(), loaded.getWeaponNuyenCost());
+    assertEquals(original.getEquipment().getWeaponNuyenCost(),
+        loaded.getEquipment().getWeaponNuyenCost());
   }
 
   @Test
@@ -52,7 +55,7 @@ class CharacterStoreWeaponRoundtripTest {
     Files.writeString(tempFile().toPath(), "{\"name\":\"Alt\",\"metatype\":\"Mensch\"}",
         StandardCharsets.UTF_8);
 
-    assertTrue(CharacterStore.load(tempFile()).getWeapons().isEmpty());
+    assertTrue(CharacterStore.load(tempFile()).getEquipment().getWeapons().isEmpty());
   }
 
   @Test
@@ -64,7 +67,7 @@ class CharacterStoreWeaponRoundtripTest {
                     {"name":"Katana","rating":0}]}
         """, StandardCharsets.UTF_8);
 
-    List<Weapon> weapons = CharacterStore.load(tempFile()).getWeapons();
+    List<Weapon> weapons = CharacterStore.load(tempFile()).getEquipment().getWeapons();
 
     assertEquals(1, weapons.size());
     assertEquals("Katana", weapons.get(0).getName());
@@ -76,10 +79,10 @@ class CharacterStoreWeaponRoundtripTest {
     Weapon rifle = new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("AK-97")));
     rifle.addAccessory(new WeaponAccessory(accessory("Lasermarkierer"), Mount.UNDERBARREL));
     rifle.addAccessory(new WeaponAccessory(accessory("Smartgunsystem, intern"), null));
-    original.addWeapon(rifle);
+    original.getEquipment().addWeapon(rifle);
 
     CharacterStore.save(original, tempFile());
-    Weapon loaded = CharacterStore.load(tempFile()).getWeapons().get(0);
+    Weapon loaded = CharacterStore.load(tempFile()).getEquipment().getWeapons().get(0);
 
     assertEquals(rifle.getAccessories(), loaded.getAccessories());
     assertEquals(rifle.getTotalNuyenCost(), loaded.getTotalNuyenCost());
@@ -98,7 +101,7 @@ class CharacterStoreWeaponRoundtripTest {
         """, StandardCharsets.UTF_8);
 
     List<WeaponAccessory> accessories =
-        CharacterStore.load(tempFile()).getWeapons().get(0).getAccessories();
+        CharacterStore.load(tempFile()).getEquipment().getWeapons().get(0).getAccessories();
 
     assertEquals(List.of(new WeaponAccessory(accessory("Lasermarkierer"), Mount.TOP)), accessories);
   }

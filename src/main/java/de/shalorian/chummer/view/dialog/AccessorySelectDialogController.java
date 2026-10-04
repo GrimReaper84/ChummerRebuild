@@ -85,7 +85,7 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
     if (mountProblem != null) {
       return mountProblem;
     }
-    if (!character.isAvailableForPurchase(data.availability(), 0)) {
+    if (!character.getEquipment().isAvailableForPurchase(data.availability(), 0)) {
       return "Verfügbarkeit " + data.availability().displayText(0) + " liegt über "
           + Availability.MAX_AVAILABILITY_AT_CREATION + " (Charaktererschaffung, GRW S. 111)";
     }

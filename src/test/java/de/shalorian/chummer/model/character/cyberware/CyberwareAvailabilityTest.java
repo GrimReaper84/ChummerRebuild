@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character.cyberware;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -55,7 +56,7 @@ class CyberwareAvailabilityTest {
   void everyEntryHasEvaluableAvailability() {
     for (CyberwareData data : CyberwareDataLoader.getAllCyberware().values()) {
       int maxRating = data.hasRating() ? data.maxRating() : 0;
-      data.availability().evaluate(maxRating);
+      assertDoesNotThrow(() -> data.availability().evaluate(maxRating), data.name());
     }
   }
 
@@ -64,10 +65,10 @@ class CyberwareAvailabilityTest {
     Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
     Availability dermal = availability("Dermalpanzerung");
 
-    assertFalse(c.isAvailableForPurchase(dermal, 3));
-    assertTrue(c.isAvailableForPurchase(dermal, 2));
+    assertFalse(c.getEquipment().isAvailableForPurchase(dermal, 3));
+    assertTrue(c.getEquipment().isAvailableForPurchase(dermal, 2));
 
     c.setCreated(true);
-    assertTrue(c.isAvailableForPurchase(dermal, 3));
+    assertTrue(c.getEquipment().isAvailableForPurchase(dermal, 3));
   }
 }

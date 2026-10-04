@@ -37,14 +37,17 @@ class CharacterStoreCyberwareRoundtripTest {
   @Test
   void roundtripPreservesImplantsWithGradeAndRating() throws IOException {
     Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
-    original.addCyberware(new Cyberware(catalog("Datenbuchse"), CyberwareGrade.ALPHAWARE, 0));
-    original.addCyberware(new Cyberware(catalog("Dermalpanzerung"), CyberwareGrade.STANDARD, 2));
-    original.addCyberware(new Cyberware(catalog("Toxinextraktor"), CyberwareGrade.DELTAWARE, 4));
+    original.getEquipment()
+        .addCyberware(new Cyberware(catalog("Datenbuchse"), CyberwareGrade.ALPHAWARE, 0));
+    original.getEquipment()
+        .addCyberware(new Cyberware(catalog("Dermalpanzerung"), CyberwareGrade.STANDARD, 2));
+    original.getEquipment()
+        .addCyberware(new Cyberware(catalog("Toxinextraktor"), CyberwareGrade.DELTAWARE, 4));
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
-    List<Cyberware> implants = loaded.getCyberware();
+    List<Cyberware> implants = loaded.getEquipment().getCyberware();
     assertEquals(3, implants.size());
     assertEquals("Datenbuchse", implants.get(0).getName());
     assertEquals(CyberwareGrade.ALPHAWARE, implants.get(0).getGrade());
@@ -64,7 +67,7 @@ class CharacterStoreCyberwareRoundtripTest {
 
     Character loaded = CharacterStore.load(tempFile());
 
-    assertTrue(loaded.getCyberware().isEmpty());
+    assertTrue(loaded.getEquipment().getCyberware().isEmpty());
     assertEquals(6.0, loaded.getEssence());
   }
 
@@ -78,7 +81,7 @@ class CharacterStoreCyberwareRoundtripTest {
 
     Character loaded = CharacterStore.load(tempFile());
 
-    assertEquals(1, loaded.getCyberware().size());
-    assertEquals(CyberwareGrade.STANDARD, loaded.getCyberware().get(0).getGrade());
+    assertEquals(1, loaded.getEquipment().getCyberware().size());
+    assertEquals(CyberwareGrade.STANDARD, loaded.getEquipment().getCyberware().get(0).getGrade());
   }
 }

@@ -115,19 +115,16 @@ public class CharacterViewController {
 
   private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
   /**
-   * Platzhalter für den augmentierten Attributwert bzw. das augmentierte Metatyp-Maximum, solange
-   * es noch keine Essenz-/Cyberware-Berechnung gibt (Roadmap Stufe 2, Cyberware/Bioware). Struktur
-   * (eigene Spalte + Klammerzusatz im Bereichs-Label, analog zum alten WinForms-UI) ist bereits
+   * Platzhalter für den augmentierten Attributwert bzw. das augmentierte Metatyp-Maximum, solange es noch keine Essenz-/Cyberware-Berechnung gibt
+   * (Roadmap Stufe 2, Cyberware/Bioware). Struktur (eigene Spalte + Klammerzusatz im Bereichs-Label, analog zum alten WinForms-UI) ist bereits
    * vorbereitet — bei Einführung der echten Berechnung wird hier nur dieser Platzhalter ersetzt.
    */
   private static final String ATTRIBUTE_AUGMENTED_PLACEHOLDER = "—";
   /**
-   * Feste Breite der Attribut-"Wert"-Spalte — einzige Rating-Spalte, die zweistellig werden kann
-   * (Metatyp-Varianten erlauben Attributmaxima bis 10, siehe {@code max="10"} in den Metatyp-XML-Dateien).
-   * Alle anderen Rating-Spalten (Fertigkeiten, Wissensfertigkeiten, Kontakte, Gruppen) sind durch
-   * {@code MAX_RATING = 6} einstellig und brauchen daher keine feste Breite — ohne diese Ausnahme
-   * würde die Spalte beim Überschreiten von 9 sichtbar nachspringen, da die direkt angrenzenden
-   * +/−-Buttons mitverschoben würden.
+   * Feste Breite der Attribut-"Wert"-Spalte — einzige Rating-Spalte, die zweistellig werden kann (Metatyp-Varianten erlauben Attributmaxima bis 10,
+   * siehe {@code max="10"} in den Metatyp-XML-Dateien). Alle anderen Rating-Spalten (Fertigkeiten, Wissensfertigkeiten, Kontakte, Gruppen) sind durch
+   * {@code MAX_RATING = 6} einstellig und brauchen daher keine feste Breite — ohne diese Ausnahme würde die Spalte beim Überschreiten von 9 sichtbar
+   * nachspringen, da die direkt angrenzenden +/−-Buttons mitverschoben würden.
    */
   private static final int ATTRIBUTE_VALUE_COLUMN_WIDTH = 46;
   private static final String KARMA_SUFFIX = " Karma";
@@ -220,9 +217,34 @@ public class CharacterViewController {
   private int technomancerTabIndex;
   private @NonNull SkillSortMode skillSortMode = SkillSortMode.CATEGORY;
   private @Nullable Character character;
-  /** Wird in {@link #initialize()} erzeugt, sobald die FXML-Container injiziert sind. */
+  /**
+   * Wird in {@link #initialize()} erzeugt, sobald die FXML-Container injiziert sind.
+   */
   @SuppressWarnings("NullAway.Init")
   private StreetGearTabBuilder streetGear;
+
+  /**
+   * Inhalt der Aug-Spalte eines Körperlichen/Geistigen Attributs: der wirksame Wert (derzeit nur durch Panzerungsbehinderung auf GES/REA reduziert,
+   * siehe {@link Character#getAugmentedAttributeValue(AttributeType)}), sofern er vom investierten Wert abweicht.
+   */
+  private static @NonNull String augmentedAttributeText(@NonNull Character character,
+      @NonNull AttributeType type) {
+    int augmented = character.getAugmentedAttributeValue(type);
+    return augmented == character.getAttribute(type).getValue()
+        ? ATTRIBUTE_AUGMENTED_PLACEHOLDER
+        : String.valueOf(augmented);
+  }
+
+  /**
+   * Bezeichnung eines Implantats für Log-Einträge, z.B. "Dermalpanzerung (Stufe 2, Alphaware)".
+   */
+  private static @NonNull String cyberwareLabel(@NonNull Cyberware implant) {
+    String details = implant.getGrade().getDisplayName();
+    if (implant.getData().hasRating()) {
+      details = "Stufe " + implant.getRating() + ", " + details;
+    }
+    return implant.getName() + " (" + details + ")";
+  }
 
   @FXML
   public void initialize() {
@@ -266,11 +288,10 @@ public class CharacterViewController {
   }
 
   /**
-   * Blendet den Magie-Tab ein bzw. aus, je nachdem ob {@link Character#isMagician()} aktuell wahr
-   * ist — funktioniert identisch im Erstellungs- und im Karrieremodus. Anders als das bestehende
-   * {@code setVisible()}/{@code setManaged()}-Muster für einzelne Controls wird der Tab tatsächlich
-   * aus {@link TabPane#getTabs()} entfernt bzw. an der ursprünglichen FXML-Position wieder
-   * eingefügt (analog zum C#-Original, siehe {@code docs/magie_analyse.md}).
+   * Blendet den Magie-Tab ein bzw. aus, je nachdem ob {@link Character#isMagician()} aktuell wahr ist — funktioniert identisch im Erstellungs- und im
+   * Karrieremodus. Anders als das bestehende {@code setVisible()}/{@code setManaged()}-Muster für einzelne Controls wird der Tab tatsächlich aus
+   * {@link TabPane#getTabs()} entfernt bzw. an der ursprünglichen FXML-Position wieder eingefügt (analog zum C#-Original, siehe
+   * {@code docs/magie_analyse.md}).
    */
   private void syncMagicTabVisibility() {
     Character ch = this.character;
@@ -287,11 +308,12 @@ public class CharacterViewController {
     }
   }
 
+  // ── Biografie-Tab ─────────────────────────────────────────
+
   /**
-   * Blendet den Technomancer-Tab ein bzw. aus, je nachdem ob {@link Character#hasResonance()}
-   * aktuell wahr ist — 1:1 dasselbe Muster wie {@link #syncMagicTabVisibility()}. Anders als bei Magie
-   * (Magier vs. Adept) gibt es bei Technomancer keine feinere Differenzierung nötig, da nur eine
-   * einzige Quality ("Technomant") RES freischaltet.
+   * Blendet den Technomancer-Tab ein bzw. aus, je nachdem ob {@link Character#hasResonance()} aktuell wahr ist — 1:1 dasselbe Muster wie
+   * {@link #syncMagicTabVisibility()}. Anders als bei Magie (Magier vs. Adept) gibt es bei Technomancer keine feinere Differenzierung nötig, da nur
+   * eine einzige Quality ("Technomant") RES freischaltet.
    */
   private void syncTechnomancerTabVisibility() {
     Character ch = this.character;
@@ -323,8 +345,6 @@ public class CharacterViewController {
     buildCyberwareTab();
     buildStreetGearTabs();
   }
-
-  // ── Biografie-Tab ─────────────────────────────────────────
 
   private void buildBiographyTab() {
     Character ch = this.character;
@@ -395,11 +415,10 @@ public class CharacterViewController {
   }
 
   /**
-   * "Name:" bindet direkt an {@link Character#getName()}/{@link Character#setName(String)} (nicht an
-   * {@link CharacterBiography}) — im alten WinForms-UI stand dieses Feld (bürgerlicher Name, getrennt
-   * vom Straßennamen/Alias) in derselben Zeile wie der Spielername. Der Setter aktualisiert zusätzlich
-   * {@link #nameLabel}, da dessen Text sonst nur beim initialen {@link #setCharacter} gesetzt wird und
-   * nach einer Live-Änderung hier sonst veraltet bliebe.
+   * "Name:" bindet direkt an {@link Character#getName()}/{@link Character#setName(String)} (nicht an {@link CharacterBiography}) — im alten
+   * WinForms-UI stand dieses Feld (bürgerlicher Name, getrennt vom Straßennamen/Alias) in derselben Zeile wie der Spielername. Der Setter
+   * aktualisiert zusätzlich {@link #nameLabel}, da dessen Text sonst nur beim initialen {@link #setCharacter} gesetzt wird und nach einer
+   * Live-Änderung hier sonst veraltet bliebe.
    */
   private @NonNull GridPane buildPlayerGrid(@NonNull CharacterBiography bio,
       @NonNull Character character) {
@@ -444,11 +463,12 @@ public class CharacterViewController {
     return row + 1;
   }
 
+  // ── Attribute-Tab ─────────────────────────────────────────
+
   /**
-   * Bindet ein einzeiliges Textfeld live ans Modell: der Wert wird beim Aufbau vorbefüllt, jede
-   * Änderung schreibt sofort über {@code setter} ins Modell — kein Trimmen, keine Validierung,
-   * kein Bestätigungsdialog (anders als die bestehenden Dialog-Formulare, die nur beim Bestätigen
-   * einmalig auslesen).
+   * Bindet ein einzeiliges Textfeld live ans Modell: der Wert wird beim Aufbau vorbefüllt, jede Änderung schreibt sofort über {@code setter} ins
+   * Modell — kein Trimmen, keine Validierung, kein Bestätigungsdialog (anders als die bestehenden Dialog-Formulare, die nur beim Bestätigen einmalig
+   * auslesen).
    */
   private void bindTextControl(@NonNull TextField field, @NonNull Supplier<String> getter,
       @NonNull Consumer<String> setter) {
@@ -456,14 +476,14 @@ public class CharacterViewController {
     field.textProperty().addListener((obs, old, val) -> setter.accept(val));
   }
 
-  /** Mehrzeiliges Gegenstück zu {@link #bindTextControl(TextField, Supplier, Consumer)}. */
+  /**
+   * Mehrzeiliges Gegenstück zu {@link #bindTextControl(TextField, Supplier, Consumer)}.
+   */
   private void bindTextControl(@NonNull TextArea area, @NonNull Supplier<String> getter,
       @NonNull Consumer<String> setter) {
     area.setText(getter.get());
     area.textProperty().addListener((obs, old, val) -> setter.accept(val));
   }
-
-  // ── Attribute-Tab ─────────────────────────────────────────
 
   private void buildAttributeGrid() {
     if (character == null) {
@@ -521,9 +541,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Essenz-Zeile unter den Sonderattributen. Weist zusätzlich auf eine Magie-/Resonanz-Reduktion durch
-   * Essenzverlust hin, damit der Unterschied zwischen angezeigtem (wirksamem) Wert und den nach dem
-   * investierten Wert berechneten BP-/Karma-Kosten nachvollziehbar bleibt.
+   * Essenz-Zeile unter den Sonderattributen. Weist zusätzlich auf eine Magie-/Resonanz-Reduktion durch Essenzverlust hin, damit der Unterschied
+   * zwischen angezeigtem (wirksamem) Wert und den nach dem investierten Wert berechneten BP-/Karma-Kosten nachvollziehbar bleibt.
    */
   private @NonNull Label buildEssenceInfoLabel(@NonNull Character ch) {
     String text = "Essenz: " + ESSENCE_FORMAT.toString(ch.getEssence());
@@ -540,11 +559,10 @@ public class CharacterViewController {
   }
 
   /**
-   * Sonderattribut-Zeile. Für Magie/Resonanz zeigen Wert und Maximum die durch Essenzverlust reduzierten
-   * Werte ({@link Character#getEffectiveMagicOrResonanceValue()}/{@link
-   * Character#getEffectiveMagicOrResonanceMax()}); Grenzen, +/−-Logik und BP-/Karma-Kosten arbeiten
-   * dagegen weiterhin auf dem investierten Wert. Da investierter Wert und Maximum um dieselbe Penalty
-   * verschoben werden, bleibt die Sperre am Maximum trotzdem konsistent mit der Anzeige.
+   * Sonderattribut-Zeile. Für Magie/Resonanz zeigen Wert und Maximum die durch Essenzverlust reduzierten Werte
+   * ({@link Character#getEffectiveMagicOrResonanceValue()}/{@link Character#getEffectiveMagicOrResonanceMax()}); Grenzen, +/−-Logik und
+   * BP-/Karma-Kosten arbeiten dagegen weiterhin auf dem investierten Wert. Da investierter Wert und Maximum um dieselbe Penalty verschoben werden,
+   * bleibt die Sperre am Maximum trotzdem konsistent mit der Anzeige.
    */
   private void addSpecialAttributeRow(@NonNull MigPane grid, int row,
       @NonNull SpecialAttribute attr, @NonNull Character character) {
@@ -666,15 +684,13 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Aug-Platzhalter, Bereich, BP-/Karma-Kosten) in ein
-   * MigPane ein und verdrahtet sie über {@link #wireIncrementable}. Gemeinsam genutzt von
-   * {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
-   * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am
-   * alten WinForms-{@code panAttributes} (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen
-   * inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den Text aus {@code augmentedText} (bei jedem
-   * Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht),
-   * bzw. {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}, wenn {@code augmentedText} {@code null} ist; der
-   * Klammerzusatz im Bereichs-Label bleibt bis zur Modellierung von Attributboni ein Platzhalter.
+   * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Aug-Platzhalter, Bereich, BP-/Karma-Kosten) in ein MigPane ein und verdrahtet sie über
+   * {@link #wireIncrementable}. Gemeinsam genutzt von {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
+   * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am alten WinForms-{@code panAttributes}
+   * (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den Text aus
+   * {@code augmentedText} (bei jedem Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht), bzw.
+   * {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}, wenn {@code augmentedText} {@code null} ist; der Klammerzusatz im Bereichs-Label bleibt bis zur
+   * Modellierung von Attributboni ein Platzhalter.
    */
   private void addAttributeGridRow(@NonNull MigPane grid, int row,
       @NonNull List<Runnable> refresherList, @NonNull AttributeRowLabel label,
@@ -711,23 +727,12 @@ public class CharacterViewController {
         bpLabel);
   }
 
-  /**
-   * Inhalt der Aug-Spalte eines Körperlichen/Geistigen Attributs: der wirksame Wert (derzeit nur durch
-   * Panzerungsbehinderung auf GES/REA reduziert, siehe {@link
-   * Character#getAugmentedAttributeValue(AttributeType)}), sofern er vom investierten Wert abweicht.
-   */
-  private static @NonNull String augmentedAttributeText(@NonNull Character character,
-      @NonNull AttributeType type) {
-    int augmented = character.getAugmentedAttributeValue(type);
-    return augmented == character.getAttribute(type).getValue()
-        ? ATTRIBUTE_AUGMENTED_PLACEHOLDER
-        : String.valueOf(augmented);
-  }
+  // ── Skills-Tab ────────────────────────────────────────────
 
   /**
-   * Gemeinsames Spalten-Layout für Standard- und Sonderattribut-Grid: alle Spalten inhaltsbasiert ohne
-   * eigenes Wachstum — ungenutzter Platz wird stattdessen außen über {@link GridSupport#withRightFiller} verteilt.
-   * Die Wert-Spalte ist die einzige feste Ausnahme, siehe {@link #ATTRIBUTE_VALUE_COLUMN_WIDTH}.
+   * Gemeinsames Spalten-Layout für Standard- und Sonderattribut-Grid: alle Spalten inhaltsbasiert ohne eigenes Wachstum — ungenutzter Platz wird
+   * stattdessen außen über {@link GridSupport#withRightFiller} verteilt. Die Wert-Spalte ist die einzige feste Ausnahme, siehe
+   * {@link #ATTRIBUTE_VALUE_COLUMN_WIDTH}.
    */
   private @NonNull MigPane buildAttributeMigPane() {
     return new MigPane(MIGPANE_HIDEMODE_3,
@@ -735,19 +740,16 @@ public class CharacterViewController {
             + "!,center][center][center][][]");
   }
 
-  // ── Skills-Tab ────────────────────────────────────────────
-
   private void buildSkillsTab() {
     buildActiveSkillsSection();
     buildKnowledgeSkillSection();
   }
 
   /**
-   * Baut die aktive-Fertigkeiten-Sektion neu auf, je nach {@link #skillSortMode} entweder nach
-   * Kategorie ({@link #buildCategorySkillsSection}) oder als zwei parallele alphabetische Listen
-   * ({@link #buildAlphabeticalSkillsSection}). Betrifft ausschließlich {@link #skillsContainer} — die
-   * Wissensfertigkeiten-Sektion liegt seit der Layout-Trennung in einem eigenen Container und wird
-   * unabhängig über {@link #buildKnowledgeSkillSection()} aufgebaut.
+   * Baut die aktive-Fertigkeiten-Sektion neu auf, je nach {@link #skillSortMode} entweder nach Kategorie ({@link #buildCategorySkillsSection}) oder
+   * als zwei parallele alphabetische Listen ({@link #buildAlphabeticalSkillsSection}). Betrifft ausschließlich {@link #skillsContainer} — die
+   * Wissensfertigkeiten-Sektion liegt seit der Layout-Trennung in einem eigenen Container und wird unabhängig über
+   * {@link #buildKnowledgeSkillSection()} aufgebaut.
    */
   private void buildActiveSkillsSection() {
     Character ch = this.character;
@@ -791,11 +793,10 @@ public class CharacterViewController {
   }
 
   /**
-   * Alphabet-Modus: zwei unabhängig sortierte Listen nebeneinander — links alle noch gekoppelten
-   * Fertigkeitsgruppen (nur Name + gemeinsame Rating-Steuerung, keine Mitgliedsnamen, siehe
-   * {@code docs/skills_sortierung_plan.md} Abschnitt 13), rechts alle Einzelfertigkeiten (ungruppiert
-   * oder entkoppelt), jeweils alphabetisch nach Name sortiert über {@link Character#getCoupledGroupNames()}
-   * bzw. {@link Character#getIndividualSkills()}.
+   * Alphabet-Modus: zwei unabhängig sortierte Listen nebeneinander — links alle noch gekoppelten Fertigkeitsgruppen (nur Name + gemeinsame
+   * Rating-Steuerung, keine Mitgliedsnamen, siehe {@code docs/skills_sortierung_plan.md} Abschnitt 13), rechts alle Einzelfertigkeiten (ungruppiert
+   * oder entkoppelt), jeweils alphabetisch nach Name sortiert über {@link Character#getCoupledGroupNames()} bzw.
+   * {@link Character#getIndividualSkills()}.
    */
   private void buildAlphabeticalSkillsSection(@NonNull Character character) {
     HBox columns = new HBox(24);
@@ -829,12 +830,11 @@ public class CharacterViewController {
   }
 
   /**
-   * Schmaleres Grid für die Gruppen-Liste im Alphabet-Modus — {@link #addGroupHeaderRow} befüllt die
-   * Spalten 0 (Name), 1 (Auskoppeln-Button, nur bei gekoppelten Gruppen im Karrieremodus) und 2/3/4/5
-   * (−/Wert/+/BP), nie Spalte 6/7 (Attribut-Abkürzung/Spezialisierung). Die volle 8-Spalten-Spec aus
-   * {@link #buildSkillGrid()} würde daher in einem Nebeneinander-Layout unnötig Platz verschenken. Der
-   * Auskoppeln-Button steht bewusst in einer eigenen Spalte statt direkt am Namenstext dran, damit er
-   * über alle Zeilen hinweg untereinander ausgerichtet ist statt je nach Namenslänge zu wandern.
+   * Schmaleres Grid für die Gruppen-Liste im Alphabet-Modus — {@link #addGroupHeaderRow} befüllt die Spalten 0 (Name), 1 (Auskoppeln-Button, nur bei
+   * gekoppelten Gruppen im Karrieremodus) und 2/3/4/5 (−/Wert/+/BP), nie Spalte 6/7 (Attribut-Abkürzung/Spezialisierung). Die volle 8-Spalten-Spec
+   * aus {@link #buildSkillGrid()} würde daher in einem Nebeneinander-Layout unnötig Platz verschenken. Der Auskoppeln-Button steht bewusst in einer
+   * eigenen Spalte statt direkt am Namenstext dran, damit er über alle Zeilen hinweg untereinander ausgerichtet ist statt je nach Namenslänge zu
+   * wandern.
    */
   private @NonNull MigPane buildGroupOnlyGrid() {
     // Wert-Spalte ist bei Fertigkeitsgruppen durch Skill.MAX_RATING = 6 einstellig und braucht keine
@@ -884,6 +884,8 @@ public class CharacterViewController {
     return row;
   }
 
+  // ── Wissensfertigkeiten (Teil des Skills-Tabs) ─────────────
+
   /**
    * Baut den Skills-Tab neu auf, z.B. nach dem Entkoppeln einer Gruppe.
    */
@@ -892,8 +894,6 @@ public class CharacterViewController {
     attrRefreshers.forEach(Runnable::run);
     updateBpDisplay();
   }
-
-  // ── Wissensfertigkeiten (Teil des Skills-Tabs) ─────────────
 
   private void buildKnowledgeSkillSection() {
     Character ch = this.character;
@@ -1109,6 +1109,8 @@ public class CharacterViewController {
         specBtn, costLabel, removeBtn);
   }
 
+  // ── Qualities-Tab ──────────────────────────────────────────
+
   private void onAddKnowledgeSkill() {
     Character ch = this.character;
     if (ch == null) {
@@ -1131,8 +1133,6 @@ public class CharacterViewController {
       showDialogLoadError();
     }
   }
-
-  // ── Qualities-Tab ──────────────────────────────────────────
 
   private void buildQualitiesTab() {
     if (character == null) {
@@ -1303,8 +1303,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Gegenstück zu {@link #karmaChargeFailed} für Nuyen-Käufe im Karrieremodus (Cyberware, Rüstung;
-   * Muster des C#-Originals: Guthabenprüfung, Log-Eintrag, sonst Abbruch mit Hinweis).
+   * Gegenstück zu {@link #karmaChargeFailed} für Nuyen-Käufe im Karrieremodus (Cyberware, Rüstung; Muster des C#-Originals: Guthabenprüfung,
+   * Log-Eintrag, sonst Abbruch mit Hinweis).
    *
    * @return true, wenn NICHT gebucht wurde — der Aufrufer bricht dann den Kauf ab
    */
@@ -1314,8 +1314,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Gemeinsamer Ablauf aller Karrieremodus-Käufe: bei zu wenig Guthaben Hinweis und Abbruch, sonst
-   * Bestätigung einholen und einen negativen Log-Eintrag über {@code logSink} buchen.
+   * Gemeinsamer Ablauf aller Karrieremodus-Käufe: bei zu wenig Guthaben Hinweis und Abbruch, sonst Bestätigung einholen und einen negativen
+   * Log-Eintrag über {@code logSink} buchen.
    *
    * @return true, wenn NICHT gebucht wurde (zu wenig Guthaben oder abgebrochen)
    */
@@ -1547,6 +1547,8 @@ public class CharacterViewController {
     return decoupleBtn;
   }
 
+  // ── Kontakte-Tab ──────────────────────────────────────────
+
   private void addSkillRow(@NonNull MigPane grid, int row, @NonNull Skill skill, boolean coupled,
       @NonNull Character character) {
     Label skillNameLabel = new Label(skill.getName());
@@ -1654,8 +1656,6 @@ public class CharacterViewController {
         bpLabel);
   }
 
-  // ── Kontakte-Tab ──────────────────────────────────────────
-
   private void buildContactsTab() {
     Character ch = this.character;
     if (ch == null) {
@@ -1692,11 +1692,9 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut das Kontakte-Grid inkl. Kopfzeile (Zeile 0) mit "Verbindung"/"Loyalität"-Spaltenüberschriften
-   * über den jeweiligen Wert-Spalten — ersetzt die im alten WinForms-UI pro Zeile wiederholten
-   * "Connection:"/"Loyalty:"-Inline-Labels (dort nötig, da jede Kontakt-Zeile aus einer eigenständigen
-   * UserControl-Instanz bestand) durch eine einzelne gemeinsame Kopfzeile, analog zum bestehenden
-   * Attribute-/Zauber-/Komplexe-Formen-Grid-Muster.
+   * Baut das Kontakte-Grid inkl. Kopfzeile (Zeile 0) mit "Verbindung"/"Loyalität"-Spaltenüberschriften über den jeweiligen Wert-Spalten — ersetzt die
+   * im alten WinForms-UI pro Zeile wiederholten "Connection:"/"Loyalty:"-Inline-Labels (dort nötig, da jede Kontakt-Zeile aus einer eigenständigen
+   * UserControl-Instanz bestand) durch eine einzelne gemeinsame Kopfzeile, analog zum bestehenden Attribute-/Zauber-/Komplexe-Formen-Grid-Muster.
    */
   private @NonNull MigPane buildContactGrid() {
     // Beide Wert-Spalten (Verbindung/Loyalität) durch Contact.MAX_RATING = 6 einstellig, keine feste
@@ -1892,6 +1890,8 @@ public class CharacterViewController {
     }
   }
 
+  // ── Magie-Tab ─────────────────────────────────────────────
+
   private void onEditContact(@NonNull Contact contact) {
     try {
       DialogHandle dialog = openDialog("ContactEditDialog.fxml", "Kontakt bearbeiten");
@@ -1910,8 +1910,6 @@ public class CharacterViewController {
       showDialogLoadError();
     }
   }
-
-  // ── Magie-Tab ─────────────────────────────────────────────
 
   private void buildMagicTab() {
     Character ch = this.character;
@@ -1957,11 +1955,10 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut das Zauber-Grid inkl. Kopfzeile (Zeile 0). Alle Datenspalten bleiben bei ihrer Inhaltsbreite
-   * (feststehendes Vokabular aus den Zauber-Stammdaten, kein eigenes Wachstum nötig) — ungenutzter
-   * Platz wird stattdessen außen über {@link GridSupport#withRightFiller} verteilt. Das Grid wird bei jeder Änderung
-   * komplett neu aufgebaut (kein In-Place-Refresh einzelner Zellen), daher gibt es hier keine
-   * Wert-Spalten-Ausnahme wie bei Attributen.
+   * Baut das Zauber-Grid inkl. Kopfzeile (Zeile 0). Alle Datenspalten bleiben bei ihrer Inhaltsbreite (feststehendes Vokabular aus den
+   * Zauber-Stammdaten, kein eigenes Wachstum nötig) — ungenutzter Platz wird stattdessen außen über {@link GridSupport#withRightFiller} verteilt. Das
+   * Grid wird bei jeder Änderung komplett neu aufgebaut (kein In-Place-Refresh einzelner Zellen), daher gibt es hier keine Wert-Spalten-Ausnahme wie
+   * bei Attributen.
    */
   private @NonNull MigPane buildSpellGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][center][][][]");
@@ -2002,11 +1999,12 @@ public class CharacterViewController {
         durationLabel, dvLabel, sourceLabel, removeBtn);
   }
 
+  // ── Technomancer-Tab ───────────────────────────────────────
+
   /**
-   * Öffnet den Zauber-Auswahl-Dialog und fügt den gewählten Zauber hinzu. Im Erstellungsmodus greift
-   * das Cap aus {@link Character#canAddSpellAtCreation()}; im Karrieremodus kostet jeder neue Zauber
-   * {@link Character#getSpellKarmaCost()} Karma (Bestätigungsdialog analog anderen
-   * Karrieremodus-Käufen, siehe {@link #karmaChargeFailed}).
+   * Öffnet den Zauber-Auswahl-Dialog und fügt den gewählten Zauber hinzu. Im Erstellungsmodus greift das Cap aus
+   * {@link Character#canAddSpellAtCreation()}; im Karrieremodus kostet jeder neue Zauber {@link Character#getSpellKarmaCost()} Karma
+   * (Bestätigungsdialog analog anderen Karrieremodus-Käufen, siehe {@link #karmaChargeFailed}).
    */
   private void onAddSpell() {
     Character ch = this.character;
@@ -2044,8 +2042,6 @@ public class CharacterViewController {
       showDialogLoadError();
     }
   }
-
-  // ── Technomancer-Tab ───────────────────────────────────────
 
   private void buildTechnomancerTab() {
     Character ch = this.character;
@@ -2093,9 +2089,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Baut das Komplexe-Formen-Grid inkl. Kopfzeile (Zeile 0) — Spaltenlayout analog {@link
-   * #buildSkillGrid()}, aber ohne Spezialisierungs-Spalten (Komplexe Formen kennen keine
-   * Spezialisierung).
+   * Baut das Komplexe-Formen-Grid inkl. Kopfzeile (Zeile 0) — Spaltenlayout analog {@link #buildSkillGrid()}, aber ohne Spezialisierungs-Spalten
+   * (Komplexe Formen kennen keine Spezialisierung).
    */
   private @NonNull MigPane buildComplexFormGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
@@ -2200,12 +2195,12 @@ public class CharacterViewController {
         costLabel, sourceLabel, removeBtn);
   }
 
+  // ── Cyberware-Tab ──────────────────────────────────────────
+
   /**
-   * Öffnet den Komplexe-Formen-Auswahl-Dialog und lernt die gewählte Form mit Stufe 1 (SR4-
-   * Grundregelwerk: "lernt die neue Komplexe Form mit Stufe 1"). Im Erstellungsmodus greift {@link
-   * Character#canAddComplexForm()}; im Karrieremodus kostet der Erwerb {@link
-   * ComplexForm#getKarmaCost(int)} mit {@code currentRating=0}, analog anderen
-   * Karrieremodus-Käufen.
+   * Öffnet den Komplexe-Formen-Auswahl-Dialog und lernt die gewählte Form mit Stufe 1 (SR4- Grundregelwerk: "lernt die neue Komplexe Form mit Stufe
+   * 1"). Im Erstellungsmodus greift {@link Character#canAddComplexForm()}; im Karrieremodus kostet der Erwerb {@link ComplexForm#getKarmaCost(int)}
+   * mit {@code currentRating=0}, analog anderen Karrieremodus-Käufen.
    */
   private void onAddComplexForm() {
     Character ch = this.character;
@@ -2245,12 +2240,9 @@ public class CharacterViewController {
     }
   }
 
-  // ── Cyberware-Tab ──────────────────────────────────────────
-
   /**
-   * Baut den (immer sichtbaren) Cyberware-&-Bioware-Tab: Kopfzeile mit Essenz-Übersicht (Gesamt-Essenz
-   * sowie getrennte Cyberware-/Bioware-Verluste, wie vom GRW zum Notieren empfohlen) und zwei Sektionen
-   * mit je eigenem Hinzufügen-Button — analog {@link #buildQualitiesTab()}. Wird bei jeder
+   * Baut den (immer sichtbaren) Cyberware-&-Bioware-Tab: Kopfzeile mit Essenz-Übersicht (Gesamt-Essenz sowie getrennte Cyberware-/Bioware-Verluste,
+   * wie vom GRW zum Notieren empfohlen) und zwei Sektionen mit je eigenem Hinzufügen-Button — analog {@link #buildQualitiesTab()}. Wird bei jeder
    * Implantat-Änderung komplett neu aufgebaut (kein In-Place-Refresh einzelner Zellen).
    */
   private void buildCyberwareTab() {
@@ -2268,7 +2260,8 @@ public class CharacterViewController {
     Label lossLabel = new Label("(Cyberware " + ESSENCE_FORMAT.toString(ch.getCyberwareEssenceLoss())
         + " / Bioware " + ESSENCE_FORMAT.toString(ch.getBiowareEssenceLoss()) + ")");
     lossLabel.getStyleClass().add(STYLE_BP_LABEL);
-    Label costLabel = new Label("Kosten: " + ch.getCyberwareNuyenCost() + NUYEN_SUFFIX);
+    Label costLabel =
+        new Label("Kosten: " + ch.getEquipment().getCyberwareNuyenCost() + NUYEN_SUFFIX);
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     HBox header = new HBox(12);
@@ -2305,7 +2298,7 @@ public class CharacterViewController {
     header.getChildren().addAll(title, spacer, addBtn);
     cyberwareContainer.getChildren().add(header);
 
-    List<Cyberware> implants = ch.getCyberware().stream()
+    List<Cyberware> implants = ch.getEquipment().getCyberware().stream()
         .filter(c -> c.getKind() == kind)
         .toList();
     if (implants.isEmpty()) {
@@ -2324,7 +2317,9 @@ public class CharacterViewController {
     cyberwareContainer.getChildren().add(withRightFiller(grid));
   }
 
-  /** Implantat-Grid inkl. Kopfzeile (Zeile 0), inhaltsbasierte Spalten analog {@link #buildSpellGrid()}. */
+  /**
+   * Implantat-Grid inkl. Kopfzeile (Zeile 0), inhaltsbasierte Spalten analog {@link #buildSpellGrid()}.
+   */
   private @NonNull MigPane buildCyberwareGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
@@ -2360,7 +2355,7 @@ public class CharacterViewController {
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
     removeBtn.setOnAction(e -> {
-      character.removeCyberware(implant);
+      character.getEquipment().removeCyberware(implant);
       onCyberwareChanged();
     });
 
@@ -2369,11 +2364,10 @@ public class CharacterViewController {
   }
 
   /**
-   * Öffnet den Implantat-Auswahl-Dialog für Cyberware bzw. Bioware und baut die Auswahl ein. Fällt die
-   * Essenz während der Charaktererschaffung dadurch auf 0 oder darunter, erscheint nur eine Warnung
-   * (keine Sperre, siehe {@link Character#isEssenceBelowCreationMinimum()}). Bei der Erschaffung zählt
-   * der Preis gegen das Ressourcengeld ({@link Character#getRemainingNuyen()}), im Karrieremodus wird
-   * er nach Bestätigung vom Nuyen-Guthaben abgebucht ({@link #nuyenChargeFailed}).
+   * Öffnet den Implantat-Auswahl-Dialog für Cyberware bzw. Bioware und baut die Auswahl ein. Fällt die Essenz während der Charaktererschaffung
+   * dadurch auf 0 oder darunter, erscheint nur eine Warnung (keine Sperre, siehe {@link Character#isEssenceBelowCreationMinimum()}). Bei der
+   * Erschaffung zählt der Preis gegen das Ressourcengeld ({@link Character#getRemainingNuyen()}), im Karrieremodus wird er nach Bestätigung vom
+   * Nuyen-Guthaben abgebucht ({@link #nuyenChargeFailed}).
    */
   private void onAddCyberware(@NonNull EquipmentKind kind) {
     Character ch = this.character;
@@ -2394,7 +2388,7 @@ public class CharacterViewController {
             && nuyenChargeFailed(ch, "Kauf: " + cyberwareLabel(implant), implant.getNuyenCost())) {
           return;
         }
-        ch.addCyberware(implant);
+        ch.getEquipment().addCyberware(implant);
         onCyberwareChanged();
         if (ch.isEssenceBelowCreationMinimum()) {
           Notifications.create()
@@ -2411,9 +2405,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Zieht alle essenzabhängigen Anzeigen nach einer Implantat-Änderung nach: den Cyberware-Tab selbst,
-   * das Attribut-Grid (Essenz-Zeile, wirksame Magie/Resonanz inkl. Maximum im Bereichs-Label) und die
-   * übrigen Zeilen (z.B. Komplexe Formen, deren Maximum am wirksamen Resonanzwert hängt).
+   * Zieht alle essenzabhängigen Anzeigen nach einer Implantat-Änderung nach: den Cyberware-Tab selbst, das Attribut-Grid (Essenz-Zeile, wirksame
+   * Magie/Resonanz inkl. Maximum im Bereichs-Label) und die übrigen Zeilen (z.B. Komplexe Formen, deren Maximum am wirksamen Resonanzwert hängt).
    */
   private void onCyberwareChanged() {
     buildCyberwareTab();
@@ -2422,18 +2415,11 @@ public class CharacterViewController {
     refreshAllRows();
   }
 
-  /** Bezeichnung eines Implantats für Log-Einträge, z.B. "Dermalpanzerung (Stufe 2, Alphaware)". */
-  private static @NonNull String cyberwareLabel(@NonNull Cyberware implant) {
-    String details = implant.getGrade().getDisplayName();
-    if (implant.getData().hasRating()) {
-      details = "Stufe " + implant.getRating() + ", " + details;
-    }
-    return implant.getName() + " (" + details + ")";
-  }
-
   // ── Straßenausrüstung-Tab (Lebensstil, Rüstung) ───────────
 
-  /** Baut den Straßenausrüstung-Tab über {@link StreetGearTabBuilder} neu auf. */
+  /**
+   * Baut den Straßenausrüstung-Tab über {@link StreetGearTabBuilder} neu auf.
+   */
   private void buildStreetGearTabs() {
     if (character == null) {
       return;
@@ -2441,7 +2427,9 @@ public class CharacterViewController {
     streetGear.build(character);
   }
 
-  /** Verbindet den {@link StreetGearTabBuilder} mit den Anzeigen und Diensten dieses Controllers. */
+  /**
+   * Verbindet den {@link StreetGearTabBuilder} mit den Anzeigen und Diensten dieses Controllers.
+   */
   private @NonNull StreetGearHost streetGearHost() {
     return new StreetGearHost() {
       @Override
@@ -2499,9 +2487,8 @@ public class CharacterViewController {
   }
 
   /**
-   * Hängt das App-Stylesheet an einen {@link Alert} oder {@link TextInputDialog} — deren
-   * {@code DialogPane} bekommt sonst nie {@code style.css} zugewiesen und rendert rein mit dem
-   * JavaFX-Standard-Theme "Modena", was neben dem restlichen dunklen UI wie ein Fremdkörper wirkt.
+   * Hängt das App-Stylesheet an einen {@link Alert} oder {@link TextInputDialog} — deren {@code DialogPane} bekommt sonst nie {@code style.css}
+   * zugewiesen und rendert rein mit dem JavaFX-Standard-Theme "Modena", was neben dem restlichen dunklen UI wie ein Fremdkörper wirkt.
    */
   private void applyDialogStyle(@NonNull DialogPane pane) {
     pane.getStylesheets()
@@ -2656,7 +2643,9 @@ public class CharacterViewController {
         extraWarning);
   }
 
-  /** Bestätigungsdialog für einen Karrieremodus-Kauf; {@code extraWarning} wird dem Kostentext vorangestellt. */
+  /**
+   * Bestätigungsdialog für einen Karrieremodus-Kauf; {@code extraWarning} wird dem Kostentext vorangestellt.
+   */
   private boolean confirmSpend(@NonNull SpendCurrency currency, @NonNull String label, int cost,
       int available, @Nullable String extraWarning) {
     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -2864,10 +2853,9 @@ public class CharacterViewController {
   }
 
   /**
-   * Schließt die Charaktererschaffung ab. Hinderungsgründe aus {@link Character#getFinalizeProblems()}
-   * (derzeit negatives Restgeld) brechen mit einer Warnung ab; sonst zeigt der Abschlussdialog den
-   * Startkapital-Wurf nach Lebensstil (GRW S. 114), gebucht wird über {@link
-   * Character#finalizeCreation(int)}.
+   * Schließt die Charaktererschaffung ab. Hinderungsgründe aus {@link Character#getFinalizeProblems()} (derzeit negatives Restgeld) brechen mit einer
+   * Warnung ab; sonst zeigt der Abschlussdialog den Startkapital-Wurf nach Lebensstil (GRW S. 114), gebucht wird über
+   * {@link Character#finalizeCreation(int)}.
    */
   @FXML
   private void onFinalize() {

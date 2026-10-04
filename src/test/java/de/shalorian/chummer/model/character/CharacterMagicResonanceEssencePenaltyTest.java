@@ -47,7 +47,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
     Character c = withQuality("Magier");
     magicOrResonance(c).setValue(4);
 
-    c.addCyberware(cyberware("0.2"));
+    c.getEquipment().addCyberware(cyberware("0.2"));
 
     assertEquals(5.8, c.getEssence());
     assertEquals(1, c.getEssencePenalty());
@@ -61,7 +61,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
     magicOrResonance(c).setValue(4);
     int bpBefore = c.getSpecialAttributeBP();
 
-    c.addCyberware(cyberware("0.2"));
+    c.getEquipment().addCyberware(cyberware("0.2"));
 
     assertEquals(4, magicOrResonance(c).getValue());
     assertEquals(6, magicOrResonance(c).getMax());
@@ -81,7 +81,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
   @Test
   void smallestLossAlreadyCostsAFullPoint() {
     Character c = withQuality("Magier");
-    c.addCyberware(cyberware("0.01"));
+    c.getEquipment().addCyberware(cyberware("0.01"));
 
     assertEquals(1, c.getEssencePenalty());
   }
@@ -89,10 +89,10 @@ class CharacterMagicResonanceEssencePenaltyTest {
   @Test
   void furtherLossOnlyCountsOnceNextEssencePointIsStarted() {
     Character c = withQuality("Magier");
-    c.addCyberware(cyberware("1.0"));
+    c.getEquipment().addCyberware(cyberware("1.0"));
     assertEquals(1, c.getEssencePenalty());
 
-    c.addCyberware(cyberware("0.01"));
+    c.getEquipment().addCyberware(cyberware("0.01"));
     assertEquals(2, c.getEssencePenalty());
   }
 
@@ -101,7 +101,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
     Character c = withQuality("Magier");
     magicOrResonance(c).setValue(6);
 
-    c.addCyberware(cyberware("0.5"));
+    c.getEquipment().addCyberware(cyberware("0.5"));
 
     assertEquals(5, c.getEffectiveMagicOrResonanceValue());
     assertEquals(5, c.getEffectiveMagicOrResonanceMax());
@@ -110,7 +110,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
   @Test
   void effectiveValueNeverDropsBelowZero() {
     Character c = withQuality("Magier");
-    c.addCyberware(cyberware("2.5"));
+    c.getEquipment().addCyberware(cyberware("2.5"));
 
     assertEquals(3, c.getEssencePenalty());
     assertEquals(0, c.getEffectiveMagicOrResonanceValue());
@@ -122,7 +122,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
     magicOrResonance(c).setValue(4);
     c.setCreated(true);
 
-    c.addCyberware(cyberware("0.2"));
+    c.getEquipment().addCyberware(cyberware("0.2"));
 
     assertEquals(3, c.getEffectiveMagicOrResonanceValue());
     assertEquals(5, c.getEffectiveMagicOrResonanceMax());
@@ -133,7 +133,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
     Character c = withQuality("Technomant");
     magicOrResonance(c).setValue(4);
 
-    c.addCyberware(cyberware("0.2"));
+    c.getEquipment().addCyberware(cyberware("0.2"));
 
     assertEquals(3, c.getEffectiveMagicOrResonanceValue());
     assertEquals(5, c.getEffectiveMagicOrResonanceMax());
@@ -148,7 +148,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
     c.addComplexForm(analyse);
     assertTrue(c.canRaiseComplexForm(c.getComplexForms().get(0)));
 
-    c.addCyberware(cyberware("0.2"));
+    c.getEquipment().addCyberware(cyberware("0.2"));
 
     assertFalse(c.canRaiseComplexForm(c.getComplexForms().get(0)));
   }
@@ -156,7 +156,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
   @Test
   void characterWithoutMagicOrResonanceHasZeroEffectiveValues() {
     Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
-    c.addCyberware(cyberware("0.2"));
+    c.getEquipment().addCyberware(cyberware("0.2"));
 
     assertEquals(0, c.getEffectiveMagicOrResonanceValue());
     assertEquals(0, c.getEffectiveMagicOrResonanceMax());
@@ -165,7 +165,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
   @Test
   void removingMagicQualityWithImplantsInstalledIsConsistent() {
     Character c = withQuality("Magier");
-    c.addCyberware(cyberware("0.2"));
+    c.getEquipment().addCyberware(cyberware("0.2"));
 
     c.removeQuality("Magier");
 

@@ -83,8 +83,8 @@ class WeaponAccessoryRulesTest {
     Weapon rifle = weapon("AK-97");
 
     assertThrows(IllegalArgumentException.class, () -> mount(rifle, "Zielfernrohr", null));
-    assertThrows(IllegalArgumentException.class,
-        () -> rifle.addAccessory(new WeaponAccessory(accessory("Schockpolster"), Mount.TOP)));
+    WeaponAccessory shockPadOnTop = new WeaponAccessory(accessory("Schockpolster"), Mount.TOP);
+    assertThrows(IllegalArgumentException.class, () -> rifle.addAccessory(shockPadOnTop));
   }
 
   @Test

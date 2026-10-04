@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
@@ -25,7 +26,7 @@ class CharacterCyberwareTest {
 
   @Test
   void newCharacterHasNoImplants() {
-    assertTrue(mensch().getCyberware().isEmpty());
+    assertTrue(mensch().getEquipment().getCyberware().isEmpty());
   }
 
   @Test
@@ -33,13 +34,13 @@ class CharacterCyberwareTest {
     Character c = mensch();
     Cyberware first = implant("0.2", "1500");
     Cyberware second = implant("0.2", "1500");
-    c.addCyberware(first);
-    c.addCyberware(second);
+    c.getEquipment().addCyberware(first);
+    c.getEquipment().addCyberware(second);
 
-    c.removeCyberware(first);
+    c.getEquipment().removeCyberware(first);
 
-    assertEquals(1, c.getCyberware().size());
-    assertTrue(c.getCyberware().get(0) == second);
+    assertEquals(1, c.getEquipment().getCyberware().size());
+    assertSame(c.getEquipment().getCyberware().getFirst(), second);
   }
 
   @Test
@@ -47,7 +48,7 @@ class CharacterCyberwareTest {
     Character c = mensch();
     int spentBefore = c.getSpentBP();
 
-    c.addCyberware(implant("0.5", "10000"));
+    c.getEquipment().addCyberware(implant("0.5", "10000"));
 
     assertEquals(spentBefore, c.getSpentBP());
   }
@@ -55,22 +56,22 @@ class CharacterCyberwareTest {
   @Test
   void nuyenCostSumsAllImplantsIncludingGrade() {
     Character c = mensch();
-    c.addCyberware(implant("0.1", "500"));
+    c.getEquipment().addCyberware(implant("0.1", "500"));
     Cyberware alpha = implant("0.1", "1000");
     alpha.setGrade(CyberwareGrade.ALPHAWARE);
-    c.addCyberware(alpha);
+    c.getEquipment().addCyberware(alpha);
 
-    assertEquals(2500, c.getCyberwareNuyenCost());
+    assertEquals(2500, c.getEquipment().getCyberwareNuyenCost());
   }
 
   @Test
   void onlyStandardAndAlphaAreAvailableAtCreation() {
     Character c = mensch();
 
-    assertTrue(c.isCyberwareGradeAvailable(CyberwareGrade.STANDARD));
-    assertTrue(c.isCyberwareGradeAvailable(CyberwareGrade.ALPHAWARE));
-    assertFalse(c.isCyberwareGradeAvailable(CyberwareGrade.BETAWARE));
-    assertFalse(c.isCyberwareGradeAvailable(CyberwareGrade.DELTAWARE));
+    assertTrue(c.getEquipment().isCyberwareGradeAvailable(CyberwareGrade.STANDARD));
+    assertTrue(c.getEquipment().isCyberwareGradeAvailable(CyberwareGrade.ALPHAWARE));
+    assertFalse(c.getEquipment().isCyberwareGradeAvailable(CyberwareGrade.BETAWARE));
+    assertFalse(c.getEquipment().isCyberwareGradeAvailable(CyberwareGrade.DELTAWARE));
   }
 
   @Test
@@ -79,17 +80,17 @@ class CharacterCyberwareTest {
     c.setCreated(true);
 
     for (CyberwareGrade grade : CyberwareGrade.values()) {
-      assertTrue(c.isCyberwareGradeAvailable(grade), grade.name());
+      assertTrue(c.getEquipment().isCyberwareGradeAvailable(grade), grade.name());
     }
   }
 
   @Test
   void essenceAtOrBelowZeroIsFlaggedOnlyDuringCreation() {
     Character c = mensch();
-    c.addCyberware(implant("5.9", "100"));
+    c.getEquipment().addCyberware(implant("5.9", "100"));
     assertFalse(c.isEssenceBelowCreationMinimum());
 
-    c.addCyberware(implant("0.1", "100"));
+    c.getEquipment().addCyberware(implant("0.1", "100"));
     assertTrue(c.isEssenceBelowCreationMinimum());
 
     c.setCreated(true);

@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Eine gekaufte Waffe eines Charakters: referenziert einen {@link WeaponData}-Katalogeintrag, — nur
  * beim Bogen — die gewählte Stufe (Mindeststärke) und das montierte Zubehör. Dieselbe Waffe darf
- * mehrfach gekauft werden, daher arbeitet {@code Character#removeWeapon} über die Objektreferenz.
+ * mehrfach gekauft werden, daher arbeitet {@code Equipment#removeWeapon} über die Objektreferenz.
  *
  * <p>Montageregeln (SR4-Grundregelwerk S. 357, 367/368): Zubehör braucht eine passende, freie
  * Halterung der Waffenkategorie ("An jeder Halterung kann nur jeweils ein Zubehörteil montiert

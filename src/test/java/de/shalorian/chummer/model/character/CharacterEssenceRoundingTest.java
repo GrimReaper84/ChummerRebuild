@@ -26,7 +26,7 @@ class CharacterEssenceRoundingTest {
   void threeDecimalGradeResultIsRoundedToTwo() {
     Character c = mensch();
     // Schlafregulator als Betaware: 0,15 × 0,7 = 0,105 → 6 − 0,105 = 5,895 → 5,90
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "0.15", CyberwareGrade.BETAWARE));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "0.15", CyberwareGrade.BETAWARE));
 
     assertEquals(5.9, c.getEssence());
   }
@@ -34,8 +34,8 @@ class CharacterEssenceRoundingTest {
   @Test
   void halvedLowerSumIsRoundedToTwo() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "0.1", CyberwareGrade.STANDARD));
-    c.addCyberware(implant(EquipmentKind.BIOWARE, "0.05", CyberwareGrade.STANDARD));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "0.1", CyberwareGrade.STANDARD));
+    c.getEquipment().addCyberware(implant(EquipmentKind.BIOWARE, "0.05", CyberwareGrade.STANDARD));
 
     // 6 − 0,1 − 0,025 = 5,875 → 5,88
     assertEquals(5.88, c.getEssence());
@@ -44,8 +44,8 @@ class CharacterEssenceRoundingTest {
   @Test
   void sumOfDecimalsHasNoFloatingPointArtefacts() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "0.1", CyberwareGrade.STANDARD));
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "0.2", CyberwareGrade.STANDARD));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "0.1", CyberwareGrade.STANDARD));
+    c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "0.2", CyberwareGrade.STANDARD));
 
     assertEquals(5.7, c.getEssence());
     assertEquals(0.3, c.getCyberwareEssenceLoss());
@@ -54,7 +54,8 @@ class CharacterEssenceRoundingTest {
   @Test
   void lossBelowRoundingThresholdCausesNoPenalty() {
     Character c = mensch();
-    c.addCyberware(implant(EquipmentKind.CYBERWARE, "0.004", CyberwareGrade.STANDARD));
+    c.getEquipment()
+        .addCyberware(implant(EquipmentKind.CYBERWARE, "0.004", CyberwareGrade.STANDARD));
 
     // Angezeigte Essenz und Penalty beruhen auf demselben gerundeten Wert.
     assertEquals(6.0, c.getEssence());
