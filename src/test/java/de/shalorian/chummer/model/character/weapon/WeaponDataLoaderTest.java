@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.shalorian.chummer.model.character.equipment.Legality;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class WeaponDataLoaderTest {
     assertEquals("5K", predator.damage());
     assertEquals("–1", predator.armorPiercing());
     assertEquals("HM", predator.mode());
-    assertEquals("–", predator.recoil());
+    assertEquals("–", predator.recoil().displayText());
     assertEquals("15 (s)", predator.ammo());
     assertEquals("4E", predator.availability().displayText(0));
     assertEquals(350, predator.costFor(0));
@@ -64,8 +65,8 @@ class WeaponDataLoaderTest {
   @Test
   void samplesFromEachTable() {
     assertEquals("12V", find("Monofilamentpeitsche").availability().displayText(0));
-    assertEquals("2 (3)", find("Ingram Smartgun X").recoil());
-    assertEquals("5 (6)", find("Ingram White Knight").recoil());
+    assertEquals("2 (3)", find("Ingram Smartgun X").recoil().displayText());
+    assertEquals("5 (6)", find("Ingram White Knight").recoil().displayText());
     assertEquals("50 (s) oder 100 (gurt)", find("Ingram White Knight").ammo());
     assertEquals("6 (tr)", find("Ruger Super Warhawk").ammo());
     assertEquals("–", find("Messer").availability().displayText(0));
@@ -146,5 +147,26 @@ class WeaponDataLoaderTest {
     assertEquals(WeaponRange.LIGHT_PISTOL, find("Fichetti Pain Inducer").range());
     assertEquals(WeaponRange.HEAVY_PISTOL, find("Parashield Pfeilpistole").range());
     assertEquals(WeaponRange.SPORTS_RIFLE, find("Parashield Pfeilgewehr").range());
+  }
+
+  @Test
+  void includedAccessoriesFollowWeaponTexts() {
+    // GRW S. 363: "Die TX beinhaltet ein Gasventilsystem 2, einen Lasermarkierer …"
+    assertEquals(List.of(new IncludedAccessory("Gasventilsystem 2", AccessoryRule.GAS_VENT),
+            new IncludedAccessory("Lasermarkierer", null)),
+        find("HK MP-5 TX").included());
+    // GRW S. 362: "Enthält ein Smartgunsystem."
+    assertEquals(List.of(new IncludedAccessory("Smartgunsystem", AccessoryRule.SMARTGUN)),
+        find("Ares Predator IV").included());
+    assertEquals(3, find("Ultimax HMG-2").included().size());
+    assertTrue(find("Katana").included().isEmpty());
+  }
+
+  @Test
+  void recoilWithIncludedAccessoriesMatchesTable() {
+    // Tabellen-RK enthält eingebautes Zubehör bereits (GRW S. 357): Gasventil 3 fest,
+    // Schockpolster 1 + Dreibein 6 im Klammerwert.
+    assertEquals(new Recoil(3, 10), find("Ultimax HMG-2").recoil());
+    assertEquals(new Recoil(0, 1), find("Ruger 100").recoil());
   }
 }

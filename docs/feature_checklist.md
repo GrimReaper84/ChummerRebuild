@@ -204,7 +204,7 @@
 |-----------------------------|--------|------------------|
 | Waffen kaufen und verwalten | ✅      | Teil A umgesetzt 2026-09-28 (`docs/plaene/waffen_plan.md`): 63 GRW-Kern-Waffen (Tabellen S. 361/363/366, am Bild geprüft) mit Tabellenwerten als Text, Bogen mit Stufe 1–8 (Mindeststärke), Kauf/Entfernen, Nuyen-Budget, Verfügbarkeit ≤ 12 (sichtbar-deaktiviert), Karriere-Kauf über Nuyen-Log, Persistenz; Unter-Tab "Waffen" seit 2026-09-30 als Baum nach Kategorie + Detailbereich wie im Original (`docs/plaene/waffen_detailansicht_plan.md`; vom Nutzer angesehen und für gut befunden) |
 | Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ✅ | Teil B umgesetzt 2026-09-30: Schaden aus Stärke (GRW S. 188, STR÷2 aufgerundet; Bogen nach Mindeststärke S. 361), Reichweiten laut Tabelle S. 179 (am Bild geprüft; `<range>` je Waffe, Abweichungen laut Waffentext: Hämmerli 620S, Mossberg AM-CMDT, Spezielle Waffen S. 362/365), Fertigkeit mit Wert je Kategorie (S. 147/148, 360–366). Tabelle aktualisiert sich bei Attribut-/Fertigkeitsänderung. **Einschränkungen:** Exotische Waffen teilen sich je eine Fertigkeit (GRW: je Waffe eigene); Pfeilstufe nicht modelliert; kein Würfelpool (Roadmap Stufe 3) |
-| Zubehör mit Halterungen     | ❌      | Teil C des Waffen-Plans |
+| Zubehör mit Halterungen     | ✅      | Teil C umgesetzt 2026-10-04: 16 GRW-Zubehörteile (Tabelle S. 368, am Bild geprüft) an Halterungen Lauf/Unterlauf/Aufmontiert je Waffenklasse (S. 357), eine pro Halterung, Zubehör ohne Halterung mehrfach; Sonderregeln laut Zubehörtexten S. 367/368 (Gasventil nur Automatikpistolen/MPs/Sturmgewehre/MGs und nicht entfernbar, Schalldämpfer EM/HM ohne Revolver, Schallunterdrücker SM/AM, Schockpolster und Gyrostabilisator nur Gewehre/schwere Waffen, Airburst nur Granat-/Raketenwerfer, Schnelllader nur Revolver, Ersatzladestreifen nur Ladestreifen-Waffen, Projektilwaffen nur Lasermarkierer/Smartgun); mitgeliefertes Zubehör laut Waffentexten S. 362–366 (`<included>`), höchstens ein Gasventil/Smartgunsystem/Schockpolster je Waffe; RK "x (y)" inkl. Zubehör (Gasventil fest, alles andere im Klammerwert); internes Smartgunsystem kostet den Waffenpreis; Budget, Karriere-Kauf, Persistenz. **Einschränkungen:** Spezielle Waffen ohne Halterung (kein GRW-Beleg); Airburst verlangt kein Smartgunsystem; HK-XM30-Umbausätze zurückgestellt (nur `<note>`) |
 | Waffenmodifikationen        | ❌      | Nur Arsenal, zurückgestellt |
 | Munition, Pfeile/Bolzen, Granaten/Raketen | ❌ | Gehören zum Gear-Feature |
 
@@ -217,6 +217,8 @@
 | Allgemeine Ausrüstung kaufen | ❌      | Komplett fehlend |
 | Commlink mit Response/Signal | ❌      |                  |
 | Orte/Lager-Kategorien        | ❌      |                  |
+| Holster, Versteckte Armhalterung, Smart-Feuerplattform | ❌ | Aus dem Waffenzubehör (GRW S. 367/368) hierher verschoben (Nutzerentscheidung 2026-09-30) |
+| Munition, Pfeile/Bolzen, Granaten/Raketen | ❌ | Aus dem Waffen-Feature hierher verschoben (`waffen_plan.md`) |
 
 ---
 
@@ -312,8 +314,8 @@
 | Cyberware/Bioware      | 6 | 0  | 2 |
 | Rüstung                | 3 | 0  | 4 |
 | Lebensstil             | 1 | 0  | 2 |
-| Waffen                 | 2 | 0  | 3 |
-| Gear                   | 0 | 0  | 3 |
+| Waffen                 | 3 | 0  | 2 |
+| Gear                   | 0 | 0  | 5 |
 | Fahrzeuge              | 0 | 0  | 1 |
 | Karrieremodus          | 5 | 0  | 4 |
 | Initiative             | 0 | 0  | 4 |
@@ -347,7 +349,7 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung (GRW-Kern S. 284, zurückgestellt)
 3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
 4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
-5. **Waffen** ⚠️ Teil A (2026-09-28) und Teil B (2026-09-30) umgesetzt (`docs/plaene/waffen_plan.md`); offen: Teil C (Zubehör)
+5. **Waffen** ✅ Teil A (2026-09-28), Teil B (2026-09-30) und Teil C Zubehör (2026-10-04) umgesetzt (`docs/plaene/waffen_plan.md`)
 6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen
 
 **Stufe 3 – Abgeleitete Werte & Gameplay**

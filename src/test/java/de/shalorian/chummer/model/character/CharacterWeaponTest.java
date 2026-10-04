@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
+import de.shalorian.chummer.model.character.weapon.Mount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import java.util.Objects;
@@ -83,5 +86,18 @@ class CharacterWeaponTest {
     c.setCreated(true);
     assertTrue(c.isAvailableForPurchase(catalog("HK XM30").availability(), 0));
     assertTrue(c.isAvailableForPurchase(bow.availability(), 8));
+  }
+
+  @Test
+  void accessoriesCountAgainstResourceBudget() {
+    Character c = mensch();
+    c.setNuyenBP(10);
+    Weapon predator = new Weapon(catalog("Ares Predator IV"));
+    predator.addAccessory(new WeaponAccessory(
+        Objects.requireNonNull(AccessoryDataLoader.findByName("Schalldämpfer")), Mount.BARREL));
+    c.addWeapon(predator);
+
+    assertEquals(550, c.getWeaponNuyenCost());
+    assertEquals(49_450, c.getRemainingNuyen());
   }
 }

@@ -25,7 +25,11 @@ import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.weapon.AccessoryData;
+import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
+import de.shalorian.chummer.model.character.weapon.Mount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import de.shalorian.chummer.model.character.magic.SpellData;
@@ -109,7 +113,9 @@ public class CharacterStore {
         .map(a -> new ArmorEntry(a.getName(), a.isEquipped()))
         .toList();
     data.weapons = character.getWeapons().stream()
-        .map(w -> new WeaponEntry(w.getName(), w.getRating()))
+        .map(w -> new WeaponEntry(w.getName(), w.getRating(), w.getAccessories().stream()
+            .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
+            .toList()))
         .toList();
     Lifestyle lifestyle = character.getLifestyle();
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
@@ -226,15 +232,31 @@ public class CharacterStore {
   }
 
   /**
-   * Stellt die gekauften Waffen wieder her; unbekannte Katalognamen und unzulässige Stufen werden
-   * übersprungen statt die ganze Datei abzulehnen.
+   * Stellt die gekauften Waffen samt Zubehör wieder her; unbekannte Katalognamen, unzulässige Stufen
+   * und Zubehör, das laut Montageregeln nicht (mehr) passt, werden übersprungen statt die ganze Datei
+   * abzulehnen.
    */
   private static void applyWeapons(@NonNull Character character, @NonNull CharacterData data) {
     for (WeaponEntry entry : data.weapons) {
       WeaponData weaponData = WeaponDataLoader.findByName(entry.name);
       if (weaponData != null && weaponData.isValidRating(entry.rating)) {
-        character.addWeapon(new Weapon(weaponData, entry.rating));
+        Weapon weapon = new Weapon(weaponData, entry.rating);
+        entry.accessories.forEach(a -> applyAccessory(weapon, a));
+        character.addWeapon(weapon);
       }
+    }
+  }
+
+  private static void applyAccessory(@NonNull Weapon weapon, @NonNull AccessoryEntry entry) {
+    AccessoryData accessoryData = AccessoryDataLoader.findByName(entry.name);
+    if (accessoryData == null) {
+      return;
+    }
+    try {
+      Mount mount = entry.mount == null ? null : Mount.valueOf(entry.mount);
+      weapon.addAccessory(new WeaponAccessory(accessoryData, mount));
+    } catch (IllegalArgumentException e) {
+      // unbekannte Halterung oder Teil passt nicht: überspringen
     }
   }
 

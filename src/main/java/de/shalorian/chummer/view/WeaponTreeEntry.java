@@ -1,26 +1,46 @@
 package de.shalorian.chummer.view;
 
+import de.shalorian.chummer.model.character.weapon.IncludedAccessory;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Knotenwert im Waffenbaum des Unter-Tabs "Waffen": entweder eine Kategorie-Gruppe ({@code weapon ==
- * null}) oder eine gekaufte Waffe. Zubehör (Waffen-Plan Teil C) wird später als weitere Knotenart unter
- * der Waffe ergänzt.
+ * Knotenwert im Waffenbaum des Unter-Tabs "Waffen": eine Kategorie-Gruppe ({@code weapon == null}),
+ * eine gekaufte Waffe oder — als Kind der Waffe — ein gekauftes bzw. mitgeliefertes Zubehörteil.
  *
- * @param label  angezeigter Text (Kategoriename bzw. Waffenname inkl. Stufe)
- * @param weapon die Waffe, oder {@code null} bei einem Kategorieknoten
+ * @param label     angezeigter Text
+ * @param weapon    die Waffe des Knotens bzw. die Waffe, an der das Zubehör sitzt; {@code null} bei
+ *                  einem Kategorieknoten
+ * @param accessory gekauftes Zubehör, sonst {@code null}
+ * @param included  mitgeliefertes Zubehör, sonst {@code null}
  */
-record WeaponTreeEntry(@NonNull String label, @Nullable Weapon weapon) {
+record WeaponTreeEntry(@NonNull String label, @Nullable Weapon weapon,
+                       @Nullable WeaponAccessory accessory, @Nullable IncludedAccessory included) {
 
   static @NonNull WeaponTreeEntry ofCategory(@NonNull WeaponCategory category) {
-    return new WeaponTreeEntry(category.getDisplayName(), null);
+    return new WeaponTreeEntry(category.getDisplayName(), null, null, null);
   }
 
   static @NonNull WeaponTreeEntry ofWeapon(@NonNull Weapon weapon) {
-    return new WeaponTreeEntry(weapon.getDisplayName(), weapon);
+    return new WeaponTreeEntry(weapon.getDisplayName(), weapon, null, null);
+  }
+
+  static @NonNull WeaponTreeEntry ofAccessory(@NonNull Weapon weapon,
+      @NonNull WeaponAccessory accessory) {
+    return new WeaponTreeEntry(accessory.getDisplayName(), weapon, accessory, null);
+  }
+
+  static @NonNull WeaponTreeEntry ofIncluded(@NonNull Weapon weapon,
+      @NonNull IncludedAccessory included) {
+    return new WeaponTreeEntry(included.name() + " (mitgeliefert)", weapon, null, included);
+  }
+
+  /** Ob der Knoten die Waffe selbst ist (nicht Kategorie, nicht Zubehör). */
+  boolean isWeapon() {
+    return weapon != null && accessory == null && included == null;
   }
 
   /** Beschriftung im {@code TreeView} (Standard-Zellen zeigen {@code toString()}). */

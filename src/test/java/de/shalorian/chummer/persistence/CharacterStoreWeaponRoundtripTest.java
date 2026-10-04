@@ -5,7 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.weapon.AccessoryData;
+import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
+import de.shalorian.chummer.model.character.weapon.Mount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import java.io.File;
 import java.io.IOException;
@@ -64,5 +68,42 @@ class CharacterStoreWeaponRoundtripTest {
 
     assertEquals(1, weapons.size());
     assertEquals("Katana", weapons.get(0).getName());
+  }
+
+  @Test
+  void roundtripPreservesAccessoriesWithMount() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    Weapon rifle = new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("AK-97")));
+    rifle.addAccessory(new WeaponAccessory(accessory("Lasermarkierer"), Mount.UNDERBARREL));
+    rifle.addAccessory(new WeaponAccessory(accessory("Smartgunsystem, intern"), null));
+    original.addWeapon(rifle);
+
+    CharacterStore.save(original, tempFile());
+    Weapon loaded = CharacterStore.load(tempFile()).getWeapons().get(0);
+
+    assertEquals(rifle.getAccessories(), loaded.getAccessories());
+    assertEquals(rifle.getTotalNuyenCost(), loaded.getTotalNuyenCost());
+  }
+
+  @Test
+  void unknownOrInvalidAccessoriesAreSkipped() throws IOException {
+    Files.writeString(tempFile().toPath(), """
+        {"name":"Alt","metatype":"Mensch",
+         "weapons":[{"name":"Uzi IV","rating":0,"accessories":[
+           {"name":"Gibt es nicht","mount":"TOP"},
+           {"name":"Zielfernrohr","mount":"NIRGENDS"},
+           {"name":"Zielfernrohr","mount":"UNDERBARREL"},
+           {"name":"Schalldämpfer","mount":"BARREL"},
+           {"name":"Lasermarkierer","mount":"TOP"}]}]}
+        """, StandardCharsets.UTF_8);
+
+    List<WeaponAccessory> accessories =
+        CharacterStore.load(tempFile()).getWeapons().get(0).getAccessories();
+
+    assertEquals(List.of(new WeaponAccessory(accessory("Lasermarkierer"), Mount.TOP)), accessories);
+  }
+
+  private static AccessoryData accessory(String name) {
+    return Objects.requireNonNull(AccessoryDataLoader.findByName(name));
   }
 }

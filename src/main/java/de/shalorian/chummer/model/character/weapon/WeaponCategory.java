@@ -1,5 +1,7 @@
 package de.shalorian.chummer.model.character.weapon;
 
+import java.util.EnumSet;
+import java.util.Set;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -67,6 +69,41 @@ public enum WeaponCategory {
    */
   public @NonNull String skillName() {
     return skillName;
+  }
+
+  /**
+   * Halterungen für Zubehör. SR4-Grundregelwerk S. 357: "Holdout-Pistolen besitzen keine Halterung.
+   * Pistolen (einschließlich Automatikpistolen) verfügen über Halterungen für Lauf- und aufmontiertes
+   * Zubehör. MPs, alle Gewehre und schweren Waffen haben aufmontierte, Lauf- und
+   * Unterlaufhalterungen."
+   *
+   * <p>Ergänzungen ohne ausdrückliche GRW-Zeile: Taser nur aufmontiert (Nutzerentscheidung
+   * 2026-09-30, wie im Original-Chummer); Bögen und Armbrüste aufmontiert und Unterlauf, damit die
+   * nach S. 357 erlaubten Lasermarkierer und Smartgunsysteme an ihre Tabellen-Halterungen passen;
+   * Spezielle Waffen, Nahkampf- und Wurfwaffen keine.
+   */
+  public @NonNull Set<Mount> mounts() {
+    return switch (this) {
+      case HOLDOUTS, SPECIAL, BLADES, CLUBS, EXOTIC_MELEE, UNARMED, THROWING -> EnumSet.noneOf(
+          Mount.class);
+      case TASERS -> EnumSet.of(Mount.TOP);
+      case BOWS, CROSSBOWS -> EnumSet.of(Mount.TOP, Mount.UNDERBARREL);
+      case LIGHT_PISTOLS, HEAVY_PISTOLS, MACHINE_PISTOLS -> EnumSet.of(Mount.BARREL, Mount.TOP);
+      default -> EnumSet.allOf(Mount.class);
+    };
+  }
+
+  /** Ob Waffen dieser Kategorie überhaupt Zubehör aufnehmen (Feuer- und Projektilwaffen). */
+  public boolean acceptsAccessories() {
+    return !melee && this != THROWING;
+  }
+
+  /**
+   * Ob es sich um Projektilwaffen handelt (GRW S. 357: "Projektilwaffen können nur mit einem
+   * Lasermarkierer oder Smartgunsystem ausgerüstet werden").
+   */
+  public boolean isProjectile() {
+    return this == BOWS || this == CROSSBOWS;
   }
 
   /**

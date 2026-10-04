@@ -1,12 +1,14 @@
 package de.shalorian.chummer.model.character.weapon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillDataLoader;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -59,5 +61,21 @@ class WeaponCategoryTest {
     assertEquals("Schwere Waffen", WeaponCategory.MISSILE_LAUNCHERS.skillName());
     assertEquals("Exotische Fernkampfwaffe", WeaponCategory.SPECIAL.skillName());
     assertEquals("Exotische Nahkampfwaffe", WeaponCategory.EXOTIC_MELEE.skillName());
+  }
+
+  @Test
+  void mountsFollowRulebookPage357() {
+    assertTrue(WeaponCategory.HOLDOUTS.mounts().isEmpty());
+    assertEquals(Set.of(Mount.BARREL, Mount.TOP), WeaponCategory.LIGHT_PISTOLS.mounts());
+    assertEquals(Set.of(Mount.BARREL, Mount.TOP), WeaponCategory.MACHINE_PISTOLS.mounts());
+    assertEquals(Set.of(Mount.TOP), WeaponCategory.TASERS.mounts());
+    for (WeaponCategory category : List.of(WeaponCategory.SUBMACHINE_GUNS,
+        WeaponCategory.ASSAULT_RIFLES, WeaponCategory.SNIPER_RIFLES, WeaponCategory.SHOTGUNS,
+        WeaponCategory.HEAVY_MG, WeaponCategory.MISSILE_LAUNCHERS)) {
+      assertEquals(Set.of(Mount.values()), category.mounts(), category.name());
+    }
+    assertTrue(WeaponCategory.BLADES.mounts().isEmpty());
+    assertFalse(WeaponCategory.THROWING.acceptsAccessories());
+    assertTrue(WeaponCategory.BOWS.isProjectile());
   }
 }

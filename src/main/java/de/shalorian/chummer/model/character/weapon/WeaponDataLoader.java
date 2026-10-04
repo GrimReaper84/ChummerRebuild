@@ -5,8 +5,10 @@ import static de.shalorian.chummer.utils.XmlUtils.childText;
 import de.shalorian.chummer.model.character.DataPaths;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.jspecify.annotations.NonNull;
@@ -74,14 +76,28 @@ public class WeaponDataLoader {
         childText(el, "damage"),
         childText(el, "ap"),
         childText(el, "mode"),
-        childText(el, "rc"),
+        Recoil.parse(childText(el, "rc")),
         childText(el, "ammo"),
         range.isEmpty() ? null : WeaponRange.fromDisplayName(range),
         Availability.parse(childText(el, "avail"), childText(el, "legality")),
         childText(el, "cost"),
         rating.isEmpty() ? 0 : Integer.parseInt(rating),
         childText(el, "note"),
+        parseIncluded(el),
         childText(el, "source"),
         childText(el, "page"));
+  }
+
+  /** {@code <included rule="…">Name</included>}: eingebautes Zubehör, Regel optional. */
+  private static @NonNull List<IncludedAccessory> parseIncluded(@NonNull Element el) {
+    List<IncludedAccessory> included = new ArrayList<>();
+    NodeList nodes = el.getElementsByTagName("included");
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Element node = (Element) nodes.item(i);
+      String rule = node.getAttribute("rule");
+      included.add(new IncludedAccessory(node.getTextContent().trim(),
+          rule.isEmpty() ? null : AccessoryRule.valueOf(rule)));
+    }
+    return included;
   }
 }

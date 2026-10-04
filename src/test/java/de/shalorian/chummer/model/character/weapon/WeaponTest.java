@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.shalorian.chummer.model.character.equipment.Availability;
+import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +31,8 @@ class WeaponTest {
 
   @Test
   void weaponWithoutRatingRejectsRating() {
-    WeaponData knife = new WeaponData("Test", WeaponCategory.BLADES, "–", "(STR÷2+1)K", "–", "", "",
-        "", null, Availability.NONE, "20", 0, "", "SR4", "0");
+    WeaponData knife = new WeaponData("Test", WeaponCategory.BLADES, "–", "(STR÷2+1)K", "–", "",
+        Recoil.NONE, "", null, Availability.NONE, "20", 0, "", List.of(), "SR4", "0");
 
     assertEquals("Test", new Weapon(knife).getDisplayName());
     assertEquals(20, new Weapon(knife).getNuyenCost());

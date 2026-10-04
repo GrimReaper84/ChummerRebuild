@@ -1295,7 +1295,7 @@ public class Character {
 
   /** Gesamtpreis aller gekauften Waffen in Nuyen. */
   public int getWeaponNuyenCost() {
-    return weapons.stream().mapToInt(Weapon::getNuyenCost).sum();
+    return weapons.stream().mapToInt(Weapon::getTotalNuyenCost).sum();
   }
 
   /**

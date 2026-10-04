@@ -17,6 +17,8 @@ import org.jspecify.annotations.NonNull;
  * "–" angezeigt.
  *
  * @param damage        Schaden für den Charakter berechnet, z.B. "6K"
+ * @param recoil        RK inkl. gekauftem Zubehör (Waffen-Plan Teil C)
+ * @param cost          Waffenpreis, mit gekauftem Zubehör zusätzlich die Summe
  * @param damageFormula GRW-Schadensformel, wenn der Schaden berechnet wurde, sonst leer
  * @param skill         Fertigkeit mit Wert, z.B. "Pistolen 4"
  * @param rangeBands    Reichweitenstufen Kurz/Mittel/Weit/Extrem in Metern, leer bei Nahkampfwaffen
@@ -58,13 +60,13 @@ record WeaponDetails(
         orDash(damage),
         // Berechnet wurde genau dann, wenn der Text von der GRW-Formel abweicht.
         damage.equals(data.damage()) ? "" : data.damage(),
-        orDash(data.recoil()),
+        weapon.getRecoil().displayText(),
         orDash(data.armorPiercing()),
         orDash(data.reach()),
         orDash(data.mode()),
         orDash(data.ammo()),
         weapon.getAvailabilityText(),
-        weapon.getNuyenCost() + " ¥",
+        costText(weapon),
         data.source() + " S. " + data.page(),
         bands == null ? List.of() : bands.bandTexts(),
         range == null ? "" : rangeNote(range),
@@ -81,6 +83,14 @@ record WeaponDetails(
       return text;
     }
     return text + (range == WeaponRange.BOW ? ", nach Mindeststärke" : ", nach Stärke");
+  }
+
+  /** z.B. "350 ¥" bzw. "350 ¥ (mit Zubehör 750 ¥)". */
+  private static @NonNull String costText(@NonNull Weapon weapon) {
+    String text = weapon.getNuyenCost() + " ¥";
+    return weapon.getAccessories().isEmpty()
+        ? text
+        : text + " (mit Zubehör " + weapon.getTotalNuyenCost() + " ¥)";
   }
 
   private static @NonNull String orDash(@NonNull String text) {

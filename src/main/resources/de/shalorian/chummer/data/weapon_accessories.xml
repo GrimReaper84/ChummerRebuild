@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Feuerwaffenzubehör des SR4-Grundregelwerks (Tabelle Feuerwaffenzubehör S. 368, Texte S. 367/368) —
+  Halterung, Verfügbarkeit und Preis direkt gegen das PDF-Bild verifiziert.
+
+  <mount>        mögliche Halterungen (Lauf, Unterlauf, Aufmontiert); keine = ohne Halterung (GRW "–")
+  <rc>           Rückstoßkompensation laut Zubehörtext
+  <rule>         Sonderregel (AccessoryRule), z.B. GAS_VENT: nur bestimmte Waffenklassen, nicht entfernbar
+  <projectile/>  passt auch an Projektilwaffen (GRW S. 357: nur Lasermarkierer oder Smartgunsystem)
+  <cost>         Nuyen, bzw. "Waffenpreis" beim internen Smartgunsystem (S. 368)
+  <avail>/<legality> wie armor.xml.
+
+  Bewusst NICHT enthalten (Gear-Feature, Nutzerentscheidung 2026-09-30): Schnellziehholster,
+  Tarnholster, Versteckte Armhalterung, Smart-Feuerplattform.
+-->
+<accessories>
+
+    <item>
+        <name>Airburst-Verbindung</name>
+        <rule>AIRBURST</rule>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <note>Verringert die Abweichung von Minigranaten/Raketen von 3W6 bzw. 4W6 auf 2W6 (S. 367).</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Dreibein</name>
+        <mount>Unterlauf</mount>
+        <rc>6</rc>
+        <avail>4</avail>
+        <cost>300</cost>
+        <note>6 RK nur bei richtigem Einsatz (am Boden, liegend oder kniend), daher im Klammerwert.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Ersatzladestreifen</name>
+        <rule>SPARE_CLIP</rule>
+        <avail>4</avail>
+        <cost>5</cost>
+        <note>Wird ungeladen geliefert und passt nur zu dieser Waffe.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Gasventilsystem 2</name>
+        <mount>Lauf</mount>
+        <rc>2</rc>
+        <rule>GAS_VENT</rule>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>200</cost>
+        <note>Kann nach dem Einbau nicht mehr entfernt werden.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Gasventilsystem 3</name>
+        <mount>Lauf</mount>
+        <rc>3</rc>
+        <rule>GAS_VENT</rule>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>400</cost>
+        <note>Kann nach dem Einbau nicht mehr entfernt werden.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Gyrostabilisator</name>
+        <mount>Unterlauf</mount>
+        <rule>GYROSTABILIZER</rule>
+        <avail>7</avail>
+        <cost>3000</cost>
+        <note>Neutralisiert bis zu 6 Punkte Rückstoß- und Bewegungsmodifikatoren; keine RK (S. 367).</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Lasermarkierer</name>
+        <mount>Aufmontiert</mount>
+        <mount>Unterlauf</mount>
+        <projectile/>
+        <avail>2</avail>
+        <cost>100</cost>
+        <note>+1 Würfelpool für Fernkampfangriffe, nicht kumulativ mit Smartlink-Boni.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Periskop</name>
+        <mount>Aufmontiert</mount>
+        <avail>3</avail>
+        <cost>50</cost>
+        <note>Erlaubt es, um eine Ecke zu zielen.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Schalldämpfer</name>
+        <mount>Lauf</mount>
+        <rule>SUPPRESSOR</rule>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>200</cost>
+        <note>−4 auf Wahrnehmungsproben, um die Benutzung der Waffe oder den Schützen zu bemerken.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Schallunterdrücker</name>
+        <mount>Lauf</mount>
+        <rule>SOUND_SUPPRESSOR</rule>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>300</cost>
+        <note>−4 auf Wahrnehmungsproben, um die Benutzung der Waffe oder den Schützen zu bemerken; nach 300 Schuss Salven- oder Vollautomatikfeuer zu ersetzen.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Schnelllader</name>
+        <rule>SPEEDLOADER</rule>
+        <avail>2</avail>
+        <cost>25</cost>
+        <note>Siehe Tabelle Feuerwaffen nachladen, S. 369.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Schockpolster</name>
+        <rc>1</rc>
+        <rule>SHOCK_PAD</rule>
+        <avail>2</avail>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Smartgunsystem, extern</name>
+        <mount>Aufmontiert</mount>
+        <mount>Unterlauf</mount>
+        <rule>SMARTGUN</rule>
+        <projectile/>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>400</cost>
+        <note>+2 Würfelpool auf Fernkampfproben zusammen mit einem Smartlink.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Smartgunsystem, intern</name>
+        <rule>SMARTGUN</rule>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>Waffenpreis</cost>
+        <note>+2 Würfelpool auf Fernkampfproben zusammen mit einem Smartlink. Nachträglicher Einbau verdoppelt den Preis der Waffe.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Zielfernrohr</name>
+        <mount>Aufmontiert</mount>
+        <avail>3</avail>
+        <cost>300</cost>
+        <note>Kann mit Sichtverstärkungen (S. 379) ausgerüstet werden.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+    <item>
+        <name>Zweibein</name>
+        <mount>Unterlauf</mount>
+        <rc>2</rc>
+        <avail>2</avail>
+        <cost>100</cost>
+        <note>2 RK nur bei richtigem Einsatz (sitzend oder liegend), daher im Klammerwert.</note>
+        <source>SR4</source>
+        <page>368</page>
+    </item>
+
+</accessories>

@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
+import de.shalorian.chummer.model.character.weapon.Mount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import java.util.List;
 import java.util.Objects;
@@ -71,5 +74,18 @@ class WeaponDetailsTest {
     WeaponDetails roomsweeper = WeaponDetails.of(weapon("Remington Roomsweeper"), mensch());
 
     assertEquals("Mit Flechette: 7K(f), PB +5", roomsweeper.note());
+  }
+
+  @Test
+  void recoilAndCostIncludeBoughtAccessories() {
+    Weapon uzi = weapon("Uzi IV"); // RK "(1)", 500 ¥
+    uzi.addAccessory(new WeaponAccessory(
+        Objects.requireNonNull(AccessoryDataLoader.findByName("Gasventilsystem 2")), Mount.BARREL));
+
+    WeaponDetails details = WeaponDetails.of(uzi, mensch());
+
+    assertEquals("2 (3)", details.recoil());
+    assertEquals("500 ¥ (mit Zubehör 700 ¥)", details.cost());
+    assertEquals("500 ¥", WeaponDetails.of(weapon("Uzi IV"), mensch()).cost());
   }
 }

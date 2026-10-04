@@ -145,7 +145,7 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
     damageLabel.setText(orDash(selected.damage()));
     armorPiercingLabel.setText(orDash(selected.armorPiercing()));
     modeLabel.setText(orDash(selected.mode()));
-    recoilLabel.setText(orDash(selected.recoil()));
+    recoilLabel.setText(selected.recoil().displayText());
     ammoLabel.setText(orDash(selected.ammo()));
     String availability = selected.availability().displayText(rating);
     if (!isAvailable(selected, rating)) {
