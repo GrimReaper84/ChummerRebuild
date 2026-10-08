@@ -8,7 +8,7 @@ import org.jspecify.annotations.NonNull;
  * Tabellenüberschrift und zugleich der Wert von {@code <category>} in {@code gear.xml}; wo die
  * Überschrift allein mehrdeutig ist, ist der Bereich vorangestellt ("Elektronik-Zubehör" statt
  * "Zubehör"). Die Zauberformeln stehen im GRW unter "Spruchkategorie".
- * Kategorien der späteren Gear-Teile (Munition …) folgen mit diesen.
+ * Pfeile ({@link #ARROWS}) werden im Waffen-Tab am Bogen gekauft, nicht als eigenständige Ausrüstung.
  *
  * <p>Einige Kategorien werden nur als Einbau in ein passendes Gerät gekauft ({@link
  * #isInstalledOnly()}): Betriebssysteme in Kommlinks (Nutzerentscheidung 2026-10-04), Sicht- und
@@ -17,7 +17,15 @@ import org.jspecify.annotations.NonNull;
  * {@link GearData#accepts()}.
  */
 public enum GearCategory {
+  ARROWS("Pfeile", GearArea.PROJECTILES),
+  BOLTS("Bolzen", GearArea.PROJECTILES),
   FIREARM_ACCESSORIES("Feuerwaffenzubehör", GearArea.FIREARM_ACCESSORIES),
+  AMMUNITION("Munition", GearArea.AMMUNITION),
+  GRENADES("Granaten", GearArea.EXPLOSIVES),
+  ROCKETS("Raketen", GearArea.EXPLOSIVES),
+  MISSILES("Lenkraketen", GearArea.EXPLOSIVES),
+  EXPLOSIVES("Sprengstoffe", GearArea.EXPLOSIVES),
+  EXPLOSIVE_ACCESSORIES("Sprengstoff-Zubehör", GearArea.EXPLOSIVES),
   COMMLINKS("Kommlink-Modell", GearArea.ELECTRONICS),
   OPERATING_SYSTEMS("Handelsübliche Betriebssysteme", GearArea.ELECTRONICS),
   ELECTRONIC_ACCESSORIES("Elektronik-Zubehör", GearArea.ELECTRONICS),

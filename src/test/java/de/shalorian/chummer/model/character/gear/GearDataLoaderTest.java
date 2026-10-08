@@ -24,7 +24,15 @@ class GearDataLoaderTest {
   @Test
   void everyCategoryHasItsRulebookRowCount() {
     Map<GearCategory, Integer> expected = new EnumMap<>(GearCategory.class);
+    expected.put(GearCategory.ARROWS, 2);
+    expected.put(GearCategory.BOLTS, 2);
     expected.put(GearCategory.FIREARM_ACCESSORIES, 4);
+    expected.put(GearCategory.AMMUNITION, 11);
+    expected.put(GearCategory.GRENADES, 7);
+    expected.put(GearCategory.ROCKETS, 3);
+    expected.put(GearCategory.MISSILES, 3);
+    expected.put(GearCategory.EXPLOSIVES, 3);
+    expected.put(GearCategory.EXPLOSIVE_ACCESSORIES, 1);
     expected.put(GearCategory.COMMLINKS, 9);
     expected.put(GearCategory.OPERATING_SYSTEMS, 6);
     expected.put(GearCategory.ELECTRONIC_ACCESSORIES, 11);

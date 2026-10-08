@@ -1,5 +1,7 @@
 package de.shalorian.chummer.model.character.weapon;
 
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearCategory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,12 +18,18 @@ import org.jspecify.annotations.Nullable;
  * Halterung der Waffenkategorie ("An jeder Halterung kann nur jeweils ein Zubehörteil montiert
  * werden"), Zubehör ohne Halterung ist mehrfach möglich. Eingebautes Zubehör belegt keine Halterung.
  * Dazu kommen die Sonderregeln aus {@link AccessoryRule} und die Beschränkung der Projektilwaffen.
+ *
+ * <p><b>Pfeile:</b> Ein Bogen führt seine Pfeile als Stapel ({@link Gear} der Kategorie {@link
+ * GearCategory#ARROWS}, Nutzerentscheidung 2026-10-04: Pfeile im Waffen-Tab am Bogen). Gleiche Pfeile
+ * werden zusammengeführt; ihr Preis zählt zur Waffe. GRW S. 361: "Berechnen Sie den Schaden anhand
+ * der niedrigsten Stufe des Pfeils oder Bogens" ({@link #getArrowDamageText(Gear)}).
  */
 public class Weapon {
 
   private final @NonNull WeaponData data;
   private final int rating;
   private final List<WeaponAccessory> accessories = new ArrayList<>();
+  private final List<Gear> arrows = new ArrayList<>();
 
   /**
    * Waffe mit Stufe.
@@ -68,9 +76,13 @@ public class Weapon {
     return data.costFor(rating);
   }
 
-  /** Preis der Waffe einschließlich des gekauften Zubehörs; eingebautes Zubehör ist im Preis enthalten. */
+  /**
+   * Preis der Waffe einschließlich des gekauften Zubehörs und der Pfeile; eingebautes Zubehör ist im
+   * Preis enthalten.
+   */
   public int getTotalNuyenCost() {
-    return getNuyenCost() + accessories.stream().mapToInt(a -> getAccessoryNuyenCost(a.data())).sum();
+    return getNuyenCost() + accessories.stream().mapToInt(a -> getAccessoryNuyenCost(a.data())).sum()
+        + arrows.stream().mapToInt(Gear::getNuyenCost).sum();
   }
 
   /**
@@ -195,6 +207,52 @@ public class Weapon {
             .map(WeaponAccessory::getName).findFirst().orElse(null));
   }
 
+  // --- Pfeile ---
+
+  /** Ob die Waffe Pfeile führt (nur Bögen). */
+  public boolean takesArrows() {
+    return data.category() == WeaponCategory.BOWS;
+  }
+
+  /** Pfeilstapel in Kaufreihenfolge. */
+  public @NonNull List<Gear> getArrows() {
+    return Collections.unmodifiableList(arrows);
+  }
+
+  /**
+   * Fügt Pfeile hinzu; gleiche Pfeile (Sorte und Stufe) werden mit einem vorhandenen Stapel
+   * zusammengeführt.
+   *
+   * @return der Stapel, der die Pfeile jetzt enthält
+   * @throws IllegalArgumentException wenn die Waffe kein Bogen ist oder {@code item} kein Pfeil
+   */
+  public @NonNull Gear addArrows(@NonNull Gear item) {
+    if (!takesArrows() || item.getData().category() != GearCategory.ARROWS) {
+      throw new IllegalArgumentException(item.getName() + " passt nicht zu " + data.name());
+    }
+    for (Gear stack : arrows) {
+      if (stack.isSameKind(item)) {
+        stack.setQuantity(stack.getQuantity() + item.getQuantity());
+        return stack;
+      }
+    }
+    arrows.add(item);
+    return item;
+  }
+
+  /** Entfernt genau diesen Pfeilstapel. */
+  public void removeArrows(@NonNull Gear stack) {
+    arrows.remove(stack);
+  }
+
+  /**
+   * Schaden mit diesen Pfeilen: Bogenschaden nach der niedrigeren Stufe von Pfeil und Bogen (GRW
+   * S. 361), z.B. Bogen Stufe 6 mit Pfeilen Stufe 4 → "(4 + 2)K" = "6K".
+   */
+  public @NonNull String getArrowDamageText(@NonNull Gear stack) {
+    return WeaponDamage.evaluate(data.damage(), Math.min(stack.getRating(), rating));
+  }
+
   /** Verfügbarkeit dieser Waffe in ihrer Stufe, wie im GRW angezeigt (z.B. "8" beim Bogen Stufe 4). */
   public @NonNull String getAvailabilityText() {
     return data.availability().displayText(rating);
@@ -220,8 +278,8 @@ public class Weapon {
   /**
    * Stärke, nach der Schaden und Reichweite berechnet werden: beim Bogen seine Mindeststärke (= Stufe),
    * sonst die des Charakters. GRW S. 361: "Die Mindeststärke der Waffe wird auch für die Bestimmung
-   * des Schadens und der Reichweite benutzt". Pfeile sind noch nicht modelliert; ihre Stufe (S. 361:
-   * "Berechnen Sie den Schaden anhand der niedrigsten Stufe des Pfeils oder Bogens") bleibt außen vor.
+   * des Schadens und der Reichweite benutzt". Der Schaden mit bestimmten Pfeilen steht in {@link
+   * #getArrowDamageText(Gear)}.
    */
   private int effectiveStrength(int strength) {
     return data.hasRating() ? rating : strength;

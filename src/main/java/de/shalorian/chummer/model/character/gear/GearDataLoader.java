@@ -100,6 +100,7 @@ public class GearDataLoader {
         childText(el, "capacity"),
         childText(el, "capacitycost"),
         Boolean.parseBoolean(childText(el, "repeatable")),
+        combatStats(el),
         costFor.isEmpty() ? 1 : Integer.parseInt(costFor),
         GearUnit.fromSingular(childText(el, "unit")),
         Boolean.parseBoolean(childText(el, "variablecost")),
@@ -108,6 +109,16 @@ public class GearDataLoader {
         childText(el, "note"),
         childText(el, "source"),
         childText(el, "page"));
+  }
+
+  /**
+   * Kampfwerte aus {@code <damage>}, {@code <ap>}, {@code <blast>}, {@code <armortype>}; {@code null},
+   * wenn der Eintrag keinen Schaden hat.
+   */
+  private static @Nullable GearCombatStats combatStats(@NonNull Element el) {
+    String damage = childText(el, "damage");
+    return damage.isEmpty() ? null : new GearCombatStats(damage, childText(el, "ap"),
+        childText(el, "blast"), childText(el, "armortype"));
   }
 
   /** Ganzzahl aus einem optionalen Element, {@code 0} wenn es fehlt. */

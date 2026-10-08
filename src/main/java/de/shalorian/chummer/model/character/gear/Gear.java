@@ -75,6 +75,9 @@ public class Gear {
     if (data.needsExtra() == extra.isEmpty()) {
       return data.needsExtra() ? data.extraLabel() + " fehlt" : "Zusatztext nicht vorgesehen";
     }
+    if (data.extraKind().isChoice() && !data.extraKind().suggestions().contains(extra)) {
+      return "\"" + extra + "\" ist keine zulässige Angabe für " + data.extraLabel();
+    }
     if (data.variableCost() != (chosenPackPrice != null)) {
       return data.variableCost() ? "Preis fehlt" : "Preis ist fest";
     }

@@ -20,12 +20,57 @@
   <accepts> = Kategorie, die das Gerät als Einbau aufnimmt; <capacity> = Kapazität (Formel), <capacitycost> =
   Kapazitätsbedarf als Einbau ("[1]" → 1, "pro Stufe" → Rating); <avail>+n</avail> = Zuschlag auf die
   Verfügbarkeit des Geräts; <repeatable> = darf mehrfach im selben Gerät stecken ("pro Stück").
-  Bewusst NICHT enthalten (spätere Gear-Teile): Munition, Pfeile, Bolzen, Granaten,
-  Raketen, Sprengstoffe (D). Kleidung gehört zum Rüstungs-Feature.
+  Gear Teil D: Pfeile, Bolzen, Munition, Granaten, Raketen, Lenkraketen, Sprengstoffe (S. 361, 369-371),
+  ebenfalls vom PDF-Bild. <damage>/<ap>/<blast>/<armortype> = Kampfwerte nur zur Anzeige.
+  Kleidung gehört zum Rüstungs-Feature.
   Namen: Einträge, die im GRW nur unter ihrer Tabelle stehen ("Kiste", "Metall", "Heilung", "Gold"),
   sind um den Tabellennamen ergänzt, damit der Katalogname eindeutig ist.
 -->
 <gear>
+
+    <!-- ── Pfeile (Tabelle Bögen; Stufe 1-8 laut Nutzerentscheidung, Preis fest; gekauft im Waffen-Tab am Bogen) (S. 361) ── -->
+    <item>
+        <name>Pfeil</name>
+        <category>Pfeile</category>
+        <rating>1-8</rating>
+        <avail>2</avail>
+        <cost>5</cost>
+        <note>Schaden nach der niedrigeren Stufe von Pfeil und Bogen (GRW S. 361).</note>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+    <item>
+        <name>Injektionspfeil</name>
+        <category>Pfeile</category>
+        <rating>1-8</rating>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>50</cost>
+        <note>Gleicher Schaden wie ein normaler Pfeil. Ein Angriff, der mindestens 1 Punkt Schaden verursacht, verabreicht eine Dosis der vorher eingefüllten Droge bzw. des Toxins (GRW S. 361/362); die Dosis wird separat gekauft.</note>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+
+    <!-- ── Bolzen (Tabelle Armbrüste; ohne Stufe, normale Ausrüstung laut Nutzerentscheidung 2026-10-08) (S. 361) ── -->
+    <item>
+        <name>Bolzen</name>
+        <category>Bolzen</category>
+        <avail>2</avail>
+        <cost>5</cost>
+        <note>Für Armbrüste (GRW S. 361).</note>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
+    <item>
+        <name>Injektionsbolzen</name>
+        <category>Bolzen</category>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>50</cost>
+        <note>Für Armbrüste; im GRW-Tabellenteil „Injektionspfeile“. Gleicher Schaden wie ein normaler Bolzen. Ein Angriff, der mindestens 1 Punkt Schaden verursacht, verabreicht eine Dosis der vorher eingefüllten Droge bzw. des Toxins (GRW S. 361/362); die Dosis wird separat gekauft.</note>
+        <source>SR4</source>
+        <page>361</page>
+    </item>
 
     <!-- ── Feuerwaffenzubehör (nur die Gear-Teile; Waffenzubehör steht in weapon_accessories.xml) (S. 368) ── -->
     <item>
@@ -62,6 +107,396 @@
         <note>Stationäres Roboter-Dreibein für eine Smartgun-Waffe (Halterung Unterlauf); Pilot 3, Sensor 3, Zielerfassung-Autosoft Stufe 3 (GRW S. 368).</note>
         <source>SR4</source>
         <page>368</page>
+    </item>
+
+    <!-- ── Munition pro 10 Schuss (Zusatz = Waffenklasse; Kampfwerte nur Anzeige) (S. 369) ── -->
+    <item>
+        <name>APDS-Geschosse</name>
+        <category>Munition</category>
+        <avail>16</avail>
+        <legality>V</legality>
+        <cost>70</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>–</damage>
+        <ap>−4</ap>
+        <armortype>Ballistisch</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Explosivgeschosse</name>
+        <category>Munition</category>
+        <avail>8</avail>
+        <legality>V</legality>
+        <cost>50</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>+1</damage>
+        <ap>–</ap>
+        <armortype>Ballistisch</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>EX-Explosivgeschosse</name>
+        <category>Munition</category>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>100</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>+1</damage>
+        <ap>−1</ap>
+        <armortype>Ballistisch</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Flechettegeschosse</name>
+        <category>Munition</category>
+        <avail>2</avail>
+        <legality>E</legality>
+        <cost>100</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>+2</damage>
+        <ap>+5</ap>
+        <armortype>Stoß</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Gelgeschosse</name>
+        <category>Munition</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>30</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>(−1)G</damage>
+        <ap>+2</ap>
+        <armortype>Stoß</armortype>
+        <note>Geistiger Schaden; Konstitution des Ziels für den Niederschlag um 2 reduziert (GRW S. 369).</note>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Injektionspfeile</name>
+        <category>Munition</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>75</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>wie Droge/Toxin</damage>
+        <ap>–</ap>
+        <armortype>Stoß</armortype>
+        <note>Munition für Pfeilwaffen (z.B. Parashield); enthält eine Dosis Droge oder Toxin, die separat gekauft wird; 2 Nettoerfolge nötig (GRW S. 369).</note>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Leuchtspurgeschosse</name>
+        <category>Munition</category>
+        <avail>5</avail>
+        <legality>E</legality>
+        <cost>75</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>–</damage>
+        <ap>–</ap>
+        <armortype>Ballistisch</armortype>
+        <note>Nur für vollautomatische Waffen; +1/+2/+3 auf Salven (GRW S. 369).</note>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Schocker</name>
+        <category>Munition</category>
+        <avail>5</avail>
+        <legality>E</legality>
+        <cost>80</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>6G(e)</damage>
+        <ap>−Hälfte</ap>
+        <armortype>Stoß</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Standardmunition</name>
+        <category>Munition</category>
+        <avail>2</avail>
+        <legality>E</legality>
+        <cost>20</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>–</damage>
+        <ap>–</ap>
+        <armortype>Ballistisch</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Sturmkanonen-Geschosse</name>
+        <category>Munition</category>
+        <avail>16</avail>
+        <legality>V</legality>
+        <cost>450</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>wie Kanone</damage>
+        <ap>wie Kanone</ap>
+        <armortype>Ballistisch</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+    <item>
+        <name>Taserpfeil</name>
+        <category>Munition</category>
+        <avail>2</avail>
+        <cost>50</cost>
+        <costfor>10</costfor>
+        <unit>Schuss</unit>
+        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
+        <damage>wie Taser</damage>
+        <ap>−Hälfte</ap>
+        <armortype>Stoß</armortype>
+        <source>SR4</source>
+        <page>369</page>
+    </item>
+
+    <!-- ── Granaten (Zusatz = Granate/Minigranate, gleicher Preis S. 370) (S. 371) ── -->
+    <item>
+        <name>Betäubungsgranate</name>
+        <category>Granaten</category>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>30</cost>
+        <extra kind="GRENADE_FORM">Ausführung</extra>
+        <damage>6G</damage>
+        <ap>−3</ap>
+        <blast>10 m Radius</blast>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Flash-Pack</name>
+        <category>Granaten</category>
+        <avail>4</avail>
+        <cost>200</cost>
+        <damage>Speziell</damage>
+        <ap>–</ap>
+        <blast>Speziell</blast>
+        <note>10 Ladungen; −4 auf Angriffsproben für jeden, der hineinschaut (Blitzkompensation: −2) (GRW S. 370).</note>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Gasgranate</name>
+        <category>Granaten</category>
+        <avail>4</avail>
+        <cost>20</cost>
+        <extra kind="GRENADE_FORM">Ausführung</extra>
+        <damage>Chemikalie</damage>
+        <ap>–</ap>
+        <blast>10 m Radius</blast>
+        <note>Verfügbarkeit 4 + Chemikalie, Preis 20 ¥ + Chemikalie: die Chemikalie (z.B. CS/Tränengas) wird separat gekauft (GRW S. 371).</note>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>IR-Rauchgranate</name>
+        <category>Granaten</category>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>35</cost>
+        <extra kind="GRENADE_FORM">Ausführung</extra>
+        <damage>–</damage>
+        <ap>–</ap>
+        <blast>10 m Radius</blast>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Rauchgranate</name>
+        <category>Granaten</category>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>30</cost>
+        <extra kind="GRENADE_FORM">Ausführung</extra>
+        <damage>–</damage>
+        <ap>–</ap>
+        <blast>10 m Radius</blast>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Splittergranate</name>
+        <category>Granaten</category>
+        <avail>10</avail>
+        <legality>V</legality>
+        <cost>35</cost>
+        <extra kind="GRENADE_FORM">Ausführung</extra>
+        <damage>12K(f)</damage>
+        <ap>+5</ap>
+        <blast>−1/m</blast>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Sprenggranate</name>
+        <category>Granaten</category>
+        <avail>7</avail>
+        <legality>V</legality>
+        <cost>45</cost>
+        <extra kind="GRENADE_FORM">Ausführung</extra>
+        <damage>10K</damage>
+        <ap>−2</ap>
+        <blast>−2/m</blast>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+
+    <!-- ── Raketen (S. 371) ── -->
+    <item>
+        <name>Anti-Fahrzeug-Rakete</name>
+        <category>Raketen</category>
+        <avail>20</avail>
+        <legality>V</legality>
+        <cost>1000</cost>
+        <damage>16K</damage>
+        <ap>−2/−6</ap>
+        <blast>−4/m</blast>
+        <note>Anti-Fahrzeug: PB −2 gegen Personen, −6 gegen Fahrzeuge (GRW S. 371).</note>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Splitterrakete</name>
+        <category>Raketen</category>
+        <avail>16</avail>
+        <legality>V</legality>
+        <cost>500</cost>
+        <damage>16K(f)</damage>
+        <ap>+5</ap>
+        <blast>−1/m</blast>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Sprengrakete</name>
+        <category>Raketen</category>
+        <avail>20</avail>
+        <legality>V</legality>
+        <cost>750</cost>
+        <damage>14K</damage>
+        <ap>−2</ap>
+        <blast>−2/m</blast>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+
+    <!-- ── Lenkraketen: wie Rakete, Verf. +5, Preis + (Sensorstufe x 500) ¥; Stufe = Sensorstufe 1-6 (S. 371) ── -->
+    <item>
+        <name>Anti-Fahrzeug-Lenkrakete</name>
+        <category>Lenkraketen</category>
+        <rating>1-6</rating>
+        <avail>25</avail>
+        <legality>V</legality>
+        <cost>1000 + Rating * 500</cost>
+        <damage>16K</damage>
+        <ap>−2/−6</ap>
+        <blast>−4/m</blast>
+        <note>Stufe = Sensorstufe. Anti-Fahrzeug: PB −2 gegen Personen, −6 gegen Fahrzeuge (GRW S. 371).</note>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Splitterlenkrakete</name>
+        <category>Lenkraketen</category>
+        <rating>1-6</rating>
+        <avail>21</avail>
+        <legality>V</legality>
+        <cost>500 + Rating * 500</cost>
+        <damage>16K(f)</damage>
+        <ap>+5</ap>
+        <blast>−1/m</blast>
+        <note>Stufe = Sensorstufe (GRW S. 371).</note>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Spreng-Lenkrakete</name>
+        <category>Lenkraketen</category>
+        <rating>1-6</rating>
+        <avail>25</avail>
+        <legality>V</legality>
+        <cost>750 + Rating * 500</cost>
+        <damage>14K</damage>
+        <ap>−2</ap>
+        <blast>−2/m</blast>
+        <note>Stufe = Sensorstufe (GRW S. 371).</note>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+
+    <!-- ── Sprengstoffe, pro Kilogramm (S. 371) ── -->
+    <item>
+        <name>Kommerzieller Sprengstoff</name>
+        <category>Sprengstoffe</category>
+        <rating>3-3</rating>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>100</cost>
+        <unit>kg</unit>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Plastiksprengstoff</name>
+        <category>Sprengstoffe</category>
+        <rating>4-15</rating>
+        <avail>16</avail>
+        <legality>V</legality>
+        <cost>Rating * 100</cost>
+        <unit>kg</unit>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+    <item>
+        <name>Sprengschaum</name>
+        <category>Sprengstoffe</category>
+        <rating>4-15</rating>
+        <avail>12</avail>
+        <legality>V</legality>
+        <cost>Rating * 100</cost>
+        <unit>kg</unit>
+        <source>SR4</source>
+        <page>371</page>
+    </item>
+
+    <!-- ── Sprengstoff-Zubehör (S. 371) ── -->
+    <item>
+        <name>Sprengkapsel</name>
+        <category>Sprengstoff-Zubehör</category>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>75</cost>
+        <source>SR4</source>
+        <page>371</page>
     </item>
 
     <!-- ── Elektronik: Kommlink-Modell (Prozessor, Signal; ohne Verfügbarkeit) (S. 374) ── -->

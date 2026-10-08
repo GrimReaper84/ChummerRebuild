@@ -5,7 +5,8 @@ import org.jspecify.annotations.NonNull;
 /**
  * Einheit, in der die Menge eines Gegenstands gezählt wird, mit Einzahl und Mehrzahl für die Anzeige
  * ("1 Dosis", "3 Dosen"). Die Einheiten stammen aus den Preisangaben der GRW-Tabellen: "pro Dosis"
- * (S. 382), "pro 100 m" (S. 383), "pro m²" (S. 395), "pro Jahr" (S. 384), "pro Simchip" (S. 377).
+ * (S. 382), "pro 100 m" (S. 383), "pro m²" (S. 395), "pro Jahr" (S. 384), "pro Simchip" (S. 377),
+ * "Munition pro 10 Schuss" (S. 369), "Sprengstoffe, pro Kilogramm" (S. 371).
  */
 public enum GearUnit {
   PIECE("Stück", "Stück"),
@@ -13,7 +14,9 @@ public enum GearUnit {
   METER("m", "m"),
   SQUARE_METER("m²", "m²"),
   YEAR("Jahr", "Jahre"),
-  SIMCHIP("Simchip", "Simchips");
+  SIMCHIP("Simchip", "Simchips"),
+  ROUND("Schuss", "Schuss"),
+  KILOGRAM("kg", "kg");
 
   private final @NonNull String singular;
   private final @NonNull String plural;

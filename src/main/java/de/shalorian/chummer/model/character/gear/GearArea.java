@@ -5,13 +5,16 @@ import org.jspecify.annotations.NonNull;
 /**
  * Bereich der Ausrüstungsliste laut Inhaltsverzeichnis des SR4-Grundregelwerks (Kapitel
  * Straßenausrüstung, S. 367–395), in Buchreihenfolge. Der Ausrüstungsbaum gruppiert nach Bereich,
- * weil die rund 30 GRW-Tabellen ({@link GearCategory}) als Baumebene zu kleinteilig wären. Bereiche
- * der späteren Gear-Teile (Munition, Sprengstoffe …) werden erst mit diesen ergänzt. Der Bereich
- * "Sensoren und Verstärkungen" fasst die GRW-Abschnitte Visuelle Sensoren, Sichtverstärkung,
- * Audiosensoren, Audioverstärkung und Sensoren (S. 378–381) zusammen.
+ * weil die rund 50 GRW-Tabellen ({@link GearCategory}) als Baumebene zu kleinteilig wären. Der
+ * Bereich "Pfeile und Bolzen" steht vorn, weil das GRW sie in der Tabelle der Projektilwaffen
+ * (S. 361) führt. Der Bereich "Sensoren und Verstärkungen" fasst die GRW-Abschnitte Visuelle
+ * Sensoren, Sichtverstärkung, Audiosensoren, Audioverstärkung und Sensoren (S. 378–381) zusammen.
  */
 public enum GearArea {
+  PROJECTILES("Pfeile und Bolzen"),
   FIREARM_ACCESSORIES("Feuerwaffen-Zubehör"),
+  AMMUNITION("Munition"),
+  EXPLOSIVES("Granaten, Raketen und Sprengstoffe"),
   ELECTRONICS("Elektronik"),
   DATACHIPS_AND_SOFTWARE("Datenchips und Software"),
   IDS_AND_CREDSTICKS("IDs und Credsticks"),

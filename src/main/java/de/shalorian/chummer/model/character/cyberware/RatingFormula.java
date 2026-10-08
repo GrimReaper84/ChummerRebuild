@@ -17,6 +17,8 @@ import org.jspecify.annotations.NonNull;
  *   <li>{@code "Rating"} — die Stufe selbst</li>
  *   <li>{@code "Rating * X"} — z.B. {@code "Rating * 0.5"} (GRW: "Stufe x 0,5")</li>
  *   <li>{@code "Rating + X"} und {@code "Rating - X"}</li>
+ *   <li>{@code "X + Rating * Y"} — Grundpreis plus Stufenaufschlag, z.B. Lenkrakete
+ *       {@code "500 + Rating * 500"} (GRW S. 371: "+ (Sensorstufe x 500) ¥")</li>
  * </ul>
  * Jeder andere Ausdruck führt zu einer {@link IllegalArgumentException} statt eines stillen
  * Fallbacks — ein unbekanntes Muster ist ein Datenfehler im Katalog und soll früh auffallen. Komplexere
@@ -29,6 +31,8 @@ public final class RatingFormula {
   private static final Pattern FIXED = Pattern.compile(NUMBER);
   private static final Pattern RATING_ONLY = Pattern.compile("Rating");
   private static final Pattern RATING_OPERATION = Pattern.compile("Rating\\s*([*+-])\\s*" + NUMBER);
+  private static final Pattern BASE_PLUS_RATING_TIMES = Pattern.compile(
+      NUMBER + "\\s*\\+\\s*Rating\\s*\\*\\s*" + NUMBER);
 
   private RatingFormula() {
   }
@@ -58,6 +62,11 @@ public final class RatingFormula {
         case "+" -> ratingValue.add(operand);
         default -> ratingValue.subtract(operand);
       };
+    }
+    Matcher basePlus = BASE_PLUS_RATING_TIMES.matcher(expression);
+    if (basePlus.matches()) {
+      return new BigDecimal(basePlus.group(1))
+          .add(BigDecimal.valueOf(rating).multiply(new BigDecimal(basePlus.group(2))));
     }
     throw new IllegalArgumentException("Nicht unterstützter Formelausdruck: \"" + formula + "\"");
   }

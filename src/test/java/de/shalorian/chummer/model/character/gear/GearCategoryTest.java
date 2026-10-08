@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.gear;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,6 +29,9 @@ class GearCategoryTest {
     assertEquals(GearArea.ELECTRONICS, GearCategory.OPERATING_SYSTEMS.area());
     assertEquals(GearArea.DATACHIPS_AND_SOFTWARE, GearCategory.MATRIX_PROGRAMS.area());
     assertEquals(GearArea.SENSORS, GearCategory.SENSOR_FUNCTIONS.area());
+    assertEquals(GearArea.PROJECTILES, GearCategory.BOLTS.area());
+    assertEquals(GearArea.AMMUNITION, GearCategory.AMMUNITION.area());
+    assertEquals(GearArea.EXPLOSIVES, GearCategory.MISSILES.area());
     assertEquals(GearArea.SECURITY, GearCategory.MAGLOCK_OPTIONS.area());
     assertEquals(GearArea.DATACHIPS_AND_SOFTWARE, GearCategory.SKILLSOFTS.area());
     assertEquals(GearArea.SECURITY, GearCategory.RESTRAINTS.area());
@@ -55,9 +59,14 @@ class GearCategoryTest {
   }
 
   @Test
-  void onlyLicenseHasSuggestions() {
+  void suggestionsAndChoices() {
     assertEquals(6, ExtraKind.LICENSE.suggestions().size());
+    assertEquals(15, ExtraKind.WEAPON_CLASS.suggestions().size());
+    assertEquals(2, ExtraKind.GRENADE_FORM.suggestions().size());
     assertTrue(ExtraKind.TEXT.suggestions().isEmpty());
     assertTrue(ExtraKind.NONE.suggestions().isEmpty());
+    assertFalse(ExtraKind.LICENSE.isChoice());
+    assertTrue(ExtraKind.WEAPON_CLASS.isChoice());
+    assertTrue(ExtraKind.GRENADE_FORM.isChoice());
   }
 }

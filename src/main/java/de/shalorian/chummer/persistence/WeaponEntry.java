@@ -11,6 +11,8 @@ class WeaponEntry {
   public int rating = 0;
   /** Gekauftes Zubehör; eingebautes Zubehör ergibt sich aus dem Katalog. */
   public @NonNull List<AccessoryEntry> accessories = new ArrayList<>();
+  /** Pfeilstapel eines Bogens; fehlt in Dateien vor Gear Teil D. */
+  public @NonNull List<GearEntry> arrows = new ArrayList<>();
 
   public WeaponEntry() {
   }

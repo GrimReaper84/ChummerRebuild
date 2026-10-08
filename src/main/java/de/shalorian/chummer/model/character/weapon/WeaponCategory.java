@@ -99,6 +99,19 @@ public enum WeaponCategory {
   }
 
   /**
+   * Ob für Waffen dieser Klasse Munition (Tabelle "Munition pro 10 Schuss", GRW S. 369) gekauft wird:
+   * alle Feuerwaffen vom Taser bis zur Sturmkanone. Granat- und Raketenwerfer verschießen Granaten bzw.
+   * Raketen (S. 370), Bögen und Armbrüste Pfeile bzw. Bolzen (S. 361).
+   */
+  public boolean usesAmmunition() {
+    return switch (this) {
+      case BLADES, CLUBS, EXOTIC_MELEE, UNARMED, BOWS, CROSSBOWS, THROWING, GRENADE_LAUNCHERS,
+           MISSILE_LAUNCHERS -> false;
+      default -> true;
+    };
+  }
+
+  /**
    * Ob es sich um Projektilwaffen handelt (GRW S. 357: "Projektilwaffen können nur mit einem
    * Lasermarkierer oder Smartgunsystem ausgerüstet werden").
    */

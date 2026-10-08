@@ -51,4 +51,11 @@ class RatingFormulaTest {
     assertThrows(IllegalArgumentException.class, () -> RatingFormula.evaluate("", 1));
     assertThrows(IllegalArgumentException.class, () -> RatingFormula.evaluate("0,5", 1));
   }
+
+  @Test
+  void basePlusRatingTimesFactor() {
+    // Lenkrakete: Rakete 500 ¥ + (Sensorstufe x 500) ¥ (GRW S. 371)
+    assertValue("2000", RatingFormula.evaluate("500 + Rating * 500", 3));
+    assertValue("1500", RatingFormula.evaluate("1000+Rating*500", 1));
+  }
 }

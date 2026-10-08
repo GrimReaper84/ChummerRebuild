@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.weapon.AccessoryData;
 import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
@@ -21,6 +23,42 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class CharacterStoreWeaponRoundtripTest {
+
+  @Test
+  void roundtripPreservesArrowsOnBow() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    Weapon bow = new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Bogen")), 5);
+    bow.addArrows(new Gear(Objects.requireNonNull(GearDataLoader.findByName("Pfeil")), 4, 20, "",
+        null));
+    original.getEquipment().addWeapon(bow);
+
+    CharacterStore.save(original, tempFile());
+    List<Weapon> weapons = CharacterStore.load(tempFile()).getEquipment().getWeapons();
+
+    Gear arrows = weapons.get(0).getArrows().get(0);
+    assertEquals(4, arrows.getRating());
+    assertEquals(20, arrows.getQuantity());
+    assertEquals(500 + 100, weapons.get(0).getTotalNuyenCost());
+  }
+
+  @Test
+  void arrowsOnNonBowsAndInGearListAreSkipped() throws IOException {
+    Files.writeString(tempFile().toPath(), """
+        {"name":"Alt","metatype":"Mensch",
+         "weapons":[{"name":"Leichte Armbrust","rating":0,
+                     "arrows":[{"name":"Pfeil","rating":3,"quantity":10,"extra":""}]},
+                    {"name":"Bogen","rating":3,
+                     "arrows":[{"name":"Survival-Kit","rating":0,"quantity":1,"extra":""},
+                               {"name":"Pfeil","rating":2,"quantity":10,"extra":""}]}],
+         "gear":[{"name":"Pfeil","rating":3,"quantity":10,"extra":""}]}
+        """, StandardCharsets.UTF_8);
+
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertTrue(loaded.getEquipment().getWeapons().get(0).getArrows().isEmpty());
+    assertEquals(1, loaded.getEquipment().getWeapons().get(1).getArrows().size());
+    assertTrue(loaded.getEquipment().getGear().isEmpty());
+  }
 
   @TempDir
   File tempDir;

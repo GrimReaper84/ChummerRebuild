@@ -3,13 +3,14 @@ package de.shalorian.chummer.view.dialog;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.equipment.Equipment;
-import de.shalorian.chummer.model.character.gear.ExtraKind;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearArea;
+import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javafx.fxml.FXML;
@@ -84,6 +85,8 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   private @Nullable Gear result;
   /** Gerät, in das die Auswahl eingebaut wird, oder {@code null} beim normalen Kauf. */
   private @Nullable Gear installTarget;
+  /** Ob nur Pfeile für einen Bogen gekauft werden (Waffen-Tab). */
+  private boolean arrowsOnly;
   /** Eintrag, für den Stufe, Menge, Zusatztext und Preis zuletzt eingerichtet wurden. */
   private @Nullable GearData configuredFor;
 
@@ -107,6 +110,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     quantitySpinner.valueProperty().addListener((obs, old, val) -> updatePreview());
     extraField.textProperty().addListener((obs, old, val) -> updatePreview());
     extraBox.getEditor().textProperty().addListener((obs, old, val) -> updatePreview());
+    extraBox.valueProperty().addListener((obs, old, val) -> updatePreview());
     priceField.textProperty().addListener((obs, old, val) -> updatePreview());
     super.initialize();
   }
@@ -128,6 +132,14 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     updateList();
   }
 
+  /** Kauf von Pfeilen für einen Bogen; nur Pfeile erscheinen (GRW S. 361). */
+  public void setArrowsOnly(@NonNull Character character) {
+    this.character = character;
+    this.arrowsOnly = true;
+    refreshCategoryOptions();
+    updateList();
+  }
+
   /**
    * Warum {@code data} in Stufe {@code rating} hier nicht gekauft werden kann (außer
    * Verfügbarkeit/Stufe), oder {@code null}: Einbauten nur über ihr Gerät, und das Zielgerät muss den
@@ -136,6 +148,9 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   private @Nullable String purchaseProblem(@NonNull GearData data, int rating) {
     if (installTarget != null) {
       return installTarget.installProblem(data, rating);
+    }
+    if (data.category() == GearCategory.ARROWS && !arrowsOnly) {
+      return "Pfeile werden im Waffen-Tab an einem Bogen gekauft („Pfeile hinzufügen“).";
     }
     return data.category().isInstalledOnly()
         ? "Wird nur als Einbau gekauft: passendes Gerät im Ausrüstungsbaum wählen und „Einbauen“."
@@ -171,9 +186,12 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     return canBuy(data, data.lowestRating());
   }
 
-  /** Beim Einbau nur Einträge der Kategorie, die das Zielgerät aufnimmt. */
+  /** Beim Einbau nur Einträge der Kategorie, die das Zielgerät aufnimmt; für den Bogen nur Pfeile. */
   @Override
   protected boolean additionalFilter(@NonNull GearData data) {
+    if (arrowsOnly) {
+      return data.category() == GearCategory.ARROWS;
+    }
     return installTarget == null || data.category() == installTarget.getData().accepts();
   }
 
@@ -243,14 +261,17 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     unitLabel.setText(pack == 1 ? data.unit().getPlural()
         : data.unit().getPlural() + " (in Schritten von " + pack + ")");
 
-    boolean license = data.extraKind() == ExtraKind.LICENSE;
+    // Vorschläge (Lizenz) bzw. feste Auswahl (Waffenklasse, Granatenform) als ComboBox
+    boolean withSuggestions = !data.extraKind().suggestions().isEmpty();
     extraCaption.setText(data.needsExtra() ? data.extraLabel() + ":" : "Zusatz:");
-    extraField.setVisible(!license);
+    extraField.setVisible(!withSuggestions);
     extraField.setText("");
     extraField.setDisable(!data.needsExtra());
     extraField.setPromptText(data.needsExtra() ? "Pflichtangabe" : "kein Zusatz");
-    extraBox.setVisible(license);
+    extraBox.setVisible(withSuggestions);
+    extraBox.setEditable(!data.extraKind().isChoice());
     extraBox.getItems().setAll(data.extraKind().suggestions());
+    extraBox.setValue(null);
     extraBox.getEditor().setText("");
 
     priceCaption.setText(data.variableCost() ? "Preis je Packung:" : "Preis je Packung (fest):");
@@ -331,6 +352,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
       case NONE -> "";
       case TEXT -> extraField.getText();
       case LICENSE -> extraBox.getEditor().getText();
+      case WEAPON_CLASS, GRENADE_FORM -> Objects.requireNonNullElse(extraBox.getValue(), "");
     };
   }
 

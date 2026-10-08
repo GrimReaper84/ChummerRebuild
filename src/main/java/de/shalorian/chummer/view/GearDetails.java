@@ -2,9 +2,12 @@ package de.shalorian.chummer.view;
 
 import de.shalorian.chummer.model.character.gear.CommlinkStats;
 import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearCategory;
+import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearUnit;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Anzeigewerte des Detailbereichs im Ausrüstungs-Unter-Tab, analog {@link WeaponDetails}: nur
@@ -21,6 +24,7 @@ import org.jspecify.annotations.NonNull;
  * @param note         Hinweis aus Tabelle oder Text, sonst leer
  * @param capacity     beim Gerät "belegt von gesamt" (z.B. "2 von 3 belegt"), beim Einbau der
  *                     Kapazitätsbedarf wie im GRW ("[2]"), sonst leer
+ * @param combat       Kampfwerte von Munition, Granaten und Raketen, sonst {@code null}
  * @param commlink     ob der Gegenstand ein Kommlink ist (dann sind die vier Matrixwerte belegt)
  * @param processor    Prozessor eines Kommlinks, leer bei anderen Gegenständen (ebenso die drei
  *                     folgenden Werte)
@@ -43,6 +47,7 @@ record GearDetails(
     @NonNull String source,
     @NonNull String note,
     @NonNull String capacity,
+    @Nullable GearCombatStats combat,
     boolean commlink,
     @NonNull String processor,
     @NonNull String signal,
@@ -69,11 +74,17 @@ record GearDetails(
         data.source() + " S. " + data.page(),
         data.note(),
         capacityText(gear),
+        data.combat(),
         stats != null,
         stats == null ? "" : String.valueOf(stats.processor()),
         stats == null ? "" : String.valueOf(stats.signal()),
         stats == null ? "" : orNoValue(stats.firewall()),
         stats == null ? "" : systemText(stats));
+  }
+
+  /** Ob die Kampfwerte Modifikatoren der Munition sind ("Schadensmod.", "PB-Modifikator", S. 369). */
+  boolean isAmmunition() {
+    return category.equals(GearCategory.AMMUNITION.getDisplayName());
   }
 
   private static @NonNull String capacityText(@NonNull Gear gear) {

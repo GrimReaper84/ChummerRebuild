@@ -16,6 +16,7 @@ import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
@@ -116,10 +117,7 @@ public class CharacterStore {
     data.armor = character.getEquipment().getArmor().stream()
         .map(a -> new ArmorEntry(a.getName(), a.isEquipped()))
         .toList();
-    data.weapons = character.getEquipment().getWeapons().stream()
-        .map(w -> new WeaponEntry(w.getName(), w.getRating(), w.getAccessories().stream()
-            .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
-            .toList()))
+    data.weapons = character.getEquipment().getWeapons().stream().map(CharacterStore::toWeaponEntry)
         .toList();
     data.gear = character.getEquipment().getGear().stream().map(CharacterStore::toGearEntry)
         .toList();
@@ -127,6 +125,15 @@ public class CharacterStore {
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
 
     return data;
+  }
+
+  private static @NonNull WeaponEntry toWeaponEntry(@NonNull Weapon weapon) {
+    WeaponEntry entry = new WeaponEntry(weapon.getName(), weapon.getRating(),
+        weapon.getAccessories().stream()
+            .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
+            .toList());
+    entry.arrows = weapon.getArrows().stream().map(CharacterStore::toGearEntry).toList();
+    return entry;
   }
 
   private static @NonNull GearEntry toGearEntry(@NonNull Gear gear) {
@@ -247,9 +254,9 @@ public class CharacterStore {
   }
 
   /**
-   * Stellt die gekauften Waffen samt Zubehör wieder her; unbekannte Katalognamen, unzulässige Stufen
-   * und Zubehör, das laut Montageregeln nicht (mehr) passt, werden übersprungen statt die ganze Datei
-   * abzulehnen.
+   * Stellt die gekauften Waffen samt Zubehör und Pfeilen wieder her; unbekannte Katalognamen,
+   * unzulässige Stufen, Zubehör, das laut Montageregeln nicht (mehr) passt, und Pfeile an einer Waffe,
+   * die keine führt, werden übersprungen statt die ganze Datei abzulehnen.
    */
   private static void applyWeapons(@NonNull Character character, @NonNull CharacterData data) {
     for (WeaponEntry entry : data.weapons) {
@@ -257,6 +264,13 @@ public class CharacterStore {
       if (weaponData != null && weaponData.isValidRating(entry.rating)) {
         Weapon weapon = new Weapon(weaponData, entry.rating);
         entry.accessories.forEach(a -> applyAccessory(weapon, a));
+        for (GearEntry arrowEntry : entry.arrows) {
+          Gear arrows = toGear(arrowEntry);
+          if (arrows != null && weapon.takesArrows()
+              && arrows.getData().category() == GearCategory.ARROWS) {
+            weapon.addArrows(arrows);
+          }
+        }
         character.getEquipment().addWeapon(weapon);
       }
     }
@@ -270,7 +284,12 @@ public class CharacterStore {
   private static void applyGear(@NonNull Character character, @NonNull CharacterData data) {
     for (GearEntry entry : data.gear) {
       Gear gear = toGear(entry);
-      if (gear != null && !gear.getData().category().isInstalledOnly()) {
+      if (gear == null) {
+        continue;
+      }
+      // Einbauten ohne Gerät und Pfeile ohne Bogen gehören nicht in die Ausrüstungsliste
+      GearCategory category = gear.getData().category();
+      if (!category.isInstalledOnly() && category != GearCategory.ARROWS) {
         character.getEquipment().addGear(gear);
       }
     }

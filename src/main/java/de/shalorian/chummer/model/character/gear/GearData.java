@@ -51,6 +51,7 @@ import org.jspecify.annotations.Nullable;
  * @param capacity     Kapazitätsformel des Geräts ("Rating" bzw. fester Wert), leer ohne Kapazität
  * @param capacityCost Kapazitätsbedarf als Einbau ("1", "2", "Rating"), leer ohne Bedarf
  * @param repeatable   ob derselbe Einbau mehrfach in einem Gerät stecken darf ("pro Stück")
+ * @param combat       Kampfwerte von Munition, Granaten und Raketen (nur Anzeige), sonst {@code null}
  * @param packSize     Anzahl Einheiten, für die {@link #cost()} gilt (mindestens 1)
  * @param variableCost ob der Preis eine Spanne ist, die der Spieler festlegt
  * @param extraKind    ob und wie ein Zusatztext beim Kauf anzugeben ist
@@ -75,6 +76,7 @@ public record GearData(
     @NonNull String capacity,
     @NonNull String capacityCost,
     boolean repeatable,
+    @Nullable GearCombatStats combat,
     int packSize,
     @NonNull GearUnit unit,
     boolean variableCost,

@@ -14,6 +14,8 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_KEY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.weapon.AccessoryData;
 import de.shalorian.chummer.model.character.weapon.IncludedAccessory;
 import de.shalorian.chummer.model.character.weapon.Mount;
@@ -21,6 +23,7 @@ import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import de.shalorian.chummer.view.dialog.AccessorySelectDialogController;
+import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.grid.GridSupport;
 import de.shalorian.chummer.view.dialog.WeaponSelectDialogController;
@@ -87,11 +90,11 @@ final class WeaponTabBuilder {
   }
 
   /**
-   * Baut den Tab neu auf und wählt {@code selectedAccessory} bzw. sonst {@code selectedWeapon} aus,
-   * falls angegeben.
+   * Baut den Tab neu auf und wählt {@code selectedChild} (Zubehörteil oder Pfeilstapel) bzw. sonst
+   * {@code selectedWeapon} aus, falls angegeben.
    */
   private void build(@NonNull Character character, @Nullable Weapon selectedWeapon,
-      @Nullable WeaponAccessory selectedAccessory) {
+      @Nullable Object selectedChild) {
     container.getChildren().clear();
     TreeView<WeaponTreeEntry> tree = new TreeView<>();
     tree.setShowRoot(false);
@@ -104,7 +107,7 @@ final class WeaponTabBuilder {
     detailRefresher = showSelected;
 
     TreeItem<WeaponTreeEntry> toSelect =
-        fillTree(tree, character, selectedWeapon, selectedAccessory);
+        fillTree(tree, character, selectedWeapon, selectedChild);
     if (toSelect != null) {
       tree.getSelectionModel().select(toSelect); // Listener füllt den Detailbereich
       tree.scrollTo(tree.getRow(toSelect));
@@ -125,13 +128,13 @@ final class WeaponTabBuilder {
   /**
    * Füllt den Baum: je belegter Kategorie ein aufgeklappter Knoten in GRW-Tabellenreihenfolge
    * ({@link WeaponCategory}), darunter die Waffen in Kaufreihenfolge und unter jeder Waffe ihr
-   * mitgeliefertes und gekauftes Zubehör.
+   * mitgeliefertes und gekauftes Zubehör sowie beim Bogen seine Pfeile.
    *
    * @return der Knoten der gewünschten Auswahl, oder {@code null}
    */
   private static @Nullable TreeItem<WeaponTreeEntry> fillTree(@NonNull TreeView<WeaponTreeEntry> tree,
       @NonNull Character character, @Nullable Weapon selectedWeapon,
-      @Nullable WeaponAccessory selectedAccessory) {
+      @Nullable Object selectedChild) {
     Map<WeaponCategory, TreeItem<WeaponTreeEntry>> groups = new EnumMap<>(WeaponCategory.class);
     TreeItem<WeaponTreeEntry> selectedItem = null;
     for (Weapon weapon : character.getEquipment().getWeapons()) {
@@ -154,7 +157,14 @@ final class WeaponTabBuilder {
         TreeItem<WeaponTreeEntry> child =
             new TreeItem<>(WeaponTreeEntry.ofAccessory(weapon, accessory));
         item.getChildren().add(child);
-        if (accessory.equals(selectedAccessory)) {
+        if (accessory == selectedChild) {
+          selectedItem = child;
+        }
+      }
+      for (Gear arrows : weapon.getArrows()) {
+        TreeItem<WeaponTreeEntry> child = new TreeItem<>(WeaponTreeEntry.ofArrows(weapon, arrows));
+        item.getChildren().add(child);
+        if (arrows == selectedChild) {
           selectedItem = child;
         }
       }
@@ -208,7 +218,16 @@ final class WeaponTabBuilder {
     }, tree.getSelectionModel().selectedItemProperty()));
     addAccessoryBtn.setOnAction(e -> onAddAccessory(character, tree));
 
-    Button removeBtn = new Button("Ausgewählte Waffe bzw. ausgewähltes Zubehör entfernen");
+    Button addArrowsBtn = new Button("Pfeile zum ausgewählten Bogen hinzufügen");
+    addArrowsBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addArrowsBtn, FontAwesomeSolid.BULLSEYE);
+    addArrowsBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+      Weapon weapon = selectedWeapon(tree);
+      return weapon == null || !weapon.takesArrows();
+    }, tree.getSelectionModel().selectedItemProperty()));
+    addArrowsBtn.setOnAction(e -> onAddArrows(character, tree));
+
+    Button removeBtn = new Button("Ausgewählte Waffe, Zubehör bzw. Pfeile entfernen");
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
     // Kategorieknoten, mitgeliefertes und fest eingebautes Zubehör (Gasventil, GRW S. 367) lassen
@@ -219,7 +238,10 @@ final class WeaponTabBuilder {
         return true;
       }
       WeaponAccessory accessory = entry.accessory();
-      return accessory == null ? !entry.isWeapon() : accessory.data().isPermanent();
+      if (accessory != null) {
+        return accessory.data().isPermanent();
+      }
+      return !entry.isWeapon() && entry.arrows() == null;
     }, tree.getSelectionModel().selectedItemProperty()));
     removeBtn.setOnAction(e -> onRemoveSelected(character, tree));
 
@@ -227,7 +249,7 @@ final class WeaponTabBuilder {
     toolbar.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    toolbar.getChildren().addAll(spacer, removeBtn, addAccessoryBtn, addBtn);
+    toolbar.getChildren().addAll(spacer, removeBtn, addArrowsBtn, addAccessoryBtn, addBtn);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
   }
@@ -250,6 +272,8 @@ final class WeaponTabBuilder {
       showAccessoryDetails(details, weapon, entry.accessory());
     } else if (entry.included() != null) {
       showIncludedDetails(details, weapon, entry.included());
+    } else if (entry.arrows() != null) {
+      showArrowDetails(details, weapon, entry.arrows());
     } else {
       showWeaponDetails(details, weapon, character);
     }
@@ -261,6 +285,9 @@ final class WeaponTabBuilder {
     Label title = new Label(d.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
     details.getChildren().addAll(title, buildValueGrid(d), buildRangeSection(d));
+    if (weapon.takesArrows()) {
+      details.getChildren().add(buildArrowSection(weapon));
+    }
     if (!d.note().isEmpty()) {
       Label note = detailHint(d.note());
       note.setWrapText(true);
@@ -293,6 +320,50 @@ final class WeaponTabBuilder {
       note.setWrapText(true);
       details.getChildren().add(note);
     }
+  }
+
+  /**
+   * Pfeilstapel am Bogen: Stufe, Menge, Schaden mit diesem Bogen (niedrigere Stufe von Pfeil und
+   * Bogen, GRW S. 361), Verfügbarkeit, Preis und Hinweis.
+   */
+  private static void showArrowDetails(@NonNull VBox details, @NonNull Weapon weapon,
+      @NonNull Gear arrows) {
+    GearData data = arrows.getData();
+    Label title = new Label(arrows.getDisplayName());
+    title.getStyleClass().add(STYLE_SECTION_TITLE);
+    MigPane grid = new MigPane("", "[][]24[][]24[][]");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
+    addRowCells(grid, 0, detailKey("Bogen"), detailValue(weapon.getDisplayName()),
+        detailKey("Stufe"), detailValue(String.valueOf(arrows.getRating())),
+        detailKey("Schaden"), detailValue(weapon.getArrowDamageText(arrows)));
+    addRowCells(grid, 1, detailKey("Menge"), detailValue(data.unit().format(arrows.getQuantity())),
+        detailKey("Verf."), detailValue(arrows.getAvailabilityText()),
+        detailKey("Preis"), detailValue(arrows.getNuyenCost() + " ¥"));
+    addRowCells(grid, 2, detailKey("Quelle"), detailValue(data.source() + " S. " + data.page()));
+    details.getChildren().addAll(title, grid);
+    if (!data.note().isEmpty()) {
+      Label note = detailHint(data.note());
+      note.setWrapText(true);
+      details.getChildren().add(note);
+    }
+  }
+
+  /** Schaden je Pfeilsorte am Bogen (GRW S. 361: niedrigere Stufe von Pfeil und Bogen). */
+  private static @NonNull VBox buildArrowSection(@NonNull Weapon weapon) {
+    Label title = new Label("Pfeile");
+    title.getStyleClass().add(STYLE_DETAIL_KEY);
+    if (weapon.getArrows().isEmpty()) {
+      return new VBox(4, title, detailHint("Keine Pfeile – über „Pfeile hinzufügen“ kaufen"));
+    }
+    MigPane grid = new MigPane("", "[][]");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
+    int row = 0;
+    for (Gear arrows : weapon.getArrows()) {
+      addRowCells(grid, row++, detailKey(arrows.getDisplayName()),
+          detailValue(weapon.getArrowDamageText(arrows)));
+    }
+    return new VBox(4, title, grid,
+        detailHint("Schaden nach der niedrigeren Stufe von Pfeil und Bogen (GRW S. 361)"));
   }
 
   /** Mitgeliefertes Zubehör hat keine eigenen Werte, nur die Regel aus GRW S. 357. */
@@ -402,12 +473,48 @@ final class WeaponTabBuilder {
     }
   }
 
-  /** Entfernt die gewählte Waffe bzw. das gewählte Zubehör. */
+  /**
+   * Öffnet den Auswahldialog für Pfeile und gibt sie dem gewählten Bogen; gleiche Pfeile werden
+   * zusammengeführt. Im Karrieremodus wird der Preis nach Bestätigung abgebucht.
+   */
+  private void onAddArrows(@NonNull Character character, @NonNull TreeView<WeaponTreeEntry> tree) {
+    Weapon weapon = selectedWeapon(tree);
+    if (weapon == null || !weapon.takesArrows()) {
+      return;
+    }
+    try {
+      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml",
+          "Pfeile für " + weapon.getDisplayName());
+      GearSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setArrowsOnly(character);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(arrows -> {
+        if (character.isCreated() && host.nuyenChargeFailed(character,
+            "Kauf: " + arrows.getDisplayName() + " für " + weapon.getDisplayName(),
+            arrows.getNuyenCost())) {
+          return;
+        }
+        onWeaponsChanged(character, weapon, weapon.addArrows(arrows));
+      });
+    } catch (IOException e) {
+      host.showDialogLoadError();
+    }
+  }
+
+  /** Entfernt die gewählte Waffe, das gewählte Zubehör bzw. den gewählten Pfeilstapel. */
   private void onRemoveSelected(@NonNull Character character,
       @NonNull TreeView<WeaponTreeEntry> tree) {
     WeaponTreeEntry entry = selectedEntry(tree);
     Weapon weapon = entry == null ? null : entry.weapon();
     if (entry == null || weapon == null) {
+      return;
+    }
+    Gear arrows = entry.arrows();
+    if (arrows != null) {
+      weapon.removeArrows(arrows);
+      onWeaponsChanged(character, weapon, null);
       return;
     }
     WeaponAccessory accessory = entry.accessory();
@@ -423,8 +530,8 @@ final class WeaponTabBuilder {
   }
 
   private void onWeaponsChanged(@NonNull Character character, @Nullable Weapon selectedWeapon,
-      @Nullable WeaponAccessory selectedAccessory) {
-    build(character, selectedWeapon, selectedAccessory);
+      @Nullable Object selectedChild) {
+    build(character, selectedWeapon, selectedChild);
     host.onNuyenSpentChanged();
   }
 }

@@ -78,4 +78,15 @@ class WeaponCategoryTest {
     assertFalse(WeaponCategory.THROWING.acceptsAccessories());
     assertTrue(WeaponCategory.BOWS.isProjectile());
   }
+
+  @Test
+  void firearmsFromTaserToAssaultCannonUseAmmunition() {
+    // GRW S. 369: Munition pro 10 Schuss; Werfer verschießen Granaten/Raketen, Bögen Pfeile
+    assertTrue(WeaponCategory.TASERS.usesAmmunition());
+    assertTrue(WeaponCategory.SHOTGUNS.usesAmmunition());
+    assertTrue(WeaponCategory.ASSAULT_CANNONS.usesAmmunition());
+    assertFalse(WeaponCategory.GRENADE_LAUNCHERS.usesAmmunition());
+    assertFalse(WeaponCategory.BOWS.usesAmmunition());
+    assertFalse(WeaponCategory.BLADES.usesAmmunition());
+  }
 }

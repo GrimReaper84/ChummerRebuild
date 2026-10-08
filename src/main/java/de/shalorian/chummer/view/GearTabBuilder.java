@@ -16,6 +16,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearArea;
+import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.view.dialog.DialogHandle;
@@ -247,6 +248,15 @@ final class GearTabBuilder {
     int row = 4;
     if (!d.extraLabel().isEmpty()) {
       addRowCells(grid, row++, detailKey(d.extraLabel()), detailValue(d.extra()));
+    }
+    GearCombatStats combat = d.combat();
+    if (combat != null) {
+      boolean ammo = d.isAmmunition();
+      addRowCells(grid, row++, detailKey(ammo ? "Schadensmod." : "Schaden"),
+          detailValue(combat.damage()), detailKey(ammo ? "PB-Mod." : "PB"),
+          detailValue(combat.armorPiercing()));
+      addRowCells(grid, row++, detailKey(ammo ? "Panzerung" : "Sprengwirkung"),
+          detailValue(ammo ? combat.armorType() : combat.blast()));
     }
     if (!d.capacity().isEmpty()) {
       addRowCells(grid, row++, detailKey("Kapazität"), detailValue(d.capacity()));
