@@ -15,8 +15,12 @@
 
   Gear Teil B: Kommlinks, Betriebssysteme, Matrixprogramme (S. 374/376), ebenfalls vom PDF-Bild.
   Kommlink-Aufrüstungen fehlen (kein GRW-Preis, kommen mit "Vernetzt").
-  Bewusst NICHT enthalten (spätere Gear-Teile):
-  Sensoren, Sicht-/Audioverstärkungen, Magschloss-Zusätze (C); Munition, Pfeile, Bolzen, Granaten,
+  Gear Teil C: Sicht-/Audiosensoren, Verstärkungen, Sensorpakete, Sensor-Funktionen, Magschloss-Zusätze
+  (S. 378-382), ebenfalls vom PDF-Bild.
+  <accepts> = Kategorie, die das Gerät als Einbau aufnimmt; <capacity> = Kapazität (Formel), <capacitycost> =
+  Kapazitätsbedarf als Einbau ("[1]" → 1, "pro Stufe" → Rating); <avail>+n</avail> = Zuschlag auf die
+  Verfügbarkeit des Geräts; <repeatable> = darf mehrfach im selben Gerät stecken ("pro Stück").
+  Bewusst NICHT enthalten (spätere Gear-Teile): Munition, Pfeile, Bolzen, Granaten,
   Raketen, Sprengstoffe (D). Kleidung gehört zum Rüstungs-Feature.
   Namen: Einträge, die im GRW nur unter ihrer Tabelle stehen ("Kiste", "Metall", "Heilung", "Gold"),
   sind um den Tabellennamen ergänzt, damit der Katalogname eindeutig ist.
@@ -64,6 +68,7 @@
     <item>
         <name>Meta Link</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>1</processor>
         <signal>2</signal>
         <cost>100</cost>
@@ -73,6 +78,7 @@
     <item>
         <name>CMT Clip</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>1</processor>
         <signal>3</signal>
         <cost>300</cost>
@@ -82,6 +88,7 @@
     <item>
         <name>Sony Emperor</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>2</processor>
         <signal>3</signal>
         <cost>700</cost>
@@ -91,6 +98,7 @@
     <item>
         <name>Renraku Sensei</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>2</processor>
         <signal>4</signal>
         <cost>1000</cost>
@@ -100,6 +108,7 @@
     <item>
         <name>Novatech Airware</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>3</processor>
         <signal>3</signal>
         <cost>1250</cost>
@@ -109,6 +118,7 @@
     <item>
         <name>Erika Elite</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>3</processor>
         <signal>4</signal>
         <cost>2500</cost>
@@ -118,6 +128,7 @@
     <item>
         <name>Hermes Ikon</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>4</processor>
         <signal>3</signal>
         <cost>3000</cost>
@@ -127,6 +138,7 @@
     <item>
         <name>Transys Avalon</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>4</processor>
         <signal>4</signal>
         <cost>5000</cost>
@@ -136,6 +148,7 @@
     <item>
         <name>Fairlight Caliban</name>
         <category>Kommlink-Modell</category>
+        <accepts>Handelsübliche Betriebssysteme</accepts>
         <processor>4</processor>
         <signal>5</signal>
         <cost>8000</cost>
@@ -685,12 +698,408 @@
         <page>378</page>
     </item>
 
-    <!-- ── Sicherheitsgeräte (ohne die Magschloss-Zusätze, die kommen mit Gear Teil C) (S. 382) ── -->
+    <!-- ── Visuelle Sensoren und Optische Geräte (Kapazität = Stufe, nehmen Sichtverstärkungen auf) (S. 378) ── -->
+    <item>
+        <name>Brille</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <rating>1-4</rating>
+        <cost>Rating * 25</cost>
+        <accepts>Sichtverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Fernglas</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <rating>1-3</rating>
+        <cost>Rating * 50</cost>
+        <accepts>Sichtverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Fernglas, optisch</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <cost>50</cost>
+        <note>Optisches Gerät: nimmt keine Sichtverstärkungen auf (GRW S. 378).</note>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Kamera, Trideo</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <rating>1-6</rating>
+        <cost>Rating * 100</cost>
+        <accepts>Sichtverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <note>Mikrokameras gibt es nur in Stufe 1 (Kapazität 1). Als Sensor im Sensorpaket siehe „Kamera, Trideo (Sensor)“ (GRW S. 378).</note>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Kontaktlinsen</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <rating>1-3</rating>
+        <avail>6</avail>
+        <cost>Rating * 50</cost>
+        <accepts>Sichtverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Monokel</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <rating>1-4</rating>
+        <avail>4</avail>
+        <cost>Rating * 25</cost>
+        <accepts>Sichtverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Sichtgerät</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <accepts>Sichtverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Endoskop</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <avail>8</avail>
+        <cost>250</cost>
+        <note>Optisches Gerät: nimmt keine Sichtverstärkungen auf (GRW S. 378).</note>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Mage-Sight-Brille</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>2000</cost>
+        <note>Optisches Gerät; die Tabelle nennt [1] als Kapazitätsbedarf, einen Einbauort aber nicht – daher nur als eigenständiges Gerät (GRW S. 378).</note>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+    <item>
+        <name>Periskop</name>
+        <category>Visuelle Sensoren und Optische Geräte</category>
+        <avail>3</avail>
+        <cost>50</cost>
+        <note>Optisches Gerät; die Tabelle nennt [1] als Kapazitätsbedarf, einen Einbauort aber nicht – daher nur als eigenständiges Gerät (GRW S. 378).</note>
+        <source>SR4</source>
+        <page>378</page>
+    </item>
+
+    <!-- ── Sichtverstärkung (nur als Einbau; Verf./Preis sind Zuschläge; je 1 Kapazität, Ultraschall 2) (S. 379) ── -->
+    <item>
+        <name>Blitzkompensation</name>
+        <category>Sichtverstärkung</category>
+        <avail>+2</avail>
+        <cost>50</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Bildverbindung</name>
+        <category>Sichtverstärkung</category>
+        <cost>25</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Infrarot</name>
+        <category>Sichtverstärkung</category>
+        <avail>+6</avail>
+        <cost>100</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Restlichtverstärkung</name>
+        <category>Sichtverstärkung</category>
+        <avail>+4</avail>
+        <cost>100</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Sichtverbesserung</name>
+        <category>Sichtverstärkung</category>
+        <rating>1-3</rating>
+        <avail>+4</avail>
+        <cost>Rating * 100</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Sichtvergrößerung</name>
+        <category>Sichtverstärkung</category>
+        <avail>+2</avail>
+        <cost>100</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Smartlink</name>
+        <category>Sichtverstärkung</category>
+        <avail>+4</avail>
+        <legality>E</legality>
+        <cost>500</cost>
+        <capacitycost>1</capacitycost>
+        <note>Erfordert eine Bildverbindung (GRW S. 380).</note>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Ultraschall</name>
+        <category>Sichtverstärkung</category>
+        <avail>+8</avail>
+        <cost>1000</cost>
+        <capacitycost>2</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+
+    <!-- ── Audiosensoren (Kapazität = Stufe, nehmen Audioverstärkungen auf) (S. 379) ── -->
+    <item>
+        <name>Kopfhörer</name>
+        <category>Audiosensoren</category>
+        <rating>1-3</rating>
+        <cost>Rating * 50</cost>
+        <accepts>Audioverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Ohrstöpsel</name>
+        <category>Audiosensoren</category>
+        <rating>1-3</rating>
+        <cost>Rating * 10</cost>
+        <accepts>Audioverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Mikrofon</name>
+        <category>Audiosensoren</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <accepts>Audioverstärkung</accepts>
+        <capacity>Rating</capacity>
+        <note>Mikroversionen gibt es nur in Stufe 1 (Kapazität 1). Als Sensor im Sensorpaket siehe „Mikrofon (Sensor)“ (GRW S. 379).</note>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+
+    <!-- ── Audioverstärkung (nur als Einbau; Zuschläge; "1 Punkt Kapazität (pro Stufe)") (S. 379) ── -->
+    <item>
+        <name>Audioverbesserung</name>
+        <category>Audioverstärkung</category>
+        <rating>1-3</rating>
+        <avail>+2</avail>
+        <cost>Rating * 100</cost>
+        <capacitycost>Rating</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Richtungsdetektor</name>
+        <category>Audioverstärkung</category>
+        <avail>+6</avail>
+        <cost>100</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+    <item>
+        <name>Selektiver Geräuschfilter</name>
+        <category>Audioverstärkung</category>
+        <rating>1-3</rating>
+        <avail>+8</avail>
+        <cost>Rating * 200</cost>
+        <capacitycost>Rating</capacitycost>
+        <source>SR4</source>
+        <page>379</page>
+    </item>
+
+    <!-- ── Sensorpakete (GRW ohne Preis/Verf.: 0 ¥, Nutzerentscheidung 2026-10-08; Drohnen-/Fahrzeugpakete folgen mit Fahrzeugen) (S. 381) ── -->
+    <item>
+        <name>Sensorpaket (RFID)</name>
+        <category>Sensorpakete</category>
+        <cost>0</cost>
+        <accepts>Sensor-Funktionen</accepts>
+        <capacity>1</capacity>
+        <note>Signal 0. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Sensorpaket (Mikro)</name>
+        <category>Sensorpakete</category>
+        <cost>0</cost>
+        <accepts>Sensor-Funktionen</accepts>
+        <capacity>1</capacity>
+        <note>Signal 2. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Sensorpaket (Hand)</name>
+        <category>Sensorpakete</category>
+        <cost>0</cost>
+        <accepts>Sensor-Funktionen</accepts>
+        <capacity>3</capacity>
+        <note>Signal 3. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+
+    <!-- ── Sensor-Funktionen (nur als Einbau in ein Sensorpaket; eigene Verfügbarkeit) (S. 381) ── -->
+    <item>
+        <name>Atmosphärensensor</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-3</rating>
+        <avail>2</avail>
+        <cost>Rating * 25</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Bewegungsmelder</name>
+        <category>Sensor-Funktionen</category>
+        <avail>4</avail>
+        <cost>50</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Cyberwarescanner</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-6</rating>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>Rating * 75</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Geigerzähler</name>
+        <category>Sensor-Funktionen</category>
+        <avail>4</avail>
+        <cost>50</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Geruchsscanner</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-6</rating>
+        <avail>4</avail>
+        <cost>Rating * 500</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Kamera, Trideo (Sensor)</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-6</rating>
+        <cost>Rating * 100</cost>
+        <capacitycost>1</capacitycost>
+        <note>Kamera als Sensor im Sensorpaket; Werte laut Tabelle Visuelle Sensoren (GRW S. 378).</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Laser-Entfernungsmesser</name>
+        <category>Sensor-Funktionen</category>
+        <avail>8</avail>
+        <cost>100</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Lasermikrofon</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-6</rating>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>Rating * 50</cost>
+        <capacitycost>2</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>MAD-Scanner</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-3</rating>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>Rating * 75</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Mikrofon (Sensor)</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <capacitycost>1</capacitycost>
+        <note>Mikrofon als Sensor im Sensorpaket; Werte laut Tabelle Audiosensoren (GRW S. 379).</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Radiosignalscanner</name>
+        <category>Sensor-Funktionen</category>
+        <rating>1-6</rating>
+        <avail>4</avail>
+        <legality>E</legality>
+        <cost>Rating * 25</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Richtmikrofon</name>
+        <category>Sensor-Funktionen</category>
+        <avail>4</avail>
+        <cost>50</cost>
+        <capacitycost>1</capacitycost>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+
+    <!-- ── Sicherheitsgeräte (S. 382) ── -->
     <item>
         <name>Magschloss</name>
         <category>Sicherheitsgeräte</category>
         <rating>1-6</rating>
         <cost>Rating * 100</cost>
+        <accepts>Magschloss-Zusätze</accepts>
         <source>SR4</source>
         <page>382</page>
     </item>
@@ -699,6 +1108,33 @@
         <category>Sicherheitsgeräte</category>
         <rating>1-6</rating>
         <cost>Rating * 10</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+
+    <!-- ── Magschloss-Zusätze (nur als Einbau in ein Magschloss; Zuschläge; ohne Kapazität) (S. 382) ── -->
+    <item>
+        <name>Anti-Manipulations-System</name>
+        <category>Magschloss-Zusätze</category>
+        <rating>1-4</rating>
+        <cost>Rating * 100</cost>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Biometrischer Scanner (Magschloss)</name>
+        <category>Magschloss-Zusätze</category>
+        <avail>+4</avail>
+        <cost>200</cost>
+        <repeatable>true</repeatable>
+        <note>Pro Stück; ein Magschloss kann mehrere Scanner haben (GRW S. 382).</note>
+        <source>SR4</source>
+        <page>382</page>
+    </item>
+    <item>
+        <name>Tastatur oder Kartenleser</name>
+        <category>Magschloss-Zusätze</category>
+        <cost>50</cost>
         <source>SR4</source>
         <page>382</page>
     </item>

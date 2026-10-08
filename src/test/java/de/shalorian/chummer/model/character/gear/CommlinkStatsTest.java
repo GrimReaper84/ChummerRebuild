@@ -69,7 +69,7 @@ class CommlinkStatsTest {
     Gear device = commlinkWith("Sony Emperor", "Vector Xim");
 
     assertEquals("Sony Emperor hat bereits ein Betriebssystem",
-        device.installProblem(find("Redcap Nix")));
+        device.installProblem(find("Redcap Nix"), 0));
     assertThrows(IllegalArgumentException.class,
         () -> device.install(new Gear(find("Redcap Nix"), 0)));
     assertEquals(1, device.getInstalled().size());
@@ -80,9 +80,9 @@ class CommlinkStatsTest {
     Gear commlink = new Gear(find("Meta Link"), 0);
     Gear kit = new Gear(find("Survival-Kit"), 0);
 
-    assertTrue(commlink.installProblem(find("Survival-Kit")) != null);
-    assertTrue(kit.installProblem(find("Iris Orb")) != null);
-    assertNull(commlink.installProblem(find("Iris Orb")));
+    assertTrue(commlink.installProblem(find("Survival-Kit"), 0) != null);
+    assertTrue(kit.installProblem(find("Iris Orb"), 0) != null);
+    assertNull(commlink.installProblem(find("Iris Orb"), 0));
   }
 
   @Test

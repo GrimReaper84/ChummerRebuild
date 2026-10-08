@@ -90,6 +90,21 @@ class CharacterStoreGearRoundtripTest {
   }
 
   @Test
+  void installsBeyondCapacityAreSkippedOnLoad() throws IOException {
+    Files.writeString(tempFile().toPath(), """
+        {"name":"Alt","metatype":"Mensch",
+         "gear":[{"name":"Brille","rating":1,"quantity":1,"extra":"",
+                  "installed":[{"name":"Infrarot","rating":0,"quantity":1,"extra":""},
+                               {"name":"Restlichtverstärkung","rating":0,"quantity":1,"extra":""}]}]}
+        """, StandardCharsets.UTF_8);
+
+    List<Gear> gear = CharacterStore.load(tempFile()).getEquipment().getGear();
+
+    assertEquals(1, gear.get(0).getInstalled().size());
+    assertEquals("Infrarot", gear.get(0).getInstalled().get(0).getName());
+  }
+
+  @Test
   void fileWithoutGearNodeLoadsWithoutGear() throws IOException {
     Files.writeString(tempFile().toPath(), "{\"name\":\"Alt\",\"metatype\":\"Mensch\"}",
         StandardCharsets.UTF_8);

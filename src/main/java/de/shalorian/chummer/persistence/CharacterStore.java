@@ -293,7 +293,7 @@ public class CharacterStore {
     }
     for (GearEntry childEntry : entry.installed) {
       Gear child = toGear(childEntry);
-      if (child != null && gear.installProblem(child.getData()) == null) {
+      if (child != null && gear.installProblem(child.getData(), child.getRating()) == null) {
         gear.install(child);
       }
     }

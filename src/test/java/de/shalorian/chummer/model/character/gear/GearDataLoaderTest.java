@@ -39,7 +39,14 @@ class GearDataLoaderTest {
     expected.put(GearCategory.ARE_PROGRAMS, 6);
     expected.put(GearCategory.IDS_AND_CREDSTICKS, 3);
     expected.put(GearCategory.TOOLS, 3);
+    expected.put(GearCategory.VISUAL_DEVICES, 10);
+    expected.put(GearCategory.VISION_ENHANCEMENTS, 8);
+    expected.put(GearCategory.AUDIO_DEVICES, 3);
+    expected.put(GearCategory.AUDIO_ENHANCEMENTS, 3);
+    expected.put(GearCategory.SENSOR_PACKAGES, 3);
+    expected.put(GearCategory.SENSOR_FUNCTIONS, 12);
     expected.put(GearCategory.SECURITY_DEVICES, 2);
+    expected.put(GearCategory.MAGLOCK_OPTIONS, 3);
     expected.put(GearCategory.RESTRAINTS, 4);
     expected.put(GearCategory.BREAKING_AND_ENTERING, 10);
     expected.put(GearCategory.DRUGS, 9);
@@ -82,7 +89,11 @@ class GearDataLoaderTest {
       int to = data.hasRating() ? data.maxRating() : 0;
       for (int rating = from; rating <= to; rating++) {
         try {
-          assertTrue(data.packCostFor(rating) > 0, data.name());
+          // Sensorpakete haben im GRW keinen Preis (Nutzerentscheidung 2026-10-08: 0 ¥)
+          assertEquals(data.category() != GearCategory.SENSOR_PACKAGES,
+              data.packCostFor(rating) > 0, data.name());
+          data.capacityFor(rating);
+          data.capacityCostFor(rating);
           data.availability().evaluate(rating);
         } catch (IllegalArgumentException | ArithmeticException e) {
           fail(data.name() + " Stufe " + rating + ": " + e.getMessage());
@@ -105,6 +116,38 @@ class GearDataLoaderTest {
     assertEquals(4, navi.system());
     assertEquals(1_500, navi.packCostFor(0));
     assertTrue(navi.isSingleItem());
+  }
+
+  @Test
+  void installedOnlyEntriesFitIntoSomeDeviceAndDevicesAcceptInstalledOnlyCategories() {
+    Set<GearCategory> accepted = GearDataLoader.getAllGear().values().stream()
+        .map(GearData::accepts).filter(Objects::nonNull).collect(Collectors.toSet());
+    for (GearData data : GearDataLoader.getAllGear().values()) {
+      assertEquals(data.category().isInstalledOnly(), accepted.contains(data.category()),
+          data.name());
+      GearCategory accepts = data.accepts();
+      assertTrue(accepts == null || accepts.isInstalledOnly(), data.name());
+    }
+  }
+
+  @Test
+  void visionEnhancementsAreSurchargesWithCapacityCost() {
+    // GRW S. 379, am Bild gelesen
+    GearData ultrasound = find("Ultraschall");
+    assertTrue(ultrasound.availabilitySurcharge());
+    assertEquals("8", ultrasound.availability().displayText(0));
+    assertEquals(1_000, ultrasound.packCostFor(0));
+    assertEquals(2, ultrasound.capacityCostFor(0));
+
+    GearData smartlink = find("Smartlink");
+    assertEquals("4E", smartlink.availability().displayText(0));
+    assertEquals(500, smartlink.packCostFor(0));
+
+    assertEquals(3, find("Selektiver Geräuschfilter").capacityCostFor(3)); // pro Stufe
+    assertEquals(4, find("Brille").capacityFor(4));
+    assertEquals(3, find("Sensorpaket (Hand)").capacityFor(0));
+    assertEquals(2, find("Lasermikrofon").capacityCostFor(5));
+    assertFalse(find("Fernglas, optisch").hasCapacity());
   }
 
   @Test

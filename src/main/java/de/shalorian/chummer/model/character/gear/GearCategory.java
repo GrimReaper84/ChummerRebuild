@@ -8,10 +8,13 @@ import org.jspecify.annotations.NonNull;
  * Tabellenüberschrift und zugleich der Wert von {@code <category>} in {@code gear.xml}; wo die
  * Überschrift allein mehrdeutig ist, ist der Bereich vorangestellt ("Elektronik-Zubehör" statt
  * "Zubehör"). Die Zauberformeln stehen im GRW unter "Spruchkategorie".
- * Kategorien der späteren Gear-Teile (Sensoren, Munition …) folgen mit diesen.
+ * Kategorien der späteren Gear-Teile (Munition …) folgen mit diesen.
  *
- * <p>Kommlinks nehmen ein Betriebssystem als Einbau auf (Nutzerentscheidung 2026-10-04); handelsübliche
- * Betriebssysteme werden nur so gekauft, nicht als eigenständiger Gegenstand.
+ * <p>Einige Kategorien werden nur als Einbau in ein passendes Gerät gekauft ({@link
+ * #isInstalledOnly()}): Betriebssysteme in Kommlinks (Nutzerentscheidung 2026-10-04), Sicht- und
+ * Audioverstärkungen in Sicht- bzw. Audiosensoren (S. 379), Sensor-Funktionen in Sensorpakete
+ * (S. 380) und die Zusätze des Magschlosses (S. 382). Welches Gerät was aufnimmt, steht je Eintrag in
+ * {@link GearData#accepts()}.
  */
 public enum GearCategory {
   FIREARM_ACCESSORIES("Feuerwaffenzubehör", GearArea.FIREARM_ACCESSORIES),
@@ -29,7 +32,14 @@ public enum GearCategory {
   ARE_PROGRAMS("ARE-Programme", GearArea.DATACHIPS_AND_SOFTWARE),
   IDS_AND_CREDSTICKS("ID/Credsticks", GearArea.IDS_AND_CREDSTICKS),
   TOOLS("Werkzeug", GearArea.TOOLS),
+  VISUAL_DEVICES("Visuelle Sensoren und Optische Geräte", GearArea.SENSORS),
+  VISION_ENHANCEMENTS("Sichtverstärkung", GearArea.SENSORS),
+  AUDIO_DEVICES("Audiosensoren", GearArea.SENSORS),
+  AUDIO_ENHANCEMENTS("Audioverstärkung", GearArea.SENSORS),
+  SENSOR_PACKAGES("Sensorpakete", GearArea.SENSORS),
+  SENSOR_FUNCTIONS("Sensor-Funktionen", GearArea.SENSORS),
   SECURITY_DEVICES("Sicherheitsgeräte", GearArea.SECURITY),
+  MAGLOCK_OPTIONS("Magschloss-Zusätze", GearArea.SECURITY),
   RESTRAINTS("Handschellen", GearArea.SECURITY),
   BREAKING_AND_ENTERING("Einbruchswerkzeug", GearArea.BREAKING_AND_ENTERING),
   DRUGS("Drogen", GearArea.CHEMICALS_AND_DRUGS),
@@ -63,14 +73,16 @@ public enum GearCategory {
     return area;
   }
 
-  /** Ob Gegenstände dieser Kategorie Einbauten aufnehmen (Kommlink: ein Betriebssystem). */
-  public boolean acceptsInstalls() {
-    return this == COMMLINKS;
-  }
-
-  /** Ob Gegenstände dieser Kategorie nur als Einbau gekauft werden (Betriebssystem im Kommlink). */
+  /**
+   * Ob Gegenstände dieser Kategorie nur als Einbau in ein Gerät gekauft werden (Betriebssystem,
+   * Verstärkungen, Sensor-Funktionen, Magschloss-Zusätze).
+   */
   public boolean isInstalledOnly() {
-    return this == OPERATING_SYSTEMS;
+    return switch (this) {
+      case OPERATING_SYSTEMS, VISION_ENHANCEMENTS, AUDIO_ENHANCEMENTS, SENSOR_FUNCTIONS,
+           MAGLOCK_OPTIONS -> true;
+      default -> false;
+    };
   }
 
   /**

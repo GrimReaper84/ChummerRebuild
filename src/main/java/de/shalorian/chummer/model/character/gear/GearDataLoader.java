@@ -77,6 +77,9 @@ public class GearDataLoader {
       maxRating = Integer.parseInt(rating.substring(dash + 1).trim());
     }
     String costFor = childText(el, "costfor");
+    // Verfügbarkeit als Zuschlag auf das Gerät ("+4", GRW S. 379/382)
+    String avail = childText(el, "avail");
+    String accepts = childText(el, "accepts");
     Element extra = firstChild(el, "extra");
     return new GearData(
         childText(el, "name"),
@@ -88,9 +91,15 @@ public class GearDataLoader {
         optionalInt(el, "signal"),
         optionalInt(el, "firewall"),
         optionalInt(el, "system"),
-        Availability.parse(childText(el, "avail"), childText(el, "legality")),
+        Availability.parse(avail.startsWith("+") ? avail.substring(1) : avail,
+            childText(el, "legality")),
         childText(el, "cost"),
         childText(el, "costhigh"),
+        avail.startsWith("+"),
+        accepts.isEmpty() ? null : GearCategory.fromDisplayName(accepts),
+        childText(el, "capacity"),
+        childText(el, "capacitycost"),
+        Boolean.parseBoolean(childText(el, "repeatable")),
         costFor.isEmpty() ? 1 : Integer.parseInt(costFor),
         GearUnit.fromSingular(childText(el, "unit")),
         Boolean.parseBoolean(childText(el, "variablecost")),

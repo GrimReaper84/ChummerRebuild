@@ -17,6 +17,7 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearData;
+import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import java.io.IOException;
@@ -47,8 +48,9 @@ import org.tbee.javafx.scene.layout.MigPane;
  * Auswahl entfernen), links ein Baum der gekauften Gegenstände, rechts ein Detailbereich mit den
  * Werten und einem Mengen-Stepper. Abweichend vom Original gruppiert der Baum nach Bereich der
  * GRW-Ausrüstungsliste ({@link GearArea}); Lagerorte, "Equipped", Kommlink-Schalter und Fokusbindung
- * fehlen bewusst ({@code docs/plaene/gear_plan.md} Abschnitt 7). Das Betriebssystem eines Kommlinks
- * hängt als Kindknoten unter dem Kommlink und wird über "Betriebssystem installieren" gekauft.
+ * fehlen bewusst ({@code docs/plaene/gear_plan.md} Abschnitt 7). Einbauten (Betriebssystem im
+ * Kommlink, Verstärkungen, Sensor-Funktionen, Magschloss-Zusätze) hängen als Kindknoten unter ihrem
+ * Gerät und werden über "Einbauen" gekauft; Geräte mit Kapazität zeigen "belegt von gesamt".
  *
  * <p>Nach jeder Änderung wird der Tab neu aufgebaut und die Auswahl erhalten. Gear hängt nicht an
  * Attributen oder Fertigkeiten, daher gibt es keinen Refresh des Detailbereichs.
@@ -162,13 +164,13 @@ final class GearTabBuilder {
     useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(e -> onAddGear(character));
 
-    Button installBtn = new Button("Betriebssystem installieren");
+    Button installBtn = new Button("In ausgewählten Gegenstand einbauen");
     installBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(installBtn, FontAwesomeSolid.MICROCHIP);
     // Bindung an die Baumauswahl (UI-Zustand); die Kategorie eines Gegenstands ändert sich nie.
     installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       Gear gear = selectedGear(tree);
-      return gear == null || !gear.getData().category().acceptsInstalls();
+      return gear == null || gear.getData().accepts() == null;
     }, tree.getSelectionModel().selectedItemProperty()));
     installBtn.setOnAction(e -> {
       Gear gear = selectedGear(tree);
@@ -176,10 +178,13 @@ final class GearTabBuilder {
         return;
       }
       // Prüfung im Handler statt Sperre aus Live-Zustand (Projektregeln §8)
-      if (!gear.getInstalled().isEmpty()) {
+      if (!gear.canInstallAnyOf(GearDataLoader.getAllGear().values())) {
+        String capacity = GearDetails.of(gear).capacity();
+        capacity = capacity.isEmpty() ? "" : " (Kapazität " + capacity + ")";
         Notifications.create()
-            .title("Betriebssystem vorhanden")
-            .text(gear.getName() + " hat bereits ein Betriebssystem; zuerst entfernen.")
+            .title("Kein Einbau möglich")
+            .text(gear.getName() + ": kein weiterer Einbau möglich" + capacity
+                + "; zuerst einen Einbau entfernen.")
             .position(Pos.BOTTOM_RIGHT)
             .owner(container.getScene().getWindow())
             .showWarning();
@@ -232,16 +237,19 @@ final class GearTabBuilder {
         detailKey("Stufe"), detailValue(d.rating()));
     addRowCells(grid, 1, detailKey("Gerätestufe"), detailValue(d.deviceRating()),
         detailKey("Verf."), detailValue(d.availability()));
-    // Einzelstücke (Kommlink, Betriebssystem) haben keine veränderliche Menge.
+    // Einzelstücke (Geräte mit Einbauten und Einbauten selbst) haben keine veränderliche Menge.
     addRowCells(grid, 2, detailKey("Menge"), gear.getData().isSingleItem()
             ? detailValue(d.quantity()) : buildQuantityStepper(gear, character),
         detailKey("Preis"), detailValue(d.packPrice()));
     addRowCells(grid, 3, detailKey(gear.getInstalled().isEmpty()
-            ? "Gesamtpreis" : "Gesamtpreis (inkl. Betriebssystem)"), detailValue(d.totalCost()),
+            ? "Gesamtpreis" : "Gesamtpreis (inkl. Einbauten)"), detailValue(d.totalCost()),
         detailKey("Quelle"), detailValue(d.source()));
     int row = 4;
     if (!d.extraLabel().isEmpty()) {
       addRowCells(grid, row++, detailKey(d.extraLabel()), detailValue(d.extra()));
+    }
+    if (!d.capacity().isEmpty()) {
+      addRowCells(grid, row++, detailKey("Kapazität"), detailValue(d.capacity()));
     }
     if (d.commlink()) {
       addRowCells(grid, row++, detailKey("Prozessor"), detailValue(d.processor()),
@@ -321,13 +329,13 @@ final class GearTabBuilder {
   }
 
   /**
-   * Öffnet den Auswahldialog gefiltert auf Betriebssysteme und installiert die Auswahl im Kommlink
-   * {@code device}. Im Karrieremodus wird der Preis nach Bestätigung abgebucht.
+   * Öffnet den Auswahldialog gefiltert auf die Kategorie, die {@code device} aufnimmt, und baut die
+   * Auswahl ein. Im Karrieremodus wird der Preis nach Bestätigung abgebucht.
    */
   private void onInstall(@NonNull Character character, @NonNull Gear device) {
     try {
       DialogHandle dialog = host.openDialog("GearSelectDialog.fxml",
-          "Betriebssystem für " + device.getDisplayName());
+          "Einbau in " + device.getDisplayName());
       GearSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
       ctrl.setInstallTarget(character, device);

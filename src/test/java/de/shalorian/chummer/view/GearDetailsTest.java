@@ -59,6 +59,18 @@ class GearDetailsTest {
   }
 
   @Test
+  void deviceShowsUsedCapacityAndInstallShowsItsCost() {
+    Gear goggles = new Gear(find("Brille"), 3);
+    goggles.install(new Gear(find("Ultraschall"), 0));
+
+    assertEquals("2 von 3 belegt", GearDetails.of(goggles).capacity());
+    assertEquals("[2]", GearDetails.of(goggles.getInstalled().get(0)).capacity());
+    assertEquals("+8", GearDetails.of(goggles.getInstalled().get(0)).availability());
+    assertEquals("8", GearDetails.of(goggles).availability());
+    assertEquals("", GearDetails.of(new Gear(find("Survival-Kit"), 0)).capacity());
+  }
+
+  @Test
   void commlinkWithoutOperatingSystemAndOtherGear() {
     GearDetails commlink = GearDetails.of(new Gear(find("CMT Clip"), 0));
     assertEquals("–", commlink.firewall());

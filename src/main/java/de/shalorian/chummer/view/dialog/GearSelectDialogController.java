@@ -37,9 +37,12 @@ import org.jspecify.annotations.Nullable;
  * Equipment#isAvailableForPurchase(Availability, int)}). Die Werte prüft {@link Gear} selbst; der
  * Dialog bietet OK erst an, wenn sich daraus ein gültiger Gegenstand bauen lässt.
  *
- * <p>Mit {@link #setInstallTarget(Character, Gear)} dient der Dialog dem Einbau in ein Gerät (Gear
- * Teil B: Betriebssystem im Kommlink) und zeigt nur einbaubare Einträge. Ohne Zielgerät sind diese
- * sichtbar, aber deaktiviert, weil sie nur als Einbau gekauft werden.
+ * <p>Mit {@link #setInstallTarget(Character, Gear)} dient der Dialog dem Einbau in ein Gerät
+ * (Betriebssystem im Kommlink, Verstärkung in einer Brille, Sensor im Sensorpaket, Zusatz im
+ * Magschloss) und zeigt nur Einträge der Kategorie, die das Gerät aufnimmt. Was nicht mehr passt
+ * (Kapazität, schon eingebaut), bleibt sichtbar, aber deaktiviert; der Grund steht im Hinweis.
+ * Verfügbarkeitszuschläge zählen bei der Erschaffung mit der Verfügbarkeit des Geräts ({@link
+ * Equipment#isAvailableForInstall}). Ohne Zielgerät sind reine Einbauten deaktiviert.
  */
 public class GearSelectDialogController extends CatalogSelectDialogController<GearData> {
 
@@ -117,7 +120,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     updateList();
   }
 
-  /** Kauf eines Einbaus (Betriebssystem) für {@code target}; nur einbaubare Einträge erscheinen. */
+  /** Kauf eines Einbaus für {@code target}; nur Einträge der aufgenommenen Kategorie erscheinen. */
   public void setInstallTarget(@NonNull Character character, @NonNull Gear target) {
     this.character = character;
     this.installTarget = target;
@@ -126,40 +129,52 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   }
 
   /**
-   * Warum {@code data} hier nicht gekauft werden kann (außer Verfügbarkeit/Stufe), oder {@code null}:
-   * Einbauten nur über ihr Gerät, und das Zielgerät muss den Einbau aufnehmen können.
+   * Warum {@code data} in Stufe {@code rating} hier nicht gekauft werden kann (außer
+   * Verfügbarkeit/Stufe), oder {@code null}: Einbauten nur über ihr Gerät, und das Zielgerät muss den
+   * Einbau aufnehmen können (Kapazität, schon eingebaut …).
    */
-  private @Nullable String purchaseProblem(@NonNull GearData data) {
+  private @Nullable String purchaseProblem(@NonNull GearData data, int rating) {
     if (installTarget != null) {
-      return installTarget.installProblem(data);
+      return installTarget.installProblem(data, rating);
     }
     return data.category().isInstalledOnly()
-        ? "Wird über „Betriebssystem installieren“ in einem Kommlink gekauft." : null;
+        ? "Wird nur als Einbau gekauft: passendes Gerät im Ausrüstungsbaum wählen und „Einbauen“."
+        : null;
   }
 
   private boolean isAvailable(@NonNull GearData data, int rating) {
-    return character == null
-        || character.getEquipment().isAvailableForPurchase(data.availability(), rating);
+    if (character == null) {
+      return true;
+    }
+    Equipment equipment = character.getEquipment();
+    return installTarget == null
+        ? equipment.isAvailableForPurchase(data.availability(), rating)
+        : equipment.isAvailableForInstall(installTarget, data, rating);
+  }
+
+  /** Ob {@code data} in Stufe {@code rating} hier gekauft werden kann (Verfügbarkeit und Einbau). */
+  private boolean canBuy(@NonNull GearData data, int rating) {
+    return isAvailable(data, rating) && purchaseProblem(data, rating) == null;
   }
 
   private boolean isRatingAvailable(int rating) {
     GearData selected = itemListView.getSelectionModel().getSelectedItem();
-    return selected == null || isAvailable(selected, rating);
+    return selected == null || canBuy(selected, rating);
   }
 
   /**
    * Ein Gegenstand ist wählbar, wenn wenigstens seine niedrigste Stufe verfügbar ist und er hier
-   * gekauft werden kann ({@link #purchaseProblem(GearData)}).
+   * gekauft werden kann ({@link #purchaseProblem(GearData, int)}).
    */
   @Override
   protected boolean isSelectable(@NonNull GearData data) {
-    return isAvailable(data, data.lowestRating()) && purchaseProblem(data) == null;
+    return canBuy(data, data.lowestRating());
   }
 
-  /** Beim Einbau nur Einträge, die als Einbau gekauft werden. */
+  /** Beim Einbau nur Einträge der Kategorie, die das Zielgerät aufnimmt. */
   @Override
   protected boolean additionalFilter(@NonNull GearData data) {
-    return installTarget == null || data.category().isInstalledOnly();
+    return installTarget == null || data.category() == installTarget.getData().accepts();
   }
 
   /**
@@ -265,7 +280,11 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     int rating = selectedRating(selected);
     categoryLabel.setText(selected.category().getDisplayName() + " (Bereich "
         + selected.category().area().getDisplayName() + ")");
-    String availability = selected.availability().displayText(rating);
+    String availability = selected.availabilityText(rating);
+    if (selected.availabilitySurcharge() && installTarget != null) {
+      availability += " (Gerät dann "
+          + installTarget.availabilityWith(selected, rating).displayText(0) + ")";
+    }
     if (!isAvailable(selected, rating)) {
       availability += " (bei Erschaffung max. Stufe " + Availability.MAX_RATING_AT_CREATION
           + ", Verf. " + Availability.MAX_AVAILABILITY_AT_CREATION + ")";
@@ -275,7 +294,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     Gear selection = buildSelection();
     costLabel.setText(selection == null ? NO_VALUE : selection.getNuyenCost() + " ¥");
     sourceLabel.setText(selected.source() + " S. " + selected.page());
-    String problem = purchaseProblem(selected);
+    String problem = purchaseProblem(selected, rating);
     noteLabel.setText(problem != null ? problem : noteText(selected));
     okButton.setDisable(selection == null);
   }
@@ -322,7 +341,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
       return null;
     }
     int rating = selectedRating(selected);
-    if (!isAvailable(selected, rating) || purchaseProblem(selected) != null) {
+    if (!canBuy(selected, rating)) {
       return null;
     }
     try {

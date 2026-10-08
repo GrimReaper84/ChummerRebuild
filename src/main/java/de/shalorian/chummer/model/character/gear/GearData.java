@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.cyberware.RatingFormula;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import java.math.RoundingMode;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Unveränderlicher Katalogeintrag eines Ausrüstungsgegenstands aus {@code gear.xml} (GRW-Tabellen
@@ -19,6 +20,16 @@ import org.jspecify.annotations.NonNull;
  * <p><b>Preisbänder:</b> Die Matrixprogramme haben zwei Preisspalten, "Preis (bis Stufe 3)" und
  * "Preis (bis Stufe 6)" (S. 376, z.B. Hacking "Stufe x 500 ¥" bzw. "Stufe x 1.000 ¥"). {@link
  * #cost()} gilt dann bis Stufe 3, {@link #highCost()} ab Stufe {@value #HIGH_COST_FROM_RATING}.
+ *
+ * <p><b>Einbauten:</b> Geräte mit {@link #accepts()} nehmen Gegenstände dieser Kategorie auf
+ * (Kommlink → Betriebssystem, Brille → Sichtverstärkung, Sensorpaket → Sensor-Funktion, Magschloss →
+ * Zusätze). Hat das Gerät eine {@link #capacity()}, darf die Summe der {@link #capacityCost()} seiner
+ * Einbauten sie nicht übersteigen. SR4-Grundregelwerk S. 379: "Jede Verstärkung verbraucht 1 Punkt
+ * Kapazität" (Ultraschall 2), Audioverstärkung "1 Punkt Kapazität (pro Stufe)"; S. 380: "die
+ * gesamte Kapazität der einzelnen Sensoren darf die Kapazitätsstufe des Paketes nicht
+ * überschreiten". Steht die Verfügbarkeit als Zuschlag in der Tabelle ("+4", "+4E"), erhöht sie die
+ * Verfügbarkeit des Geräts ({@link #availabilitySurcharge()}); der Preis eines Einbaus zählt immer
+ * zum Gerät.
  *
  * <p><b>Preisspanne:</b> Bei Einträgen wie "5–200+ ¥" (Sim-Aufzeichnung, S. 377) oder "100+ ¥"
  * (Sim-Modul, S. 374) gibt der Spieler den Preis selbst ein; {@link #cost()} ist dann der
@@ -35,6 +46,11 @@ import org.jspecify.annotations.NonNull;
  *                     der Preis bis Stufe 3
  * @param highCost     Preisformel ab Stufe {@value #HIGH_COST_FROM_RATING} (Matrixprogramme), sonst
  *                     leer
+ * @param availabilitySurcharge ob die Verfügbarkeit ein Zuschlag auf das Gerät ist ("+4")
+ * @param accepts      Kategorie, deren Gegenstände das Gerät als Einbau aufnimmt, sonst {@code null}
+ * @param capacity     Kapazitätsformel des Geräts ("Rating" bzw. fester Wert), leer ohne Kapazität
+ * @param capacityCost Kapazitätsbedarf als Einbau ("1", "2", "Rating"), leer ohne Bedarf
+ * @param repeatable   ob derselbe Einbau mehrfach in einem Gerät stecken darf ("pro Stück")
  * @param packSize     Anzahl Einheiten, für die {@link #cost()} gilt (mindestens 1)
  * @param variableCost ob der Preis eine Spanne ist, die der Spieler festlegt
  * @param extraKind    ob und wie ein Zusatztext beim Kauf anzugeben ist
@@ -54,6 +70,11 @@ public record GearData(
     @NonNull Availability availability,
     @NonNull String cost,
     @NonNull String highCost,
+    boolean availabilitySurcharge,
+    @Nullable GearCategory accepts,
+    @NonNull String capacity,
+    @NonNull String capacityCost,
+    boolean repeatable,
     int packSize,
     @NonNull GearUnit unit,
     boolean variableCost,
@@ -97,11 +118,31 @@ public record GearData(
   }
 
   /**
-   * Ob der Gegenstand nur einzeln gekauft wird: Kommlinks, weil jedes sein eigenes Betriebssystem
-   * aufnimmt, und Betriebssysteme, weil sie in genau einem Kommlink stecken.
+   * Ob der Gegenstand nur einzeln gekauft wird: Geräte, die Einbauten aufnehmen (jedes hat seine
+   * eigenen), und Einbauten selbst, weil sie in genau einem Gerät stecken.
    */
   public boolean isSingleItem() {
-    return category.acceptsInstalls() || category.isInstalledOnly();
+    return accepts != null || category.isInstalledOnly();
+  }
+
+  /** Verfügbarkeit wie im GRW angezeigt, bei einem Zuschlag mit "+" (z.B. "+4E", "8", "–"). */
+  public @NonNull String availabilityText(int rating) {
+    return (availabilitySurcharge ? "+" : "") + availability.displayText(rating);
+  }
+
+  /** Ob das Gerät eine Kapazität für Einbauten hat. */
+  public boolean hasCapacity() {
+    return !capacity.isEmpty();
+  }
+
+  /** Kapazität des Geräts in der angegebenen Stufe, {@code 0} ohne Kapazität. */
+  public int capacityFor(int rating) {
+    return hasCapacity() ? RatingFormula.evaluate(capacity, rating).intValueExact() : 0;
+  }
+
+  /** Kapazitätsbedarf als Einbau in der angegebenen Stufe, {@code 0} ohne Bedarf. */
+  public int capacityCostFor(int rating) {
+    return capacityCost.isEmpty() ? 0 : RatingFormula.evaluate(capacityCost, rating).intValueExact();
   }
 
   /**

@@ -1,6 +1,9 @@
 package de.shalorian.chummer.model.character.gear;
 
+import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.equipment.Legality;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -16,9 +19,12 @@ import org.jspecify.annotations.Nullable;
  * sind zwei Packungen "pro 20 Stück" (GRW S. 374). Preis = Packungspreis × Menge ÷ Packungsgröße; die
  * Menge muss ein Vielfaches der Packungsgröße sein, daher wird nicht gerundet.
  *
- * <p><b>Einbauten:</b> Ein Kommlink nimmt höchstens ein handelsübliches Betriebssystem auf (Kind des
- * Kommlinks, Nutzerentscheidung 2026-10-04); dessen Preis zählt zum Preis des Kommlinks. Matrixwerte
- * siehe {@link #getCommlinkStats()}.
+ * <p><b>Einbauten:</b> Geräte nehmen Gegenstände der Kategorie {@link GearData#accepts()} als Kinder
+ * auf: ein Kommlink höchstens ein Betriebssystem (Nutzerentscheidung 2026-10-04), Sicht- und
+ * Audiosensoren Verstärkungen und Sensorpakete Sensor-Funktionen bis zu ihrer Kapazität, ein
+ * Magschloss seine Zusätze (GRW S. 379–382). Der Preis der Einbauten zählt zum Gerät, Zuschläge auf
+ * die Verfügbarkeit erhöhen dessen Verfügbarkeit ({@link #getAvailabilityText()}). Matrixwerte siehe
+ * {@link #getCommlinkStats()}.
  */
 public class Gear {
 
@@ -169,7 +175,7 @@ public class Gear {
     return chosenPackPrice != null ? chosenPackPrice : data.packCostFor(rating);
   }
 
-  /** Preis der aktuellen Menge samt Einbauten (Betriebssystem eines Kommlinks). */
+  /** Preis der aktuellen Menge samt Einbauten (Betriebssystem, Verstärkungen, Sensoren, Zusätze). */
   public int getNuyenCost() {
     return getPackPrice() * quantity / data.packSize()
         + installed.stream().mapToInt(Gear::getNuyenCost).sum();
@@ -177,21 +183,43 @@ public class Gear {
 
   // --- Einbauten ---
 
-  /** Eingebaute Gegenstände (Betriebssystem eines Kommlinks) in Einbaureihenfolge. */
+  /** Eingebaute Gegenstände in Einbaureihenfolge. */
   public @NonNull List<Gear> getInstalled() {
     return Collections.unmodifiableList(installed);
   }
 
+  /** Kapazität des Geräts in seiner Stufe, {@code 0} ohne Kapazität. */
+  public int getCapacity() {
+    return data.capacityFor(rating);
+  }
+
+  /** Von den Einbauten belegte Kapazität. */
+  public int getUsedCapacity() {
+    return installed.stream().mapToInt(g -> g.data.capacityCostFor(g.rating)).sum();
+  }
+
   /**
-   * Warum {@code child} nicht in diesen Gegenstand eingebaut werden kann, oder {@code null}. Ein
-   * Kommlink nimmt genau ein handelsübliches Betriebssystem auf.
+   * Warum {@code child} in Stufe {@code childRating} nicht in diesen Gegenstand eingebaut werden kann,
+   * oder {@code null}. Das Gerät muss die Kategorie aufnehmen ({@link GearData#accepts()}); ein
+   * Kommlink nimmt nur ein Betriebssystem auf; derselbe Einbau steckt höchstens einmal im Gerät, außer
+   * er ist "pro Stück" erhältlich (Biometrischer Scanner, GRW S. 382); die Einbauten dürfen die
+   * Kapazität nicht übersteigen (GRW S. 379/380).
    */
-  public @Nullable String installProblem(@NonNull GearData child) {
-    if (!data.category().acceptsInstalls() || !child.category().isInstalledOnly()) {
+  public @Nullable String installProblem(@NonNull GearData child, int childRating) {
+    if (child.category() != data.accepts()) {
       return child.name() + " lässt sich nicht in " + data.name() + " einbauen";
     }
-    if (!installed.isEmpty()) {
+    if (child.category() == GearCategory.OPERATING_SYSTEMS && !installed.isEmpty()) {
       return data.name() + " hat bereits ein Betriebssystem";
+    }
+    if (!child.repeatable() && installed.stream().anyMatch(g -> g.data.equals(child))) {
+      return child.name() + " ist bereits eingebaut";
+    }
+    int needed = child.capacityCostFor(childRating);
+    int free = getCapacity() - getUsedCapacity();
+    if (data.hasCapacity() && needed > free) {
+      return "Kapazität reicht nicht: " + child.name() + " braucht " + needed + ", frei sind " + free
+          + " von " + getCapacity();
     }
     return null;
   }
@@ -199,10 +227,10 @@ public class Gear {
   /**
    * Baut {@code child} ein.
    *
-   * @throws IllegalArgumentException wenn {@link #installProblem(GearData)} einen Grund liefert
+   * @throws IllegalArgumentException wenn {@link #installProblem(GearData, int)} einen Grund liefert
    */
   public void install(@NonNull Gear child) {
-    String problem = installProblem(child.data);
+    String problem = installProblem(child.data, child.rating);
     if (problem != null) {
       throw new IllegalArgumentException(problem);
     }
@@ -219,15 +247,67 @@ public class Gear {
    * anderen Gegenständen.
    */
   public @Nullable CommlinkStats getCommlinkStats() {
-    if (!data.category().acceptsInstalls()) {
+    if (data.category() != GearCategory.COMMLINKS) {
       return null;
     }
     return CommlinkStats.of(data, installed.isEmpty() ? null : installed.get(0).data);
   }
 
-  /** Verfügbarkeit in der gewählten Stufe, wie im GRW angezeigt. */
+  // --- Verfügbarkeit ---
+
+  /**
+   * Verfügbarkeit des Geräts in seiner Stufe samt der Zuschläge seiner Einbauten ("+4", "+4E",
+   * GRW S. 379/382), als fester Wert; die höchste Legalitätsstufe gilt. Beispiel: Brille (–) mit
+   * Restlichtverstärkung (+4) und Infrarot (+6) → 10. Einbauten mit eigener Verfügbarkeit
+   * (Sensor-Funktionen) ändern die Verfügbarkeit des Geräts nicht.
+   */
+  private @NonNull Availability deviceAvailability() {
+    Availability sum = new Availability(String.valueOf(data.availability().evaluate(rating)),
+        data.availability().legality());
+    for (Gear child : installed) {
+      sum = plusSurcharge(sum, child.data, child.rating);
+    }
+    return sum;
+  }
+
+  /**
+   * Verfügbarkeit des Geräts samt Zuschlägen, nachdem zusätzlich {@code child} in Stufe {@code
+   * childRating} eingebaut wäre.
+   */
+  public @NonNull Availability availabilityWith(@NonNull GearData child, int childRating) {
+    return plusSurcharge(deviceAvailability(), child, childRating);
+  }
+
+  /** {@code sum} plus den Zuschlag von {@code child}; unverändert, wenn es kein Zuschlag ist. */
+  private static @NonNull Availability plusSurcharge(@NonNull Availability sum,
+      @NonNull GearData child, int childRating) {
+    if (!child.availabilitySurcharge()) {
+      return sum;
+    }
+    Availability surcharge = child.availability();
+    Legality legality = surcharge.legality().compareTo(sum.legality()) > 0
+        ? surcharge.legality() : sum.legality();
+    return new Availability(String.valueOf(sum.evaluate(0) + surcharge.evaluate(childRating)),
+        legality);
+  }
+
+  /**
+   * Verfügbarkeit wie im GRW angezeigt: beim Gerät inklusive Zuschlägen der Einbauten, bei einem
+   * Zuschlag selbst mit "+" ("+4E").
+   */
   public @NonNull String getAvailabilityText() {
-    return data.availability().displayText(rating);
+    return data.availabilitySurcharge()
+        ? data.availabilityText(rating) : deviceAvailability().displayText(0);
+  }
+
+  /**
+   * Ob noch einer der {@code candidates} in dieses Gerät passt (in seiner niedrigsten Stufe, ohne
+   * Verfügbarkeitsprüfung); {@code false} auch bei Gegenständen ohne Einbauten.
+   */
+  public boolean canInstallAnyOf(@NonNull Collection<GearData> candidates) {
+    return candidates.stream()
+        .filter(candidate -> candidate.category() == data.accepts())
+        .anyMatch(candidate -> installProblem(candidate, candidate.lowestRating()) == null);
   }
 
   /**

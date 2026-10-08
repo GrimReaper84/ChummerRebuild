@@ -9,6 +9,7 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
@@ -125,6 +126,19 @@ public class Equipment {
     return owner.isCreated()
         || (rating <= Availability.MAX_RATING_AT_CREATION
             && availability.isAllowedAtCreation(rating));
+  }
+
+  /**
+   * Ob {@code child} in Stufe {@code rating} in {@code device} eingebaut (und damit gekauft) werden
+   * darf: wie {@link #isAvailableForPurchase(Availability, int)}, wobei ein Verfügbarkeitszuschlag
+   * ("+4") mit der Verfügbarkeit des Geräts samt bisheriger Einbauten zählt — eine Brille mit
+   * Ultraschall (+8) und Infrarot (+6) läge bei 14 und ist bei der Erschaffung gesperrt (GRW S. 111,
+   * 379).
+   */
+  public boolean isAvailableForInstall(@NonNull Gear device, @NonNull GearData child, int rating) {
+    Availability availability = child.availabilitySurcharge()
+        ? device.availabilityWith(child, rating) : child.availability();
+    return isAvailableForPurchase(availability, rating);
   }
 
   /** Wie {@link #isAvailableForPurchase(Availability, int)} für Rüstung, die keine Stufe hat. */

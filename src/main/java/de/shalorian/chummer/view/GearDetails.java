@@ -19,6 +19,8 @@ import org.jspecify.annotations.NonNull;
  * @param packPrice    Preis je Packung, z.B. "1 ¥ pro 20 Stück", "10 ¥ pro Dosis"
  * @param totalCost    Preis der ganzen Menge
  * @param note         Hinweis aus Tabelle oder Text, sonst leer
+ * @param capacity     beim Gerät "belegt von gesamt" (z.B. "2 von 3 belegt"), beim Einbau der
+ *                     Kapazitätsbedarf wie im GRW ("[2]"), sonst leer
  * @param commlink     ob der Gegenstand ein Kommlink ist (dann sind die vier Matrixwerte belegt)
  * @param processor    Prozessor eines Kommlinks, leer bei anderen Gegenständen (ebenso die drei
  *                     folgenden Werte)
@@ -40,6 +42,7 @@ record GearDetails(
     @NonNull String totalCost,
     @NonNull String source,
     @NonNull String note,
+    @NonNull String capacity,
     boolean commlink,
     @NonNull String processor,
     @NonNull String signal,
@@ -65,11 +68,21 @@ record GearDetails(
         gear.getNuyenCost() + " ¥",
         data.source() + " S. " + data.page(),
         data.note(),
+        capacityText(gear),
         stats != null,
         stats == null ? "" : String.valueOf(stats.processor()),
         stats == null ? "" : String.valueOf(stats.signal()),
         stats == null ? "" : orNoValue(stats.firewall()),
         stats == null ? "" : systemText(stats));
+  }
+
+  private static @NonNull String capacityText(@NonNull Gear gear) {
+    GearData data = gear.getData();
+    if (data.hasCapacity()) {
+      return gear.getUsedCapacity() + " von " + gear.getCapacity() + " belegt";
+    }
+    int cost = data.capacityCostFor(gear.getRating());
+    return cost > 0 ? "[" + cost + "]" : "";
   }
 
   private static @NonNull String orNoValue(int value) {

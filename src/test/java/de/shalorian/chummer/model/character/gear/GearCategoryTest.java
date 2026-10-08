@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.EnumSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 /** Ausrüstungskategorien und -bereiche in GRW-Reihenfolge (S. 368–395). */
@@ -25,6 +27,8 @@ class GearCategoryTest {
     assertEquals(GearArea.ELECTRONICS, GearCategory.COMMLINKS.area());
     assertEquals(GearArea.ELECTRONICS, GearCategory.OPERATING_SYSTEMS.area());
     assertEquals(GearArea.DATACHIPS_AND_SOFTWARE, GearCategory.MATRIX_PROGRAMS.area());
+    assertEquals(GearArea.SENSORS, GearCategory.SENSOR_FUNCTIONS.area());
+    assertEquals(GearArea.SECURITY, GearCategory.MAGLOCK_OPTIONS.area());
     assertEquals(GearArea.DATACHIPS_AND_SOFTWARE, GearCategory.SKILLSOFTS.area());
     assertEquals(GearArea.SECURITY, GearCategory.RESTRAINTS.area());
     assertEquals(GearArea.CHEMICALS_AND_DRUGS, GearCategory.TOXINS.area());
@@ -41,11 +45,12 @@ class GearCategoryTest {
   }
 
   @Test
-  void onlyCommlinksTakeInstallsAndOnlyOperatingSystemsAreInstalledOnly() {
+  void installedOnlyCategories() {
+    Set<GearCategory> installedOnly = EnumSet.of(GearCategory.OPERATING_SYSTEMS,
+        GearCategory.VISION_ENHANCEMENTS, GearCategory.AUDIO_ENHANCEMENTS,
+        GearCategory.SENSOR_FUNCTIONS, GearCategory.MAGLOCK_OPTIONS);
     for (GearCategory category : GearCategory.values()) {
-      assertEquals(category == GearCategory.COMMLINKS, category.acceptsInstalls(), category.name());
-      assertEquals(category == GearCategory.OPERATING_SYSTEMS, category.isInstalledOnly(),
-          category.name());
+      assertEquals(installedOnly.contains(category), category.isInstalledOnly(), category.name());
     }
   }
 
