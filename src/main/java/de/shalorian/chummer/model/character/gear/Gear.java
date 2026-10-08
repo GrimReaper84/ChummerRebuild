@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.gear;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.jspecify.annotations.NonNull;
@@ -14,6 +15,10 @@ import org.jspecify.annotations.Nullable;
  * <p>Die Menge zählt Einheiten ({@link GearData#unit()}), nicht Packungen: 40 Standard-RFID-Marker
  * sind zwei Packungen "pro 20 Stück" (GRW S. 374). Preis = Packungspreis × Menge ÷ Packungsgröße; die
  * Menge muss ein Vielfaches der Packungsgröße sein, daher wird nicht gerundet.
+ *
+ * <p><b>Einbauten:</b> Ein Kommlink nimmt höchstens ein handelsübliches Betriebssystem auf (Kind des
+ * Kommlinks, Nutzerentscheidung 2026-10-04); dessen Preis zählt zum Preis des Kommlinks. Matrixwerte
+ * siehe {@link #getCommlinkStats()}.
  */
 public class Gear {
 
@@ -28,6 +33,7 @@ public class Gear {
   private final @NonNull String extra;
   private final @Nullable Integer chosenPackPrice;
   private int quantity;
+  private final List<Gear> installed = new ArrayList<>();
 
   /**
    * @param rating          Stufe in [{@link GearData#minRating()}, {@link GearData#maxRating()}],
@@ -163,9 +169,60 @@ public class Gear {
     return chosenPackPrice != null ? chosenPackPrice : data.packCostFor(rating);
   }
 
-  /** Preis der aktuellen Menge. */
+  /** Preis der aktuellen Menge samt Einbauten (Betriebssystem eines Kommlinks). */
   public int getNuyenCost() {
-    return getPackPrice() * quantity / data.packSize();
+    return getPackPrice() * quantity / data.packSize()
+        + installed.stream().mapToInt(Gear::getNuyenCost).sum();
+  }
+
+  // --- Einbauten ---
+
+  /** Eingebaute Gegenstände (Betriebssystem eines Kommlinks) in Einbaureihenfolge. */
+  public @NonNull List<Gear> getInstalled() {
+    return Collections.unmodifiableList(installed);
+  }
+
+  /**
+   * Warum {@code child} nicht in diesen Gegenstand eingebaut werden kann, oder {@code null}. Ein
+   * Kommlink nimmt genau ein handelsübliches Betriebssystem auf.
+   */
+  public @Nullable String installProblem(@NonNull GearData child) {
+    if (!data.category().acceptsInstalls() || !child.category().isInstalledOnly()) {
+      return child.name() + " lässt sich nicht in " + data.name() + " einbauen";
+    }
+    if (!installed.isEmpty()) {
+      return data.name() + " hat bereits ein Betriebssystem";
+    }
+    return null;
+  }
+
+  /**
+   * Baut {@code child} ein.
+   *
+   * @throws IllegalArgumentException wenn {@link #installProblem(GearData)} einen Grund liefert
+   */
+  public void install(@NonNull Gear child) {
+    String problem = installProblem(child.data);
+    if (problem != null) {
+      throw new IllegalArgumentException(problem);
+    }
+    installed.add(child);
+  }
+
+  /** Baut genau diesen Gegenstand aus; {@code false}, wenn er hier nicht eingebaut ist. */
+  public boolean uninstall(@NonNull Gear child) {
+    return installed.remove(child);
+  }
+
+  /**
+   * Matrixwerte eines Kommlinks mit seinem Betriebssystem (GRW S. 260, 374), oder {@code null} bei
+   * anderen Gegenständen.
+   */
+  public @Nullable CommlinkStats getCommlinkStats() {
+    if (!data.category().acceptsInstalls()) {
+      return null;
+    }
+    return CommlinkStats.of(data, installed.isEmpty() ? null : installed.get(0).data);
   }
 
   /** Verfügbarkeit in der gewählten Stufe, wie im GRW angezeigt. */
@@ -175,10 +232,11 @@ public class Gear {
 
   /**
    * Ob {@code other} derselbe Gegenstand ist und beim Kauf mit diesem zusammengeführt wird: gleicher
-   * Katalogeintrag, gleiche Stufe, gleicher Zusatztext und gleicher gewählter Preis.
+   * Katalogeintrag, gleiche Stufe, gleicher Zusatztext und gleicher gewählter Preis. Einzelstücke
+   * ({@link GearData#isSingleItem()}, z.B. Kommlinks) werden nie zusammengeführt.
    */
   public boolean isSameKind(@NonNull Gear other) {
-    return data.equals(other.data) && rating == other.rating && extra.equals(other.extra)
+    return !data.isSingleItem() && data.equals(other.data) && rating == other.rating && extra.equals(other.extra)
         && Objects.equals(chosenPackPrice, other.chosenPackPrice);
   }
 

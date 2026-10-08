@@ -25,10 +25,13 @@ class GearDataLoaderTest {
   void everyCategoryHasItsRulebookRowCount() {
     Map<GearCategory, Integer> expected = new EnumMap<>(GearCategory.class);
     expected.put(GearCategory.FIREARM_ACCESSORIES, 4);
+    expected.put(GearCategory.COMMLINKS, 9);
+    expected.put(GearCategory.OPERATING_SYSTEMS, 6);
     expected.put(GearCategory.ELECTRONIC_ACCESSORIES, 11);
     expected.put(GearCategory.OTHER_ELECTRONICS, 2);
     expected.put(GearCategory.RFID_TAGS, 4);
     expected.put(GearCategory.COMMUNICATION, 6);
+    expected.put(GearCategory.MATRIX_PROGRAMS, 6);
     expected.put(GearCategory.DATA_STORAGE, 1);
     expected.put(GearCategory.SOFTWARE, 3);
     expected.put(GearCategory.SKILLSOFTS, 3);
@@ -85,6 +88,30 @@ class GearDataLoaderTest {
           fail(data.name() + " Stufe " + rating + ": " + e.getMessage());
         }
       }
+    }
+  }
+
+  @Test
+  void commlinksAndOperatingSystemsHaveTheirMatrixValues() {
+    // GRW S. 374, am Bild gelesen
+    GearData caliban = find("Fairlight Caliban");
+    assertEquals(4, caliban.processor());
+    assertEquals(5, caliban.signal());
+    assertEquals(8_000, caliban.packCostFor(0));
+    assertEquals("–", caliban.availability().displayText(0));
+
+    GearData navi = find("Novatech Navi");
+    assertEquals(3, navi.firewall());
+    assertEquals(4, navi.system());
+    assertEquals(1_500, navi.packCostFor(0));
+    assertTrue(navi.isSingleItem());
+  }
+
+  @Test
+  void onlyMatrixProgramsHaveASecondPriceBand() {
+    for (GearData data : GearDataLoader.getAllGear().values()) {
+      assertEquals(data.category() == GearCategory.MATRIX_PROGRAMS, !data.highCost().isEmpty(),
+          data.name());
     }
   }
 

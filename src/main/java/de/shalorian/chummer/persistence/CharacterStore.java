@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class CharacterStore {
 
@@ -120,14 +121,19 @@ public class CharacterStore {
             .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
             .toList()))
         .toList();
-    data.gear = character.getEquipment().getGear().stream()
-        .map(g -> new GearEntry(g.getName(), g.getRating(), g.getQuantity(), g.getExtra(),
-            g.getChosenPackPrice()))
+    data.gear = character.getEquipment().getGear().stream().map(CharacterStore::toGearEntry)
         .toList();
     Lifestyle lifestyle = character.getEquipment().getLifestyle();
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
 
     return data;
+  }
+
+  private static @NonNull GearEntry toGearEntry(@NonNull Gear gear) {
+    GearEntry entry = new GearEntry(gear.getName(), gear.getRating(), gear.getQuantity(),
+        gear.getExtra(), gear.getChosenPackPrice());
+    entry.installed = gear.getInstalled().stream().map(CharacterStore::toGearEntry).toList();
+    return entry;
   }
 
   private static @NonNull BiographyData toBiographyData(@NonNull CharacterBiography biography) {
@@ -257,22 +263,41 @@ public class CharacterStore {
   }
 
   /**
-   * Stellt die gekaufte Ausrüstung wieder her; unbekannte Katalognamen und Einträge mit unzulässiger
-   * Stufe, Menge, Zusatztext oder Preis werden übersprungen statt die ganze Datei abzulehnen.
+   * Stellt die gekaufte Ausrüstung wieder her; unbekannte Katalognamen, Einträge mit unzulässiger
+   * Stufe, Menge, Zusatztext oder Preis und Einbauten ohne Gerät (Betriebssystem ohne Kommlink)
+   * werden übersprungen statt die ganze Datei abzulehnen.
    */
   private static void applyGear(@NonNull Character character, @NonNull CharacterData data) {
     for (GearEntry entry : data.gear) {
-      GearData gearData = GearDataLoader.findByName(entry.name);
-      if (gearData == null) {
-        continue;
-      }
-      try {
-        character.getEquipment().addGear(
-            new Gear(gearData, entry.rating, entry.quantity, entry.extra, entry.packPrice));
-      } catch (IllegalArgumentException e) {
-        // Werte passen nicht (mehr) zum Katalog: überspringen
+      Gear gear = toGear(entry);
+      if (gear != null && !gear.getData().category().isInstalledOnly()) {
+        character.getEquipment().addGear(gear);
       }
     }
+  }
+
+  /**
+   * Baut einen Gegenstand samt Einbauten aus der Speicherdatei; {@code null} bei unbekanntem Namen
+   * oder Werten, die nicht (mehr) zum Katalog passen. Unpassende Einbauten werden übersprungen.
+   */
+  private static @Nullable Gear toGear(@NonNull GearEntry entry) {
+    GearData gearData = GearDataLoader.findByName(entry.name);
+    if (gearData == null) {
+      return null;
+    }
+    Gear gear;
+    try {
+      gear = new Gear(gearData, entry.rating, entry.quantity, entry.extra, entry.packPrice);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+    for (GearEntry childEntry : entry.installed) {
+      Gear child = toGear(childEntry);
+      if (child != null && gear.installProblem(child.getData()) == null) {
+        gear.install(child);
+      }
+    }
+    return gear;
   }
 
   private static void applyAccessory(@NonNull Weapon weapon, @NonNull AccessoryEntry entry) {

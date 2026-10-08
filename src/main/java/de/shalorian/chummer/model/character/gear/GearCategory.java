@@ -8,14 +8,20 @@ import org.jspecify.annotations.NonNull;
  * Tabellenüberschrift und zugleich der Wert von {@code <category>} in {@code gear.xml}; wo die
  * Überschrift allein mehrdeutig ist, ist der Bereich vorangestellt ("Elektronik-Zubehör" statt
  * "Zubehör"). Die Zauberformeln stehen im GRW unter "Spruchkategorie".
- * Kategorien der späteren Gear-Teile (Kommlinks, Sensoren, Munition …) folgen mit diesen.
+ * Kategorien der späteren Gear-Teile (Sensoren, Munition …) folgen mit diesen.
+ *
+ * <p>Kommlinks nehmen ein Betriebssystem als Einbau auf (Nutzerentscheidung 2026-10-04); handelsübliche
+ * Betriebssysteme werden nur so gekauft, nicht als eigenständiger Gegenstand.
  */
 public enum GearCategory {
   FIREARM_ACCESSORIES("Feuerwaffenzubehör", GearArea.FIREARM_ACCESSORIES),
+  COMMLINKS("Kommlink-Modell", GearArea.ELECTRONICS),
+  OPERATING_SYSTEMS("Handelsübliche Betriebssysteme", GearArea.ELECTRONICS),
   ELECTRONIC_ACCESSORIES("Elektronik-Zubehör", GearArea.ELECTRONICS),
   OTHER_ELECTRONICS("Sonstige Elektronik", GearArea.ELECTRONICS),
   RFID_TAGS("RFID-Marker", GearArea.ELECTRONICS),
   COMMUNICATION("Kommunikationssystem", GearArea.ELECTRONICS),
+  MATRIX_PROGRAMS("Matrixprogramme", GearArea.DATACHIPS_AND_SOFTWARE),
   DATA_STORAGE("Speichermedien", GearArea.DATACHIPS_AND_SOFTWARE),
   SOFTWARE("Software", GearArea.DATACHIPS_AND_SOFTWARE),
   SKILLSOFTS("Talentsoft", GearArea.DATACHIPS_AND_SOFTWARE),
@@ -55,6 +61,16 @@ public enum GearCategory {
   /** Bereich der Ausrüstungsliste, unter dem die Tabelle steht. */
   public @NonNull GearArea area() {
     return area;
+  }
+
+  /** Ob Gegenstände dieser Kategorie Einbauten aufnehmen (Kommlink: ein Betriebssystem). */
+  public boolean acceptsInstalls() {
+    return this == COMMLINKS;
+  }
+
+  /** Ob Gegenstände dieser Kategorie nur als Einbau gekauft werden (Betriebssystem im Kommlink). */
+  public boolean isInstalledOnly() {
+    return this == OPERATING_SYSTEMS;
   }
 
   /**

@@ -16,6 +16,10 @@ import org.jspecify.annotations.NonNull;
  * und Toxine kosten "pro Dosis" (S. 382). {@link #cost()} ist der Preis einer Packung von {@link
  * #packSize()} Einheiten.
  *
+ * <p><b>Preisbänder:</b> Die Matrixprogramme haben zwei Preisspalten, "Preis (bis Stufe 3)" und
+ * "Preis (bis Stufe 6)" (S. 376, z.B. Hacking "Stufe x 500 ¥" bzw. "Stufe x 1.000 ¥"). {@link
+ * #cost()} gilt dann bis Stufe 3, {@link #highCost()} ab Stufe {@value #HIGH_COST_FROM_RATING}.
+ *
  * <p><b>Preisspanne:</b> Bei Einträgen wie "5–200+ ¥" (Sim-Aufzeichnung, S. 377) oder "100+ ¥"
  * (Sim-Modul, S. 374) gibt der Spieler den Preis selbst ein; {@link #cost()} ist dann der
  * GRW-Mindestpreis, nach oben ist der Preis offen (Nutzerentscheidung 2026-10-04).
@@ -23,7 +27,14 @@ import org.jspecify.annotations.NonNull;
  * @param minRating    niedrigste Stufe (bzw. Kraft); {@code 0} bei Gegenständen ohne Stufe
  * @param maxRating    höchste Stufe laut Tabelle ("Stufe 1–6"); {@code 0} ohne Stufe
  * @param deviceRating feste Gerätestufe laut Elektroniktabellen (S. 374), {@code 0} ohne Angabe
- * @param cost         Preisformel je Packung, bei Preisspanne der Mindestpreis
+ * @param processor    Prozessor eines Kommlinks (S. 374), sonst {@code 0}
+ * @param signal       Signal eines Kommlinks (S. 374), sonst {@code 0}
+ * @param firewall     Firewall eines Betriebssystems (S. 374), sonst {@code 0}
+ * @param system       System eines Betriebssystems (S. 374), sonst {@code 0}
+ * @param cost         Preisformel je Packung, bei Preisspanne der Mindestpreis; bei zwei Preisbändern
+ *                     der Preis bis Stufe 3
+ * @param highCost     Preisformel ab Stufe {@value #HIGH_COST_FROM_RATING} (Matrixprogramme), sonst
+ *                     leer
  * @param packSize     Anzahl Einheiten, für die {@link #cost()} gilt (mindestens 1)
  * @param variableCost ob der Preis eine Spanne ist, die der Spieler festlegt
  * @param extraKind    ob und wie ein Zusatztext beim Kauf anzugeben ist
@@ -36,8 +47,13 @@ public record GearData(
     int minRating,
     int maxRating,
     int deviceRating,
+    int processor,
+    int signal,
+    int firewall,
+    int system,
     @NonNull Availability availability,
     @NonNull String cost,
+    @NonNull String highCost,
     int packSize,
     @NonNull GearUnit unit,
     boolean variableCost,
@@ -47,6 +63,9 @@ public record GearData(
     @NonNull String source,
     @NonNull String page
 ) implements CatalogEntry {
+
+  /** Erste Stufe der Preisspalte "Preis (bis Stufe 6)" der Matrixprogramme (GRW S. 376). */
+  public static final int HIGH_COST_FROM_RATING = 4;
 
   public GearData {
     if (packSize < 1) {
@@ -77,13 +96,31 @@ public record GearData(
     return extraKind != ExtraKind.NONE;
   }
 
-  /** Ob {@code quantity} eine zulässige Menge ist: mindestens eine Packung, ganze Packungen. */
+  /**
+   * Ob der Gegenstand nur einzeln gekauft wird: Kommlinks, weil jedes sein eigenes Betriebssystem
+   * aufnimmt, und Betriebssysteme, weil sie in genau einem Kommlink stecken.
+   */
+  public boolean isSingleItem() {
+    return category.acceptsInstalls() || category.isInstalledOnly();
+  }
+
+  /**
+   * Ob {@code quantity} eine zulässige Menge ist: mindestens eine Packung, ganze Packungen; bei
+   * {@link #isSingleItem()} genau 1.
+   */
   public boolean isValidQuantity(int quantity) {
+    if (isSingleItem()) {
+      return quantity == 1;
+    }
     return quantity >= packSize && quantity % packSize == 0;
   }
 
-  /** Preis einer Packung in der angegebenen Stufe (bei Preisspanne der Mindestpreis). */
+  /**
+   * Preis einer Packung in der angegebenen Stufe (bei Preisspanne der Mindestpreis, bei zwei
+   * Preisbändern ab Stufe {@value #HIGH_COST_FROM_RATING} laut {@link #highCost()}).
+   */
   public int packCostFor(int rating) {
-    return RatingFormula.evaluate(cost, rating).setScale(0, RoundingMode.HALF_UP).intValueExact();
+    String formula = !highCost.isEmpty() && rating >= HIGH_COST_FROM_RATING ? highCost : cost;
+    return RatingFormula.evaluate(formula, rating).setScale(0, RoundingMode.HALF_UP).intValueExact();
   }
 }

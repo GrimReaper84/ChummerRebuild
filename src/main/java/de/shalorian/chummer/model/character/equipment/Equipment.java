@@ -291,9 +291,14 @@ public class Equipment {
     return item;
   }
 
-  /** Entfernt genau diesen Gegenstand samt seiner ganzen Menge. */
+  /**
+   * Entfernt genau diesen Gegenstand samt seiner ganzen Menge und seiner Einbauten; ist er selbst
+   * eingebaut (Betriebssystem), wird er aus seinem Gerät ausgebaut.
+   */
   public void removeGear(@NonNull Gear item) {
-    gear.remove(item);
+    if (!gear.remove(item)) {
+      gear.forEach(device -> device.uninstall(item));
+    }
   }
 
   /** Gesamtpreis aller gekauften Ausrüstungsgegenstände in Nuyen. */

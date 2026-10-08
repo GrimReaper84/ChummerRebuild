@@ -35,6 +35,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
@@ -46,7 +47,8 @@ import org.tbee.javafx.scene.layout.MigPane;
  * Auswahl entfernen), links ein Baum der gekauften Gegenstände, rechts ein Detailbereich mit den
  * Werten und einem Mengen-Stepper. Abweichend vom Original gruppiert der Baum nach Bereich der
  * GRW-Ausrüstungsliste ({@link GearArea}); Lagerorte, "Equipped", Kommlink-Schalter und Fokusbindung
- * fehlen bewusst ({@code docs/plaene/gear_plan.md} Abschnitt 7).
+ * fehlen bewusst ({@code docs/plaene/gear_plan.md} Abschnitt 7). Das Betriebssystem eines Kommlinks
+ * hängt als Kindknoten unter dem Kommlink und wird über "Betriebssystem installieren" gekauft.
  *
  * <p>Nach jeder Änderung wird der Tab neu aufgebaut und die Auswahl erhalten. Gear hängt nicht an
  * Attributen oder Fertigkeiten, daher gibt es keinen Refresh des Detailbereichs.
@@ -97,7 +99,7 @@ final class GearTabBuilder {
 
   /**
    * Füllt den Baum: je belegtem Bereich ein aufgeklappter Knoten in GRW-Reihenfolge, darunter die
-   * Gegenstände in Kaufreihenfolge.
+   * Gegenstände in Kaufreihenfolge und unter diesen ihre Einbauten.
    *
    * @return der Knoten von {@code selected}, oder {@code null}
    */
@@ -113,9 +115,17 @@ final class GearTabBuilder {
             return item;
           });
       TreeItem<GearTreeEntry> item = new TreeItem<>(GearTreeEntry.ofGear(gear));
+      item.setExpanded(true);
       group.getChildren().add(item);
       if (gear == selected) {
         selectedItem = item;
+      }
+      for (Gear child : gear.getInstalled()) {
+        TreeItem<GearTreeEntry> childItem = new TreeItem<>(GearTreeEntry.ofGear(child));
+        item.getChildren().add(childItem);
+        if (child == selected) {
+          selectedItem = childItem;
+        }
       }
     }
     TreeItem<GearTreeEntry> root = new TreeItem<>();
@@ -152,6 +162,32 @@ final class GearTabBuilder {
     useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(e -> onAddGear(character));
 
+    Button installBtn = new Button("Betriebssystem installieren");
+    installBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(installBtn, FontAwesomeSolid.MICROCHIP);
+    // Bindung an die Baumauswahl (UI-Zustand); die Kategorie eines Gegenstands ändert sich nie.
+    installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+      Gear gear = selectedGear(tree);
+      return gear == null || !gear.getData().category().acceptsInstalls();
+    }, tree.getSelectionModel().selectedItemProperty()));
+    installBtn.setOnAction(e -> {
+      Gear gear = selectedGear(tree);
+      if (gear == null) {
+        return;
+      }
+      // Prüfung im Handler statt Sperre aus Live-Zustand (Projektregeln §8)
+      if (!gear.getInstalled().isEmpty()) {
+        Notifications.create()
+            .title("Betriebssystem vorhanden")
+            .text(gear.getName() + " hat bereits ein Betriebssystem; zuerst entfernen.")
+            .position(Pos.BOTTOM_RIGHT)
+            .owner(container.getScene().getWindow())
+            .showWarning();
+        return;
+      }
+      onInstall(character, gear);
+    });
+
     Button removeBtn = new Button("Ausgewählten Gegenstand entfernen");
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
@@ -170,7 +206,7 @@ final class GearTabBuilder {
     toolbar.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    toolbar.getChildren().addAll(spacer, removeBtn, addBtn);
+    toolbar.getChildren().addAll(spacer, removeBtn, installBtn, addBtn);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
   }
@@ -196,12 +232,22 @@ final class GearTabBuilder {
         detailKey("Stufe"), detailValue(d.rating()));
     addRowCells(grid, 1, detailKey("Gerätestufe"), detailValue(d.deviceRating()),
         detailKey("Verf."), detailValue(d.availability()));
-    addRowCells(grid, 2, detailKey("Menge"), buildQuantityStepper(gear, character),
+    // Einzelstücke (Kommlink, Betriebssystem) haben keine veränderliche Menge.
+    addRowCells(grid, 2, detailKey("Menge"), gear.getData().isSingleItem()
+            ? detailValue(d.quantity()) : buildQuantityStepper(gear, character),
         detailKey("Preis"), detailValue(d.packPrice()));
-    addRowCells(grid, 3, detailKey("Gesamtpreis"), detailValue(d.totalCost()),
+    addRowCells(grid, 3, detailKey(gear.getInstalled().isEmpty()
+            ? "Gesamtpreis" : "Gesamtpreis (inkl. Betriebssystem)"), detailValue(d.totalCost()),
         detailKey("Quelle"), detailValue(d.source()));
+    int row = 4;
     if (!d.extraLabel().isEmpty()) {
-      addRowCells(grid, 4, detailKey(d.extraLabel()), detailValue(d.extra()));
+      addRowCells(grid, row++, detailKey(d.extraLabel()), detailValue(d.extra()));
+    }
+    if (d.commlink()) {
+      addRowCells(grid, row++, detailKey("Prozessor"), detailValue(d.processor()),
+          detailKey("Signal"), detailValue(d.signal()));
+      addRowCells(grid, row, detailKey("Firewall"), detailValue(d.firewall()),
+          detailKey("System"), detailValue(d.system()));
     }
     details.getChildren().addAll(title, grid);
     if (!d.note().isEmpty()) {
@@ -268,6 +314,33 @@ final class GearTabBuilder {
           return;
         }
         onGearChanged(character, character.getEquipment().addGear(gear));
+      });
+    } catch (IOException e) {
+      host.showDialogLoadError();
+    }
+  }
+
+  /**
+   * Öffnet den Auswahldialog gefiltert auf Betriebssysteme und installiert die Auswahl im Kommlink
+   * {@code device}. Im Karrieremodus wird der Preis nach Bestätigung abgebucht.
+   */
+  private void onInstall(@NonNull Character character, @NonNull Gear device) {
+    try {
+      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml",
+          "Betriebssystem für " + device.getDisplayName());
+      GearSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setInstallTarget(character, device);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(child -> {
+        if (character.isCreated() && host.nuyenChargeFailed(character,
+            "Kauf: " + child.getDisplayName() + " für " + device.getDisplayName(),
+            child.getNuyenCost())) {
+          return;
+        }
+        device.install(child);
+        onGearChanged(character, child);
       });
     } catch (IOException e) {
       host.showDialogLoadError();

@@ -76,7 +76,6 @@ public class GearDataLoader {
       minRating = Integer.parseInt(rating.substring(0, dash).trim());
       maxRating = Integer.parseInt(rating.substring(dash + 1).trim());
     }
-    String device = childText(el, "device");
     String costFor = childText(el, "costfor");
     Element extra = firstChild(el, "extra");
     return new GearData(
@@ -84,9 +83,14 @@ public class GearDataLoader {
         GearCategory.fromDisplayName(childText(el, "category")),
         minRating,
         maxRating,
-        device.isEmpty() ? 0 : Integer.parseInt(device),
+        optionalInt(el, "device"),
+        optionalInt(el, "processor"),
+        optionalInt(el, "signal"),
+        optionalInt(el, "firewall"),
+        optionalInt(el, "system"),
         Availability.parse(childText(el, "avail"), childText(el, "legality")),
         childText(el, "cost"),
+        childText(el, "costhigh"),
         costFor.isEmpty() ? 1 : Integer.parseInt(costFor),
         GearUnit.fromSingular(childText(el, "unit")),
         Boolean.parseBoolean(childText(el, "variablecost")),
@@ -95,6 +99,12 @@ public class GearDataLoader {
         childText(el, "note"),
         childText(el, "source"),
         childText(el, "page"));
+  }
+
+  /** Ganzzahl aus einem optionalen Element, {@code 0} wenn es fehlt. */
+  private static int optionalInt(@NonNull Element el, @NonNull String tag) {
+    String text = childText(el, tag);
+    return text.isEmpty() ? 0 : Integer.parseInt(text);
   }
 
   /** {@code <extra>} ohne Attribut = Freitext, {@code kind="LICENSE"} = Lizenz-Vorauswahl. */

@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character.equipment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.armor.Armor;
@@ -73,5 +74,31 @@ class EquipmentGearTest {
 
     equipment.removeGear(rope);
     assertEquals(0, equipment.getGearNuyenCost());
+  }
+
+  @Test
+  void commlinkWithOperatingSystemCountsBothAndRemovesInstalledSystemOnly() {
+    // Hermes Ikon 3.000 ¥ + Novatech Navi 1.500 ¥ (GRW S. 374)
+    Character c = mensch();
+    Gear commlink = c.getEquipment().addGear(new Gear(find("Hermes Ikon"), 0));
+    Gear os = new Gear(find("Novatech Navi"), 0);
+    commlink.install(os);
+    assertEquals(4_500, c.getEquipment().getGearNuyenCost());
+
+    c.getEquipment().removeGear(os);
+
+    assertTrue(commlink.getInstalled().isEmpty());
+    assertEquals(1, c.getEquipment().getGear().size());
+    assertEquals(3_000, c.getEquipment().getGearNuyenCost());
+  }
+
+  @Test
+  void twoCommlinksOfTheSameModelStaySeparate() {
+    Character c = mensch();
+    c.getEquipment().addGear(new Gear(find("Meta Link"), 0));
+    c.getEquipment().addGear(new Gear(find("Meta Link"), 0));
+
+    assertEquals(2, c.getEquipment().getGear().size());
+    assertEquals(200, c.getEquipment().getGearNuyenCost());
   }
 }

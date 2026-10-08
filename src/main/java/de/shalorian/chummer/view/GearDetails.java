@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view;
 
+import de.shalorian.chummer.model.character.gear.CommlinkStats;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearUnit;
@@ -18,6 +19,13 @@ import org.jspecify.annotations.NonNull;
  * @param packPrice    Preis je Packung, z.B. "1 ¥ pro 20 Stück", "10 ¥ pro Dosis"
  * @param totalCost    Preis der ganzen Menge
  * @param note         Hinweis aus Tabelle oder Text, sonst leer
+ * @param commlink     ob der Gegenstand ein Kommlink ist (dann sind die vier Matrixwerte belegt)
+ * @param processor    Prozessor eines Kommlinks, leer bei anderen Gegenständen (ebenso die drei
+ *                     folgenden Werte)
+ * @param signal       Signal eines Kommlinks
+ * @param firewall     Firewall des installierten Betriebssystems, "–" ohne Betriebssystem
+ * @param system       wirksames System, ggf. mit Hinweis auf die Begrenzung durch den Prozessor
+ *                     (GRW S. 260)
  */
 record GearDetails(
     @NonNull String name,
@@ -31,13 +39,19 @@ record GearDetails(
     @NonNull String packPrice,
     @NonNull String totalCost,
     @NonNull String source,
-    @NonNull String note
+    @NonNull String note,
+    boolean commlink,
+    @NonNull String processor,
+    @NonNull String signal,
+    @NonNull String firewall,
+    @NonNull String system
 ) {
 
   private static final String NO_VALUE = "–";
 
   static @NonNull GearDetails of(@NonNull Gear gear) {
     GearData data = gear.getData();
+    CommlinkStats stats = gear.getCommlinkStats();
     return new GearDetails(
         gear.getDisplayName(),
         data.category().getDisplayName(),
@@ -50,7 +64,25 @@ record GearDetails(
         packPriceText(gear),
         gear.getNuyenCost() + " ¥",
         data.source() + " S. " + data.page(),
-        data.note());
+        data.note(),
+        stats != null,
+        stats == null ? "" : String.valueOf(stats.processor()),
+        stats == null ? "" : String.valueOf(stats.signal()),
+        stats == null ? "" : orNoValue(stats.firewall()),
+        stats == null ? "" : systemText(stats));
+  }
+
+  private static @NonNull String orNoValue(int value) {
+    return value > 0 ? String.valueOf(value) : NO_VALUE;
+  }
+
+  /** z.B. "3", "1 (auf Prozessor begrenzt, Betriebssystem 3)" oder "–" ohne Betriebssystem. */
+  private static @NonNull String systemText(@NonNull CommlinkStats stats) {
+    if (!stats.isSystemCapped()) {
+      return orNoValue(stats.system());
+    }
+    return stats.system() + " (auf Prozessor begrenzt, Betriebssystem " + stats.nominalSystem()
+        + ")";
   }
 
   /** z.B. "800 ¥ pro Stück", "1 ¥ pro 20 Stück", "50 ¥ pro 100 m", "25000 ¥ pro Jahr". */

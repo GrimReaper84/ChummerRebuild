@@ -1,6 +1,8 @@
 package de.shalorian.chummer.view;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearData;
@@ -39,6 +41,30 @@ class GearDetailsTest {
     assertEquals("1 ¥ pro 20 Stück", d.packPrice());
     assertEquals("2 ¥", d.totalCost());
     assertEquals("–", d.availability());
+  }
+
+  @Test
+  void commlinkShowsMatrixValuesWithCappedSystem() {
+    Gear commlink = new Gear(find("Meta Link"), 0);
+    commlink.install(new Gear(find("Iris Orb"), 0));
+    GearDetails d = GearDetails.of(commlink);
+
+    assertTrue(d.commlink());
+    assertEquals("1", d.processor());
+    assertEquals("2", d.signal());
+    assertEquals("3", d.firewall());
+    assertEquals("1 (auf Prozessor begrenzt, Betriebssystem 3)", d.system());
+    assertEquals("100 ¥ pro Stück", d.packPrice());
+    assertEquals("1100 ¥", d.totalCost());
+  }
+
+  @Test
+  void commlinkWithoutOperatingSystemAndOtherGear() {
+    GearDetails commlink = GearDetails.of(new Gear(find("CMT Clip"), 0));
+    assertEquals("–", commlink.firewall());
+    assertEquals("–", commlink.system());
+
+    assertFalse(GearDetails.of(new Gear(find("Survival-Kit"), 0)).commlink());
   }
 
   @Test

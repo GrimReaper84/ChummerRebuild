@@ -55,6 +55,41 @@ class CharacterStoreGearRoundtripTest {
   }
 
   @Test
+  void roundtripPreservesInstalledOperatingSystem() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    Gear commlink = original.getEquipment().addGear(new Gear(find("Renraku Sensei"), 0));
+    commlink.install(new Gear(find("Mangadyne Deva"), 0));
+    original.getEquipment().addGear(new Gear(find("Meta Link"), 0));
+
+    CharacterStore.save(original, tempFile());
+    List<Gear> gear = CharacterStore.load(tempFile()).getEquipment().getGear();
+
+    assertEquals(2, gear.size());
+    assertEquals("Mangadyne Deva", gear.get(0).getInstalled().get(0).getName());
+    assertTrue(gear.get(1).getInstalled().isEmpty());
+    assertEquals(1_800, gear.get(0).getNuyenCost());
+  }
+
+  @Test
+  void unfittingInstalledGearIsSkipped() throws IOException {
+    Files.writeString(tempFile().toPath(), """
+        {"name":"Alt","metatype":"Mensch",
+         "gear":[{"name":"Meta Link","rating":0,"quantity":1,"extra":"",
+                  "installed":[{"name":"Vector Xim","rating":0,"quantity":1,"extra":""},
+                               {"name":"Redcap Nix","rating":0,"quantity":1,"extra":""},
+                               {"name":"Survival-Kit","rating":0,"quantity":1,"extra":""}]},
+                 {"name":"Meta Link","rating":0,"quantity":3,"extra":""},
+                 {"name":"Iris Orb","rating":0,"quantity":1,"extra":""}]}
+        """, StandardCharsets.UTF_8);
+
+    List<Gear> gear = CharacterStore.load(tempFile()).getEquipment().getGear();
+
+    assertEquals(1, gear.size());
+    assertEquals(1, gear.get(0).getInstalled().size());
+    assertEquals("Vector Xim", gear.get(0).getInstalled().get(0).getName());
+  }
+
+  @Test
   void fileWithoutGearNodeLoadsWithoutGear() throws IOException {
     Files.writeString(tempFile().toPath(), "{\"name\":\"Alt\",\"metatype\":\"Mensch\"}",
         StandardCharsets.UTF_8);

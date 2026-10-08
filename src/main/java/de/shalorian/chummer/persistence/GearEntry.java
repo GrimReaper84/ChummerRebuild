@@ -1,5 +1,7 @@
 package de.shalorian.chummer.persistence;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -14,6 +16,8 @@ class GearEntry {
   public @NonNull String extra = "";
   /** Gewählter Packungspreis bei Preisspanne, sonst {@code null}. */
   public @Nullable Integer packPrice;
+  /** Einbauten, z.B. das Betriebssystem eines Kommlinks; fehlt in Dateien vor Gear Teil B. */
+  public @NonNull List<GearEntry> installed = new ArrayList<>();
 
   public GearEntry() {
   }

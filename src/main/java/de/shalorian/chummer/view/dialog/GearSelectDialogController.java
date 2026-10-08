@@ -36,6 +36,10 @@ import org.jspecify.annotations.Nullable;
  * Charaktererschaffung sichtbar, aber deaktiviert (GRW S. 111, siehe {@link
  * Equipment#isAvailableForPurchase(Availability, int)}). Die Werte prüft {@link Gear} selbst; der
  * Dialog bietet OK erst an, wenn sich daraus ein gültiger Gegenstand bauen lässt.
+ *
+ * <p>Mit {@link #setInstallTarget(Character, Gear)} dient der Dialog dem Einbau in ein Gerät (Gear
+ * Teil B: Betriebssystem im Kommlink) und zeigt nur einbaubare Einträge. Ohne Zielgerät sind diese
+ * sichtbar, aber deaktiviert, weil sie nur als Einbau gekauft werden.
  */
 public class GearSelectDialogController extends CatalogSelectDialogController<GearData> {
 
@@ -75,6 +79,8 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   private @Nullable Stage stage;
   private @Nullable Character character;
   private @Nullable Gear result;
+  /** Gerät, in das die Auswahl eingebaut wird, oder {@code null} beim normalen Kauf. */
+  private @Nullable Gear installTarget;
   /** Eintrag, für den Stufe, Menge, Zusatztext und Preis zuletzt eingerichtet wurden. */
   private @Nullable GearData configuredFor;
 
@@ -111,6 +117,26 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     updateList();
   }
 
+  /** Kauf eines Einbaus (Betriebssystem) für {@code target}; nur einbaubare Einträge erscheinen. */
+  public void setInstallTarget(@NonNull Character character, @NonNull Gear target) {
+    this.character = character;
+    this.installTarget = target;
+    refreshCategoryOptions();
+    updateList();
+  }
+
+  /**
+   * Warum {@code data} hier nicht gekauft werden kann (außer Verfügbarkeit/Stufe), oder {@code null}:
+   * Einbauten nur über ihr Gerät, und das Zielgerät muss den Einbau aufnehmen können.
+   */
+  private @Nullable String purchaseProblem(@NonNull GearData data) {
+    if (installTarget != null) {
+      return installTarget.installProblem(data);
+    }
+    return data.category().isInstalledOnly()
+        ? "Wird über „Betriebssystem installieren“ in einem Kommlink gekauft." : null;
+  }
+
   private boolean isAvailable(@NonNull GearData data, int rating) {
     return character == null
         || character.getEquipment().isAvailableForPurchase(data.availability(), rating);
@@ -121,16 +147,31 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     return selected == null || isAvailable(selected, rating);
   }
 
-  /** Ein Gegenstand ist wählbar, wenn wenigstens seine niedrigste Stufe verfügbar ist. */
+  /**
+   * Ein Gegenstand ist wählbar, wenn wenigstens seine niedrigste Stufe verfügbar ist und er hier
+   * gekauft werden kann ({@link #purchaseProblem(GearData)}).
+   */
   @Override
   protected boolean isSelectable(@NonNull GearData data) {
-    return isAvailable(data, data.lowestRating());
+    return isAvailable(data, data.lowestRating()) && purchaseProblem(data) == null;
   }
 
-  /** Bereiche in der Reihenfolge der GRW-Ausrüstungsliste, nicht alphabetisch. */
+  /** Beim Einbau nur Einträge, die als Einbau gekauft werden. */
+  @Override
+  protected boolean additionalFilter(@NonNull GearData data) {
+    return installTarget == null || data.category().isInstalledOnly();
+  }
+
+  /**
+   * Bereiche in der Reihenfolge der GRW-Ausrüstungsliste, nicht alphabetisch; beim Einbau nur die
+   * Bereiche der einbaubaren Einträge.
+   */
   @Override
   protected @NonNull List<String> categoryOptions() {
-    return Arrays.stream(GearArea.values()).map(GearArea::getDisplayName).toList();
+    return Arrays.stream(GearArea.values())
+        .filter(area -> allEntries().stream()
+            .anyMatch(e -> e.category().area() == area && additionalFilter(e)))
+        .map(GearArea::getDisplayName).toList();
   }
 
   @Override
@@ -180,8 +221,10 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     }
 
     int pack = data.packSize();
+    int maxQuantity = data.isSingleItem() ? 1 : pack * MAX_PACKS;
     quantitySpinner.setValueFactory(
-        new SpinnerValueFactory.IntegerSpinnerValueFactory(pack, pack * MAX_PACKS, pack, pack));
+        new SpinnerValueFactory.IntegerSpinnerValueFactory(pack, maxQuantity, pack, pack));
+    quantitySpinner.setDisable(data.isSingleItem());
     unitLabel.setText(pack == 1 ? data.unit().getPlural()
         : data.unit().getPlural() + " (in Schritten von " + pack + ")");
 
@@ -232,7 +275,8 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     Gear selection = buildSelection();
     costLabel.setText(selection == null ? NO_VALUE : selection.getNuyenCost() + " ¥");
     sourceLabel.setText(selected.source() + " S. " + selected.page());
-    noteLabel.setText(noteText(selected));
+    String problem = purchaseProblem(selected);
+    noteLabel.setText(problem != null ? problem : noteText(selected));
     okButton.setDisable(selection == null);
   }
 
@@ -278,7 +322,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
       return null;
     }
     int rating = selectedRating(selected);
-    if (!isAvailable(selected, rating)) {
+    if (!isAvailable(selected, rating) || purchaseProblem(selected) != null) {
       return null;
     }
     try {

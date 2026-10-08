@@ -8,10 +8,14 @@
   <device> = feste Gerätestufe der Elektroniktabellen (S. 374).
   <avail>/<legality> wie armor.xml ("–" = leer). <cost> = Preis je Packung als Formel ("Stufe x 200 ¥" →
   "Rating * 200"). <costfor> = Packungsgröße (Standard 1), <unit> = Einheit der Menge (Standard Stück).
+  <processor>/<signal> = Kommlink-Werte, <firewall>/<system> = Betriebssystem-Werte (S. 374).
+  <costhigh> = zweites Preisband ab Stufe 4 ("Preis (bis Stufe 6)", Matrixprogramme S. 376).
   <variablecost>true</variablecost> = Preisspanne ("5-200+ ¥", "100+ ¥"): <cost> ist der Mindestpreis.
   <extra> = Pflicht-Zusatztext beim Kauf mit Feldbezeichnung; kind="LICENSE" = Lizenz-Vorauswahl.
 
-  Bewusst NICHT enthalten (spätere Gear-Teile): Kommlinks, Betriebssysteme, Matrixprogramme (B);
+  Gear Teil B: Kommlinks, Betriebssysteme, Matrixprogramme (S. 374/376), ebenfalls vom PDF-Bild.
+  Kommlink-Aufrüstungen fehlen (kein GRW-Preis, kommen mit "Vernetzt").
+  Bewusst NICHT enthalten (spätere Gear-Teile):
   Sensoren, Sicht-/Audioverstärkungen, Magschloss-Zusätze (C); Munition, Pfeile, Bolzen, Granaten,
   Raketen, Sprengstoffe (D). Kleidung gehört zum Rüstungs-Feature.
   Namen: Einträge, die im GRW nur unter ihrer Tabelle stehen ("Kiste", "Metall", "Heilung", "Gold"),
@@ -54,6 +58,145 @@
         <note>Stationäres Roboter-Dreibein für eine Smartgun-Waffe (Halterung Unterlauf); Pilot 3, Sensor 3, Zielerfassung-Autosoft Stufe 3 (GRW S. 368).</note>
         <source>SR4</source>
         <page>368</page>
+    </item>
+
+    <!-- ── Elektronik: Kommlink-Modell (Prozessor, Signal; ohne Verfügbarkeit) (S. 374) ── -->
+    <item>
+        <name>Meta Link</name>
+        <category>Kommlink-Modell</category>
+        <processor>1</processor>
+        <signal>2</signal>
+        <cost>100</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>CMT Clip</name>
+        <category>Kommlink-Modell</category>
+        <processor>1</processor>
+        <signal>3</signal>
+        <cost>300</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Sony Emperor</name>
+        <category>Kommlink-Modell</category>
+        <processor>2</processor>
+        <signal>3</signal>
+        <cost>700</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Renraku Sensei</name>
+        <category>Kommlink-Modell</category>
+        <processor>2</processor>
+        <signal>4</signal>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Novatech Airware</name>
+        <category>Kommlink-Modell</category>
+        <processor>3</processor>
+        <signal>3</signal>
+        <cost>1250</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Erika Elite</name>
+        <category>Kommlink-Modell</category>
+        <processor>3</processor>
+        <signal>4</signal>
+        <cost>2500</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Hermes Ikon</name>
+        <category>Kommlink-Modell</category>
+        <processor>4</processor>
+        <signal>3</signal>
+        <cost>3000</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Transys Avalon</name>
+        <category>Kommlink-Modell</category>
+        <processor>4</processor>
+        <signal>4</signal>
+        <cost>5000</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Fairlight Caliban</name>
+        <category>Kommlink-Modell</category>
+        <processor>4</processor>
+        <signal>5</signal>
+        <cost>8000</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+
+    <!-- ── Elektronik: Handelsübliche Betriebssysteme (Firewall, System; nur als Einbau im Kommlink) (S. 374) ── -->
+    <item>
+        <name>Vector Xim</name>
+        <category>Handelsübliche Betriebssysteme</category>
+        <firewall>1</firewall>
+        <system>1</system>
+        <cost>200</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Redcap Nix</name>
+        <category>Handelsübliche Betriebssysteme</category>
+        <firewall>1</firewall>
+        <system>2</system>
+        <cost>400</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Renraku Ichi</name>
+        <category>Handelsübliche Betriebssysteme</category>
+        <firewall>2</firewall>
+        <system>2</system>
+        <cost>600</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Mangadyne Deva</name>
+        <category>Handelsübliche Betriebssysteme</category>
+        <firewall>2</firewall>
+        <system>3</system>
+        <cost>800</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Iris Orb</name>
+        <category>Handelsübliche Betriebssysteme</category>
+        <firewall>3</firewall>
+        <system>3</system>
+        <cost>1000</cost>
+        <source>SR4</source>
+        <page>374</page>
+    </item>
+    <item>
+        <name>Novatech Navi</name>
+        <category>Handelsübliche Betriebssysteme</category>
+        <firewall>3</firewall>
+        <system>4</system>
+        <cost>1500</cost>
+        <source>SR4</source>
+        <page>374</page>
     </item>
 
     <!-- ── Elektronik: Zubehör (Gerätestufe laut Tabelle) (S. 374) ── -->
@@ -270,6 +413,72 @@
         <rating>1-6</rating>
         <avail>Rating + 1</avail>
         <cost>Rating * 50</cost>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+
+    <!-- ── Matrixprogramme (zwei Preisbänder: <cost> bis Stufe 3, <costhigh> ab Stufe 4; Pilotstufe = Stufe) (S. 376) ── -->
+    <item>
+        <name>Matrixprogramm (Standard)</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <costhigh>Rating * 100</costhigh>
+        <extra>Programm</extra>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Matrixprogramm (Hacking)</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <extra>Programm</extra>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Matrixprogramm (Agent/IC/Pilot)</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 3</avail>
+        <cost>Rating * 1000</cost>
+        <costhigh>Rating * 2500</costhigh>
+        <extra>Programm</extra>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Matrixprogramm (System)</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 200</cost>
+        <costhigh>Rating * 500</costhigh>
+        <note>Einzelnes Systemprogramm; wird nicht mit den Werten eines Kommlinks verrechnet (dafür „Betriebssystem installieren“).</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Matrixprogramm (Firewall)</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 200</cost>
+        <costhigh>Rating * 500</costhigh>
+        <note>Einzelnes Systemprogramm; wird nicht mit den Werten eines Kommlinks verrechnet (dafür „Betriebssystem installieren“).</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Autosoft</name>
+        <category>Matrixprogramme</category>
+        <rating>1-4</rating>
+        <avail>Rating * 2</avail>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <extra>Autosoft</extra>
         <source>SR4</source>
         <page>376</page>
     </item>

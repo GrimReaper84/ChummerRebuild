@@ -22,6 +22,9 @@ class GearCategoryTest {
   @Test
   void categoriesBelongToTheirRulebookArea() {
     assertEquals(GearArea.ELECTRONICS, GearCategory.RFID_TAGS.area());
+    assertEquals(GearArea.ELECTRONICS, GearCategory.COMMLINKS.area());
+    assertEquals(GearArea.ELECTRONICS, GearCategory.OPERATING_SYSTEMS.area());
+    assertEquals(GearArea.DATACHIPS_AND_SOFTWARE, GearCategory.MATRIX_PROGRAMS.area());
     assertEquals(GearArea.DATACHIPS_AND_SOFTWARE, GearCategory.SKILLSOFTS.area());
     assertEquals(GearArea.SECURITY, GearCategory.RESTRAINTS.area());
     assertEquals(GearArea.CHEMICALS_AND_DRUGS, GearCategory.TOXINS.area());
@@ -35,6 +38,15 @@ class GearCategoryTest {
       assertEquals(category, GearCategory.fromDisplayName(category.getDisplayName()));
     }
     assertThrows(IllegalArgumentException.class, () -> GearCategory.fromDisplayName("Zubehör"));
+  }
+
+  @Test
+  void onlyCommlinksTakeInstallsAndOnlyOperatingSystemsAreInstalledOnly() {
+    for (GearCategory category : GearCategory.values()) {
+      assertEquals(category == GearCategory.COMMLINKS, category.acceptsInstalls(), category.name());
+      assertEquals(category == GearCategory.OPERATING_SYSTEMS, category.isInstalledOnly(),
+          category.name());
+    }
   }
 
   @Test
