@@ -97,7 +97,7 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
     return problem(data) == null;
   }
 
-  /** Halterungen in der Reihenfolge der GRW-Aufzählung, dazu Zubehör ohne Halterung. */
+  /** Halterungen laut GRW-Aufzählung, dazu Zubehör ohne Halterung. */
   @Override
   protected @NonNull List<String> categoryOptions() {
     List<String> options = new ArrayList<>(

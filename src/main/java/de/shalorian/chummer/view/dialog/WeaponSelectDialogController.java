@@ -21,11 +21,11 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Auswahl-Dialog für Waffen (GRW-Tabellen S. 361, 363, 366) mit Kategorie-Filter in GRW-Reihenfolge
- * und Info-Bereich mit den Tabellenwerten. Nur der Bogen hat eine Stufen-Auswahl (Mindeststärke).
- * Waffen und einzelne Bogenstufen, deren Verfügbarkeit bei der Charaktererschaffung über 12 liegt,
- * bleiben sichtbar, aber deaktiviert (GRW S. 111, siehe {@link
- * Equipment#isAvailableForPurchase(Availability, int)}).
+ * Auswahl-Dialog für Waffen (GRW-Tabellen S. 361, 363, 366) mit Kategorie-Filter und Info-Bereich
+ * mit den Tabellenwerten. Nur der Bogen hat eine Stufen-Auswahl (Mindeststärke). Waffen und
+ * einzelne Bogenstufen, deren Verfügbarkeit bei der Charaktererschaffung über 12 liegt, bleiben
+ * sichtbar, aber deaktiviert (GRW S. 111, siehe
+ * {@link Equipment#isAvailableForPurchase(Availability, int)}).
  */
 public class WeaponSelectDialogController extends CatalogSelectDialogController<WeaponData> {
 
@@ -98,7 +98,7 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
     return isAvailable(data, data.lowestRating());
   }
 
-  /** Kategorien in der Reihenfolge der GRW-Tabellen, nicht alphabetisch. */
+  /** Kategorien = GRW-Tabellen der Waffen. */
   @Override
   protected @NonNull List<String> categoryOptions() {
     return Arrays.stream(WeaponCategory.values()).map(WeaponCategory::getDisplayName).toList();

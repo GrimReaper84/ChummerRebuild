@@ -27,11 +27,11 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Auswahl-Dialog für die übrige Ausrüstung (GRW-Tabellen S. 368, 374–385, 395) mit Bereichs-Filter
- * in GRW-Reihenfolge. Je nach Katalogeintrag gibt es eine Stufen-Auswahl, eine Menge in
- * Packungsschritten (z.B. RFID-Marker "pro 20 Stück", GRW S. 374), einen Pflicht-Zusatztext (bei
- * gefälschten Lizenzen mit Vorauswahl, GRW S. 377/131) und bei Preisspannen ein Preisfeld, dessen
- * Untergrenze der GRW-Mindestpreis ist (Nutzerentscheidung 2026-10-04).
+ * Auswahl-Dialog für die übrige Ausrüstung (GRW-Tabellen S. 361–395) mit Bereichs-Filter. Je nach
+ * Katalogeintrag gibt es eine Stufen-Auswahl, eine Menge in Packungsschritten (z.B. RFID-Marker
+ * "pro 20 Stück", GRW S. 374), einen Pflicht-Zusatztext (bei gefälschten Lizenzen mit Vorauswahl,
+ * GRW S. 377/131) und bei Preisspannen ein Preisfeld, dessen Untergrenze der GRW-Mindestpreis ist
+ * (Nutzerentscheidung 2026-10-04).
  *
  * <p>Gegenstände und einzelne Stufen über Stufe 6 bzw. Verfügbarkeit 12 bleiben bei der
  * Charaktererschaffung sichtbar, aber deaktiviert (GRW S. 111, siehe {@link
@@ -196,8 +196,8 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   }
 
   /**
-   * Bereiche in der Reihenfolge der GRW-Ausrüstungsliste, nicht alphabetisch; beim Einbau nur die
-   * Bereiche der einbaubaren Einträge.
+   * Bereiche der GRW-Ausrüstungsliste; beim Einbau bzw. für Pfeile nur die Bereiche der passenden
+   * Einträge.
    */
   @Override
   protected @NonNull List<String> categoryOptions() {

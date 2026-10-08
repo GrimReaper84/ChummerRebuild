@@ -304,6 +304,8 @@
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
 | Drucken / Export / Charakterbogen                                    | ❌      | **Niedrige Priorität** (2026-08-04): keine Charakterbogen-Vorlage/Formular im GRW-Text gefunden — reines Tool-Feature ohne Regelwerk-Bezug |
+| Kategorie-Dropdowns alphabetisch                                     | ✅      | Nutzervorgabe 2026-10-08: zentral in `CatalogSelectDialogController.refreshCategoryOptions()` (deutsche Sortierung, "Alle" oben); ersetzt die GRW-Reihenfolge der Ausrüstungs-/Waffen-Pläne |
+| Icon für "Pfeile hinzufügen" (Waffen-Tab)                           | ❌      | **Notiz (Nutzerwunsch 2026-10-08):** das Bullseye-Icon passt nicht; ein anderes FontAwesome-Icon suchen oder den Button als Text-Button belassen |
 | Einstellbare Zahlendarstellung (QoL)                                 | ❌      | **Notiz (Nutzerwunsch 2026-09-30):** später umschaltbar machen, ob Tausender mit Punkt gruppiert werden ("1.500" wie im GRW vs. "1500") und ob Dezimalzahlen Komma oder Punkt nutzen (z.B. Essenz "5,8" vs. "5.8"). Derzeit überall ohne Tausenderpunkt (Preise, Reichweiten). Umsetzung dann zentral über eine Formatierungsstelle statt verstreuter String-Verkettung |
 
 ---

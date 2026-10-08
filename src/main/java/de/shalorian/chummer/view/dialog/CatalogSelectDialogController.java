@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import java.text.Collator;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -36,9 +37,7 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
 
   @FXML
   public void initialize() {
-    categoryBox.getItems().add(CATEGORY_ALL);
-    categoryBox.getItems().addAll(categoryOptions());
-    categoryBox.setValue(CATEGORY_ALL);
+    refreshCategoryOptions();
 
     categoryBox.valueProperty().addListener((obs, old, val) -> updateList());
     searchField.textProperty().addListener((obs, old, val) -> updateList());
@@ -60,16 +59,22 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
 
   /**
    * Baut die Kategorie-Auswahl neu aus {@link #categoryOptions()} auf und setzt sie auf "Alle" zurück —
-   * für Subklassen, deren Kategorien von einem erst nach {@link #initialize()} gesetzten Zustand
-   * abhängen (z.B. Cyberware- vs. Bioware-Kategorien).
+   * auch für Subklassen, deren Kategorien von einem erst nach {@link #initialize()} gesetzten Zustand
+   * abhängen (z.B. Cyberware- vs. Bioware-Kategorien). Die Kategorien stehen alphabetisch (deutsche
+   * Sortierung, Umlaute wie im Wörterbuch) unter "Alle" (Nutzervorgabe 2026-10-08, gilt für alle
+   * Kategorie-Dropdowns).
    */
   protected void refreshCategoryOptions() {
+    Collator collator = Collator.getInstance(Locale.GERMAN);
     categoryBox.getItems().setAll(CATEGORY_ALL);
-    categoryBox.getItems().addAll(categoryOptions());
+    categoryBox.getItems().addAll(categoryOptions().stream().sorted(collator).toList());
     categoryBox.setValue(CATEGORY_ALL);
   }
 
-  /** Kategorie-Bezeichnungen (ohne {@code "Alle"}, das wird automatisch vorangestellt). */
+  /**
+   * Kategorie-Bezeichnungen (ohne {@code "Alle"}, das wird automatisch vorangestellt); die Reihenfolge
+   * spielt keine Rolle, sortiert wird in {@link #refreshCategoryOptions()}.
+   */
   protected abstract @NonNull List<String> categoryOptions();
 
   /** Der vollständige, ungefilterte Katalog. */
