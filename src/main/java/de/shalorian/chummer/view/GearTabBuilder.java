@@ -5,19 +5,16 @@ import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearCombatStats;
-import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
@@ -240,7 +237,9 @@ final class GearTabBuilder {
         detailKey("Verf."), detailValue(d.availability()));
     // Einzelstücke (Geräte mit Einbauten und Einbauten selbst) haben keine veränderliche Menge.
     addRowCells(grid, 2, detailKey("Menge"), gear.getData().isSingleItem()
-            ? detailValue(d.quantity()) : buildQuantityStepper(gear, character),
+            ? detailValue(d.quantity())
+            : GearQuantityStepper.create(gear, character, host,
+                () -> onGearChanged(character, gear)),
         detailKey("Preis"), detailValue(d.packPrice()));
     addRowCells(grid, 3, detailKey(gear.getInstalled().isEmpty()
             ? "Gesamtpreis" : "Gesamtpreis (inkl. Einbauten)"), detailValue(d.totalCost()),
@@ -251,7 +250,7 @@ final class GearTabBuilder {
     }
     GearCombatStats combat = d.combat();
     if (combat != null) {
-      boolean ammo = d.isAmmunition();
+      boolean ammo = d.ammunition();
       addRowCells(grid, row++, detailKey(ammo ? "Schadensmod." : "Schaden"),
           detailValue(combat.damage()), detailKey(ammo ? "PB-Mod." : "PB"),
           detailValue(combat.armorPiercing()));
@@ -274,42 +273,6 @@ final class GearTabBuilder {
       details.getChildren().add(note);
     }
   }
-
-  /**
-   * Mengen-Stepper in Packungsschritten. Erhöhen kostet im Karrieremodus Nuyen über das Log,
-   * Verringern gilt als Verbrauch und erstattet nichts (Nutzerentscheidung 2026-10-04). Mindestens
-   * eine Packung bleibt; ganz entfernen geht über die Werkzeugleiste.
-   */
-  private @NonNull HBox buildQuantityStepper(@NonNull Gear gear, @NonNull Character character) {
-    GearData data = gear.getData();
-    Button minus = new Button("−");
-    Label quantity = new Label(data.unit().format(gear.getQuantity()));
-    Button plus = new Button("+");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    quantity.getStyleClass().add(STYLE_DETAIL_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
-    // Der Tab wird nach jeder Mengenänderung neu aufgebaut, daher bleibt dieser Zustand aktuell.
-    minus.setDisable(!gear.canRemovePack());
-    minus.setOnAction(e -> {
-      if (gear.canRemovePack()) {
-        gear.removePack();
-        onGearChanged(character, gear);
-      }
-    });
-    plus.setOnAction(e -> {
-      if (character.isCreated() && host.nuyenChargeFailed(character,
-          "Kauf: " + data.name() + " +" + data.unit().format(data.packSize()),
-          gear.getPackPrice())) {
-        return;
-      }
-      gear.addPack();
-      onGearChanged(character, gear);
-    });
-    HBox box = new HBox(6, minus, quantity, plus);
-    box.setAlignment(Pos.CENTER_LEFT);
-    return box;
-  }
-
 
   // ── Aktionen ──────────────────────────────────────────────
 

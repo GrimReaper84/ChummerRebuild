@@ -109,7 +109,7 @@
         <page>368</page>
     </item>
 
-    <!-- ── Munition pro 10 Schuss (Zusatz = Waffenklasse; Kampfwerte nur Anzeige) (S. 369) ── -->
+    <!-- ── Munition pro 10 Schuss (Zusatz = Waffenklasse, außer bei Munition für eine feste Waffe; Kampfwerte nur Anzeige) (S. 369) ── -->
     <item>
         <name>APDS-Geschosse</name>
         <category>Munition</category>
@@ -194,11 +194,10 @@
         <cost>75</cost>
         <costfor>10</costfor>
         <unit>Schuss</unit>
-        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
         <damage>wie Droge/Toxin</damage>
         <ap>–</ap>
         <armortype>Stoß</armortype>
-        <note>Munition für Pfeilwaffen (z.B. Parashield); enthält eine Dosis Droge oder Toxin, die separat gekauft wird; 2 Nettoerfolge nötig (GRW S. 369).</note>
+        <note>Munition für Pfeilwaffen (Spezielle Waffen: Parashield Pfeilpistole/-gewehr, GRW S. 365); enthält eine Dosis Droge oder Toxin, die separat gekauft wird; 2 Nettoerfolge nötig (GRW S. 369).</note>
         <source>SR4</source>
         <page>369</page>
     </item>
@@ -256,10 +255,10 @@
         <cost>450</cost>
         <costfor>10</costfor>
         <unit>Schuss</unit>
-        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
         <damage>wie Kanone</damage>
         <ap>wie Kanone</ap>
         <armortype>Ballistisch</armortype>
+        <note>Munition für Sturmkanonen; Schaden und PB wie die Kanone (GRW S. 369).</note>
         <source>SR4</source>
         <page>369</page>
     </item>
@@ -270,15 +269,15 @@
         <cost>50</cost>
         <costfor>10</costfor>
         <unit>Schuss</unit>
-        <extra kind="WEAPON_CLASS">Waffenklasse</extra>
         <damage>wie Taser</damage>
         <ap>−Hälfte</ap>
         <armortype>Stoß</armortype>
+        <note>Munition für Taser; Schaden wie der Taser (GRW S. 369).</note>
         <source>SR4</source>
         <page>369</page>
     </item>
 
-    <!-- ── Granaten (Zusatz = Granate/Minigranate, gleicher Preis S. 370) (S. 371) ── -->
+    <!-- ── Granaten (Zusatz = Standard/Minigranate, gleicher Preis S. 370) (S. 371) ── -->
     <item>
         <name>Betäubungsgranate</name>
         <category>Granaten</category>

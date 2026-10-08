@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
@@ -69,5 +71,14 @@ class ArrowDamageTest {
         () -> crossbow.addArrows(new Gear(arrow(), 3)));
     assertThrows(IllegalArgumentException.class, () -> bow.addArrows(
         new Gear(Objects.requireNonNull(GearDataLoader.findByName("Survival-Kit")), 0)));
+  }
+
+  @Test
+  void arrowsAboveRatingSixAreBlockedAtCreation() {
+    // GRW S. 111: Maximalstufe 6 bei Erschaffung, gilt auch für Pfeile (Plan Schritt 16)
+    Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
+
+    assertTrue(c.getEquipment().isAvailableForPurchase(arrow().availability(), 6));
+    assertFalse(c.getEquipment().isAvailableForPurchase(arrow().availability(), 7));
   }
 }

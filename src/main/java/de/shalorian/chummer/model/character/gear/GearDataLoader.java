@@ -127,7 +127,10 @@ public class GearDataLoader {
     return text.isEmpty() ? 0 : Integer.parseInt(text);
   }
 
-  /** {@code <extra>} ohne Attribut = Freitext, {@code kind="LICENSE"} = Lizenz-Vorauswahl. */
+  /**
+   * {@code <extra>} ohne Attribut = Freitext; {@code kind} = {@link ExtraKind}: {@code LICENSE}
+   * (Lizenz-Vorauswahl plus Freitext), {@code WEAPON_CLASS} bzw. {@code GRENADE_FORM} (feste Auswahl).
+   */
   private static @NonNull ExtraKind extraKind(@Nullable Element extra) {
     if (extra == null) {
       return ExtraKind.NONE;

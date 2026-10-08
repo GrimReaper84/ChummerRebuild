@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
 import de.shalorian.chummer.model.character.weapon.Mount;
@@ -85,7 +87,16 @@ class WeaponDetailsTest {
     WeaponDetails details = WeaponDetails.of(uzi, mensch());
 
     assertEquals("2 (3)", details.recoil());
-    assertEquals("500 ¥ (mit Zubehör 700 ¥)", details.cost());
+    assertEquals("500 ¥ (gesamt 700 ¥)", details.cost());
     assertEquals("500 ¥", WeaponDetails.of(weapon("Uzi IV"), mensch()).cost());
+  }
+
+  @Test
+  void bowWithArrowsShowsTotalIncludingArrows() {
+    Weapon bow = new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Bogen")), 4);
+    bow.addArrows(new Gear(Objects.requireNonNull(GearDataLoader.findByName("Pfeil")), 4, 10, "",
+        null));
+
+    assertEquals("400 ¥ (gesamt 450 ¥)", WeaponDetails.of(bow, mensch()).cost());
   }
 }

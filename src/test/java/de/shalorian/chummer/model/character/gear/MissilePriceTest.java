@@ -45,16 +45,27 @@ class MissilePriceTest {
 
     assertTrue(c.getEquipment().isAvailableForPurchase(foam.availability(), 6));
     assertFalse(c.getEquipment().isAvailableForPurchase(foam.availability(), 7));
-    assertEquals(300, find("Kommerzieller Sprengstoff").packCostFor(3) * 3);
+  }
+
+  @Test
+  void commercialExplosiveHasFixedRatingThree() {
+    // Kommerziell: Stufe 3, 8E, 100 ¥ pro kg
+    Gear commercial = new Gear(find("Kommerzieller Sprengstoff"), 3, 3, "", null);
+
+    assertEquals(300, commercial.getNuyenCost());
+    assertEquals("8E", commercial.getAvailabilityText());
+    assertThrows(IllegalArgumentException.class,
+        () -> new Gear(find("Kommerzieller Sprengstoff"), 4, 1, "", null));
   }
 
   @Test
   void miniGrenadeHasTheSamePrice() {
     // GRW S. 370: "Minigranaten haben den gleichen Preis und die gleiche Wirkung"
-    Gear grenade = new Gear(find("Splittergranate"), 0, 2, "Granate", null);
+    Gear grenade = new Gear(find("Splittergranate"), 0, 2, "Standard", null);
     Gear mini = new Gear(find("Splittergranate"), 0, 2, "Minigranate", null);
 
     assertEquals(70, grenade.getNuyenCost());
+    assertEquals("Splittergranate (Minigranate) ×2", mini.getDisplayName());
     assertEquals(grenade.getNuyenCost(), mini.getNuyenCost());
     assertFalse(grenade.isSameKind(mini));
     assertThrows(IllegalArgumentException.class,

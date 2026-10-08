@@ -266,9 +266,13 @@ public class CharacterStore {
         entry.accessories.forEach(a -> applyAccessory(weapon, a));
         for (GearEntry arrowEntry : entry.arrows) {
           Gear arrows = toGear(arrowEntry);
-          if (arrows != null && weapon.takesArrows()
-              && arrows.getData().category() == GearCategory.ARROWS) {
+          if (arrows == null) {
+            continue;
+          }
+          try {
             weapon.addArrows(arrows);
+          } catch (IllegalArgumentException e) {
+            // kein Bogen bzw. keine Pfeile: überspringen
           }
         }
         character.getEquipment().addWeapon(weapon);

@@ -85,12 +85,12 @@ record WeaponDetails(
     return text + (range == WeaponRange.BOW ? ", nach Mindeststärke" : ", nach Stärke");
   }
 
-  /** z.B. "350 ¥" bzw. "350 ¥ (mit Zubehör 750 ¥)". */
+  /** z.B. "350 ¥" bzw. mit Zubehör oder Pfeilen "350 ¥ (gesamt 750 ¥)". */
   private static @NonNull String costText(@NonNull Weapon weapon) {
     String text = weapon.getNuyenCost() + " ¥";
-    return weapon.getAccessories().isEmpty()
+    return weapon.getTotalNuyenCost() == weapon.getNuyenCost()
         ? text
-        : text + " (mit Zubehör " + weapon.getTotalNuyenCost() + " ¥)";
+        : text + " (gesamt " + weapon.getTotalNuyenCost() + " ¥)";
   }
 
   private static @NonNull String orDash(@NonNull String text) {

@@ -31,14 +31,14 @@ public enum ExtraKind {
    */
   WEAPON_CLASS,
   /**
-   * Granate oder Minigranate. SR4-Grundregelwerk S. 370: "Minigranaten haben den gleichen Preis und
+   * Standardgranate oder Minigranate. SR4-Grundregelwerk S. 370: "Minigranaten haben den gleichen Preis und
    * die gleiche Wirkung wie normale Granaten." Auswahl, kein Freitext.
    */
   GRENADE_FORM;
 
   private static final List<String> LICENSE_SUGGESTIONS = List.of("Waffenlizenz",
       "Verdecktes Tragen", "Jagdlizenz", "Zauberlizenz", "Detektivlizenz", "Führerschein");
-  private static final List<String> GRENADE_FORMS = List.of("Granate", "Minigranate");
+  private static final List<String> GRENADE_FORMS = List.of("Standard", "Minigranate");
 
   /** Vorschläge bzw. Auswahl für den Zusatztext; leer, wenn nur Freitext vorgesehen ist. */
   public @NonNull List<String> suggestions() {

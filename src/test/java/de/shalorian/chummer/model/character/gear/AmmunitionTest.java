@@ -52,6 +52,11 @@ class AmmunitionTest {
     assertThrows(IllegalArgumentException.class,
         () -> new Gear(standard, 0, 15, "Sturmgewehre", null));
     assertNotNull(new Gear(standard, 0, 10, "Taser", null));
+    // Munition für eine feste Waffe braucht keine Klassenwahl
+    assertEquals("Taserpfeil (10 Schuss)",
+        new Gear(find("Taserpfeil"), 0, 10, "", null).getDisplayName());
+    assertFalse(find("Sturmkanonen-Geschosse").needsExtra());
+    assertFalse(find("Injektionspfeile").needsExtra());
     assertTrue(ExtraKind.WEAPON_CLASS.suggestions().contains("Sturmkanonen"));
     assertFalse(ExtraKind.WEAPON_CLASS.suggestions().contains("Granatwerfer"));
   }

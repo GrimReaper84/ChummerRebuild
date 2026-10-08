@@ -15,7 +15,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.gear.Gear;
-import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.weapon.AccessoryData;
 import de.shalorian.chummer.model.character.weapon.IncludedAccessory;
 import de.shalorian.chummer.model.character.weapon.Mount;
@@ -260,7 +259,7 @@ final class WeaponTabBuilder {
    * Füllt den Detailbereich für den gewählten Knoten: Waffe, gekauftes oder mitgeliefertes Zubehör,
    * bzw. einen Hinweis ohne Auswahl oder bei einem Kategorieknoten.
    */
-  private static void showDetails(@NonNull VBox details, @Nullable WeaponTreeEntry entry,
+  private void showDetails(@NonNull VBox details, @Nullable WeaponTreeEntry entry,
       @NonNull Character character) {
     details.getChildren().clear();
     Weapon weapon = entry == null ? null : entry.weapon();
@@ -273,7 +272,7 @@ final class WeaponTabBuilder {
     } else if (entry.included() != null) {
       showIncludedDetails(details, weapon, entry.included());
     } else if (entry.arrows() != null) {
-      showArrowDetails(details, weapon, entry.arrows());
+      showArrowDetails(details, weapon, entry.arrows(), character);
     } else {
       showWeaponDetails(details, weapon, character);
     }
@@ -323,26 +322,27 @@ final class WeaponTabBuilder {
   }
 
   /**
-   * Pfeilstapel am Bogen: Stufe, Menge, Schaden mit diesem Bogen (niedrigere Stufe von Pfeil und
-   * Bogen, GRW S. 361), Verfügbarkeit, Preis und Hinweis.
+   * Pfeilstapel am Bogen: Stufe, Schaden mit diesem Bogen (niedrigere Stufe von Pfeil und Bogen, GRW
+   * S. 361), Menge mit Stepper, Verfügbarkeit, Preis und Hinweis.
    */
-  private static void showArrowDetails(@NonNull VBox details, @NonNull Weapon weapon,
-      @NonNull Gear arrows) {
-    GearData data = arrows.getData();
-    Label title = new Label(arrows.getDisplayName());
+  private void showArrowDetails(@NonNull VBox details, @NonNull Weapon weapon,
+      @NonNull Gear arrows, @NonNull Character character) {
+    GearDetails d = GearDetails.of(arrows);
+    Label title = new Label(d.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
     MigPane grid = new MigPane("", "[][]24[][]24[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     addRowCells(grid, 0, detailKey("Bogen"), detailValue(weapon.getDisplayName()),
-        detailKey("Stufe"), detailValue(String.valueOf(arrows.getRating())),
+        detailKey("Stufe"), detailValue(d.rating()),
         detailKey("Schaden"), detailValue(weapon.getArrowDamageText(arrows)));
-    addRowCells(grid, 1, detailKey("Menge"), detailValue(data.unit().format(arrows.getQuantity())),
-        detailKey("Verf."), detailValue(arrows.getAvailabilityText()),
-        detailKey("Preis"), detailValue(arrows.getNuyenCost() + " ¥"));
-    addRowCells(grid, 2, detailKey("Quelle"), detailValue(data.source() + " S. " + data.page()));
+    addRowCells(grid, 1, detailKey("Menge"), GearQuantityStepper.create(arrows, character, host,
+            () -> onWeaponsChanged(character, weapon, arrows)),
+        detailKey("Verf."), detailValue(d.availability()),
+        detailKey("Preis"), detailValue(d.totalCost()));
+    addRowCells(grid, 2, detailKey("Quelle"), detailValue(d.source()));
     details.getChildren().addAll(title, grid);
-    if (!data.note().isEmpty()) {
-      Label note = detailHint(data.note());
+    if (!d.note().isEmpty()) {
+      Label note = detailHint(d.note());
       note.setWrapText(true);
       details.getChildren().add(note);
     }
