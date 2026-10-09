@@ -62,6 +62,7 @@ public class Character {
   private static final int SPELL_CAP_MULTIPLIER = 2;
   private static final String SPELLCASTING_SKILL = "Spruchzauberei";
   private static final String RITUAL_SPELLCASTING_SKILL = "Ritualzauberei";
+  private static final String ARCANA_SKILL = "Arcana";
 
   private static final BigDecimal BASE_ESSENCE = BigDecimal.valueOf(6);
   private static final int ESSENCE_DECIMALS = 2;
@@ -258,11 +259,11 @@ public class Character {
   /**
    * Prüft, ob der Charakter speziell die Gabe "Magier" besitzt — anders als {@link #hasMagic()}
    * (liefert auch für Adepten {@code true}, da diese ebenfalls ein Magie-Attribut besitzen), grenzt
-   * dies auf Charaktere ein, die tatsächlich Zauber wirken dürfen. SR4-Grundregelwerk S. 208: "Wenn
+   * dies auf Charaktere ein, die tatsächlich Zauber wirken dürfen. SR4-Grundregelwerk S. 148: "Wenn
    * nicht anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder Magieradept und
    * einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder anwenden." Steuert die
-   * Sichtbarkeit des Magie-Tabs sowie der magischen Aktionsfertigkeiten (Spruchzauberei/
-   * Ritualzauberei).
+   * Sichtbarkeit des Magie-Tabs sowie den Zugang zu den magischen Aktionsfertigkeiten (siehe
+   * {@link #isSkillAccessible(Skill)}).
    */
   public boolean isMagician() {
     return qualities.stream()
@@ -462,18 +463,41 @@ public class Character {
   }
 
   /**
-   * Vollständige Steigerungs-Prüfung für eine aktive Fertigkeit: kombiniert den
-   * Erstellungs-Cap aus {@link #canRaiseSkillAtCreation(Skill)} mit der Magier-Voraussetzung für
-   * magische Fertigkeiten (SR4-Grundregelwerk S. 208: "können nur Charaktere mit einer der Gaben
-   * Zauberer oder Magieradept … magische Fertigkeiten erwerben oder anwenden") — anders als der
-   * reine Erstellungs-Cap gilt diese Sperre auch im Karrieremodus, da sie keine Erschaffungsregel,
-   * sondern eine grundsätzliche Zugriffsvoraussetzung ist.
+   * Prüft, ob der Charakter diese aktive Fertigkeit überhaupt erwerben darf:
+   * <ul>
+   *   <li>Magische Fertigkeiten nur mit der Gabe "Magier" (SR4-Grundregelwerk S. 148: "Wenn nicht
+   *       anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder Magieradept und
+   *       einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder anwenden.").
+   *       Ausnahme Arcana (S. 148): "Die Fertigkeit kann nicht nur von Erwachten, sondern auch von
+   *       Mundanen erlernt werden". Dass Adepten mit der Kraft Astrale Wahrnehmung auch Askennen und
+   *       Astralkampf nutzen dürfen (S. 109), ist mangels Adeptenkräften noch nicht abgebildet.</li>
+   *   <li>Resonanzfertigkeiten nur für Technomancer (S. 151: "Diese Kategorie beinhaltet
+   *       Fertigkeiten, die nur von Charakteren mit der Gabe Technomancer (S. 117) gewählt werden
+   *       können.").</li>
+   * </ul>
+   * Die Sperre gilt auch im Karrieremodus, da sie keine Erschaffungsregel, sondern eine
+   * grundsätzliche Zugriffsvoraussetzung ist.
+   */
+  private boolean isSkillAccessible(@NonNull Skill skill) {
+    return isSkillAccessible(skill, isMagician(), hasResonance());
+  }
+
+  private static boolean isSkillAccessible(@NonNull Skill skill, boolean magician,
+      boolean resonance) {
+    return switch (skill.getCategory()) {
+      case MAGICAL -> magician || ARCANA_SKILL.equals(skill.getName());
+      case RESONANCE -> resonance;
+      default -> true;
+    };
+  }
+
+  /**
+   * Vollständige Steigerungs-Prüfung für eine aktive Fertigkeit: kombiniert den Erstellungs-Cap
+   * aus {@link #canRaiseSkillAtCreation(Skill)} mit der Zugangsvoraussetzung aus
+   * {@link #isSkillAccessible(Skill)}.
    */
   public boolean canRaiseSkill(@NonNull Skill skill) {
-    if (skill.getCategory() == SkillCategory.MAGICAL && !isMagician()) {
-      return false;
-    }
-    return canRaiseSkillAtCreation(skill);
+    return isSkillAccessible(skill) && canRaiseSkillAtCreation(skill);
   }
 
   private boolean isCoupledGroupMember(@NonNull Skill s) {
@@ -570,6 +594,19 @@ public class Character {
    */
   public boolean canRaiseGroupAtCreation(@NonNull String groupName) {
     return created || getGroupRating(groupName) < MAX_GROUP_RATING_AT_CREATION;
+  }
+
+  /**
+   * Vollständige Steigerungs-Prüfung für eine Fertigkeitsgruppe: Erstellungs-Cap aus {@link
+   * #canRaiseGroupAtCreation(String)} plus Zugangsvoraussetzung aller Mitglieder (siehe {@link
+   * #isSkillAccessible(Skill)}), z.B. Hexerei/Beschwören nur für Magier, Tasken nur für
+   * Technomancer.
+   */
+  public boolean canRaiseGroup(@NonNull String groupName) {
+    return skills.values().stream()
+        .filter(s -> groupName.equals(s.getGroupName()))
+        .allMatch(this::isSkillAccessible)
+        && canRaiseGroupAtCreation(groupName);
   }
 
   /**
@@ -695,10 +732,41 @@ public class Character {
    * freigeschaltet hat, wird das Sonderattribut zurückgesetzt (siehe {@link
    * #syncMagicOrResonance()}) — in der Erschaffungsphase entspricht das einer automatischen
    * Rückerstattung der dafür ausgegebenen BP, im Karrieremodus gibt es keine Karma-Rückerstattung.
+   * Fertigkeiten, die dadurch nicht mehr zugänglich sind, werden auf 0 gesetzt (siehe {@link
+   * #getSkillsLockedByRemovingQuality(String)}).
    */
   public void removeQuality(@NonNull String name) {
-    qualities.removeIf(q -> q.source() == QualitySource.SELECTED && q.data().name().equals(name));
+    List<Skill> locked = getSkillsLockedByRemovingQuality(name);
+    qualities.removeIf(q -> isSelectedQuality(q, name));
     syncMagicOrResonance();
+    locked.forEach(s -> {
+      s.setRating(0);
+      s.setSpecialization(null);
+    });
+  }
+
+  /**
+   * Aktive Fertigkeiten mit Wert > 0, die nach dem Entfernen dieser Quality nicht mehr zugänglich
+   * wären (siehe {@link #isSkillAccessible(Skill)}), z.B. Hexerei nach Entfernen der Gabe "Magier"
+   * oder Tasken nach Entfernen der Gabe "Technomant". {@link #removeQuality(String)} setzt genau
+   * diese Fertigkeiten samt Spezialisierung auf 0, damit keine Werte stehen bleiben, die BP kosten,
+   * aber nicht mehr nutzbar sind. Die UI fragt vorher nach, wenn die Liste nicht leer ist.
+   */
+  public @NonNull List<Skill> getSkillsLockedByRemovingQuality(@NonNull String name) {
+    List<CharacterQuality> remaining = qualities.stream()
+        .filter(q -> !isSelectedQuality(q, name))
+        .toList();
+    boolean magician = remaining.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_SPELLCASTING));
+    boolean resonance = remaining.stream()
+        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_RESONANCE));
+    return skills.values().stream()
+        .filter(s -> s.getRating() > 0 && !isSkillAccessible(s, magician, resonance))
+        .toList();
+  }
+
+  private static boolean isSelectedQuality(@NonNull CharacterQuality q, @NonNull String name) {
+    return q.source() == QualitySource.SELECTED && q.data().name().equals(name);
   }
 
   /**

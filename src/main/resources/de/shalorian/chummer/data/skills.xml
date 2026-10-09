@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Aktionsfertigkeiten laut SR4-Grundregelwerk: Namen, verknüpftes Attribut und Fertigkeitsgruppe aus
+     den Tabellen "Fertigkeiten und damit verbundene Attribute" / "Fertigkeitsgruppen" (S. 146), die
+     Kategorie aus den Beschreibungsabschnitten S. 147–154 (alles gegen das PDF-Bild geprüft).
+     Exotische Fern-/Nahkampfwaffe und Exotisches Fahrzeug müssen laut GRW je Waffe bzw. Fahrzeug
+     einzeln erlernt werden; hier vorerst als je ein Eintrag (siehe feature_checklist.md §4). -->
 <skills>
 
-    <!-- ── KAMPF ──────────────────────────────────────────── -->
-    <!-- Kampf-Aktionsfertigkeiten laut SR4-Grundregelwerk S. 147/148 (gegen das PDF-Bild geprüft):
-         Namen, verknüpftes Attribut und Fertigkeitsgruppe wie im GRW. -->
+    <!-- ── KAMPF (S. 147/148) ─────────────────────────────── -->
 
     <group name="Nahkampf" category="COMBAT">
         <skill name="Klingenwaffen"     attribute="AGI"/>
@@ -24,92 +27,122 @@
     <skill name="Schwere Waffen"           attribute="AGI" category="COMBAT"/>
     <skill name="Wurfwaffen"               attribute="AGI" category="COMBAT"/>
 
-    <!-- ── KÖRPERLICH ─────────────────────────────────────── -->
+    <!-- ── KÖRPERLICH (S. 150/151) ────────────────────────── -->
 
     <group name="Athletik" category="PHYSICAL">
-        <skill name="Gymnastik" attribute="AGI"/>
+        <skill name="Akrobatik" attribute="AGI"/>
+        <skill name="Klettern"  attribute="STR"/>
         <skill name="Laufen"    attribute="STR"/>
         <skill name="Schwimmen" attribute="STR"/>
     </group>
 
     <group name="Heimlichkeit" category="PHYSICAL">
-        <skill name="Schleichen"       attribute="AGI"/>
-        <skill name="Taschendiebstahl" attribute="AGI"/>
+        <skill name="Beschatten"       attribute="INT"/>
+        <skill name="Fingerfertigkeit" attribute="AGI"/>
+        <skill name="Infiltration"     attribute="AGI"/>
         <skill name="Verkleiden"       attribute="INT"/>
     </group>
 
     <group name="Natur" category="PHYSICAL">
         <skill name="Navigation"  attribute="INT"/>
-        <skill name="Spurensuche" attribute="INT"/>
-        <skill name="Überleben"   attribute="WIL"/>
+        <skill name="Spurenlesen" attribute="INT"/>
+        <skill name="Survival"    attribute="WIL"/>
     </group>
 
-    <skill name="Freifall"    attribute="AGI" category="PHYSICAL"/>
-    <skill name="Klettern"    attribute="STR" category="PHYSICAL"/>
-    <skill name="Wahrnehmung" attribute="INT" category="PHYSICAL"/>
+    <skill name="Entfesseln"         attribute="AGI" category="PHYSICAL"/>
+    <skill name="Fallschirmspringen" attribute="BOD" category="PHYSICAL"/>
+    <skill name="Tauchen"            attribute="BOD" category="PHYSICAL"/>
+    <skill name="Wahrnehmung"        attribute="INT" category="PHYSICAL"/>
 
-    <!-- ── SOZIAL ─────────────────────────────────────────── -->
+    <!-- ── SOZIAL (S. 151/152) ────────────────────────────── -->
 
-    <skill name="Einschüchterung" attribute="CHA" category="SOCIAL"/>
-    <skill name="Etikette"        attribute="CHA" category="SOCIAL"/>
-    <skill name="Führung"         attribute="CHA" category="SOCIAL"/>
-    <skill name="Imitieren"       attribute="CHA" category="SOCIAL"/>
-    <skill name="Schauspielen"    attribute="CHA" category="SOCIAL"/>
-    <skill name="Täuschung"       attribute="CHA" category="SOCIAL"/>
-    <skill name="Verhandeln"      attribute="CHA" category="SOCIAL"/>
+    <group name="Einfluss" category="SOCIAL">
+        <skill name="Führung"     attribute="CHA"/>
+        <skill name="Gebräuche"   attribute="CHA"/>
+        <skill name="Überreden"   attribute="CHA"/>
+        <skill name="Verhandlung" attribute="CHA"/>
+    </group>
 
-    <!-- ── TECHNISCH ──────────────────────────────────────── -->
+    <skill name="Einschüchtern" attribute="CHA" category="SOCIAL"/>
+    <skill name="Unterricht"    attribute="CHA" category="SOCIAL"/>
 
-    <group name="Biotechnik" category="TECHNICAL">
-        <skill name="Cyberchirurgie" attribute="LOG"/>
-        <skill name="Erste Hilfe"    attribute="LOG"/>
-        <skill name="Medizin"        attribute="LOG"/>
+    <!-- ── TECHNISCH (S. 152–154) ─────────────────────────── -->
+
+    <group name="Biotech" category="TECHNICAL">
+        <skill name="Erste Hilfe" attribute="LOG"/>
+        <skill name="Kybernetik"  attribute="LOG"/>
+        <skill name="Medizin"     attribute="LOG"/>
+    </group>
+
+    <group name="Cracken" category="TECHNICAL">
+        <skill name="Elektronische Kriegsführung" attribute="LOG"/>
+        <skill name="Hacking"                     attribute="LOG"/>
+        <skill name="Matrixkampf"                 attribute="LOG"/>
     </group>
 
     <group name="Elektronik" category="TECHNICAL">
-        <skill name="Computer"       attribute="LOG"/>
-        <skill name="Datenbanksuche" attribute="LOG"/>
-        <skill name="Hardware"       attribute="LOG"/>
-        <skill name="Software"       attribute="LOG"/>
+        <skill name="Computer"   attribute="LOG"/>
+        <skill name="Datensuche" attribute="LOG"/>
+        <skill name="Hardware"   attribute="LOG"/>
+        <skill name="Software"   attribute="LOG"/>
     </group>
 
-    <group name="Ingenieurwesen" category="TECHNICAL">
-        <skill name="Kfz-Technik"                attribute="LOG"/>
-        <skill name="Industrietechnik"           attribute="LOG"/>
-        <skill name="Luft- und Raumfahrttechnik" attribute="LOG"/>
-        <skill name="Meerestechnik"              attribute="LOG"/>
+    <group name="Mechanik" category="TECHNICAL">
+        <skill name="Fahrzeugmechanik"  attribute="LOG"/>
+        <skill name="Industriemechanik" attribute="LOG"/>
+        <skill name="Luftfahrtmechanik" attribute="LOG"/>
+        <skill name="Seefahrtmechanik"  attribute="LOG"/>
     </group>
 
-    <group name="Knacken" category="TECHNICAL">
-        <skill name="Cyberkampf"                  attribute="LOG"/>
-        <skill name="Elektronische Kriegsführung" attribute="LOG"/>
-        <skill name="Hacken"                      attribute="LOG"/>
+    <skill name="Chemie"       attribute="LOG" category="TECHNICAL"/>
+    <skill name="Fälschen"     attribute="AGI" category="TECHNICAL"/>
+    <skill name="Handwerk"     attribute="INT" category="TECHNICAL"/>
+    <skill name="Schlosser"    attribute="AGI" category="TECHNICAL"/>
+    <skill name="Sprengstoffe" attribute="LOG" category="TECHNICAL"/>
+    <skill name="Waffenbau"    attribute="LOG" category="TECHNICAL"/>
+
+    <!-- ── FAHRZEUGE (S. 154) ─────────────────────────────── -->
+    <!-- Das GRW kennt für Fahrzeugfertigkeiten keine Fertigkeitsgruppe ("Fertigkeitsgruppe: Keine"). -->
+
+    <skill name="Bodenfahrzeuge"      attribute="REA" category="VEHICLE"/>
+    <skill name="Exotisches Fahrzeug" attribute="REA" category="VEHICLE"/>
+    <skill name="Flugzeuge"           attribute="REA" category="VEHICLE"/>
+    <skill name="Geschütze"           attribute="AGI" category="VEHICLE"/>
+    <skill name="Läufer"              attribute="REA" category="VEHICLE"/>
+    <skill name="Raumfahrzeuge"       attribute="REA" category="VEHICLE"/>
+    <skill name="Schiffe"             attribute="REA" category="VEHICLE"/>
+
+    <!-- ── MAGIE (S. 148–150) ─────────────────────────────── -->
+    <!-- S. 148: "Wenn nicht anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder
+         Magieradept und einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder
+         anwenden." Ausnahme Arcana: "kann nicht nur von Erwachten, sondern auch von Mundanen erlernt
+         werden" — siehe Character#isSkillAccessible(Skill). -->
+
+    <group name="Beschwören" category="MAGICAL">
+        <skill name="Binden"      attribute="MAG"/>
+        <skill name="Herbeirufen" attribute="MAG"/>
+        <skill name="Verbannen"   attribute="MAG"/>
     </group>
 
-    <skill name="Chemie"            attribute="LOG" category="TECHNICAL"/>
-    <skill name="Schlösser knacken" attribute="AGI" category="TECHNICAL"/>
-    <!-- GRW S. 154: "Sprengstoffe (Logik)", technische Aktionsfertigkeit ohne Gruppe -->
-    <skill name="Sprengstoffe"      attribute="LOG" category="TECHNICAL"/>
-    <skill name="Waffenmeister"     attribute="LOG" category="TECHNICAL"/>
-
-    <!-- ── FAHRZEUGE ──────────────────────────────────────── -->
-
-    <group name="Pilotieren" category="VEHICLE">
-        <skill name="Bodenfahrzeug steuern"  attribute="REA"/>
-        <skill name="Flugzeug steuern"       attribute="REA"/>
-        <skill name="Wasserfahrzeug steuern" attribute="REA"/>
+    <group name="Hexerei" category="MAGICAL">
+        <skill name="Antimagie"      attribute="MAG"/>
+        <skill name="Ritualzauberei" attribute="MAG"/>
+        <skill name="Spruchzauberei" attribute="MAG"/>
     </group>
 
-    <skill name="Geschütze"        attribute="LOG" category="VEHICLE"/>
-    <skill name="Motorrad steuern" attribute="REA" category="VEHICLE"/>
+    <skill name="Arcana"      attribute="LOG" category="MAGICAL"/>
+    <skill name="Askennen"    attribute="INT" category="MAGICAL"/>
+    <skill name="Astralkampf" attribute="WIL" category="MAGICAL"/>
+    <skill name="Verzaubern"  attribute="MAG" category="MAGICAL"/>
 
-    <!-- ── MAGIE ──────────────────────────────────────────── -->
-    <!-- Nur für Charaktere mit der Gabe "Magier" erlernbar/steigerbar (GRW S. 208: "Wenn nicht
-         anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder Magieradept und
-         einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder anwenden.") —
-         UI-seitig über Character.isMagician() gegated, siehe CharacterViewController. -->
+    <!-- ── RESONANZ (S. 151) ──────────────────────────────── -->
+    <!-- "Diese Kategorie beinhaltet Fertigkeiten, die nur von Charakteren mit der Gabe Technomancer
+         (S. 117) gewählt werden können." -->
 
-    <skill name="Spruchzauberei" attribute="MAG" category="MAGICAL"/>
-    <skill name="Ritualzauberei" attribute="MAG" category="MAGICAL"/>
+    <group name="Tasken" category="RESONANCE">
+        <skill name="Dekompilieren" attribute="RES"/>
+        <skill name="Kompilieren"   attribute="RES"/>
+        <skill name="Registrieren"  attribute="RES"/>
+    </group>
 
 </skills>

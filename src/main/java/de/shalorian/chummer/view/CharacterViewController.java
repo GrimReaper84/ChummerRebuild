@@ -72,6 +72,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -1277,6 +1278,9 @@ public class CharacterViewController {
       return;
     }
     String qualityName = q.data().name();
+    if (!confirmLockedSkillsReset(c, qualityName)) {
+      return;
+    }
     if (c.isCreated() && q.data().type() == QualityType.NEGATIVE && !q.gratis()) {
       int karmaCost = c.getQualityKarmaCost(q.data());
       if (karmaChargeFailed(c, "%s loswerden".formatted(qualityName), karmaCost)) {
@@ -1286,9 +1290,37 @@ public class CharacterViewController {
     c.removeQuality(qualityName);
     buildQualitiesTab();
     buildAttributeGrid();
+    buildSkillsTab();
     buildCyberwareTab();
     updateBpDisplay();
     refreshAllRows();
+  }
+
+  /**
+   * Fragt per Ja/Nein-Dialog nach, wenn das Entfernen der Quality aktive Fertigkeiten mit Wert > 0
+   * unzugänglich macht (z.B. Hexerei ohne die Gabe "Magier"); diese werden beim Entfernen auf 0
+   * gesetzt (siehe {@link Character#removeQuality(String)}). Ohne betroffene Fertigkeiten keine
+   * Abfrage.
+   *
+   * @return true, wenn entfernt werden darf
+   */
+  private boolean confirmLockedSkillsReset(@NonNull Character c, @NonNull String qualityName) {
+    List<Skill> locked = c.getSkillsLockedByRemovingQuality(qualityName);
+    if (locked.isEmpty()) {
+      return true;
+    }
+    String skillList = locked.stream()
+        .map(s -> "• %s %d".formatted(s.getName(), s.getRating()))
+        .collect(Collectors.joining("\n"));
+    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        "Ohne diese Gabe sind folgende Fertigkeiten nicht mehr erlernbar und werden auf 0 "
+            + "gesetzt:\n" + skillList,
+        ButtonType.YES, ButtonType.NO);
+    applyDialogStyle(confirm.getDialogPane());
+    confirm.setTitle("Gabe entfernen");
+    confirm.setHeaderText("\"%s\" wirklich entfernen?".formatted(qualityName));
+    confirm.initOwner(nameLabel.getScene().getWindow());
+    return confirm.showAndWait().filter(btn -> btn == ButtonType.YES).isPresent();
   }
 
   /**
@@ -1470,7 +1502,7 @@ public class CharacterViewController {
 
             @Override
             public boolean canIncrement() {
-              return character.canRaiseGroupAtCreation(groupName);
+              return character.canRaiseGroup(groupName);
             }
 
             @Override
