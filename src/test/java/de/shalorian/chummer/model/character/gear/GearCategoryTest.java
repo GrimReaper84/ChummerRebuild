@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -68,5 +69,8 @@ class GearCategoryTest {
     assertFalse(ExtraKind.LICENSE.isChoice());
     assertTrue(ExtraKind.WEAPON_CLASS.isChoice());
     assertTrue(ExtraKind.GRENADE_FORM.isChoice());
+    assertEquals(List.of("Abwehr", "Clearsight", "Elektronische Kriegsführung",
+        "Steuerung", "Zielerfassung"), ExtraKind.AUTOSOFT.suggestions());
+    assertTrue(ExtraKind.AUTOSOFT.isChoice());
   }
 }

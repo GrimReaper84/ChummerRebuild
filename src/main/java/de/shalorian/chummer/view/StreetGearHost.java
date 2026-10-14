@@ -6,7 +6,8 @@ import java.io.IOException;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Rückrufe des {@link StreetGearTabBuilder} in den {@link CharacterViewController}: Dialog-Infrastruktur,
+ * Rückrufe des {@link StreetGearTabBuilder} und des {@link VehicleTabBuilder} in den {@link
+ * CharacterViewController}: Dialog-Infrastruktur,
  * Karrieremodus-Abbuchung und die Anzeigen außerhalb des Straßenausrüstung-Tabs, die von Käufen und
  * angelegter Rüstung abhängen.
  */
@@ -17,6 +18,13 @@ interface StreetGearHost {
       throws IOException;
 
   void showDialogLoadError();
+
+  /**
+   * Fragt mit einem Ja/Nein-Dialog im App-Stil nach, z.B. vor dem Entfernen eines Fahrzeugs.
+   *
+   * @return true bei "Ja"
+   */
+  boolean confirm(@NonNull String title, @NonNull String question);
 
   /**
    * Bucht einen Karrieremodus-Kauf vom Nuyen-Guthaben ab.

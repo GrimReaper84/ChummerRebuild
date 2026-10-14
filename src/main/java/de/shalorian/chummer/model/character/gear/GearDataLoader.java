@@ -129,7 +129,7 @@ public class GearDataLoader {
 
   /**
    * {@code <extra>} ohne Attribut = Freitext; {@code kind} = {@link ExtraKind}: {@code LICENSE}
-   * (Lizenz-Vorauswahl plus Freitext), {@code WEAPON_CLASS} bzw. {@code GRENADE_FORM} (feste Auswahl).
+   * (Lizenz-Vorauswahl plus Freitext), {@code WEAPON_CLASS}, {@code GRENADE_FORM} bzw. {@code AUTOSOFT} (feste Auswahl).
    */
   private static @NonNull ExtraKind extraKind(@Nullable Element extra) {
     if (extra == null) {

@@ -107,7 +107,7 @@ class GearCapacityTest {
   void sensorPackageHoldsSensorFunctionsUpToCapacity() {
     // Handsensor Kapazität 3: Lasermikrofon [2] + Kamera-Sensor [1]; Sensor-Funktionen ändern die
     // Verfügbarkeit des Pakets nicht (eigene Verfügbarkeit, kein Zuschlag)
-    Gear pack = gear("Sensorpaket (Hand)", 0);
+    Gear pack = gear("Sensorpaket (Hand/Minidrohne)", 0);
     pack.install(gear("Lasermikrofon", 3));
     pack.install(gear("Kamera, Trideo (Sensor)", 2));
 
@@ -147,7 +147,7 @@ class GearCapacityTest {
     assertFalse(c.getEquipment().isAvailableForInstall(lenses, find("Blitzkompensation"), 0));
     assertTrue(c.getEquipment().isAvailableForInstall(lenses, find("Bildverbindung"), 0));
     // Sensor-Funktionen: eigene Verfügbarkeit zählt allein, nicht die des Pakets
-    Gear pack = gear("Sensorpaket (Hand)", 0);
+    Gear pack = gear("Sensorpaket (Hand/Minidrohne)", 0);
     assertTrue(c.getEquipment().isAvailableForInstall(pack, find("Lasermikrofon"), 6)); // 8E
     // Kontaktlinsen 6 + Infrarot 6 = 12 bleibt erlaubt, + Ultraschall 8 → 20 nicht
     assertTrue(c.getEquipment().isAvailableForInstall(gear("Kontaktlinsen", 3),

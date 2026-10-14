@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Fahrzeuge und Drohnen laut Tabelle des SR4-Grundregelwerks S. 397 (am PDF-Bild übertragen).
+  Werte aus dem GRW, nicht aus dem C#-Original (Abweichungen: GMC Everglades 25.500 ¥, Sensor der Luftfahrzeuge).
+  Verfügbarkeit leer = "–"; legality E = eingeschränkt, V = verboten.
+  <mounts>: Anzahl mitgelieferter Waffenhalterungen (S. 395 Halterungsregel), note = Bauform laut Fahrzeugtext.
+  <gear>: mitgelieferte Ausrüstung (Name im Ausrüstungskatalog), zuerst das Sensorpaket nach Größe (S. 380/381);
+  Autosofts und Medkit laut Fahrzeugtexten S. 395–398. Alle Drohnen haben einen Riggeradapter (S. 398, im Code).
+-->
+<vehicles>
+
+    <!-- ── Motorräder ── -->
+    <item>
+        <name>Dodge Scoot (Scooter)</name>
+        <category>Motorräder</category>
+        <handling>1</handling>
+        <accel>10/15</accel>
+        <speed>60</speed>
+        <pilot>1</pilot>
+        <body>4</body>
+        <armor>2</armor>
+        <sensor>1</sensor>
+        <cost>3000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Harley-Davidson Scorpion (Chopper)</name>
+        <category>Motorräder</category>
+        <handling>2</handling>
+        <accel>15/30</accel>
+        <speed>120</speed>
+        <pilot>2</pilot>
+        <body>8</body>
+        <armor>4</armor>
+        <sensor>1</sensor>
+        <cost>12000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Yamaha Growler (Offroad)</name>
+        <category>Motorräder</category>
+        <handling>1</handling>
+        <accel>15/40</accel>
+        <speed>150</speed>
+        <pilot>1</pilot>
+        <body>6</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <cost>5500</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Suzuki Mirage (Rennmaschine)</name>
+        <category>Motorräder</category>
+        <handling>2</handling>
+        <accel>20/50</accel>
+        <speed>200</speed>
+        <pilot>1</pilot>
+        <body>6</body>
+        <armor>4</armor>
+        <sensor>1</sensor>
+        <cost>6500</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Pkw ── -->
+    <item>
+        <name>Eurocar Westwind 3K (Sportwagen)</name>
+        <category>Pkw</category>
+        <handling>3</handling>
+        <accel>20/60</accel>
+        <speed>240</speed>
+        <pilot>3</pilot>
+        <body>10</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <cost>85000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Ford Spiral 115Ti (Günstiger Sportwagen)</name>
+        <category>Pkw</category>
+        <handling>2</handling>
+        <accel>15/55</accel>
+        <speed>180</speed>
+        <pilot>2</pilot>
+        <body>10</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <cost>45000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Honda Spirit (Kleinwagen)</name>
+        <category>Pkw</category>
+        <handling>1</handling>
+        <accel>10/20</accel>
+        <speed>80</speed>
+        <pilot>1</pilot>
+        <body>8</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <cost>10000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Mercury Comet (Mittelklassewagen)</name>
+        <category>Pkw</category>
+        <handling>0</handling>
+        <accel>15/30</accel>
+        <speed>110</speed>
+        <pilot>2</pilot>
+        <body>10</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <cost>14000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Mitsubishi Nightsky (Limousine)</name>
+        <category>Pkw</category>
+        <handling>-2</handling>
+        <accel>15/25</accel>
+        <speed>100</speed>
+        <pilot>3</pilot>
+        <body>12</body>
+        <armor>10</armor>
+        <sensor>1</sensor>
+        <cost>120000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <note>Versteckte Panzerung, chemische Versiegelung.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Toyota Gopher (Pick-Up)</name>
+        <category>Pkw</category>
+        <handling>0</handling>
+        <accel>5/20</accel>
+        <speed>100</speed>
+        <pilot>1</pilot>
+        <body>14</body>
+        <armor>8</armor>
+        <sensor>1</sensor>
+        <cost>35000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Lkw ── -->
+    <item>
+        <name>GMC Bulldog Step-Van (Kleinlaster)</name>
+        <category>Lkw</category>
+        <handling>0</handling>
+        <accel>5/10</accel>
+        <speed>90</speed>
+        <pilot>2</pilot>
+        <body>16</body>
+        <armor>8</armor>
+        <sensor>1</sensor>
+        <cost>35000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Hovercrafts ── -->
+    <item>
+        <name>GMC Everglades (Hovercraft)</name>
+        <category>Hovercrafts</category>
+        <handling>1</handling>
+        <accel>10/20</accel>
+        <speed>120</speed>
+        <pilot>2</pilot>
+        <body>14</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <avail>4</avail>
+        <cost>25500</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Militär- und Sicherheitsfahrzeuge ── -->
+    <item>
+        <name>Chrysler-Nissan Patrol-1 (Streifenwagen)</name>
+        <category>Militär- und Sicherheitsfahrzeuge</category>
+        <handling>3</handling>
+        <accel>10/45</accel>
+        <speed>180</speed>
+        <pilot>3</pilot>
+        <body>10</body>
+        <armor>10</armor>
+        <sensor>1</sensor>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>22700</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <note>Leicht gepanzert; kann mit einem ausfahrbaren Geschützturm versehen werden.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>GMC Beachcraft (Patrouillen-Hovercraft)</name>
+        <category>Militär- und Sicherheitsfahrzeuge</category>
+        <handling>2</handling>
+        <accel>10/40</accel>
+        <speed>160</speed>
+        <pilot>2</pilot>
+        <body>12</body>
+        <armor>16</armor>
+        <sensor>2</sensor>
+        <avail>16</avail>
+        <legality>E</legality>
+        <cost>63000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Ares Citymaster (Aufruhrbekämpfungsfahrzeug)</name>
+        <category>Militär- und Sicherheitsfahrzeuge</category>
+        <handling>-1</handling>
+        <accel>5/30</accel>
+        <speed>120</speed>
+        <pilot>3</pilot>
+        <body>16</body>
+        <armor>20</armor>
+        <sensor>3</sensor>
+        <avail>20</avail>
+        <legality>E</legality>
+        <cost>51200</cost>
+        <mounts note="kleiner Geschützturm">1</mounts>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <note>Mobile Einsatzzentrale mit chemischer Versiegelung, Lebenserhaltungssystem (20 Mannstunden) und kleinem Geschützturm.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Schiffe und U-Boote ── -->
+    <item>
+        <name>Morgan Cutlass (Patrouillenboot)</name>
+        <category>Schiffe und U-Boote</category>
+        <handling>2</handling>
+        <accel>15/30</accel>
+        <speed>60</speed>
+        <pilot>3</pilot>
+        <body>16</body>
+        <armor>10</armor>
+        <sensor>3</sensor>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>90000</cost>
+        <mounts note="Drehringlafetten">2</mounts>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <note>Leicht gepanzert, zwei Drehringlafetten (für LMGs oder leichtere Waffen) und hochentwickeltes Sensorpaket.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>MT Sea Nymph (Jacht)</name>
+        <category>Schiffe und U-Boote</category>
+        <handling>-3</handling>
+        <accel>10/20</accel>
+        <speed>45</speed>
+        <pilot>2</pilot>
+        <body>18</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <cost>170000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>SC Otter (Sportboot)</name>
+        <category>Schiffe und U-Boote</category>
+        <handling>1</handling>
+        <accel>5/10</accel>
+        <speed>45</speed>
+        <pilot>1</pilot>
+        <body>12</body>
+        <armor>6</armor>
+        <sensor>1</sensor>
+        <cost>12500</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Vulkan Electronaut (Mini-U-Boot)</name>
+        <category>Schiffe und U-Boote</category>
+        <handling>0</handling>
+        <accel>5/10</accel>
+        <speed>30</speed>
+        <pilot>2</pilot>
+        <body>12</body>
+        <armor>10</armor>
+        <sensor>2</sensor>
+        <avail>10</avail>
+        <cost>158000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Flugzeuge ── -->
+    <item>
+        <name>Cessna C750 (Propellermaschine)</name>
+        <category>Flugzeuge</category>
+        <handling>-1</handling>
+        <accel>20/90</accel>
+        <speed>340</speed>
+        <pilot>2</pilot>
+        <body>18</body>
+        <armor>4</armor>
+        <sensor>1</sensor>
+        <avail>8</avail>
+        <cost>164000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Rotormaschinen ── -->
+    <item>
+        <name>Ares Dragon (Frachthubschrauber)</name>
+        <category>Rotormaschinen</category>
+        <handling>-1</handling>
+        <accel>10/40</accel>
+        <speed>260</speed>
+        <pilot>3</pilot>
+        <body>22</body>
+        <armor>8</armor>
+        <sensor>1</sensor>
+        <avail>12</avail>
+        <cost>495000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Hughes Stallion (Mehrzweckhubschrauber)</name>
+        <category>Rotormaschinen</category>
+        <handling>-1</handling>
+        <accel>15/50</accel>
+        <speed>190</speed>
+        <pilot>3</pilot>
+        <body>14</body>
+        <armor>8</armor>
+        <sensor>1</sensor>
+        <avail>12</avail>
+        <cost>225000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Northrup Wasp (Gyrokopter)</name>
+        <category>Rotormaschinen</category>
+        <handling>0</handling>
+        <accel>15/30</accel>
+        <speed>130</speed>
+        <pilot>2</pilot>
+        <body>10</body>
+        <armor>6</armor>
+        <sensor>2</sensor>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>106000</cost>
+        <mounts>1</mounts>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <note>Leicht gepanzert; Waffenhalterung für ein LMG oder eine leichtere Waffe.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Senkrechtstarter ── -->
+    <item>
+        <name>GMC Banshee (Thunderbird)</name>
+        <category>Senkrechtstarter</category>
+        <handling>1</handling>
+        <accel>50/250</accel>
+        <speed>1000</speed>
+        <pilot>2</pilot>
+        <body>20</body>
+        <armor>18</armor>
+        <sensor>5</sensor>
+        <avail>24</avail>
+        <legality>V</legality>
+        <cost>2350000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Fed Boeing Commuter (Kippflügelmaschine)</name>
+        <category>Senkrechtstarter</category>
+        <handling>-2</handling>
+        <accel>10/30</accel>
+        <speed>120</speed>
+        <pilot>3</pilot>
+        <body>16</body>
+        <armor>8</armor>
+        <sensor>1</sensor>
+        <avail>16</avail>
+        <legality>E</legality>
+        <cost>320000</cost>
+        <gear>Sensorpaket (Fahrzeug)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+
+    <!-- ── Drohnen ── -->
+    <item>
+        <name>Shiawase Kanmushi (Mikrodrohne)</name>
+        <category>Drohnen</category>
+        <handling>1</handling>
+        <accel>2/10</accel>
+        <speed>10</speed>
+        <pilot>3</pilot>
+        <body>0</body>
+        <armor>0</armor>
+        <sensor>1</sensor>
+        <avail>8</avail>
+        <cost>1000</cost>
+        <gear>Sensorpaket (Mikro)</gear>
+        <note>Vierbeinige Kriechdrohne, kann an Wänden und Decken entlangkrabbeln.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>S-B Microskimmer (Mikrodrohne)</name>
+        <category>Drohnen</category>
+        <handling>1</handling>
+        <accel>2/10</accel>
+        <speed>10</speed>
+        <pilot>3</pilot>
+        <body>0</body>
+        <armor>0</armor>
+        <sensor>1</sensor>
+        <avail>8</avail>
+        <cost>1000</cost>
+        <gear>Sensorpaket (Mikro)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Lone Star iBall (Minidrohne)</name>
+        <category>Drohnen</category>
+        <handling>1</handling>
+        <accel>3/15</accel>
+        <speed>15</speed>
+        <pilot>3</pilot>
+        <body>1</body>
+        <armor>0</armor>
+        <sensor>2</sensor>
+        <avail>6</avail>
+        <cost>1500</cost>
+        <gear>Sensorpaket (Hand/Minidrohne)</gear>
+        <note>Eine offensive Version mit eingebautem Flash-Pak und Rauchgranate ist für zusätzliche 500 ¥ erhältlich (nicht als Variante abgebildet).</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>MCT Fly-Spy (Minidrohne)</name>
+        <category>Drohnen</category>
+        <handling>1</handling>
+        <accel>3/15</accel>
+        <speed>15</speed>
+        <pilot>3</pilot>
+        <body>1</body>
+        <armor>0</armor>
+        <sensor>2</sensor>
+        <avail>6</avail>
+        <cost>2000</cost>
+        <gear>Sensorpaket (Hand/Minidrohne)</gear>
+        <gear rating="2" extra="Steuerung">Autosoft</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Aztechnology Crawler (Klein)</name>
+        <category>Drohnen</category>
+        <handling>0</handling>
+        <accel>5/20</accel>
+        <speed>50</speed>
+        <pilot>3</pilot>
+        <body>2</body>
+        <armor>0</armor>
+        <sensor>2</sensor>
+        <avail>4</avail>
+        <cost>1700</cost>
+        <gear>Sensorpaket (Stationär/kleine Drohne)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Lockheed Optic-X (Klein)</name>
+        <category>Drohnen</category>
+        <handling>0</handling>
+        <accel>5/20</accel>
+        <speed>75</speed>
+        <pilot>3</pilot>
+        <body>2</body>
+        <armor>0</armor>
+        <sensor>2</sensor>
+        <avail>6</avail>
+        <cost>1700</cost>
+        <gear>Sensorpaket (Stationär/kleine Drohne)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>GM-Nissan Doberman (Mittel)</name>
+        <category>Drohnen</category>
+        <handling>0</handling>
+        <accel>10/25</accel>
+        <speed>75</speed>
+        <pilot>3</pilot>
+        <body>3</body>
+        <armor>6</armor>
+        <sensor>3</sensor>
+        <avail>6</avail>
+        <cost>3000</cost>
+        <mounts>1</mounts>
+        <gear>Sensorpaket (Mittlere Drohne)</gear>
+        <gear rating="3" extra="Clearsight">Autosoft</gear>
+        <gear rating="3" extra="Zielerfassung">Autosoft</gear>
+        <note>Kriechdrohne; Waffenhalterung für LMGs oder leichtere Waffen.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>MCT-Nissan Roto-Drohne (Mittel)</name>
+        <category>Drohnen</category>
+        <handling>0</handling>
+        <accel>10/25</accel>
+        <speed>100</speed>
+        <pilot>3</pilot>
+        <body>3</body>
+        <armor>2</armor>
+        <sensor>3</sensor>
+        <avail>6</avail>
+        <cost>2000</cost>
+        <gear>Sensorpaket (Mittlere Drohne)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Renraku Stormcloud (Mittel)</name>
+        <category>Drohnen</category>
+        <handling>-3</handling>
+        <accel>5/10</accel>
+        <speed>25</speed>
+        <pilot>3</pilot>
+        <body>3</body>
+        <armor>2</armor>
+        <sensor>3</sensor>
+        <avail>6</avail>
+        <cost>2600</cost>
+        <gear>Sensorpaket (Mittlere Drohne)</gear>
+        <gear rating="3" extra="Clearsight">Autosoft</gear>
+        <note>Solargetriebenes Mini-Luftschiff.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>C-D Dalmatian (Groß)</name>
+        <category>Drohnen</category>
+        <handling>0</handling>
+        <accel>15/40</accel>
+        <speed>120</speed>
+        <pilot>3</pilot>
+        <body>4</body>
+        <armor>2</armor>
+        <sensor>3</sensor>
+        <avail>9</avail>
+        <cost>2200</cost>
+        <gear>Sensorpaket (Große Drohne)</gear>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>CrashCart AutoDoc (Groß)</name>
+        <category>Drohnen</category>
+        <handling>0</handling>
+        <accel>5/10</accel>
+        <speed>30</speed>
+        <pilot>3</pilot>
+        <body>4</body>
+        <armor>2</armor>
+        <sensor>1</sensor>
+        <avail>8</avail>
+        <legality>E</legality>
+        <cost>4000</cost>
+        <gear>Sensorpaket (Große Drohne)</gear>
+        <gear rating="4">Medkit</gear>
+        <note>Mobile Stabilisierungseinheit: stabilisiert einen angeschlossenen Charakter automatisch (siehe S. 295).</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+    <item>
+        <name>Steel Lynx (Groß)</name>
+        <category>Drohnen</category>
+        <handling>0</handling>
+        <accel>15/40</accel>
+        <speed>120</speed>
+        <pilot>3</pilot>
+        <body>4</body>
+        <armor>9</armor>
+        <sensor>3</sensor>
+        <avail>12</avail>
+        <legality>E</legality>
+        <cost>5000</cost>
+        <mounts note="Geschützturm">1</mounts>
+        <gear>Sensorpaket (Große Drohne)</gear>
+        <gear rating="3" extra="Abwehr">Autosoft</gear>
+        <gear rating="3" extra="Zielerfassung">Autosoft</gear>
+        <note>Gepanzerte Bodenkampfdrohne mit vier Beinauslegern auf Rädern; Geschützturm für ein LMG oder eine leichtere Waffe.</note>
+        <source>SR4</source>
+        <page>397</page>
+    </item>
+</vehicles>

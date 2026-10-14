@@ -352,7 +352,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
       case NONE -> "";
       case TEXT -> extraField.getText();
       case LICENSE -> extraBox.getEditor().getText();
-      case WEAPON_CLASS, GRENADE_FORM -> Objects.requireNonNullElse(extraBox.getValue(), "");
+      case WEAPON_CLASS, GRENADE_FORM, AUTOSOFT -> Objects.requireNonNullElse(extraBox.getValue(), "");
     };
   }
 

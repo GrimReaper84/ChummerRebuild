@@ -51,7 +51,7 @@ class GearDataLoaderTest {
     expected.put(GearCategory.VISION_ENHANCEMENTS, 8);
     expected.put(GearCategory.AUDIO_DEVICES, 3);
     expected.put(GearCategory.AUDIO_ENHANCEMENTS, 3);
-    expected.put(GearCategory.SENSOR_PACKAGES, 3);
+    expected.put(GearCategory.SENSOR_PACKAGES, 7);
     expected.put(GearCategory.SENSOR_FUNCTIONS, 12);
     expected.put(GearCategory.SECURITY_DEVICES, 2);
     expected.put(GearCategory.MAGLOCK_OPTIONS, 3);
@@ -153,7 +153,7 @@ class GearDataLoaderTest {
 
     assertEquals(3, find("Selektiver Geräuschfilter").capacityCostFor(3)); // pro Stufe
     assertEquals(4, find("Brille").capacityFor(4));
-    assertEquals(3, find("Sensorpaket (Hand)").capacityFor(0));
+    assertEquals(3, find("Sensorpaket (Hand/Minidrohne)").capacityFor(0));
     assertEquals(2, find("Lasermikrofon").capacityCostFor(5));
     assertFalse(find("Fernglas, optisch").hasCapacity());
   }
@@ -258,5 +258,32 @@ class GearDataLoaderTest {
     assertEquals("Geisterart", find("Herbeirufungsfokus").extraLabel());
     assertEquals("Zauber", find("Zauberformel (Kampf)").extraLabel());
     assertFalse(find("Dietrich-Set").needsExtra());
+  }
+
+  /** Tabelle "Sensorpakete" (GRW S. 381): Kapazität je Paket, Signal steht im Hinweis. */
+  @Test
+  void vehicleAndDroneSensorPackagesMatchRulebookTable() {
+    Map<String, Integer> capacities = Map.of(
+        "Sensorpaket (RFID)", 1,
+        "Sensorpaket (Mikro)", 1,
+        "Sensorpaket (Hand/Minidrohne)", 3,
+        "Sensorpaket (Stationär/kleine Drohne)", 5,
+        "Sensorpaket (Mittlere Drohne)", 6,
+        "Sensorpaket (Große Drohne)", 8,
+        "Sensorpaket (Fahrzeug)", 12);
+    capacities.forEach((name, capacity) -> {
+      GearData pack = find(name);
+      assertEquals(capacity, pack.capacityFor(0), name);
+      assertEquals(GearCategory.SENSOR_FUNCTIONS, pack.accepts(), name);
+      assertEquals(0, pack.packCostFor(0), name);
+    });
+    assertTrue(find("Sensorpaket (Fahrzeug)").note().startsWith("Signal 5."));
+    assertTrue(find("Sensorpaket (Große Drohne)").note().startsWith("Signal 4."));
+  }
+
+  /** Autosoft: Typ als Auswahl der fünf Autosofts von GRW S. 287 (Preise in MatrixProgramPriceTest). */
+  @Test
+  void autosoftOffersRulebookTypes() {
+    assertEquals(ExtraKind.AUTOSOFT, find("Autosoft").extraKind());
   }
 }

@@ -12,6 +12,7 @@ import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
@@ -27,7 +28,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Ausrüstung eines Charakters: alle Kaufkategorien (Cyber- und Bioware, Rüstung, Waffen, übrige
- * Ausrüstung, Lebensstil) samt Kaufprüfung, Schutzwerten, Waffenwerten und der Summe der ausgegebenen
+ * Ausrüstung, Fahrzeuge, Lebensstil) samt Kaufprüfung, Schutzwerten, Waffenwerten und der Summe der ausgegebenen
  * Nuyen. Komponente des Aggregats {@link Character}, erreichbar über {@link Character#getEquipment()};
  * künftige Kaufkategorien gehören hierher. Ausgelagert, damit {@code Character} nicht mit jeder
  * Kaufkategorie wächst (SonarQube S6539, {@code docs/plaene/character_aufteilung_plan.md}).
@@ -48,6 +49,7 @@ public class Equipment {
   private final List<Armor> armor = new ArrayList<>();
   private final List<Weapon> weapons = new ArrayList<>();
   private final List<Gear> gear = new ArrayList<>();
+  private final List<Vehicle> vehicles = new ArrayList<>();
   private final @NonNull Lifestyle lifestyle = new Lifestyle();
 
   /** Leere Ausrüstung für {@code owner}; ruft im Konstruktor nichts auf dem Charakter auf. */
@@ -295,14 +297,7 @@ public class Equipment {
    * @return der Gegenstand, der die Menge jetzt enthält ({@code item} oder der vorhandene)
    */
   public @NonNull Gear addGear(@NonNull Gear item) {
-    for (Gear existing : gear) {
-      if (existing.isSameKind(item)) {
-        existing.setQuantity(existing.getQuantity() + item.getQuantity());
-        return existing;
-      }
-    }
-    gear.add(item);
-    return item;
+    return Gear.addOrMerge(gear, item);
   }
 
   /**
@@ -320,6 +315,34 @@ public class Equipment {
     return gear.stream().mapToInt(Gear::getNuyenCost).sum();
   }
 
+  // --- Fahrzeuge & Drohnen ---
+
+  /**
+   * Alle gekauften Fahrzeuge und Drohnen. Ihre Waffen stecken in den Halterungen ({@link
+   * Vehicle#getMounts()}) und gehören nicht zu {@link #getWeapons()}.
+   */
+  public @NonNull List<Vehicle> getVehicles() {
+    return Collections.unmodifiableList(vehicles);
+  }
+
+  /**
+   * Kauft ein Fahrzeug. Dasselbe Fahrzeug darf mehrfach gekauft werden (keine Duplikatprüfung); die
+   * Verfügbarkeit prüft die UI über {@link #isAvailableForPurchase(Availability, int)}.
+   */
+  public void addVehicle(@NonNull Vehicle vehicle) {
+    vehicles.add(vehicle);
+  }
+
+  /** Entfernt genau dieses Fahrzeug samt Ausstattung (Objektreferenz, da Duplikate erlaubt sind). */
+  public void removeVehicle(@NonNull Vehicle vehicle) {
+    vehicles.remove(vehicle);
+  }
+
+  /** Gesamtpreis aller Fahrzeuge samt Ausstattung in Nuyen ({@link Vehicle#getNuyenCost()}). */
+  public int getVehicleNuyenCost() {
+    return vehicles.stream().mapToInt(Vehicle::getNuyenCost).sum();
+  }
+
   // --- Lebensstil & Nuyen-Summe ---
 
   /**
@@ -332,12 +355,12 @@ public class Equipment {
 
   /**
    * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung, Waffen,
-   * übrige Ausrüstung und Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige
+   * übrige Ausrüstung, Fahrzeuge und Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige
    * Kaufkategorien werden hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
    * Ausrüstungsgegenstände vollständig bezahlen."
    */
   public int getSpentNuyen() {
     return getCyberwareNuyenCost() + getArmorNuyenCost() + getWeaponNuyenCost()
-        + getGearNuyenCost() + lifestyle.getNuyenCost();
+        + getGearNuyenCost() + getVehicleNuyenCost() + lifestyle.getNuyenCost();
   }
 }

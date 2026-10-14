@@ -120,6 +120,22 @@ public enum WeaponCategory {
   }
 
   /**
+   * Ob Waffen dieser Kategorie in eine Waffenhalterung eines Fahrzeugs passen. SR4-Grundregelwerk
+   * S. 395: "Eine Waffenhalterung kann ein LMG oder eine kleinere Waffe sowie 250 Schuss Munition
+   * aufnehmen." Erlaubt sind deshalb die Feuerwaffen bis einschließlich der Leichten
+   * Maschinengewehre, zusätzlich Granatwerfer (Nutzerentscheidung 2026-10-09); Nahkampf-, Wurf- und
+   * Projektilwaffen, Mittlere und Schwere MGs, Sturmkanonen und Raketenwerfer nicht.
+   */
+  public boolean fitsVehicleMount() {
+    return switch (this) {
+      case TASERS, HOLDOUTS, LIGHT_PISTOLS, HEAVY_PISTOLS, MACHINE_PISTOLS, SUBMACHINE_GUNS,
+           ASSAULT_RIFLES, SPORTS_RIFLES, SNIPER_RIFLES, SHOTGUNS, SPECIAL, LIGHT_MG,
+           GRENADE_LAUNCHERS -> true;
+      default -> false;
+    };
+  }
+
+  /**
    * Liest die Kategorie aus {@code <category>} in {@code weapons.xml}.
    *
    * @throws IllegalArgumentException bei unbekannter Bezeichnung (Datenfehler im Katalog)

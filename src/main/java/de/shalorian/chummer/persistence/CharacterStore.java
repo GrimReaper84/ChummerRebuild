@@ -29,6 +29,10 @@ import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.vehicle.Vehicle;
+import de.shalorian.chummer.model.character.vehicle.VehicleData;
+import de.shalorian.chummer.model.character.vehicle.VehicleDataLoader;
+import de.shalorian.chummer.model.character.vehicle.WeaponMount;
 import de.shalorian.chummer.model.character.weapon.AccessoryData;
 import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
 import de.shalorian.chummer.model.character.weapon.Mount;
@@ -121,6 +125,9 @@ public class CharacterStore {
         .toList();
     data.gear = character.getEquipment().getGear().stream().map(CharacterStore::toGearEntry)
         .toList();
+    data.vehicles = character.getEquipment().getVehicles().stream()
+        .map(CharacterStore::toVehicleEntry)
+        .toList();
     Lifestyle lifestyle = character.getEquipment().getLifestyle();
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
 
@@ -133,6 +140,20 @@ public class CharacterStore {
             .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
             .toList());
     entry.arrows = weapon.getArrows().stream().map(CharacterStore::toGearEntry).toList();
+    return entry;
+  }
+
+  private static @NonNull VehicleEntry toVehicleEntry(@NonNull Vehicle vehicle) {
+    VehicleEntry entry = new VehicleEntry(vehicle.getName());
+    entry.riggerAdapter = vehicle.isRiggerAdapterPurchased();
+    entry.mounts = vehicle.getMounts().stream()
+        .map(m -> {
+          Weapon weapon = m.getWeapon();
+          return new MountEntry(m.isIncluded(), weapon == null ? null : toWeaponEntry(weapon));
+        })
+        .toList();
+    entry.includedGear = vehicle.getIncludedGear().stream().map(CharacterStore::toGearEntry).toList();
+    entry.gear = vehicle.getGear().stream().map(CharacterStore::toGearEntry).toList();
     return entry;
   }
 
@@ -187,6 +208,7 @@ public class CharacterStore {
     applyArmor(character, data);
     applyWeapons(character, data);
     applyGear(character, data);
+    applyVehicles(character, data);
     applyLifestyle(character, data);
 
     return character;
@@ -260,24 +282,33 @@ public class CharacterStore {
    */
   private static void applyWeapons(@NonNull Character character, @NonNull CharacterData data) {
     for (WeaponEntry entry : data.weapons) {
-      WeaponData weaponData = WeaponDataLoader.findByName(entry.name);
-      if (weaponData != null && weaponData.isValidRating(entry.rating)) {
-        Weapon weapon = new Weapon(weaponData, entry.rating);
-        entry.accessories.forEach(a -> applyAccessory(weapon, a));
-        for (GearEntry arrowEntry : entry.arrows) {
-          Gear arrows = toGear(arrowEntry);
-          if (arrows == null) {
-            continue;
-          }
-          try {
-            weapon.addArrows(arrows);
-          } catch (IllegalArgumentException e) {
-            // kein Bogen bzw. keine Pfeile: überspringen
-          }
-        }
+      Weapon weapon = toWeapon(entry);
+      if (weapon != null) {
         character.getEquipment().addWeapon(weapon);
       }
     }
+  }
+
+  /** Baut eine Waffe samt Zubehör und Pfeilen; {@code null} bei unbekanntem Namen oder Stufe. */
+  private static @Nullable Weapon toWeapon(@NonNull WeaponEntry entry) {
+    WeaponData weaponData = WeaponDataLoader.findByName(entry.name);
+    if (weaponData == null || !weaponData.isValidRating(entry.rating)) {
+      return null;
+    }
+    Weapon weapon = new Weapon(weaponData, entry.rating);
+    entry.accessories.forEach(a -> applyAccessory(weapon, a));
+    for (GearEntry arrowEntry : entry.arrows) {
+      Gear arrows = toGear(arrowEntry);
+      if (arrows == null) {
+        continue;
+      }
+      try {
+        weapon.addArrows(arrows);
+      } catch (IllegalArgumentException e) {
+        // kein Bogen bzw. keine Pfeile: überspringen
+      }
+    }
+    return weapon;
   }
 
   /**
@@ -295,6 +326,70 @@ public class CharacterStore {
       GearCategory category = gear.getData().category();
       if (!category.isInstalledOnly() && category != GearCategory.ARROWS) {
         character.getEquipment().addGear(gear);
+      }
+    }
+  }
+
+  /**
+   * Stellt die Fahrzeuge wieder her. Mitgelieferte Halterungen und Ausrüstung entstehen aus dem
+   * Katalog; aus der Datei kommen nur ihre Waffen bzw. Einbauten (positionsweise). Unbekannte
+   * Fahrzeuge, Waffen und Gegenstände, Waffen, die nicht (mehr) in eine Halterung passen, und
+   * Halterungen über der Grenze Rumpf ÷ 3 werden übersprungen statt die ganze Datei abzulehnen.
+   */
+  private static void applyVehicles(@NonNull Character character, @NonNull CharacterData data) {
+    for (VehicleEntry entry : data.vehicles) {
+      VehicleData vehicleData = VehicleDataLoader.findByName(entry.name);
+      if (vehicleData == null) {
+        continue;
+      }
+      Vehicle vehicle = new Vehicle(vehicleData);
+      if (entry.riggerAdapter && vehicle.riggerAdapterProblem() == null) {
+        vehicle.installRiggerAdapter();
+      }
+      applyMounts(vehicle, entry.mounts);
+      List<Gear> included = vehicle.getIncludedGear();
+      for (int i = 0; i < Math.min(included.size(), entry.includedGear.size()); i++) {
+        Gear device = included.get(i);
+        GearEntry savedDevice = entry.includedGear.get(i);
+        if (!device.getName().equals(savedDevice.name)) {
+          continue;
+        }
+        for (GearEntry childEntry : savedDevice.installed) {
+          Gear child = toGear(childEntry);
+          if (child != null && device.installProblem(child.getData(), child.getRating()) == null) {
+            device.install(child);
+          }
+        }
+      }
+      for (GearEntry gearEntry : entry.gear) {
+        Gear gear = toGear(gearEntry);
+        if (gear != null && !gear.getData().category().isInstalledOnly()) {
+          vehicle.addGear(gear);
+        }
+      }
+      character.getEquipment().addVehicle(vehicle);
+    }
+  }
+
+  private static void applyMounts(@NonNull Vehicle vehicle, @NonNull List<MountEntry> entries) {
+    int includedIndex = 0;
+    for (MountEntry entry : entries) {
+      WeaponMount mount;
+      if (entry.included) {
+        List<WeaponMount> mounts = vehicle.getMounts();
+        if (includedIndex >= mounts.size() || !mounts.get(includedIndex).isIncluded()) {
+          continue;
+        }
+        mount = mounts.get(includedIndex++);
+      } else if (vehicle.mountProblem() == null) {
+        mount = vehicle.addMount();
+      } else {
+        continue;
+      }
+      WeaponEntry weaponEntry = entry.weapon;
+      Weapon weapon = weaponEntry == null ? null : toWeapon(weaponEntry);
+      if (weapon != null && vehicle.weaponProblem(mount, weapon.getData()) == null) {
+        vehicle.mountWeapon(mount, weapon);
       }
     }
   }

@@ -99,4 +99,17 @@ class WeaponDetailsTest {
 
     assertEquals("400 ¥ (gesamt 450 ¥)", WeaponDetails.of(bow, mensch()).cost());
   }
+
+  /** Fahrzeugwaffen zeigen nur Tabellenwerte (Nutzerentscheidung 2026-10-09). */
+  @Test
+  void mountedWeaponShowsTableValuesWithoutSkill() {
+    Weapon lmg = weapon("Ingram White Knight");
+    WeaponDetails mounted = WeaponDetails.ofMounted(lmg);
+
+    assertEquals("–", mounted.skill());
+    assertEquals(lmg.getData().damage(), mounted.damage());
+    assertEquals("", mounted.damageFormula());
+    assertEquals(4, mounted.rangeBands().size());
+    assertEquals(lmg.getNuyenCost() + " ¥", mounted.cost());
+  }
 }

@@ -324,6 +324,24 @@ public class Gear {
   }
 
   /**
+   * Nimmt {@code item} in {@code items} auf: Gibt es dort schon einen Gegenstand derselben Art ({@link
+   * #isSameKind(Gear)}), wird nur dessen Menge erhöht (Nutzerentscheidung 2026-10-04), sonst wird
+   * {@code item} angehängt. Gemeinsame Regel für die Ausrüstung des Charakters und der Fahrzeuge.
+   *
+   * @return der Gegenstand, der die Menge jetzt enthält ({@code item} oder der vorhandene)
+   */
+  public static @NonNull Gear addOrMerge(@NonNull List<Gear> items, @NonNull Gear item) {
+    for (Gear existing : items) {
+      if (existing.isSameKind(item)) {
+        existing.setQuantity(existing.getQuantity() + item.getQuantity());
+        return existing;
+      }
+    }
+    items.add(item);
+    return item;
+  }
+
+  /**
    * Anzeigename im Stil der GRW-Ausrüstungslisten (S. 125ff.), z.B. "Automatischer Dietrich (Stufe 4)",
    * "Gefälschte Lizenz (Stufe 3, Waffenlizenz)", "Cram (3 Dosen)", "DocWagon-Vertrag (Gold, 1 Jahr)",
    * "Standard-RFID-Marker ×40". Stückzahlen erscheinen nur ab 2 als "×n".

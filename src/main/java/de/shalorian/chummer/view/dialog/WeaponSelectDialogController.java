@@ -26,6 +26,10 @@ import org.jspecify.annotations.Nullable;
  * einzelne Bogenstufen, deren Verfügbarkeit bei der Charaktererschaffung über 12 liegt, bleiben
  * sichtbar, aber deaktiviert (GRW S. 111, siehe
  * {@link Equipment#isAvailableForPurchase(Availability, int)}).
+ *
+ * <p>Mit {@link #setMountTarget(Character)} dient der Dialog der Waffenauswahl für eine
+ * Fahrzeug-Waffenhalterung und zeigt nur Waffen, die hineinpassen ({@link
+ * WeaponCategory#fitsVehicleMount()}, GRW S. 395).
  */
 public class WeaponSelectDialogController extends CatalogSelectDialogController<WeaponData> {
 
@@ -55,6 +59,8 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
   private @Nullable Stage stage;
   private @Nullable Character character;
   private @Nullable Weapon result;
+  /** Ob nur Waffen für eine Fahrzeug-Waffenhalterung angeboten werden. */
+  private boolean mountOnly;
   /** Waffe, für die {@code ratingBox} zuletzt befüllt wurde. */
   private @Nullable WeaponData ratingSource;
 
@@ -82,6 +88,14 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
     updateList();
   }
 
+  /** Kauf einer Waffe für eine Fahrzeug-Waffenhalterung; nur passende Kategorien erscheinen. */
+  public void setMountTarget(@NonNull Character character) {
+    this.character = character;
+    this.mountOnly = true;
+    refreshCategoryOptions();
+    updateList();
+  }
+
   private boolean isAvailable(@NonNull WeaponData data, int rating) {
     return character == null
         || character.getEquipment().isAvailableForPurchase(data.availability(), rating);
@@ -98,10 +112,18 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
     return isAvailable(data, data.lowestRating());
   }
 
-  /** Kategorien = GRW-Tabellen der Waffen. */
+  /** Kategorien = GRW-Tabellen der Waffen; für eine Halterung nur die passenden. */
   @Override
   protected @NonNull List<String> categoryOptions() {
-    return Arrays.stream(WeaponCategory.values()).map(WeaponCategory::getDisplayName).toList();
+    return Arrays.stream(WeaponCategory.values())
+        .filter(category -> !mountOnly || category.fitsVehicleMount())
+        .map(WeaponCategory::getDisplayName)
+        .toList();
+  }
+
+  @Override
+  protected boolean additionalFilter(@NonNull WeaponData data) {
+    return !mountOnly || data.category().fitsVehicleMount();
   }
 
   @Override

@@ -74,6 +74,35 @@ record WeaponDetails(
   }
 
   /**
+   * Werte einer Waffe in einer Fahrzeug-Waffenhalterung: nur die Tabellenwerte, ohne Stärke und
+   * Fertigkeit des Charakters (Nutzerentscheidung 2026-10-09). Halterungswaffen sind Feuerwaffen bzw.
+   * Granatwerfer mit festem Schaden und festen Reichweiten; Würfelpools für Rigger und Drohnen (GRW
+   * S. 203, 287) sind zurückgestellt.
+   */
+  static @NonNull WeaponDetails ofMounted(@NonNull Weapon weapon) {
+    WeaponData data = weapon.getData();
+    RangeBands bands = weapon.getRangeBands(0);
+    WeaponRange range = data.range();
+    return new WeaponDetails(
+        weapon.getDisplayName(),
+        data.category().getDisplayName(),
+        NO_VALUE,
+        orDash(data.damage()),
+        "",
+        weapon.getRecoil().displayText(),
+        orDash(data.armorPiercing()),
+        orDash(data.reach()),
+        orDash(data.mode()),
+        orDash(data.ammo()),
+        weapon.getAvailabilityText(),
+        costText(weapon),
+        data.source() + " S. " + data.page(),
+        bands == null ? List.of() : bands.bandTexts(),
+        range == null ? "" : rangeNote(range),
+        data.note());
+  }
+
+  /**
    * Tabellenzeile der Reichweiten; bei stärkeabhängigen Zeilen mit Bezug: Bögen nach ihrer
    * Mindeststärke (GRW S. 180), Wurfwaffen nach der Stärke des Werfers.
    */

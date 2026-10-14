@@ -207,6 +207,8 @@ public class CharacterViewController {
   @FXML
   private VBox gearContainer;
   @FXML
+  private VBox vehicleContainer;
+  @FXML
   private Label remainingNuyenLabel;
   @FXML
   private VBox knowledgeSkillsContainer;
@@ -225,6 +227,11 @@ public class CharacterViewController {
    */
   @SuppressWarnings("NullAway.Init")
   private StreetGearTabBuilder streetGear;
+  /**
+   * Wird in {@link #initialize()} erzeugt, sobald die FXML-Container injiziert sind.
+   */
+  @SuppressWarnings("NullAway.Init")
+  private VehicleTabBuilder vehicleTab;
 
   /**
    * Inhalt der Aug-Spalte eines Körperlichen/Geistigen Attributs: der wirksame Wert (derzeit nur durch Panzerungsbehinderung auf GES/REA reduziert,
@@ -253,6 +260,7 @@ public class CharacterViewController {
   public void initialize() {
     streetGear = new StreetGearTabBuilder(lifestyleContainer, armorContainer, weaponContainer,
         gearContainer, streetGearHost());
+    vehicleTab = new VehicleTabBuilder(vehicleContainer, streetGearHost());
     metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
     metatypeBox.setConverter(new MetatypeStringConverter());
     metatypeBox.valueProperty().addListener((obs, old, newVal) -> {
@@ -2452,13 +2460,15 @@ public class CharacterViewController {
   // ── Straßenausrüstung-Tab (Lebensstil, Rüstung) ───────────
 
   /**
-   * Baut den Straßenausrüstung-Tab über {@link StreetGearTabBuilder} neu auf.
+   * Baut den Straßenausrüstung-Tab über {@link StreetGearTabBuilder} und den Tab "Fahrzeuge &amp;
+   * Drohnen" über {@link VehicleTabBuilder} neu auf.
    */
   private void buildStreetGearTabs() {
     if (character == null) {
       return;
     }
     streetGear.build(character);
+    vehicleTab.build(character);
   }
 
   /**
@@ -2475,6 +2485,16 @@ public class CharacterViewController {
       @Override
       public void showDialogLoadError() {
         CharacterViewController.this.showDialogLoadError();
+      }
+
+      @Override
+      public boolean confirm(@NonNull String title, @NonNull String question) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+        applyDialogStyle(confirm.getDialogPane());
+        confirm.setTitle(title);
+        confirm.setHeaderText(question);
+        confirm.initOwner(nameLabel.getScene().getWindow());
+        return confirm.showAndWait().filter(btn -> btn == ButtonType.YES).isPresent();
       }
 
       @Override

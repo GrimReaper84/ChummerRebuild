@@ -11,6 +11,7 @@ public final class DataPaths {
   public static final String BIOWARE_XML = "/de/shalorian/chummer/data/bioware.xml";
   public static final String ARMOR_XML = "/de/shalorian/chummer/data/armor.xml";
   public static final String WEAPONS_XML = "/de/shalorian/chummer/data/weapons.xml";
+  public static final String VEHICLES_XML = "/de/shalorian/chummer/data/vehicles.xml";
   public static final String WEAPON_ACCESSORIES_XML =
       "/de/shalorian/chummer/data/weapon_accessories.xml";
   public static final String GEAR_XML = "/de/shalorian/chummer/data/gear.xml";

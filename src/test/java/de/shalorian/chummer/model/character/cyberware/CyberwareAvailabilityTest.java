@@ -11,7 +11,9 @@ import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import org.junit.jupiter.api.Test;
 
-/** Verfügbarkeit der Implantate gegen die Erschaffungsgrenze 12 (GRW S. 111, Tabellen S. 386–394). */
+/**
+ * Verfügbarkeit der Implantate gegen die Erschaffungsgrenze 12 (GRW S. 111, Tabellen S. 386–394).
+ */
 class CyberwareAvailabilityTest {
 
   private static Availability availability(String name) {

@@ -225,6 +225,17 @@ final class GearTabBuilder {
           : "Gegenstand auswählen, um seine Werte zu sehen"));
       return;
     }
+    showGearDetails(details, gear, character, host, () -> onGearChanged(character, gear));
+  }
+
+  /**
+   * Werte eines Gegenstands im Detailbereich, mit Mengen-Stepper bei Gegenständen mit veränderlicher
+   * Menge; auch für die Ausrüstung im Fahrzeug ({@link VehicleTabBuilder}).
+   *
+   * @param onChanged baut den Tab nach einer Mengenänderung neu auf
+   */
+  static void showGearDetails(@NonNull VBox details, @NonNull Gear gear,
+      @NonNull Character character, @NonNull StreetGearHost host, @NonNull Runnable onChanged) {
     GearDetails d = GearDetails.of(gear);
     Label title = new Label(d.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
@@ -238,8 +249,7 @@ final class GearTabBuilder {
     // Einzelstücke (Geräte mit Einbauten und Einbauten selbst) haben keine veränderliche Menge.
     addRowCells(grid, 2, detailKey("Menge"), gear.getData().isSingleItem()
             ? detailValue(d.quantity())
-            : GearQuantityStepper.create(gear, character, host,
-                () -> onGearChanged(character, gear)),
+            : GearQuantityStepper.create(gear, character, host, onChanged),
         detailKey("Preis"), detailValue(d.packPrice()));
     addRowCells(grid, 3, detailKey(gear.getInstalled().isEmpty()
             ? "Gesamtpreis" : "Gesamtpreis (inkl. Einbauten)"), detailValue(d.totalCost()),

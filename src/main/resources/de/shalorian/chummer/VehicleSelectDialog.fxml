@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.shalorian.chummer.view.dialog.VehicleSelectDialogController"
+      spacing="14" styleClass="dialog-pane" prefWidth="520">
+    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+    <!-- Filter-Zeile -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <ComboBox fx:id="categoryBox" prefWidth="220"/>
+        <TextField fx:id="searchField" promptText="Suche…" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- Fahrzeug-Liste -->
+    <ListView fx:id="itemListView" prefHeight="260" VBox.vgrow="ALWAYS"/>
+
+    <!-- Info-Bereich -->
+    <GridPane hgap="14" vgap="6">
+        <columnConstraints>
+            <ColumnConstraints minWidth="110" prefWidth="120"/>
+            <ColumnConstraints minWidth="200" prefWidth="300" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label text="Kategorie:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="categoryLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="Handling:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="handlingLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label text="Beschleunigung:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="accelLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label text="Geschwindigkeit:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="speedLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Label text="Pilot:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <Label fx:id="pilotLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Label text="Rumpf:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <Label fx:id="bodyLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        <Label text="Panzerung:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <Label fx:id="armorLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+        <Label text="Sensor:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+        <Label fx:id="sensorLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+        <Label text="Mitgeliefert:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+        <Label fx:id="includedLabel" styleClass="attr-abbr" wrapText="true" maxWidth="300"
+               GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+        <Label text="Hinweis:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+        <Label fx:id="noteLabel" styleClass="attr-abbr" wrapText="true" maxWidth="300"
+               GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+        <Label text="Verfügbarkeit:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="10"/>
+        <Label fx:id="availabilityLabel" styleClass="attr-abbr"
+               GridPane.columnIndex="1" GridPane.rowIndex="10"/>
+        <Label text="Preis:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="11"/>
+        <Label fx:id="costLabel" styleClass="attr-bp"
+               GridPane.columnIndex="1" GridPane.rowIndex="11"/>
+        <Label text="Quelle:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="12"/>
+        <Label fx:id="sourceLabel" styleClass="attr-range"
+               GridPane.columnIndex="1" GridPane.rowIndex="12"/>
+    </GridPane>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Abbrechen" onAction="#onCancel" styleClass="btn-secondary"/>
+        <Button fx:id="okButton" text="OK" onAction="#onOk"
+                defaultButton="true" styleClass="btn-primary"/>
+    </HBox>
+</VBox>

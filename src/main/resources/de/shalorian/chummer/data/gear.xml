@@ -925,7 +925,7 @@
         <avail>Rating * 2</avail>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <extra>Autosoft</extra>
+        <extra kind="AUTOSOFT">Autosoft</extra>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1373,7 +1373,7 @@
         <page>379</page>
     </item>
 
-    <!-- ── Sensorpakete (GRW ohne Preis/Verf.: 0 ¥, Nutzerentscheidung 2026-10-08; Drohnen-/Fahrzeugpakete folgen mit Fahrzeugen) (S. 381) ── -->
+    <!-- ── Sensorpakete (GRW ohne Preis/Verf.: 0 ¥, Nutzerentscheidung 2026-10-08; Drohnen- und Fahrzeugpakete sind in vehicles.xml mitgeliefert) (S. 381) ── -->
     <item>
         <name>Sensorpaket (RFID)</name>
         <category>Sensorpakete</category>
@@ -1395,12 +1395,52 @@
         <page>381</page>
     </item>
     <item>
-        <name>Sensorpaket (Hand)</name>
+        <name>Sensorpaket (Hand/Minidrohne)</name>
         <category>Sensorpakete</category>
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>3</capacity>
         <note>Signal 3. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Sensorpaket (Stationär/kleine Drohne)</name>
+        <category>Sensorpakete</category>
+        <cost>0</cost>
+        <accepts>Sensor-Funktionen</accepts>
+        <capacity>5</capacity>
+        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Sensorpaket (Mittlere Drohne)</name>
+        <category>Sensorpakete</category>
+        <cost>0</cost>
+        <accepts>Sensor-Funktionen</accepts>
+        <capacity>6</capacity>
+        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Sensorpaket (Große Drohne)</name>
+        <category>Sensorpakete</category>
+        <cost>0</cost>
+        <accepts>Sensor-Funktionen</accepts>
+        <capacity>8</capacity>
+        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <source>SR4</source>
+        <page>381</page>
+    </item>
+    <item>
+        <name>Sensorpaket (Fahrzeug)</name>
+        <category>Sensorpakete</category>
+        <cost>0</cost>
+        <accepts>Sensor-Funktionen</accepts>
+        <capacity>12</capacity>
+        <note>Signal 5. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>

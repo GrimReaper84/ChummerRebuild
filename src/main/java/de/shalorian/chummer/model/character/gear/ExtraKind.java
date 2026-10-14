@@ -34,11 +34,20 @@ public enum ExtraKind {
    * Standardgranate oder Minigranate. SR4-Grundregelwerk S. 370: "Minigranaten haben den gleichen Preis und
    * die gleiche Wirkung wie normale Granaten." Auswahl, kein Freitext.
    */
-  GRENADE_FORM;
+  GRENADE_FORM,
+  /**
+   * Art einer Autosoft. SR4-Grundregelwerk S. 287 beschreibt die grundlegenden Autosofts Abwehr,
+   * Clearsight, Elektronische Kriegsführung, "Steuerung (Fahrzeugtyp)" und "Zielerfassung
+   * (Waffentyp)". Auswahl, kein Freitext; den Fahrzeug- bzw. Waffentyp erfasst die Auswahl nicht
+   * (Nutzerentscheidung 2026-10-09).
+   */
+  AUTOSOFT;
 
   private static final List<String> LICENSE_SUGGESTIONS = List.of("Waffenlizenz",
       "Verdecktes Tragen", "Jagdlizenz", "Zauberlizenz", "Detektivlizenz", "Führerschein");
   private static final List<String> GRENADE_FORMS = List.of("Standard", "Minigranate");
+  private static final List<String> AUTOSOFTS = List.of("Abwehr", "Clearsight",
+      "Elektronische Kriegsführung", "Steuerung", "Zielerfassung");
 
   /** Vorschläge bzw. Auswahl für den Zusatztext; leer, wenn nur Freitext vorgesehen ist. */
   public @NonNull List<String> suggestions() {
@@ -47,12 +56,13 @@ public enum ExtraKind {
       case WEAPON_CLASS -> Arrays.stream(WeaponCategory.values())
           .filter(WeaponCategory::usesAmmunition).map(WeaponCategory::getDisplayName).toList();
       case GRENADE_FORM -> GRENADE_FORMS;
+      case AUTOSOFT -> AUTOSOFTS;
       default -> List.of();
     };
   }
 
   /** Ob der Zusatztext eine der {@link #suggestions()} sein muss (Auswahl statt Freitext). */
   public boolean isChoice() {
-    return this == WEAPON_CLASS || this == GRENADE_FORM;
+    return this == WEAPON_CLASS || this == GRENADE_FORM || this == AUTOSOFT;
   }
 }

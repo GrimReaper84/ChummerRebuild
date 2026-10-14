@@ -89,4 +89,17 @@ class WeaponCategoryTest {
     assertFalse(WeaponCategory.BOWS.usesAmmunition());
     assertFalse(WeaponCategory.BLADES.usesAmmunition());
   }
+
+  /** GRW S. 395: "ein LMG oder eine kleinere Waffe", dazu Granatwerfer (Nutzerentscheidung 2026-10-09). */
+  @Test
+  void vehicleMountTakesFirearmsUpToLightMgAndGrenadeLaunchers() {
+    Set<WeaponCategory> allowed = Arrays.stream(WeaponCategory.values())
+        .filter(WeaponCategory::fitsVehicleMount)
+        .collect(Collectors.toSet());
+    assertEquals(Set.of(WeaponCategory.TASERS, WeaponCategory.HOLDOUTS, WeaponCategory.LIGHT_PISTOLS,
+        WeaponCategory.HEAVY_PISTOLS, WeaponCategory.MACHINE_PISTOLS, WeaponCategory.SUBMACHINE_GUNS,
+        WeaponCategory.ASSAULT_RIFLES, WeaponCategory.SPORTS_RIFLES, WeaponCategory.SNIPER_RIFLES,
+        WeaponCategory.SHOTGUNS, WeaponCategory.SPECIAL, WeaponCategory.LIGHT_MG,
+        WeaponCategory.GRENADE_LAUNCHERS), allowed);
+  }
 }

@@ -378,8 +378,11 @@ final class WeaponTabBuilder {
     details.getChildren().addAll(title, text);
   }
 
-  /** Werte in Label/Wert-Paaren, gruppiert wie die Detail-Labels in {@code tabWeapons}. */
-  private static @NonNull MigPane buildValueGrid(@NonNull WeaponDetails d) {
+  /**
+   * Werte in Label/Wert-Paaren, gruppiert wie die Detail-Labels in {@code tabWeapons}; auch für
+   * Fahrzeugwaffen im {@link VehicleTabBuilder}.
+   */
+  static @NonNull MigPane buildValueGrid(@NonNull WeaponDetails d) {
     MigPane grid = new MigPane("", "[][]24[][]24[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     addRowCells(grid, 0, detailKey("Kategorie"), detailValue(d.category()),
@@ -406,8 +409,8 @@ final class WeaponTabBuilder {
     return box;
   }
 
-  /** Reichweitenstufen mit den GRW-Modifikatoren als Spaltenköpfe (S. 179). */
-  private static @NonNull VBox buildRangeSection(@NonNull WeaponDetails d) {
+  /** Reichweitenstufen mit den GRW-Modifikatoren als Spaltenköpfe (S. 179); auch für Fahrzeugwaffen. */
+  static @NonNull VBox buildRangeSection(@NonNull WeaponDetails d) {
     Label title = new Label("Reichweiten");
     title.getStyleClass().add(STYLE_DETAIL_KEY);
     if (d.rangeBands().isEmpty()) {

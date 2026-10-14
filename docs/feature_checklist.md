@@ -206,7 +206,7 @@
 | Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ✅ | Teil B umgesetzt 2026-09-30: Schaden aus Stärke (GRW S. 188, STR÷2 aufgerundet; Bogen nach Mindeststärke S. 361), Reichweiten laut Tabelle S. 179 (am Bild geprüft; `<range>` je Waffe, Abweichungen laut Waffentext: Hämmerli 620S, Mossberg AM-CMDT, Spezielle Waffen S. 362/365), Fertigkeit mit Wert je Kategorie (S. 147/148, 360–366). Tabelle aktualisiert sich bei Attribut-/Fertigkeitsänderung. **Einschränkungen:** Exotische Waffen teilen sich je eine Fertigkeit (GRW: je Waffe eigene); Pfeilstufe nicht modelliert; kein Würfelpool (Roadmap Stufe 3) |
 | Zubehör mit Halterungen     | ✅      | Teil C umgesetzt 2026-10-04: 16 GRW-Zubehörteile (Tabelle S. 368, am Bild geprüft) an Halterungen Lauf/Unterlauf/Aufmontiert je Waffenklasse (S. 357), eine pro Halterung, Zubehör ohne Halterung mehrfach; Sonderregeln laut Zubehörtexten S. 367/368 (Gasventil nur Automatikpistolen/MPs/Sturmgewehre/MGs und nicht entfernbar, Schalldämpfer EM/HM ohne Revolver, Schallunterdrücker SM/AM, Schockpolster und Gyrostabilisator nur Gewehre/schwere Waffen, Airburst nur Granat-/Raketenwerfer, Schnelllader nur Revolver, Ersatzladestreifen nur Ladestreifen-Waffen, Projektilwaffen nur Lasermarkierer/Smartgun); mitgeliefertes Zubehör laut Waffentexten S. 362–366 (`<included>`), höchstens ein Gasventil/Smartgunsystem/Schockpolster je Waffe; RK "x (y)" inkl. Zubehör (Gasventil fest, alles andere im Klammerwert); internes Smartgunsystem kostet den Waffenpreis; Budget, Karriere-Kauf, Persistenz. **Einschränkungen:** Spezielle Waffen ohne Halterung (kein GRW-Beleg); Airburst verlangt kein Smartgunsystem; HK-XM30-Umbausätze zurückgestellt (nur `<note>`) |
 | Waffenmodifikationen        | ❌      | Nur Arsenal, zurückgestellt |
-| Munition, Pfeile/Bolzen, Granaten/Raketen | ❌ | Gehören zum Gear-Feature |
+| Munition, Pfeile/Bolzen, Granaten/Raketen | ✅ | Im Gear-Feature umgesetzt (Gear Teil D, 2026-10-08), siehe Abschnitt 13 |
 
 ---
 
@@ -218,9 +218,10 @@
 | Stufe ≤ 6 bei Erschaffung (allgemein) | ✅ | `Equipment.isAvailableForPurchase` (GRW S. 111), gilt für alle Kaufkategorien mit Stufe |
 | Kommlink mit Prozessor/Signal + Betriebssystem (Firewall/System) | ✅ | Gear Teil B (2026-10-08): 9 Kommlinks, 6 Betriebssysteme (GRW S. 374, am Bild); Betriebssystem als Kindknoten, gekauft über "Betriebssystem installieren", höchstens eins je Kommlink; System ≤ Prozessor (S. 260) mit Hinweis im Detailbereich; Kommlinks/Betriebssysteme sind Einzelstücke (Menge 1, kein Zusammenführen). UI vom Nutzer noch nicht angesehen |
 | Matrixprogramme mit Preisbändern | ✅ | Gear Teil B: 6 Zeilen der Tabelle S. 376 (Preis bis Stufe 3 / ab Stufe 4), Programmname als Pflicht-Zusatztext (Freitext, keine Programmliste). Programme "System"/"Firewall" sind reine Käufe ohne Wirkung auf Kommlink-Werte |
-| Kommlink-Aufrüstungen, laufende Programme/Matrix-Regeln | ❌ | Zurückgestellt: kein GRW-Preis für Aufrüstungen (kommt mit *Vernetzt*); Programme nicht einem Kommlink zugeordnet |
+| Kommlink-Aufrüstungen, laufende Programme/Matrix-Regeln | ❌ | Zurückgestellt; Programme nicht einem Kommlink zugeordnet. **Korrektur 2026-10-09:** GRW-Preise gibt es doch: Tabelle "Preise für Hardware-Upgrades" S. 261 (Prozessor/Signal, Modulstufe 1–6, am Bild geprüft), Regel S. 260 ("nur um bis zu +2 über die Originalstufen", ein Modul je Attribut); Firewall/System als Softwarepaket zu den Programmpreisen S. 376. Umsetzung bleibt offen (gemeinsam mit Fahrzeug-Matrix-Upgrades zu entscheiden, `docs/analysen/fahrzeuge_analyse.md` F12) |
 | Sensoren, Sicht-/Audioverstärkung, Magschloss-Zusätze (Kapazität) | ✅ | Gear Teil C (2026-10-08): 10 visuelle/optische Geräte, 8 Sichtverstärkungen, 3 Audiosensoren, 3 Audioverstärkungen, 3 Sensorpakete (RFID/Mikro/Hand, 0 ¥ mangels GRW-Preis), 12 Sensor-Funktionen (inkl. Kamera/Mikrofon als Sensor), 3 Magschloss-Zusätze (GRW S. 378–382, am Bild). Einbau über "Einbauen" mit Kapazitätsprüfung, Verfügbarkeitszuschläge erhöhen die Verfügbarkeit des Geräts (auch für die Grenze 12 bei Erschaffung). UI vom Nutzer noch nicht angesehen |
-| Drohnen-/Fahrzeug-Sensorpakete | ❌ | Mit dem Fahrzeug-Feature (Nutzerentscheidung 2026-10-08) |
+| Drohnen-/Fahrzeug-Sensorpakete | ✅ | Fahrzeug-Feature (2026-10-09): Stationär/kleine Drohne 5/4, Mittlere Drohne 6/4, Große Drohne 8/4, Fahrzeug 12/5 (Kapazität/Signal, GRW S. 381); "Sensorpaket (Hand)" heißt jetzt "Sensorpaket (Hand/Minidrohne)" wie die GRW-Zeile (alte Speicherdateien verlieren diesen Eintrag beim Laden) |
+| Autosoft-Typ als Auswahl | ✅ | 2026-10-09: Abwehr, Clearsight, Elektronische Kriegsführung, Steuerung, Zielerfassung (GRW S. 287); ohne Unterangabe Waffe/Fahrzeugtyp (Nutzerentscheidung) |
 | Smartlink erfordert Bildverbindung | ❌ | GRW S. 380; derzeit nur Hinweis, keine Einbauprüfung |
 | Mage-Sight-Brille/Periskop "[1]" als Einbau | ❌ | GRW nennt keinen Einbauort; nur als eigenständiges Gerät |
 | Orte/Lager-Kategorien        | ❌      | Zurückgestellt (später gemeinsam für Gear, Waffen, Rüstung) |
@@ -236,7 +237,19 @@
 
 | Feature                        | Status | Anmerkung        |
 |--------------------------------|--------|------------------|
-| Fahrzeuge kaufen und verwalten | ❌      | Komplett fehlend |
+| Fahrzeuge und Drohnen kaufen | ✅ | 2026-10-09 (`docs/plaene/fahrzeuge_plan.md`): eigener Haupttab "Fahrzeuge & Drohnen" (Baum nach GRW-Kategorie + Detailbereich), 37 Einträge der GRW-Tabelle S. 397 (am Bild, Werte aus dem GRW statt C#: Everglades 25.500 ¥, Sensor der Luftfahrzeuge), Verf. ≤ 12 sichtbar-deaktiviert, Restgeld bzw. Karriere-Abbuchung, Persistenz. Anzeige: Zustandsmonitor 8 + ⌈Rumpf/2⌉ (S. 197), Gerätestufe 3/4 (S. 261), Sensor mit Ø eingebauter Sensoren (S. 380). UI vom Nutzer noch nicht angesehen |
+| Riggeradapter, Waffenhalterungen | ✅ | GRW S. 395/396: je 2.500 ¥ (Verf. 4 bzw. 8V); Drohnen haben den Riggeradapter (S. 398); Halterungen ≤ Rumpf ÷ 3 inkl. mitgelieferter (Doberman, Steel Lynx, Wasp, Citymaster, Cutlass) |
+| Waffen in Halterungen | ✅ | Feuerwaffen bis LMG + Granatwerfer (GRW S. 395 + Nutzerentscheidung), eine je Halterung, nur Tabellenwerte (ohne Fertigkeit/Würfelpool); gehören nicht zu den Charakterwaffen |
+| Ausrüstung im Fahrzeug | ✅ | Beliebige Ausrüstung, mitgeliefertes Sensorpaket mit Einbau von Sensor-Funktionen, mitgelieferte Autosofts (Doberman, Steel Lynx, Stormcloud, Fly-Spy) und Medkit 4 (AutoDoc) kostenlos und nicht entfernbar |
+| Zubehör an Fahrzeugwaffen | ❌ | Zurückgestellt (Nutzerentscheidung 2026-10-09) |
+| Matrix-Upgrades (Prozessor/Signal/Firewall/System) | ❌ | Zurückgestellt, gemeinsam mit den Kommlink-Aufrüstungen (GRW S. 260/261, 376) |
+| Pilot-Upgrade | ❌ | Kein eindeutiger GRW-Beleg, zurückgestellt |
+| Eigenname, Notizen, Orte | ❌ | Zurückgestellt (gemeinsam mit Gear/Waffen) |
+| Schaden am Zustandsmonitor, Würfelpools Rigger/Drohnen, Fahrzeugkampf | ❌ | Roadmap (Condition Monitor, Würfelpools) |
+| Arsenal-Inhalte (Slots, Mod-Boni, weitere Fahrzeuge/Mods), Gebrauchtwagen, Verkauf | ❌ | Zusatzband bzw. kein GRW-Beleg, zurückgestellt |
+
+--------------------------------|--------|------------------|
+| Fahrzeuge kaufen und verwalten | ❌      | Komplett fehlend. Analysen: `docs/analysen/fahrzeuge_analyse.md` (C#/GRW), `docs/analysen/fahrzeuge_java_analyse.md` (Java-Ist, 2026-10-09). Schon vorhanden: Riggerkontrolle (Cyberware), Autosoft und Medkit (Gear), Fahrzeugfertigkeiten |
 
 ---
 
@@ -326,9 +339,9 @@
 | Cyberware/Bioware      | 6 | 0  | 2 |
 | Rüstung                | 3 | 0  | 4 |
 | Lebensstil             | 1 | 0  | 2 |
-| Waffen                 | 3 | 0  | 2 |
-| Gear                   | 4 | 0  | 5 |
-| Fahrzeuge              | 0 | 0  | 1 |
+| Waffen                 | 4 | 0  | 1 |
+| Gear                   | 6 | 0  | 4 |
+| Fahrzeuge              | 4 | 0  | 6 |
 | Karrieremodus          | 5 | 0  | 4 |
 | Initiative             | 0 | 0  | 4 |
 | Condition Monitor      | 0 | 0  | 4 |
