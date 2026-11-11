@@ -5,14 +5,20 @@ Diese Datei gibt Claude Code (claude.ai/code) Hinweise für die Arbeit an diesem
 ## Build & Start
 
 ```bash
-./gradlew run          # Anwendung starten
-./gradlew build        # Kompilieren + Tests (die Verifikation)
-./gradlew test         # Nur Tests
-./gradlew jar          # JAR bauen
-./gradlew distZip      # Verteilbares Archiv bauen
+./gradlew run            # Anwendung starten
+./gradlew build          # Kompilieren + Tests (die Verifikation)
+./gradlew test           # Nur Tests
+./gradlew jpackage       # Installer für das aktuelle Betriebssystem (build/jpackage)
+./gradlew runtimeZip     # Portables ZIP mit eingebautem Java (build/portable)
+./gradlew generateIcons  # Fenster- und Installer-Icons neu zeichnen (von Hand, Ergebnis wird eingecheckt)
 ```
 
 **Java 25** ist Pflicht (per Toolchain erzwungen; Gradle findet auch die JDKs aus `~/.jdks`). Hauptklasse: `de.shalorian.chummer.App`.
+Für `jpackage`/`runtimeZip` muss die JDK JavaFX enthalten (Liberica Full, ADR-043).
+
+**Version und Release:** Die Version steht nur in `gradle.properties` (`AppInfo.version()` liest sie zur Laufzeit). Ein
+Tag `v<version>` startet `.github/workflows/release.yml` (Installer und ZIPs für Windows, Linux, macOS als
+Release-Entwurf); `ci.yml` baut bei Push auf `master` und bei Pull Requests. Ablauf: `README.md`, „Release erstellen“.
 
 ## Architektur
 

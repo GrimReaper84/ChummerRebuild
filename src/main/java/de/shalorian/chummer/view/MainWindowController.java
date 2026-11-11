@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view;
 
 import de.shalorian.chummer.App;
+import de.shalorian.chummer.AppInfo;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.persistence.CharacterStore;
 import de.shalorian.chummer.utils.PersistenceUtils;
@@ -168,7 +169,7 @@ public class MainWindowController {
     if (stage == null) return;
     String name = currentCharacter != null ? currentCharacter.getName() : "";
     String file = currentFile != null ? "  [" + currentFile.getName() + "]" : "";
-    stage.setTitle("Chummer – " + name + file);
+    stage.setTitle(AppInfo.title() + " – " + name + file);
   }
 
   private @NonNull FileChooser buildChooser(@NonNull String title) {

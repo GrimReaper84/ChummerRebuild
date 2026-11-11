@@ -90,6 +90,10 @@ aufführt. Reine Katalog-Vervollständigungen (z.B. "alle GRW-Qualities") sind e
   Mechanik irreführend wären, zurückstellen statt halb anbieten (ADR-005).
 - **Kommentare** in der XML auf Deutsch, mit Kategorie- und Seitenangaben wie in den bestehenden
   Dateien.
+- **Kein GRW-Text 1:1.** Hinweise, Beschreibungen und Kommentare in den Katalogen immer in eigenen Worten
+  zusammenfassen, nie Sätze aus dem Regelwerk abschreiben (Projektregeln Abschnitt 4). Werte, Namen und
+  Seitenangaben sind erlaubt. Stößt du in einem bestehenden Katalog auf wörtlich übernommenen Text, im Bericht
+  aufführen und umformulieren.
 - **Nichts erfinden.** Keine Einträge oder Werte aus dem Gedächtnis. Was im GRW nicht steht, bleibt
   aus den Daten und kommt als offene Frage in den Bericht.
 

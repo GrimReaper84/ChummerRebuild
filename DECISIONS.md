@@ -111,6 +111,24 @@ Klassen. Das FXML bleibt unverändert (kein `fx:include`).
 **Warum:** Der Controller war unübersichtlich; Querabhängigkeiten zwischen Tabs stehen jetzt an einer Stelle statt
 verstreut in den Tabs. Nutzerentscheidungen per Rückfrage (Package `view.tab`, fachliche Rückmeldungen, ein Host).
 
+### ADR-042: Kein Regelwerkstext 1:1 in Katalogen und Anzeige (2026-11-11)
+Kataloge enthalten nur Werte, Namen, Seitenangaben und eigene Kurzbeschreibungen; bestehende Kataloge werden vor dem
+ersten öffentlichen Release darauf geprüft.
+**Warum:** Das Projekt wird öffentlich (GPL-3.0), der GRW-Text ist urheberrechtlich geschützt.
+
+### ADR-043: Release-Pakete mit JavaFX aus der JDK, Name und Icon (2026-11-11)
+Auslieferung als „Chummer SR4 Reborn“ (Paketname `chummer-sr4-reborn`, Starter `ChummerSR4Reborn`) unter GPL-3.0,
+Start mit Version 1.0.0 (statt wie zuerst geplant 0.x: der macOS-Installer lehnt eine führende 0 ab;
+Nutzerentscheidung 2026-11-11), einzige Versionsquelle `gradle.properties`. Das Icon ist der
+Font-Awesome-Drache in Neon-Cyan `#00E5FF` auf `#0D0F12`, gezeichnet von `GenerateIcons` (Test-Quellen, Task
+`generateIcons`) und eingecheckt. Das Laufzeit-Image (`org.beryx.runtime`) linkt JavaFX als **Module aus der JDK**:
+lokal Liberica Full, im CI `setup-java` mit `liberica`/`jdk+fx`. Die feste Modulliste lässt jlink abbrechen, wenn die
+JDK kein JavaFX hat; die JavaFX-JARs aus Maven fallen aus dem Image heraus.
+**Warum:** `App` erbt direkt von `Application`; ohne JPMS startet JavaFX vom Classpath so nicht (ADR-039). JavaFX als
+Module im Laufzeit-Image ist die unterstützte Konfiguration, braucht keine Startklasse als Umweg und entspricht der JDK,
+mit der ohnehin entwickelt wird. Name, Version, Icon und Lizenz sind Nutzerentscheidungen per Rückfrage
+(`docs/plaene/archiv/release_plan.md`).
+
 ## Fachregeln: Entscheidungen, wo das GRW schweigt oder unklar ist
 
 ### ADR-016: Weiche Warnungen statt harter Sperren (2026-08, 2026-09-27)

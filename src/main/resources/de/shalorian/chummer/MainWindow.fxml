@@ -24,7 +24,7 @@
 
     <center>
         <VBox alignment="CENTER" spacing="12" styleClass="welcome-pane">
-            <Label text="Willkommen bei Chummer" styleClass="welcome-title"/>
+            <Label text="Willkommen bei Chummer SR4 Reborn" styleClass="welcome-title"/>
             <Label text="Datei → Neu um einen Charakter zu erstellen" styleClass="welcome-hint"/>
         </VBox>
     </center>

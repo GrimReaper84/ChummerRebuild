@@ -149,6 +149,11 @@ groß zum direkten Lesen. Eindeutiger Fließtext braucht keine Bildprüfung.
 `SR4-Grundregelwerk S. 359: "Nur Standard- und Alphaware können bei der Charaktererschaffung gekauft
 werden."` So kann man später nachvollziehen, woher eine Regel kommt.
 
+**Kein Regelwerkstext 1:1 in Katalogen (Nutzervorgabe 2026-11-11).** XML-Kataloge und alles, was die App
+anzeigt, enthalten nur Werte, Namen, Seitenangaben und Beschreibungen **in eigenen Worten**, nie wörtlich
+übernommene Sätze aus dem GRW. Grund: Das Projekt wird öffentlich (GPL-3.0), der Regelwerkstext ist urheberrechtlich
+geschützt. Gilt für neue Kataloge und für die Überarbeitung der bestehenden.
+
 **Nichts erfinden.** Katalogdaten (Zauber, Qualities, Implantate …) nur aus einer tatsächlich
 gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
 

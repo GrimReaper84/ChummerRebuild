@@ -365,11 +365,18 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    `WeaponTabBuilder`/`GearTabBuilder`/`VehicleTabBuilder`.
    Bekannte Abweichung: `StreetGearTabBuilder` und `VehicleTabBuilder` bekommen den Charakter noch per
    `build(character)` statt `setCharacter` + `build()` wie die übrigen Builder (bewusst nicht vereinheitlicht).
-3. **Auslieferung über GitHub Releases** wie im Fallout2d20-Projekt: Release-Workflow bei Tag `v*` auf Ubuntu,
+3. ✅ **Auslieferung über GitHub Releases (vorbereitet 2026-11-11, ADR-043)** wie im Fallout2d20-Projekt: Release-Workflow bei Tag `v*` auf Ubuntu,
    Windows und macOS, je Installer (`.msi`/`.deb`/`.dmg`) plus portables ZIP mit eingebautem Java, Tag-Prüfung
    gegen die Version. Chummer bleibt **nicht modular**, daher Plugin `org.beryx.runtime` statt `org.beryx.jlink`
    (ADR-039). Fällt dabei weg: die nativen JavaFX-JARs aller Plattformen in `build.gradle.kts` und `distZip`.
    Dazu gehören App-Icon, Version an einer Stelle (`gradle.properties`) und ein CI-Workflow für Pull Requests.
+   Umgesetzt: „Chummer SR4 Reborn“ 1.0.0, Drachen-Icon, `ci.yml`/`release.yml` (Liberica `jdk+fx`), `LICENSE` (GPL-3.0),
+   `README.md`; lokal `.deb` und Linux-ZIP gebaut. Offen: erster echter Lauf der Workflows (Windows/macOS ungetestet),
+   erstes Release (Tag).
+
+   **Vor dem ersten öffentlichen Release:** alle XML-Kataloge auf wörtlich übernommenen GRW-Text prüfen (v.a.
+   `<note>`, Beschreibungen, Kommentare) und in eigene Worte fassen (Projektregeln Abschnitt 4, Nutzervorgabe
+   2026-11-11), am besten mit `catalog-extractor` je Katalog.
 
 *Fachliche Features (Kandidaten, Reihenfolge offen)*
 

@@ -2,6 +2,7 @@
 javafx-runtime = "25.0.4"
 javafx-plugin = "0.1.0"
 errorprone-plugin = "5.1.1"
+runtime-plugin = "2.0.1"
 jspecify = "1.0.1"
 jackson = "2.22.4"
 controlsfx = "11.2.6"
@@ -27,3 +28,4 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 [plugins]
 javafx = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone-plugin" }
+runtime = { id = "org.beryx.runtime", version.ref = "runtime-plugin" }
