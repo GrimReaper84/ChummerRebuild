@@ -25,7 +25,7 @@ class CharacterComplexFormCapTest {
 
   private static Character technomancer(String name, int resonance) {
     Character c = mensch(name);
-    QualityData technomant = QualityDataLoader.findByName("Technomant");
+    QualityData technomant = QualityDataLoader.findByName("Technomancer");
     assertNotNull(technomant);
     c.addQuality(technomant, false);
     var attr = c.getMagicOrResonance();

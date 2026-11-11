@@ -12,6 +12,7 @@ public class SpecialAttribute {
   private final int min;
   private final int max;
   private final boolean racialMaxBonusApplies;
+  private int maxBonus;
   private int value;
 
   /**
@@ -38,8 +39,15 @@ public class SpecialAttribute {
     return min;
   }
 
+  /** Maximum, inklusive Bonus durch die Gabe Glück (Edge, GRW S. 115). */
   public int getMax() {
-    return max;
+    return max + maxBonus;
+  }
+
+  /** Setzt den Maximum-Bonus; sinkt das Maximum unter den Wert, wird der Wert darauf gesenkt. */
+  public void setMaxBonus(int maxBonus) {
+    this.maxBonus = maxBonus;
+    value = Math.min(value, getMax());
   }
 
   public int getValue() {
@@ -47,9 +55,9 @@ public class SpecialAttribute {
   }
 
   public void setValue(int newValue) {
-    if (newValue < min || newValue > max) {
+    if (newValue < min || newValue > getMax()) {
       throw new IllegalArgumentException(
-          "%s: Wert %d liegt außerhalb [%d/%d]".formatted(type, newValue, min, max));
+          "%s: Wert %d liegt außerhalb [%d/%d]".formatted(type, newValue, min, getMax()));
     }
     this.value = newValue;
   }
@@ -60,7 +68,7 @@ public class SpecialAttribute {
 
   public int getBpCostForValue(int hypotheticalValue) {
     int cost = (hypotheticalValue - min) * BP_PER_POINT;
-    if (racialMaxBonusApplies && hypotheticalValue == max && min != max) {
+    if (racialMaxBonusApplies && hypotheticalValue == getMax() && min != getMax()) {
       cost += RACIAL_MAX_BONUS;
     }
     return cost;

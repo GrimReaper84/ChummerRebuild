@@ -213,7 +213,7 @@ public class CharacterViewController implements CharacterTabHost {
   /**
    * Blendet den Technomancer-Tab ein bzw. aus, je nachdem ob {@link Character#hasResonance()} aktuell wahr ist — 1:1 dasselbe Muster wie
    * {@link #syncMagicTabVisibility()}. Anders als bei Magie (Magier vs. Adept) gibt es bei Technomancer keine feinere Differenzierung nötig, da nur
-   * eine einzige Quality ("Technomant") RES freischaltet.
+   * eine einzige Quality ("Technomancer") RES freischaltet.
    */
   private void syncTechnomancerTabVisibility() {
     Character ch = this.character;

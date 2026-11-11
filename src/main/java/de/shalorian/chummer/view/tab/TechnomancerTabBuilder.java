@@ -87,7 +87,7 @@ public final class TechnomancerTabBuilder {
     // Tab-Inhalt wird nur bei setCharacter()/updateModeDisplay() neu gebaut, nicht bei jeder
     // Quality-Änderung (nur die Tab-Sichtbarkeit wird dort synchronisiert, siehe
     // syncTechnomancerTabVisibility()) — ein hier gesetzter Disabled-Zustand würde nach Erwerb der
-    // Quality "Technomant" eingefroren bleiben. Die Prüfung erfolgt stattdessen live beim Klick in
+    // Quality "Technomancer" eingefroren bleiben. Die Prüfung erfolgt stattdessen live beim Klick in
     // onAddComplexForm() (analog dem Zauber-Button in MagicTabBuilder.build()).
     Button addBtn = new Button("Komplexe Form hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);

@@ -13,6 +13,7 @@ public class Skill {
   private final @NonNull SkillCategory category;
   private final @Nullable String groupName; // null wenn keine Gruppe
 
+  private int maxRating = MAX_RATING;
   private int rating = 0;
   private @Nullable String specialization;
 
@@ -51,24 +52,42 @@ public class Skill {
   }
 
   public void setRating(int rating) {
-    if (rating < 0 || rating > MAX_RATING) {
+    if (rating < 0 || rating > maxRating) {
       throw new IllegalArgumentException(
-          "%s: Rating %d liegt außerhalb [0/%d]".formatted(name, rating, MAX_RATING));
+          "%s: Rating %d liegt außerhalb [0/%d]".formatted(name, rating, maxRating));
     }
     this.rating = rating;
   }
 
+  /** Höchstwert: {@value #MAX_RATING}, mit der Gabe Talentiert 7 (GRW S. 117). */
+  public int getMaxRating() {
+    return maxRating;
+  }
+
+  /** Setzt den Höchstwert (Talentiert); liegt der Wert darüber, wird er darauf gesenkt. */
+  public void setMaxRating(int maxRating) {
+    this.maxRating = maxRating;
+    rating = Math.min(rating, maxRating);
+  }
+
+  /** BP-Kosten des aktuellen Werts; Stufen über {@value #MAX_RATING} kosten doppelt (Talentiert, GRW S. 117). */
   public int getBpCost(boolean doubled) {
-    int cost = rating * BP_PER_RATING;
+    int cost = rating * BP_PER_RATING + Math.max(0, rating - MAX_RATING) * BP_PER_RATING;
     return doubled ? cost * 2 : cost;
   }
 
+  /** BP-Kosten des nächsten Steigerungsschritts. */
   public int getBpCostPerRating(boolean doubled) {
-    return doubled ? BP_PER_RATING * 2 : BP_PER_RATING;
+    int cost = rating + 1 > MAX_RATING ? BP_PER_RATING * 2 : BP_PER_RATING;
+    return doubled ? cost * 2 : cost;
   }
 
+  /** Karma-Kosten des nächsten Schritts; über {@value #MAX_RATING} doppelt (Talentiert, GRW S. 117). */
   public int getKarmaCost(boolean doubled) {
     int cost = rating == 0 ? 4 : (rating + 1) * 2;
+    if (rating + 1 > MAX_RATING) {
+      cost *= 2;
+    }
     return doubled ? cost * 2 : cost;
   }
 

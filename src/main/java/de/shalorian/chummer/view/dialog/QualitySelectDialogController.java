@@ -1,22 +1,32 @@
 package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
-import de.shalorian.chummer.model.character.quality.QualitySource;
+import de.shalorian.chummer.model.character.quality.QualitySelection;
 import de.shalorian.chummer.model.character.quality.QualityType;
+import de.shalorian.chummer.model.character.skill.Skill;
+import java.text.Collator;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Auswahl einer Gabe oder eines Handicaps. Nicht wählbare Einträge bleiben deaktiviert sichtbar; der Detailbereich
+ * zeigt Seite, Kurzwirkung und gegebenenfalls den Grund aus {@link Character#getQualityBlockReason}. Verlangt die
+ * Quality eine Auswahl (Fertigkeit, Attribut oder Text), ist OK erst mit gültiger Auswahl aktiv.
+ */
 public class QualitySelectDialogController extends CatalogSelectDialogController<QualityData> {
 
   private static final String CATEGORY_POSITIVE = "Gaben";
@@ -24,6 +34,14 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
 
   @FXML
   private Label costLabel;
+  @FXML
+  private Label choiceLabel;
+  @FXML
+  private ComboBox<String> choiceBox;
+  @FXML
+  private TextField choiceField;
+  @FXML
+  private Label detailLabel;
   @FXML
   private CheckBox onlySelectableBox;
   @FXML
@@ -35,6 +53,7 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
 
   private @Nullable Stage stage;
   private @Nullable Character character;
+  private @Nullable QualityData shownChoiceFor;
   private @Nullable QualitySelectResult result;
 
   @FXML
@@ -42,9 +61,10 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
   public void initialize() {
     super.initialize();
     onlySelectableBox.selectedProperty().addListener((_, _, _) -> updateList());
-    gratisBox.selectedProperty().addListener((_, _, _) -> onListUpdated());
-    okButton.setDisable(true);
-    addAgainButton.setDisable(true);
+    gratisBox.selectedProperty().addListener((_, _, _) -> updateList());
+    choiceBox.valueProperty().addListener((_, _, _) -> updateButtons());
+    choiceField.textProperty().addListener((_, _, _) -> updateButtons());
+    showChoiceControls(QualitySelection.NONE);
   }
 
   public void setStage(@NonNull Stage stage) {
@@ -68,9 +88,12 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
     return List.of(CATEGORY_POSITIVE, CATEGORY_NEGATIVE);
   }
 
+  /** Alle wählbaren Katalogeinträge; Metatyp-Fähigkeiten kommen nur über den Metatyp und erscheinen nicht. */
   @Override
   protected @NonNull List<QualityData> allEntries() {
-    return List.copyOf(QualityDataLoader.getAllQualities().values());
+    return QualityDataLoader.getAllQualities().values().stream()
+        .filter(q -> !q.rules().metatypeOnly())
+        .toList();
   }
 
   @Override
@@ -82,38 +105,17 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
 
   @Override
   protected boolean additionalFilter(@NonNull QualityData q) {
-    if (!onlySelectableBox.isSelected()) {
-      return true;
-    }
-    return isSelectable(q, alreadySelectedNames());
+    return !onlySelectableBox.isSelected() || isSelectable(q);
   }
 
-  private @NonNull Set<String> alreadySelectedNames() {
+  @Override
+  protected boolean isSelectable(@NonNull QualityData q) {
+    return blockReason(q) == null;
+  }
+
+  private @Nullable String blockReason(@NonNull QualityData q) {
     Character c = this.character;
-    if (c == null) {
-      return Set.of();
-    }
-    return c.getQualities().stream()
-        .filter(q -> q.source() == QualitySource.SELECTED)
-        .map(q -> q.data().name())
-        .collect(Collectors.toSet());
-  }
-
-  private boolean isSelectable(@NonNull QualityData q, @NonNull Set<String> alreadySelected) {
-    if (alreadySelected.contains(q.name())) {
-      return false;
-    }
-    if (character == null || character.isCreated()) {
-      return true;
-    }
-    if (q.type() == QualityType.POSITIVE && q.contributeToLimit()) {
-      return character.getPositiveQualityBP() + q.bp() <= Character.MAX_POSITIVE_QUALITY_BP;
-    }
-    if (q.type() == QualityType.NEGATIVE && q.contributeToLimit()) {
-      return character.getNegativeQualityBP() + Math.abs(q.bp())
-          <= Character.MAX_NEGATIVE_QUALITY_BP;
-    }
-    return true;
+    return c == null ? null : c.getQualityBlockReason(q, gratisBox.isSelected());
   }
 
   @Override
@@ -121,39 +123,93 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
     QualityData selected = itemListView.getSelectionModel().getSelectedItem();
     if (selected == null) {
       costLabel.setText("–");
-      okButton.setDisable(true);
-      addAgainButton.setDisable(true);
+      detailLabel.setText("");
+      showChoiceControls(QualitySelection.NONE);
+      shownChoiceFor = null;
+      updateButtons();
       return;
     }
-    if (gratisBox.isSelected()) {
-      costLabel.setText("Gratis");
-    } else {
-      int bp = Math.abs(selected.bp());
-      costLabel.setText(bp + " BP");
+    costLabel.setText(gratisBox.isSelected() ? "Gratis" : Math.abs(selected.bp()) + " BP");
+    if (!selected.equals(shownChoiceFor)) {
+      shownChoiceFor = selected;
+      fillChoiceControls(selected);
     }
-    okButton.setDisable(false);
-    addAgainButton.setDisable(false);
+    updateButtons();
+  }
+
+  private void fillChoiceControls(@NonNull QualityData q) {
+    showChoiceControls(q.selection());
+    choiceLabel.setText(q.selectLabel().isEmpty() ? "Auswahl:" : q.selectLabel() + ":");
+    choiceField.clear();
+    Collator collator = Collator.getInstance(Locale.GERMAN);
+    Character c = this.character;
+    switch (q.selection()) {
+      case SKILL -> choiceBox.getItems().setAll(c == null ? List.of()
+          : c.getSkills().stream().map(Skill::getName).sorted(collator).toList());
+      case ATTRIBUTE -> choiceBox.getItems().setAll(
+          Arrays.stream(AttributeType.values()).map(AttributeType::getDisplayName).toList());
+      default -> choiceBox.getItems().clear();
+    }
+    choiceBox.setValue(null);
+  }
+
+  private void showChoiceControls(@NonNull QualitySelection selection) {
+    boolean list = selection == QualitySelection.SKILL || selection == QualitySelection.ATTRIBUTE;
+    boolean text = selection == QualitySelection.TEXT;
+    choiceLabel.setVisible(list || text);
+    choiceBox.setVisible(list);
+    choiceBox.setManaged(list);
+    choiceField.setVisible(text);
+    choiceField.setManaged(text);
+  }
+
+  /** Auswahl im Speicherformat: Fertigkeitsname, {@link AttributeType}-Name oder Freitext. */
+  private @NonNull String currentChoice(@NonNull QualityData q) {
+    return switch (q.selection()) {
+      case NONE -> "";
+      case TEXT -> choiceField.getText().trim();
+      case SKILL -> Optional.ofNullable(choiceBox.getValue()).orElse("");
+      case ATTRIBUTE -> Arrays.stream(AttributeType.values())
+          .filter(t -> t.getDisplayName().equals(choiceBox.getValue()))
+          .map(AttributeType::name)
+          .findFirst()
+          .orElse("");
+    };
+  }
+
+  private void updateButtons() {
+    QualityData selected = itemListView.getSelectionModel().getSelectedItem();
+    Character c = this.character;
+    String problem = null;
+    if (selected != null) {
+      problem = blockReason(selected);
+      if (problem == null && c != null) {
+        problem = c.getQualityChoiceProblem(selected, currentChoice(selected));
+      }
+      String page = selected.page() > 0 ? "GRW S. %d. ".formatted(selected.page()) : "";
+      detailLabel.setText(page + selected.note() + (problem == null ? "" : "\n→ " + problem));
+    }
+    boolean disabled = selected == null || problem != null;
+    okButton.setDisable(disabled);
+    addAgainButton.setDisable(disabled);
   }
 
   @FXML
   private void onOk() {
-    QualityData selected = itemListView.getSelectionModel().getSelectedItem();
-    if (selected == null) {
-      return;
-    }
-    result = new QualitySelectResult(selected, gratisBox.isSelected(), false);
-    if (stage != null) {
-      stage.close();
-    }
+    close(false);
   }
 
   @FXML
   private void onOkAndAdd() {
+    close(true);
+  }
+
+  private void close(boolean addAnother) {
     QualityData selected = itemListView.getSelectionModel().getSelectedItem();
-    if (selected == null) {
+    if (selected == null || okButton.isDisabled()) {
       return;
     }
-    result = new QualitySelectResult(selected, gratisBox.isSelected(), true);
+    result = new QualitySelectResult(selected, gratisBox.isSelected(), addAnother, currentChoice(selected));
     if (stage != null) {
       stage.close();
     }

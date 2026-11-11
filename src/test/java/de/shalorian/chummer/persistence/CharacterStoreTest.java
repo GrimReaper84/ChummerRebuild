@@ -132,7 +132,7 @@ class CharacterStoreTest {
   @Test
   void roundtripPreservesUnlockedMagic() throws IOException {
     Character original = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     assertNotNull(magier);
     original.addQuality(magier, false);
     original.getMagicOrResonance().setValue(4);
@@ -273,7 +273,7 @@ class CharacterStoreTest {
   @Test
   void roundtripPreservesComplexForms() throws IOException {
     Character original = mensch("Test");
-    QualityData technomant = QualityDataLoader.findByName("Technomant");
+    QualityData technomant = QualityDataLoader.findByName("Technomancer");
     assertNotNull(technomant);
     original.addQuality(technomant, false);
     var resonance = original.getMagicOrResonance();

@@ -13,6 +13,7 @@ import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.model.character.quality.QualityBonusType;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
+import de.shalorian.chummer.model.character.quality.QualityRules;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.quality.QualityType;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
@@ -27,6 +28,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -35,7 +37,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -161,6 +166,7 @@ public class Character {
     initAttributes(metatype);
     this.edge = initEdge(metatype);
     initMetatypeQualities(metatype);
+    applyQualityEffects();
   }
 
   public @NonNull Map<AttributeType, CharacterAttribute> getAttributes() {
@@ -257,7 +263,7 @@ public class Character {
   }
 
   /**
-   * Prüft, ob der Charakter speziell die Gabe "Magier" besitzt — anders als {@link #hasMagic()}
+   * Prüft, ob der Charakter speziell die Gabe "Zauberer" besitzt — anders als {@link #hasMagic()}
    * (liefert auch für Adepten {@code true}, da diese ebenfalls ein Magie-Attribut besitzen), grenzt
    * dies auf Charaktere ein, die tatsächlich Zauber wirken dürfen. SR4-Grundregelwerk S. 148: Magische
    * Fertigkeiten grundsätzlich nur für Zauberer und Magieradepten mit Magie ab 1. Steuert die
@@ -304,7 +310,8 @@ public class Character {
     BigDecimal bio = equipment.getBiowareEssenceCost();
     BigDecimal higher = cyber.max(bio);
     BigDecimal lower = cyber.min(bio);
-    return BASE_ESSENCE.subtract(higher).subtract(lower.divide(TWO))
+    BigDecimal burnout = hasQualityBonus(QualityBonusType.BURNOUT_ESSENCE) ? BigDecimal.ONE : BigDecimal.ZERO;
+    return BASE_ESSENCE.subtract(higher).subtract(lower.divide(TWO)).subtract(burnout)
         .setScale(ESSENCE_DECIMALS, RoundingMode.HALF_UP);
   }
 
@@ -448,7 +455,7 @@ public class Character {
       return true;
     }
     long count6 = skills.values().stream()
-        .filter(s -> s != skill && !isCoupledGroupMember(s) && s.getRating() == 6)
+        .filter(s -> s != skill && !isCoupledGroupMember(s) && s.getRating() >= 6)
         .count();
     long count5 = skills.values().stream()
         .filter(s -> s != skill && !isCoupledGroupMember(s) && s.getRating() == 5)
@@ -456,27 +463,32 @@ public class Character {
     if (newValue == 5) {
       return count6 == 0 && count5 < 2;
     }
-    return count5 == 0 && count6 < 1; // newValue == 6
+    // newValue 6 oder (Talentiert, GRW S. 117) 7: zählt als die eine Fertigkeit auf 6
+    return count5 == 0 && count6 < 1;
   }
 
   /**
    * Prüft, ob der Charakter diese aktive Fertigkeit überhaupt erwerben darf:
    * <ul>
-   *   <li>Magische Fertigkeiten nur mit der Gabe "Magier" (SR4-Grundregelwerk S. 148: grundsätzlich nur
+   *   <li>Magische Fertigkeiten nur mit der Gabe "Zauberer" (SR4-Grundregelwerk S. 148: grundsätzlich nur
    *       für Zauberer und Magieradepten mit Magie ab 1). Ausnahme Arcana (S. 148), die auch Mundane
    *       lernen dürfen. Dass Adepten mit der Kraft Astrale Wahrnehmung auch Askennen und
    *       Astralkampf nutzen dürfen (S. 109), ist mangels Adeptenkräften noch nicht abgebildet.</li>
    *   <li>Resonanzfertigkeiten nur für Technomancer (S. 151, Gabe S. 117).</li>
+   *   <li>Keine Fertigkeit, für die der Charakter Inkompetenz gewählt hat (S. 120).</li>
    * </ul>
    * Die Sperre gilt auch im Karrieremodus, da sie keine Erschaffungsregel, sondern eine
    * grundsätzliche Zugriffsvoraussetzung ist.
    */
   private boolean isSkillAccessible(@NonNull Skill skill) {
-    return isSkillAccessible(skill, isMagician(), hasResonance());
+    return isSkillAccessible(skill, isMagician(), hasResonance(), getIncompetentSkillNames(qualities));
   }
 
   private static boolean isSkillAccessible(@NonNull Skill skill, boolean magician,
-      boolean resonance) {
+      boolean resonance, @NonNull Set<String> incompetent) {
+    if (incompetent.contains(skill.getName())) {
+      return false;
+    }
     return switch (skill.getCategory()) {
       case MAGICAL -> magician || ARCANA_SKILL.equals(skill.getName());
       case RESONANCE -> resonance;
@@ -593,12 +605,15 @@ public class Character {
    * Vollständige Steigerungs-Prüfung für eine Fertigkeitsgruppe: Erstellungs-Cap aus {@link
    * #canRaiseGroupAtCreation(String)} plus Zugangsvoraussetzung aller Mitglieder (siehe {@link
    * #isSkillAccessible(Skill)}), z.B. Hexerei/Beschwören nur für Magier, Tasken nur für
-   * Technomancer.
+   * Technomancer. Ungebildet, Ungehobelt und Körperliche Schwäche sperren außerdem die Gruppen ihrer Kategorie
+   * (GRW S. 120–122).
    */
   public boolean canRaiseGroup(@NonNull String groupName) {
-    return skills.values().stream()
+    List<Skill> members = skills.values().stream()
         .filter(s -> groupName.equals(s.getGroupName()))
-        .allMatch(this::isSkillAccessible)
+        .toList();
+    return members.stream().allMatch(this::isSkillAccessible)
+        && members.stream().noneMatch(s -> isSkillCostDoubled(s.getCategory()))
         && canRaiseGroupAtCreation(groupName);
   }
 
@@ -669,69 +684,143 @@ public class Character {
     return Collections.unmodifiableList(qualities);
   }
 
-  /**
-   * Fügt eine gewählte Quality hinzu. Gratis-Qualities umgehen das BP-Limit und kosten 0 BP.
-   *
-   * @param gratis wenn true, wird die Limit-Prüfung übersprungen und die Quality kostet 0 BP
-   */
+  /** Fügt eine gewählte Quality ohne Auswahl hinzu, siehe {@link #addQuality(QualityData, boolean, String)}. */
   public void addQuality(@NonNull QualityData data, boolean gratis) {
-    if (!created && !gratis && data.contributeToLimit()) {
+    addQuality(data, gratis, "");
+  }
+
+  /**
+   * Fügt eine gewählte Quality hinzu. Gratis-Qualities umgehen das GP-Limit und kosten 0 GP.
+   *
+   * @param choice Auswahl laut {@link QualityData#selection()} (Fertigkeitsname, {@link AttributeType}-Name oder
+   *               Freitext), sonst leer
+   * @throws IllegalArgumentException mit dem Grund aus {@link #getQualityBlockReason} bzw. {@link
+   *                                  #getQualityChoiceProblem}
+   */
+  public void addQuality(@NonNull QualityData data, boolean gratis, @NonNull String choice) {
+    String reason = getQualityBlockReason(data, gratis);
+    if (reason == null) {
+      reason = getQualityChoiceProblem(data, choice);
+    }
+    if (reason != null) {
+      throw new IllegalArgumentException(reason);
+    }
+    qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis, choice));
+    applyQualityEffects();
+  }
+
+  /**
+   * Warum {@code data} gerade nicht gewählt werden kann (unabhängig von der Auswahl), oder {@code null}. Prüft die
+   * Regeln aus GRW S. 114–122: nur durch den Metatyp, schon gewählt (außer mehrfach wählbare), eine Stufe je
+   * Gruppe, Metatyp, Voraussetzung und Ausschluss sowie bei der Erschaffung die 35-GP-Grenzen (S. 114, 118; nicht
+   * für Gratis-Qualities). Grundlage für den Auswahldialog und {@link #addQuality}.
+   */
+  public @Nullable String getQualityBlockReason(@NonNull QualityData data, boolean gratis) {
+    QualityRules rules = data.rules();
+    if (rules.metatypeOnly()) {
+      return "Kommt nur durch den Metatyp";
+    }
+    List<CharacterQuality> selected = getSelectedQualities();
+    boolean sameName = selected.stream().anyMatch(q -> q.data().name().equals(data.name()));
+    if (sameName && !rules.multiple()) {
+      return "Bereits gewählt";
+    }
+    String group = rules.group();
+    if (group != null && selected.stream().anyMatch(q -> group.equals(q.data().rules().group()))) {
+      return "Nur eine Stufe bzw. Variante von „%s“".formatted(group);
+    }
+    if (!rules.metatypes().isEmpty() && !rules.metatypes().contains(metatype.baseName())) {
+      return "Nur für " + String.join(", ", rules.metatypes());
+    }
+    if (!rules.requires().isEmpty()
+        && selected.stream().noneMatch(q -> rules.requires().contains(q.data().name()))) {
+      return "Erfordert " + String.join(" oder ", rules.requires());
+    }
+    Optional<CharacterQuality> conflict = selected.stream()
+        .filter(q -> rules.excludes().contains(q.data().name())
+            || q.data().rules().excludes().contains(data.name()))
+        .findFirst();
+    if (conflict.isPresent()) {
+      return "Nicht zusammen mit " + conflict.get().data().name();
+    }
+    if (!created && !gratis) {
       if (data.type() == QualityType.POSITIVE
           && getPositiveQualityBP() + data.bp() > MAX_POSITIVE_QUALITY_BP) {
-        throw new IllegalArgumentException(
-            "Positives Quality-Limit von %d BP überschritten".formatted(MAX_POSITIVE_QUALITY_BP));
+        return "Höchstens %d GP für Gaben bei der Erschaffung".formatted(MAX_POSITIVE_QUALITY_BP);
       }
       if (data.type() == QualityType.NEGATIVE
           && getNegativeQualityBP() + Math.abs(data.bp()) > MAX_NEGATIVE_QUALITY_BP) {
-        throw new IllegalArgumentException(
-            "Negatives Quality-Limit von %d BP überschritten".formatted(MAX_NEGATIVE_QUALITY_BP));
+        return "Höchstens %d GP aus Handicaps bei der Erschaffung".formatted(MAX_NEGATIVE_QUALITY_BP);
       }
     }
-    if (data.bonuses().contains(QualityBonusType.GRANTS_MAGIC) && grantsResonance()) {
-      throw new IllegalArgumentException(
-          "Magie und Resonanz schließen sich gegenseitig aus (SR4-Grundregelwerk)");
-    }
-    if (data.bonuses().contains(QualityBonusType.GRANTS_RESONANCE) && grantsMagic()) {
-      throw new IllegalArgumentException(
-          "Magie und Resonanz schließen sich gegenseitig aus (SR4-Grundregelwerk)");
-    }
-    if (data.bonuses().contains(QualityBonusType.GRANTS_MAGIC) && hasSelectedGrantsMagicQuality()) {
-      throw new IllegalArgumentException(
-          "Magier, Adept und Mystischer Adept schließen sich gegenseitig aus (SR4-Grundregelwerk)");
-    }
-    qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis));
-    syncMagicOrResonance();
+    return null;
   }
 
   /**
-   * Prüft, ob bereits eine gewählte (nicht metatyp-vererbte) Quality mit {@link
-   * QualityBonusType#GRANTS_MAGIC} aktiv ist — verhindert die gleichzeitige Wahl von Magier, Adept
-   * und Mystischem Adept (SR4-Grundregelwerk: diese Gaben schließen sich gegenseitig aus).
+   * Warum {@code choice} als Auswahl für {@code data} nicht passt, oder {@code null}: fehlende Auswahl, unbekannte
+   * Fertigkeit bzw. unbekanntes Attribut, Inkompetenz für eine schon erlernte Fertigkeit, doppelte Auswahl.
    */
-  private boolean hasSelectedGrantsMagicQuality() {
-    return qualities.stream()
-        .anyMatch(q -> q.source() == QualitySource.SELECTED
-            && q.data().bonuses().contains(QualityBonusType.GRANTS_MAGIC));
+  public @Nullable String getQualityChoiceProblem(@NonNull QualityData data, @NonNull String choice) {
+    if (getSelectedQualities().stream()
+        .anyMatch(q -> q.data().name().equals(data.name()) && q.choice().equals(choice))) {
+      return "Mit dieser Auswahl bereits gewählt";
+    }
+    return switch (data.selection()) {
+      case NONE -> null;
+      case TEXT -> choice.isBlank() ? data.selectLabel() + " angeben" : null;
+      case ATTRIBUTE -> Arrays.stream(AttributeType.values()).anyMatch(t -> t.name().equals(choice))
+          ? null : "Attribut wählen";
+      case SKILL -> {
+        Skill skill = getSkill(choice);
+        if (skill == null) {
+          yield "Fertigkeit wählen";
+        }
+        // Inkompetenz: die Fertigkeit darf nicht erworben sein (GRW S. 120).
+        yield data.bonuses().contains(QualityBonusType.INCOMPETENT) && skill.getRating() > 0
+            ? "Fertigkeit hat bereits einen Wert" : null;
+      }
+    };
   }
 
-  /** Lädt eine gewählte Quality ohne Limit-Prüfung — nur für den Persistenz-Pfad. */
-  public void loadSelectedQuality(@NonNull QualityData data, boolean gratis) {
-    qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis));
-    syncMagicOrResonance();
+  /** Gewählte (nicht vom Metatyp vergebene) Qualities. */
+  public @NonNull List<CharacterQuality> getSelectedQualities() {
+    return qualities.stream().filter(q -> q.source() == QualitySource.SELECTED).toList();
   }
 
-  /**
-   * Entfernt eine gewählte Quality. Falls dies die letzte Quality war, die Magic bzw. Resonance
-   * freigeschaltet hat, wird das Sonderattribut zurückgesetzt (siehe {@link
-   * #syncMagicOrResonance()}) — in der Erschaffungsphase entspricht das einer automatischen
-   * Rückerstattung der dafür ausgegebenen BP, im Karrieremodus gibt es keine Karma-Rückerstattung.
-   * Fertigkeiten, die dadurch nicht mehr zugänglich sind, werden auf 0 gesetzt (siehe {@link
-   * #getSkillsLockedByRemovingQuality(String)}).
-   */
+  /** Lädt eine gewählte Quality ohne Regelprüfung — nur für den Persistenz-Pfad. */
+  public void loadSelectedQuality(@NonNull QualityData data, boolean gratis, @NonNull String choice) {
+    qualities.add(new CharacterQuality(data, QualitySource.SELECTED, gratis, choice));
+    applyQualityEffects();
+  }
+
+  /** Entfernt alle gewählten Qualities dieses Namens, siehe {@link #removeQuality(CharacterQuality)}. */
   public void removeQuality(@NonNull String name) {
-    List<Skill> locked = getSkillsLockedByRemovingQuality(name);
-    qualities.removeIf(q -> isSelectedQuality(q, name));
-    syncMagicOrResonance();
+    getSelectedQualities().stream()
+        .filter(q -> q.data().name().equals(name))
+        .forEach(this::removeQuality);
+  }
+
+  /**
+   * Entfernt eine gewählte Quality. Gaben, deren Voraussetzung damit wegfällt (z.B. Schutzpatron ohne Zauberer),
+   * werden mit entfernt. Falls dies die letzte Quality war, die Magie bzw. Resonanz freigeschaltet hat, wird das
+   * Sonderattribut zurückgesetzt (siehe {@link #syncMagicOrResonance()}) — in der Erschaffungsphase entspricht das
+   * einer automatischen Rückerstattung, im Karrieremodus gibt es keine Karma-Rückerstattung. Fertigkeiten, die
+   * dadurch nicht mehr zugänglich sind, werden auf 0 gesetzt (siehe {@link
+   * #getSkillsLockedByRemovingQuality(CharacterQuality)}); Werte über einem gesunkenen Maximum (Talentiert,
+   * Außergewöhnliches Attribut, Glück) sinken darauf.
+   */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Eintrag
+  public void removeQuality(@NonNull CharacterQuality quality) {
+    List<Skill> locked = getSkillsLockedByRemovingQuality(quality);
+    qualities.removeIf(q -> q == quality);
+    boolean removedDependent = true;
+    while (removedDependent) {
+      removedDependent = qualities.removeIf(q -> q.source() == QualitySource.SELECTED
+          && !q.data().rules().requires().isEmpty()
+          && getSelectedQualities().stream()
+              .noneMatch(other -> q.data().rules().requires().contains(other.data().name())));
+    }
+    applyQualityEffects();
     locked.forEach(s -> {
       s.setRating(0);
       s.setSpecialization(null);
@@ -739,22 +828,70 @@ public class Character {
   }
 
   /**
+   * Wendet die rechnerischen Wirkungen aller Qualities an: Magie/Resonanz freischalten, Maximum-Boni
+   * (Außergewöhnliches Attribut, Glück), Höchstwert 7 (Talentiert) und gesperrte Fertigkeiten (Inkompetenz, auf
+   * 0 gesetzt).
+   */
+  private void applyQualityEffects() {
+    syncMagicOrResonance();
+    for (CharacterAttribute attribute : attributes.values()) {
+      attribute.setMaxBonus(
+          hasQualityChoice(QualityBonusType.EXCEPTIONAL_ATTRIBUTE, attribute.getType().name()) ? 1 : 0);
+    }
+    edge.setMaxBonus(hasQualityBonus(QualityBonusType.LUCKY) ? 1 : 0);
+    for (Skill skill : skills.values()) {
+      skill.setMaxRating(hasQualityChoice(QualityBonusType.APTITUDE, skill.getName())
+          ? Skill.MAX_RATING + 1 : Skill.MAX_RATING);
+      if (hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())) {
+        skill.setRating(0);
+        skill.setSpecialization(null);
+      }
+    }
+  }
+
+  private boolean hasQualityBonus(@NonNull QualityBonusType bonus) {
+    return qualities.stream().anyMatch(q -> q.data().bonuses().contains(bonus));
+  }
+
+  private boolean hasQualityChoice(@NonNull QualityBonusType bonus, @NonNull String choice) {
+    return qualities.stream()
+        .anyMatch(q -> q.data().bonuses().contains(bonus) && q.choice().equals(choice));
+  }
+
+  /** Namen der Fertigkeiten, die durch Inkompetenz gesperrt sind (GRW S. 120). */
+  private @NonNull Set<String> getIncompetentSkillNames(@NonNull List<CharacterQuality> from) {
+    return from.stream()
+        .filter(q -> q.data().bonuses().contains(QualityBonusType.INCOMPETENT))
+        .map(CharacterQuality::choice)
+        .collect(Collectors.toSet());
+  }
+
+  /** Wie {@link #getSkillsLockedByRemovingQuality(CharacterQuality)} für alle gewählten Qualities dieses Namens. */
+  public @NonNull List<Skill> getSkillsLockedByRemovingQuality(@NonNull String name) {
+    return getSkillsLockedWithout(q -> isSelectedQuality(q, name));
+  }
+
+  /**
    * Aktive Fertigkeiten mit Wert > 0, die nach dem Entfernen dieser Quality nicht mehr zugänglich
-   * wären (siehe {@link #isSkillAccessible(Skill)}), z.B. Hexerei nach Entfernen der Gabe "Magier"
-   * oder Tasken nach Entfernen der Gabe "Technomant". {@link #removeQuality(String)} setzt genau
+   * wären (siehe {@link #isSkillAccessible(Skill)}), z.B. Hexerei nach Entfernen der Gabe "Zauberer"
+   * oder Tasken nach Entfernen der Gabe "Technomancer". {@link #removeQuality(String)} setzt genau
    * diese Fertigkeiten samt Spezialisierung auf 0, damit keine Werte stehen bleiben, die BP kosten,
    * aber nicht mehr nutzbar sind. Die UI fragt vorher nach, wenn die Liste nicht leer ist.
    */
-  public @NonNull List<Skill> getSkillsLockedByRemovingQuality(@NonNull String name) {
-    List<CharacterQuality> remaining = qualities.stream()
-        .filter(q -> !isSelectedQuality(q, name))
-        .toList();
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Eintrag
+  public @NonNull List<Skill> getSkillsLockedByRemovingQuality(@NonNull CharacterQuality quality) {
+    return getSkillsLockedWithout(q -> q == quality);
+  }
+
+  private @NonNull List<Skill> getSkillsLockedWithout(@NonNull Predicate<CharacterQuality> removed) {
+    List<CharacterQuality> remaining = qualities.stream().filter(removed.negate()).toList();
     boolean magician = remaining.stream()
         .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_SPELLCASTING));
     boolean resonance = remaining.stream()
         .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_RESONANCE));
+    Set<String> incompetent = getIncompetentSkillNames(remaining);
     return skills.values().stream()
-        .filter(s -> s.getRating() > 0 && !isSkillAccessible(s, magician, resonance))
+        .filter(s -> s.getRating() > 0 && !isSkillAccessible(s, magician, resonance, incompetent))
         .toList();
   }
 
@@ -775,7 +912,6 @@ public class Character {
     return qualities.stream()
         .filter(q -> q.source() == QualitySource.SELECTED
             && q.data().type() == QualityType.POSITIVE
-            && q.data().contributeToLimit()
             && !q.gratis())
         .mapToInt(q -> q.data().bp())
         .sum();
@@ -785,7 +921,6 @@ public class Character {
     return qualities.stream()
         .filter(q -> q.source() == QualitySource.SELECTED
             && q.data().type() == QualityType.NEGATIVE
-            && q.data().contributeToLimit()
             && !q.gratis())
         .mapToInt(q -> Math.abs(q.data().bp()))
         .sum();
@@ -959,7 +1094,8 @@ public class Character {
     if (newValue == 5) {
       return count6 == 0 && count5 < 2;
     }
-    return count5 == 0 && count6 < 1; // newValue == 6
+    // newValue 6 oder (Talentiert, GRW S. 117) 7: zählt als die eine Fertigkeit auf 6
+    return count5 == 0 && count6 < 1;
   }
 
   /**

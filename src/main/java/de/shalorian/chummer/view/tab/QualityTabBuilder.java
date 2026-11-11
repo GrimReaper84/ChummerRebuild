@@ -11,7 +11,9 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
+import de.shalorian.chummer.model.character.quality.QualitySelection;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.quality.QualityType;
 import de.shalorian.chummer.model.character.skill.Skill;
@@ -21,7 +23,6 @@ import de.shalorian.chummer.view.dialog.QualitySelectResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.geometry.Insets;
@@ -29,6 +30,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -165,8 +167,12 @@ public final class QualityTabBuilder {
   private void addQualityRow(@NonNull GridPane grid, int row, @NonNull CharacterQuality q) {
     boolean isMetatype = q.source() == QualitySource.METATYPE;
 
-    Label qualityNameLabel = new Label(q.data().name());
+    Label qualityNameLabel = new Label(displayName(q));
     qualityNameLabel.getStyleClass().add(isMetatype ? "quality-metatype" : STYLE_ATTR_NAME);
+    if (!q.data().note().isEmpty()) {
+      String page = q.data().page() > 0 ? "GRW S. %d: ".formatted(q.data().page()) : "";
+      qualityNameLabel.setTooltip(new Tooltip(page + q.data().note()));
+    }
 
     Label costLabel = new Label();
     costLabel.getStyleClass().add(STYLE_ATTR_BP);
@@ -196,6 +202,17 @@ public final class QualityTabBuilder {
     }
   }
 
+  /** Name mit Auswahl, z.B. "Talentiert (Pistolen)" oder "Außergewöhnliches Attribut (Stärke)". */
+  static @NonNull String displayName(@NonNull CharacterQuality q) {
+    if (q.choice().isEmpty()) {
+      return q.data().name();
+    }
+    String choice = q.data().selection() == QualitySelection.ATTRIBUTE
+        ? AttributeType.valueOf(q.choice()).getDisplayName()
+        : q.choice();
+    return "%s (%s)".formatted(q.data().name(), choice);
+  }
+
   /**
    * Entfernt eine gewählte Quality. Handicaps im Karrieremodus loswerden kostet die doppelten GP-Kosten in Karma (siehe
    * {@link Character#getQualityKarmaCost}); alle anderen Fälle (Erstellungsmodus, Gaben, Gratis-Qualities) bleiben unverändert kostenlos.
@@ -205,8 +222,8 @@ public final class QualityTabBuilder {
     if (c == null) {
       return;
     }
-    String qualityName = q.data().name();
-    if (!confirmLockedSkillsReset(c, qualityName)) {
+    String qualityName = displayName(q);
+    if (!confirmLockedSkillsReset(c, q)) {
       return;
     }
     if (c.isCreated() && q.data().type() == QualityType.NEGATIVE && !q.gratis()) {
@@ -215,20 +232,21 @@ public final class QualityTabBuilder {
         return;
       }
     }
-    c.removeQuality(qualityName);
+    c.removeQuality(q);
     host.onQualitiesChanged();
   }
 
   /**
    * Fragt per Ja/Nein-Dialog nach, wenn das Entfernen der Quality aktive Fertigkeiten mit Wert > 0
-   * unzugänglich macht (z.B. Hexerei ohne die Gabe "Magier"); diese werden beim Entfernen auf 0
-   * gesetzt (siehe {@link Character#removeQuality(String)}). Ohne betroffene Fertigkeiten keine
+   * unzugänglich macht (z.B. Hexerei ohne die Gabe "Zauberer"); diese werden beim Entfernen auf 0
+   * gesetzt (siehe {@link Character#removeQuality(CharacterQuality)}). Ohne betroffene Fertigkeiten keine
    * Abfrage.
    *
    * @return true, wenn entfernt werden darf
    */
-  private boolean confirmLockedSkillsReset(@NonNull Character c, @NonNull String qualityName) {
-    List<Skill> locked = c.getSkillsLockedByRemovingQuality(qualityName);
+  private boolean confirmLockedSkillsReset(@NonNull Character c, @NonNull CharacterQuality q) {
+    List<Skill> locked = c.getSkillsLockedByRemovingQuality(q);
+    String qualityName = displayName(q);
     if (locked.isEmpty()) {
       return true;
     }
@@ -285,6 +303,15 @@ public final class QualityTabBuilder {
   }
 
   private void tryAddQuality(@NonNull Character ch, @NonNull QualitySelectResult r) {
+    // Erst prüfen, dann Karma abbuchen, damit bei einer Ablehnung kein Karma verloren geht.
+    String problem = ch.getQualityBlockReason(r.data(), r.gratis());
+    if (problem == null) {
+      problem = ch.getQualityChoiceProblem(r.data(), r.choice());
+    }
+    if (problem != null) {
+      host.services().warn("Nicht wählbar", problem);
+      return;
+    }
     // Eine Gabe im Karrieremodus erwerben kostet die doppelten GP-Kosten in Karma.
     if (ch.isCreated() && r.data().type() == QualityType.POSITIVE && !r.gratis()) {
       int karmaCost = ch.getQualityKarmaCost(r.data());
@@ -292,10 +319,6 @@ public final class QualityTabBuilder {
         return;
       }
     }
-    try {
-      ch.addQuality(r.data(), r.gratis());
-    } catch (IllegalArgumentException ex) {
-      host.services().warn("Limit erreicht", Objects.requireNonNullElse(ex.getMessage(), ""));
-    }
+    ch.addQuality(r.data(), r.gratis(), r.choice());
   }
 }

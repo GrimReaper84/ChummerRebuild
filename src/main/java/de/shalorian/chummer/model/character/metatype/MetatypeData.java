@@ -6,10 +6,16 @@ import java.util.List;
 import java.util.Map;
 import org.jspecify.annotations.NonNull;
 
+/**
+ * Metatyp oder Metavariante aus {@code metatypes.xml}.
+ *
+ * @param baseName Grundmetatyp (bei Varianten der übergeordnete Metatyp, sonst der eigene Name)
+ */
 public record MetatypeData(
     @NonNull String name,
     int bpCost,
     boolean isVariant,
+    @NonNull String baseName,
     @NonNull Map<AttributeType, AttributeRange> ranges,
     @NonNull AttributeRange edgeRange,
     @NonNull List<String> grantedPositiveQualityNames,

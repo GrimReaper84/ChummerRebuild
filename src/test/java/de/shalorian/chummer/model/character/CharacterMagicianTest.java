@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * SR4-Grundregelwerk S. 208: Magische Aktionsfertigkeiten und Zauber sind nur Charakteren mit der
- * Gabe "Magier" zugänglich — {@link Character#isMagician()} muss das genauer erkennen als {@link
+ * Gabe "Zauberer" zugänglich — {@link Character#isMagician()} muss das genauer erkennen als {@link
  * Character#hasMagic()}, das auch für Adepten {@code true} liefert.
  */
 class CharacterMagicianTest {
@@ -28,7 +28,7 @@ class CharacterMagicianTest {
   @Test
   void magicianQualityMakesCharacterAMagician() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     assertNotNull(magier);
 
     c.addQuality(magier, false);
@@ -52,11 +52,11 @@ class CharacterMagicianTest {
   @Test
   void removingMagicianQualityRevokesMagicianStatus() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     assertNotNull(magier);
 
     c.addQuality(magier, false);
-    c.removeQuality("Magier");
+    c.removeQuality("Zauberer");
 
     assertFalse(c.isMagician());
   }
@@ -76,7 +76,7 @@ class CharacterMagicianTest {
   @Test
   void magicianCanRaiseMagicalSkills() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     assertNotNull(magier);
     c.addQuality(magier, false);
     Skill spellcasting = c.getSkill("Spruchzauberei");

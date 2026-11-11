@@ -5,7 +5,7 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.shalorian.chummer.view.dialog.QualitySelectDialogController"
-      spacing="14" styleClass="dialog-pane" prefWidth="440">
+      spacing="14" styleClass="dialog-pane" prefWidth="520">
     <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
 
     <!-- Filter-Zeile -->
@@ -27,7 +27,16 @@
                GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <Label fx:id="costLabel" styleClass="attr-bp"
                GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label fx:id="choiceLabel" text="Auswahl:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <ComboBox fx:id="choiceBox" prefWidth="260"/>
+            <TextField fx:id="choiceField" prefWidth="260"/>
+        </HBox>
     </GridPane>
+
+    <!-- Seite, Kurzwirkung und ggf. Grund, warum die Quality nicht wählbar ist -->
+    <Label fx:id="detailLabel" wrapText="true" minHeight="60"/>
 
     <!-- Checkboxen -->
     <HBox spacing="24">

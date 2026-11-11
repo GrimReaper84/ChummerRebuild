@@ -131,6 +131,17 @@ Module im Laufzeit-Image ist die unterstützte Konfiguration, braucht keine Star
 mit der ohnehin entwickelt wird. Name, Version, Icon und Lizenz sind Nutzerentscheidungen per Rückfrage
 (`docs/plaene/archiv/release_plan.md`).
 
+### ADR-044: Gaben und Handicaps vollständig nach GRW (2026-11-12)
+Der Katalog folgt der Tabelle S. 106 und den Beschreibungen S. 114–122: GRW-Namen (Zauberer, Magieradept,
+Technomancer, Glück, Unglück, Körperliche Schwäche, SIN-Mensch …), Stufen und Varianten als eigene Einträge mit
+`<group>` (nur einer je Gruppe), Auswahl per `<select>`, Regeln per `<requires>`/`<excludes>`/`<metatypes>`. Nicht-GRW-
+Gaben sind entfernt; Qualities der Metavarianten bleiben als nicht wählbare Metatyp-Qualities. Alte Namen in
+Speicherdateien werden beim Laden übersetzt. Das 35-GP-Limit gilt ohne Ausnahmen (anders als C#). Der Magieradept
+schaltet Zaubern frei (S. 116). Situative Würfelpool-, Zustandsmonitor- und Matrix-Wirkungen stehen nur als
+Kurzwirkung im Dialog und Tooltip.
+**Warum:** GRW als Wahrheitsquelle (ADR-002); Nutzerentscheidungen 2026-11-11 (übersetzen, entfernen, Metavarianten
+unverändert). Die Prüfung mit Begründung an einer Stelle (`getQualityBlockReason`) dient Dialog und Modell zugleich.
+
 ## Fachregeln: Entscheidungen, wo das GRW schweigt oder unklar ist
 
 ### ADR-016: Weiche Warnungen statt harter Sperren (2026-08, 2026-09-27)

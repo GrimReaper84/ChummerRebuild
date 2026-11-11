@@ -31,7 +31,7 @@
             <edge min="2" max="7"/>
             <qualities>
                 <positive>
-                    <quality>Nachtsicht</quality>
+                    <quality>Restlichtverstärkung</quality>
                 </positive>
                 <negative>
                     <quality>Unverkennbarer Stil</quality>
@@ -53,7 +53,7 @@
         <edge min="1" max="6"/>
         <qualities>
             <positive>
-                <quality>Nachtsicht</quality>
+                <quality>Restlichtverstärkung</quality>
             </positive>
         </qualities>
 
@@ -69,7 +69,7 @@
             <edge min="1" max="6"/>
             <qualities>
                 <positive>
-                    <quality>Nachtsicht</quality>
+                    <quality>Restlichtverstärkung</quality>
                 </positive>
                 <negative>
                     <quality>Unverkennbarer Stil</quality>
@@ -91,7 +91,7 @@
         <edge min="1" max="6"/>
         <qualities>
             <positive>
-                <quality>Wärmesicht</quality>
+                <quality>Infrarotsicht</quality>
             </positive>
         </qualities>
 
@@ -108,7 +108,7 @@
             <qualities>
                 <positive>
                     <quality>Arkaner Dämpfer</quality>
-                    <quality>Wärmesicht</quality>
+                    <quality>Infrarotsicht</quality>
                 </positive>
                 <negative>
                     <quality>Unverkennbarer Stil</quality>
@@ -131,7 +131,7 @@
         <edge min="1" max="6"/>
         <qualities>
             <positive>
-                <quality>Nachtsicht</quality>
+                <quality>Restlichtverstärkung</quality>
             </positive>
         </qualities>
 
@@ -148,7 +148,7 @@
             <qualities>
                 <positive>
                     <quality>Reißzähne</quality>
-                    <quality>Nachtsicht</quality>
+                    <quality>Restlichtverstärkung</quality>
                 </positive>
                 <negative>
                     <quality>Unverkennbarer Stil</quality>
@@ -171,7 +171,7 @@
         <edge min="1" max="6"/>
         <qualities>
             <positive>
-                <quality>Wärmesicht</quality>
+                <quality>Infrarotsicht</quality>
             </positive>
         </qualities>
 
@@ -188,7 +188,7 @@
             <qualities>
                 <positive>
                     <quality>Arkaner Dämpfer</quality>
-                    <quality>Wärmesicht</quality>
+                    <quality>Infrarotsicht</quality>
                 </positive>
                 <negative>
                     <quality>Unverkennbarer Stil</quality>

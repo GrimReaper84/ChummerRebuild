@@ -21,7 +21,7 @@ class CharacterComplexFormTest {
 
   private static @NonNull Character technomancer(String name) {
     Character c = mensch(name);
-    QualityData technomant = QualityDataLoader.findByName("Technomant");
+    QualityData technomant = QualityDataLoader.findByName("Technomancer");
     assertNotNull(technomant);
     c.addQuality(technomant, false);
     return c;

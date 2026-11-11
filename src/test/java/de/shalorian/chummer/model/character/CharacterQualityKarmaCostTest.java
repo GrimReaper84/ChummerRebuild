@@ -19,10 +19,10 @@ class CharacterQualityKarmaCostTest {
     @Test
     void karmaCostIsDoubleThePositiveQualityBpCost() {
         Character c = mensch("Test");
-        QualityData nachtsicht = QualityDataLoader.findByName("Nachtsicht");
-        assertNotNull(nachtsicht);
+        QualityData gedaechtnis = QualityDataLoader.findByName("Fotografisches Gedächtnis");
+        assertNotNull(gedaechtnis);
 
-        assertEquals(20, c.getQualityKarmaCost(nachtsicht)); // 10 GP * 2
+        assertEquals(20, c.getQualityKarmaCost(gedaechtnis)); // 10 GP * 2
     }
 
     @Test

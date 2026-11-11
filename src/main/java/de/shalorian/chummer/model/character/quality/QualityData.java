@@ -4,10 +4,23 @@ import de.shalorian.chummer.model.character.CatalogEntry;
 import java.util.Set;
 import org.jspecify.annotations.NonNull;
 
+/**
+ * Katalogeintrag einer Gabe oder eines Handicaps aus {@code qualities.xml}.
+ *
+ * @param bp          GP-Kosten; bei Handicaps negativ
+ * @param page        gedruckte GRW-Seite, {@code 0} ohne Angabe
+ * @param note        Kurzwirkung in eigenen Worten, sonst leer
+ * @param selection   was beim Kauf gewählt werden muss
+ * @param selectLabel Bezeichnung des Auswahlfelds (z.B. "Substanz"), leer ohne Auswahl
+ */
 public record QualityData(
     @NonNull String name,
     int bp,
     @NonNull QualityType type,
-    boolean contributeToLimit,
-    @NonNull Set<QualityBonusType> bonuses
+    @NonNull Set<QualityBonusType> bonuses,
+    int page,
+    @NonNull String note,
+    @NonNull QualitySelection selection,
+    @NonNull String selectLabel,
+    @NonNull QualityRules rules
 ) implements CatalogEntry {}

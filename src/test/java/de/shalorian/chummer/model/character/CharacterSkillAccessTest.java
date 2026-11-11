@@ -63,7 +63,7 @@ class CharacterSkillAccessTest {
 
   @Test
   void magicianCanRaiseMagicalSkillsAndGroups() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
 
     assertTrue(c.canRaiseSkill(skill(c, "Askennen")));
     assertTrue(c.canRaiseGroup("Hexerei"));
@@ -76,7 +76,7 @@ class CharacterSkillAccessTest {
     assertFalse(mundane.canRaiseSkill(skill(mundane, "Kompilieren")));
     assertFalse(mundane.canRaiseGroup("Tasken"));
 
-    Character technomancer = withQuality("Technomant");
+    Character technomancer = withQuality("Technomancer");
     assertTrue(technomancer.canRaiseSkill(skill(technomancer, "Kompilieren")));
     assertTrue(technomancer.canRaiseGroup("Tasken"));
   }
@@ -100,7 +100,7 @@ class CharacterSkillAccessTest {
 
   @Test
   void removingMagicianResetsLockedSkillsButKeepsArcana() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     c.raiseGroup("Hexerei");
     c.raiseGroup("Hexerei");
     skill(c, "Askennen").setRating(1);
@@ -108,9 +108,9 @@ class CharacterSkillAccessTest {
     skill(c, "Arcana").setRating(2);
     int bpWithSkills = c.getRemainingBP();
 
-    assertEquals(4, c.getSkillsLockedByRemovingQuality("Magier").size());
+    assertEquals(4, c.getSkillsLockedByRemovingQuality("Zauberer").size());
 
-    c.removeQuality("Magier");
+    c.removeQuality("Zauberer");
 
     assertEquals(0, c.getGroupRating("Hexerei"));
     assertEquals(0, skill(c, "Askennen").getRating());
@@ -121,31 +121,31 @@ class CharacterSkillAccessTest {
 
   @Test
   void removingTechnomancerResetsTaskingGroup() {
-    Character c = withQuality("Technomant");
+    Character c = withQuality("Technomancer");
     c.raiseGroup("Tasken");
 
-    assertEquals(3, c.getSkillsLockedByRemovingQuality("Technomant").size());
+    assertEquals(3, c.getSkillsLockedByRemovingQuality("Technomancer").size());
 
-    c.removeQuality("Technomant");
+    c.removeQuality("Technomancer");
 
     assertEquals(0, c.getGroupRating("Tasken"));
   }
 
   @Test
   void removingUnrelatedQualityLocksNoSkills() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     c.raiseGroup("Hexerei");
-    QualityData beidhaendig = QualityDataLoader.findByName("Beidhändig");
+    QualityData beidhaendig = QualityDataLoader.findByName("Beidhändigkeit");
     assertNotNull(beidhaendig);
     c.addQuality(beidhaendig, false);
 
-    assertTrue(c.getSkillsLockedByRemovingQuality("Beidhändig").isEmpty());
+    assertTrue(c.getSkillsLockedByRemovingQuality("Beidhändigkeit").isEmpty());
   }
 
   @Test
   void noLockedSkillsWithoutRatings() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
 
-    assertTrue(c.getSkillsLockedByRemovingQuality("Magier").isEmpty());
+    assertTrue(c.getSkillsLockedByRemovingQuality("Zauberer").isEmpty());
   }
 }

@@ -92,7 +92,7 @@ public class CharacterStore {
     data.nuyenBP = character.getNuyenBP();
     data.selectedQualities = character.getQualities().stream()
         .filter(q -> q.source() == QualitySource.SELECTED)
-        .map(q -> new SelectedQualityEntry(q.data().name(), q.gratis()))
+        .map(q -> new SelectedQualityEntry(q.data().name(), q.gratis(), q.choice()))
         .toList();
     data.knowledgeSkills = character.getKnowledgeSkills().stream()
         .map(k -> new KnowledgeSkillEntry(k.getName(), k.getCategory().name(), k.getRating(),
@@ -189,11 +189,12 @@ public class CharacterStore {
     MetatypeData metatype = MetatypeDataLoader.find(metatypeName);
     Character character = new Character(charName, metatype);
 
+    // Qualities zuerst: sie heben Maxima an (Außergewöhnliches Attribut, Glück, Talentiert).
+    applySelectedQualities(character, data);
     applyAttributes(character, data);
     applySkills(character, data);
     character.setCreated(data.created);
     character.setNuyenBP(data.nuyenBP);
-    applySelectedQualities(character, data);
     applyMagicOrResonance(character, data);
     applyKnowledgeSkills(character, data);
     applyContacts(character, data);
@@ -507,9 +508,10 @@ public class CharacterStore {
   private static void applySelectedQualities(@NonNull Character character,
       @NonNull CharacterData data) {
     for (SelectedQualityEntry entry : data.selectedQualities) {
-      QualityData qualityData = QualityDataLoader.findByName(entry.name);
+      QualityData qualityData = QualityDataLoader.findByName(
+          QualityNameMigration.currentName(entry.name));
       if (qualityData != null) {
-        character.loadSelectedQuality(qualityData, entry.gratis);
+        character.loadSelectedQuality(qualityData, entry.gratis, entry.choice);
       }
     }
   }

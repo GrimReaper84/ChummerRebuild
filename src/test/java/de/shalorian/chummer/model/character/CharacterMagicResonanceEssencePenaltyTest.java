@@ -43,7 +43,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void rulebookExampleMagicFourEssenceFivePointEight() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     magicOrResonance(c).setValue(4);
 
     c.getEquipment().addCyberware(cyberware("0.2"));
@@ -56,7 +56,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void investedValueIsNotMutated() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     magicOrResonance(c).setValue(4);
     int bpBefore = c.getSpecialAttributeBP();
 
@@ -69,7 +69,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void noLossMeansNoPenalty() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     magicOrResonance(c).setValue(4);
 
     assertEquals(0, c.getEssencePenalty());
@@ -79,7 +79,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void smallestLossAlreadyCostsAFullPoint() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     c.getEquipment().addCyberware(cyberware("0.01"));
 
     assertEquals(1, c.getEssencePenalty());
@@ -87,7 +87,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void furtherLossOnlyCountsOnceNextEssencePointIsStarted() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     c.getEquipment().addCyberware(cyberware("1.0"));
     assertEquals(1, c.getEssencePenalty());
 
@@ -97,7 +97,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void valueAtMaximumStaysAtReducedMaximum() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     magicOrResonance(c).setValue(6);
 
     c.getEquipment().addCyberware(cyberware("0.5"));
@@ -108,7 +108,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void effectiveValueNeverDropsBelowZero() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     c.getEquipment().addCyberware(cyberware("2.5"));
 
     assertEquals(3, c.getEssencePenalty());
@@ -117,7 +117,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void penaltyAppliesIdenticallyInCareerMode() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     magicOrResonance(c).setValue(4);
     c.setCreated(true);
 
@@ -129,7 +129,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void resonanceIsReducedLikeMagic() {
-    Character c = withQuality("Technomant");
+    Character c = withQuality("Technomancer");
     magicOrResonance(c).setValue(4);
 
     c.getEquipment().addCyberware(cyberware("0.2"));
@@ -140,7 +140,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void complexFormCapUsesReducedResonance() {
-    Character c = withQuality("Technomant");
+    Character c = withQuality("Technomancer");
     magicOrResonance(c).setValue(2);
     var analyse = ComplexFormDataLoader.findByName("Analyse");
     assertNotNull(analyse);
@@ -163,10 +163,10 @@ class CharacterMagicResonanceEssencePenaltyTest {
 
   @Test
   void removingMagicQualityWithImplantsInstalledIsConsistent() {
-    Character c = withQuality("Magier");
+    Character c = withQuality("Zauberer");
     c.getEquipment().addCyberware(cyberware("0.2"));
 
-    c.removeQuality("Magier");
+    c.removeQuality("Zauberer");
 
     assertFalse(c.hasMagic());
     assertEquals(0, c.getEffectiveMagicOrResonanceValue());

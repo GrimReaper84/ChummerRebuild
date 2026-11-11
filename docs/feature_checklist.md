@@ -107,6 +107,9 @@
 | Metatyp-Qualities (kursiv/grau, nicht entfernbar)                   | ✅      | Werden aus Metatyp-XML geladen, nicht in JSON gespeichert                   |
 | Bonus-Flags (Uneducated, Uncouth, Infirm)                           | ✅      | Flags gesetzt und Skill-Kostenverdopplung umgesetzt                         |
 | Karrieremodus: Karma-Kosten für Gabe-Erwerb / Handicap-Entfernung   | ✅      | GRW verifiziert (doppelte GP-Kosten), `Character.getQualityKarmaCost()`, 2026-08-04 |
+| Vollständiger GRW-Katalog (32 Gaben, 23 Handicaps mit Stufen/Varianten, Seite + Kurzwirkung) | ✅ | **2026-11-12**, `qualities.xml` nach Tabelle S. 106 (Bild geprüft), Namen wie im GRW; Nicht-GRW-Gaben entfernt; alte Namen in Speicherdateien werden übersetzt (`QualityNameMigration`) |
+| Auswahl je Quality (Fertigkeit, Attribut, Text), Voraussetzungen, Ausschlüsse, Metatyp-Bedingungen, eine Stufe je Gruppe | ✅ | `Character.getQualityBlockReason`/`getQualityChoiceProblem`, Dialog zeigt Grund und Kurzwirkung, Tab zeigt Auswahl in Klammern |
+| Effekte: Außergewöhnliches Attribut, Glück, Talentiert (bis 7, letzter Schritt doppelt), Inkompetenz, Gruppensperren Ungebildet/Ungehobelt/Körperliche Schwäche, Abhängigkeit (Ausgebrannt) Essenz −1 | ✅ | 2026-11-12; Würfelpool-, Zustandsmonitor- und Matrix-Wirkungen nur als Hinweis (kommen mit Feature Würfelpools) |
 
 ---
 
@@ -332,7 +335,7 @@
 | Attribute              | 5 | 0  | 6 |
 | Aktive Fertigkeiten    | 9 | 0  | 4 |
 | Wissensfertigkeiten    | 6 | 0  | 1 |
-| Qualities              | 6 | 0  | 0 |
+| Qualities              | 9 | 0  | 0 |
 | Kontakte               | 4 | 0  | 0 |
 | Magie                  | 0 | 0  | 6 |
 | Technomancer           | 3 | 0  | 2 |
@@ -380,9 +383,12 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    `<note>`, Beschreibungen, Kommentare) und in eigene Worte fassen (Projektregeln Abschnitt 4, Nutzervorgabe
    2026-11-11), am besten mit `catalog-extractor` je Katalog.
 
+> **Release zurückgestellt (Nutzerentscheidung 2026-11-11):** Das erste Release (Tag `v1.0.0`) kommt erst, wenn
+> mindestens alle Funktionen des Grundregelwerks umgesetzt sind. Die Release-Technik ist fertig und wartet.
+
 *Fachliche Features (Kandidaten, Reihenfolge offen)*
 
-4. **Qualities vervollständigen** mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
+4. ✅ **Qualities vervollständigt (2026-11-12, ADR-044)**; ursprünglich: mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
    siehe Abschnitt 6).
 5. **Adepten** (Adeptenkräfte, Mystischer Adept), bei Magie bewusst zurückgestellt.
 6. **Würfelpools**, Condition Monitor, Initiative (Stufe 3 unten; Analyse `docs/analysen/wuerfelpools_analyse.md`

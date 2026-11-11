@@ -57,7 +57,7 @@ class CharacterSpecialAttributeTest {
   @Test
   void magicianQualityUnlocksMagicAtValueOne() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     assertNotNull(magier);
 
     c.addQuality(magier, false);
@@ -73,7 +73,7 @@ class CharacterSpecialAttributeTest {
   @Test
   void technomancerQualityUnlocksResonanceAtValueOne() {
     Character c = mensch("Test");
-    QualityData technomant = QualityDataLoader.findByName("Technomant");
+    QualityData technomant = QualityDataLoader.findByName("Technomancer");
     assertNotNull(technomant);
 
     c.addQuality(technomant, false);
@@ -86,8 +86,8 @@ class CharacterSpecialAttributeTest {
   @Test
   void magicAndResonanceAreMutuallyExclusive() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
-    QualityData technomant = QualityDataLoader.findByName("Technomant");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
+    QualityData technomant = QualityDataLoader.findByName("Technomancer");
     assertNotNull(magier);
     assertNotNull(technomant);
 
@@ -102,7 +102,7 @@ class CharacterSpecialAttributeTest {
   @Test
   void magicianAndAdeptAreMutuallyExclusive() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     QualityData adept = QualityDataLoader.findByName("Adept");
     assertNotNull(magier);
     assertNotNull(adept);
@@ -116,7 +116,7 @@ class CharacterSpecialAttributeTest {
   @Test
   void resonanceBlocksMagicQualityToo() {
     Character c = mensch("Test");
-    QualityData technomant = QualityDataLoader.findByName("Technomant");
+    QualityData technomant = QualityDataLoader.findByName("Technomancer");
     QualityData adept = QualityDataLoader.findByName("Adept");
     assertNotNull(technomant);
     assertNotNull(adept);
@@ -129,14 +129,14 @@ class CharacterSpecialAttributeTest {
   @Test
   void removingLastGrantingQualityDuringCreationResetsAndRefundsMagic() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     assertNotNull(magier);
 
     c.addQuality(magier, false);
     c.getMagicOrResonance().setValue(4); // (4-1)*10 = 30 BP ausgegeben
     assertEquals(30, c.getSpecialAttributeBP());
 
-    c.removeQuality("Magier");
+    c.removeQuality("Zauberer");
 
     assertFalse(c.hasMagic());
     assertNull(c.getMagicOrResonance());
@@ -147,7 +147,7 @@ class CharacterSpecialAttributeTest {
   @Test
   void removingLastGrantingQualityInCareerModeResetsWithoutKarmaRefund() {
     Character c = mensch("Test");
-    QualityData magier = QualityDataLoader.findByName("Magier");
+    QualityData magier = QualityDataLoader.findByName("Zauberer");
     assertNotNull(magier);
 
     c.addQuality(magier, false);
@@ -157,7 +157,7 @@ class CharacterSpecialAttributeTest {
         java.time.LocalDate.now(java.time.ZoneId.systemDefault())));
     int karmaBefore = c.getKarmaTotal();
 
-    c.removeQuality("Magier");
+    c.removeQuality("Zauberer");
 
     assertFalse(c.hasMagic());
     assertNull(c.getMagicOrResonance());

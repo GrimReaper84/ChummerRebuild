@@ -59,13 +59,14 @@ public class MetatypeDataLoader {
           continue;
         }
 
-        list.add(parseEntry(metatypeEl, false));
+        String baseName = metatypeEl.getAttribute("name");
+        list.add(parseEntry(metatypeEl, false, baseName));
 
         NodeList grandchildren = metatypeEl.getChildNodes();
         for (int j = 0; j < grandchildren.getLength(); j++) {
           Node child = grandchildren.item(j);
           if (child instanceof Element variant && "variant".equals(variant.getTagName())) {
-            list.add(parseEntry(variant, true));
+            list.add(parseEntry(variant, true, baseName));
           }
         }
       }
@@ -75,7 +76,8 @@ public class MetatypeDataLoader {
     }
   }
 
-  private static @NonNull MetatypeData parseEntry(@NonNull Element el, boolean isVariant) {
+  private static @NonNull MetatypeData parseEntry(@NonNull Element el, boolean isVariant,
+      @NonNull String baseName) {
     String name = el.getAttribute("name");
     int bp = Integer.parseInt(el.getAttribute("bp"));
     Map<AttributeType, AttributeRange> ranges = new EnumMap<>(AttributeType.class);
@@ -113,7 +115,7 @@ public class MetatypeDataLoader {
       throw new IllegalStateException("Kein <edge>-Bereich für Metatyp \"" + name + "\"");
     }
 
-    return new MetatypeData(name, bp, isVariant,
+    return new MetatypeData(name, bp, isVariant, baseName,
         Collections.unmodifiableMap(ranges),
         edgeRange,
         Collections.unmodifiableList(positiveQualities),

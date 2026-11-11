@@ -448,7 +448,7 @@ public final class SkillTabBuilder {
 
             @Override
             public int max() {
-              return Skill.MAX_RATING;
+              return skill.getMaxRating();
             }
 
             @Override

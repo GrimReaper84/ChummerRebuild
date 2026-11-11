@@ -1,366 +1,883 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    SR4-Qualities (Gaben und Handicaps).
-    Quelle: Shadowrun 4th Edition Grundregelwerk (SR4) und Runner's Companion (RC).
+    Gaben und Handicaps nach der Tabelle des SR4-Grundregelwerks (S. 106, am Seitenbild geprüft) mit den Stufen und
+    Varianten aus den Beschreibungen S. 114-122. Namen wie im GRW, Notizen in eigenen Worten (ADR-042).
+    Handicaps haben negative GP. Höchstens 35 GP für Gaben und 35 GP aus Handicaps (S. 114, 118).
 
-    Metatyp-Qualities (durch Rasse gewährt): werden nicht separat gekauft,
-    BP-Kosten sind bereits im Metatyp-Preis enthalten.
+    Tags: <page> gedruckte Seite; <group> nur ein Eintrag je Gruppe (Stufen, Varianten); <select> verlangt beim Kauf
+    eine Fertigkeit, ein Attribut oder einen Text; <multiple/> mehrfach wählbar (mit verschiedener Auswahl);
+    <requires> mindestens eine der Gaben; <excludes> nicht zusammen mit diesen Gaben; <metatypes> nur für diese
+    Metatypen (Varianten zählen zu ihrem Grundmetatyp); <metatype/> nur durch den Metatyp, nicht wählbar.
 -->
 <qualities>
 
-    <!-- ══════════════════════════════════════════════════════
-         POSITIVE QUALITIES (GABEN)
-         ══════════════════════════════════════════════════════ -->
-
-    <!-- ── Metatyp-Qualities (Positive) ──────────────────── -->
-
-    <quality>
-        <name>Nachtsicht</name>
-        <bp>10</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Wärmesicht</name>
-        <bp>5</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Reißzähne</name>
-        <bp>15</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>RC</source>
-    </quality>
-
-    <quality>
-        <name>Arkaner Dämpfer</name>
-        <bp>15</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>RC</source>
-    </quality>
-
-    <quality>
-        <name>Shiva-Arme</name>
-        <bp>20</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>RC</source>
-    </quality>
-
-    <!-- ── Wählbare Gaben (SR4 GRW) ───────────────────────── -->
-
-    <quality>
-        <name>Analytischer Verstand</name>
-        <bp>5</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Beidhändig</name>
-        <bp>5</bp>
-        <category>Positive</category>
-        <limit>no</limit>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Erster Eindruck</name>
-        <bp>5</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Glückspilz</name>
-        <bp>15</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Hohe Schmerztoleranz 1</name>
-        <bp>5</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Hohe Schmerztoleranz 2</name>
-        <bp>10</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Hohe Schmerztoleranz 3</name>
-        <bp>15</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Natürlicher Athlet</name>
-        <bp>7</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Natürliche Abhärtung</name>
-        <bp>5</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Meisterhandwerker</name>
-        <bp>5</bp>
-        <category>Positive</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
+    <!-- ── Gaben (S. 114-118) ── -->
     <quality>
         <name>Adept</name>
         <bp>5</bp>
         <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Erwacht mit Magie 1; nutzt Magie nur über Adeptenkräfte (Kraftpunkte = Magie), kein Zaubern.</note>
+        <excludes><quality>Zauberer</quality><quality>Magieradept</quality><quality>Technomancer</quality></excludes>
         <bonus><grantsmagic/></bonus>
-        <source>SR4</source>
     </quality>
-
     <quality>
-        <name>Magier</name>
-        <bp>15</bp>
-        <category>Positive</category>
-        <bonus><grantsmagic/><grantsspellcasting/></bonus>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Mystischer Adept</name>
-        <bp>10</bp>
-        <category>Positive</category>
-        <bonus><grantsmagic/></bonus>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Technomant</name>
+        <name>Astrales Chamäleon</name>
         <bp>5</bp>
         <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Astrale Signaturen verblassen doppelt so schnell; wer sie askennt, hat −2 Würfel.</note>
+        <requires><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></requires>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Außergewöhnliches Attribut</name>
+        <bp>20</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Natürliches Maximum eines Körperlichen oder Geistigen Attributs +1 (verstärktes Maximum ebenso). Nur einmal wählbar.</note>
+        <select label="Attribut">attribute</select>
+        <bonus><exceptionalattribute/></bonus>
+    </quality>
+    <quality>
+        <name>Beidhändigkeit</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Kein Abzug für die falsche Hand; bei zwei Waffen wird der Würfelpool trotzdem geteilt.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Erhöhte Konzentrationsfähigkeit 1</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>+1 Würfel auf Entzugswiderstand.</note>
+        <group>Erhöhte Konzentrationsfähigkeit</group>
+        <requires><quality>Zauberer</quality><quality>Magieradept</quality></requires>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Erhöhte Konzentrationsfähigkeit 2</name>
+        <bp>20</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>+2 Würfel auf Entzugswiderstand.</note>
+        <group>Erhöhte Konzentrationsfähigkeit</group>
+        <requires><quality>Zauberer</quality><quality>Magieradept</quality></requires>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Fotografisches Gedächtnis</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Erinnerungsproben mit Mindestwurf −1.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Freundliche Geister</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Eine Geisterart ist dem Charakter wohlgesonnen und hilft eher.</note>
+        <select label="Geisterart">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gelöscht (1 Woche)</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Kriminelle SINs und unerwünschte Daten verschwinden binnen einer Woche aus den Systemen.</note>
+        <group>Gelöscht</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gelöscht (24 Stunden)</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Jede SIN und alle persönlichen Daten verschwinden binnen 24 Stunden aus den Systemen.</note>
+        <group>Gelöscht</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Glück</name>
+        <bp>20</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Edge-Maximum +1; die Steigerung selbst kostet normal. Nur einmal wählbar.</note>
+        <bonus><lucky/></bonus>
+    </quality>
+    <quality>
+        <name>Gummi-Gelenke</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>115</page>
+        <note>Sehr bewegliche Gelenke: +2 Würfel auf Entfesselungsproben; mit Zustimmung der Spielleitung durch enge Öffnungen.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Hohe Schmerztoleranz 1</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>Die ersten 1 Schadenskästchen je Zustandsmonitor ergeben keinen Verletzungsmodifikator.</note>
+        <group>Hohe Schmerztoleranz</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Hohe Schmerztoleranz 2</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>Die ersten 2 Schadenskästchen je Zustandsmonitor ergeben keinen Verletzungsmodifikator.</note>
+        <group>Hohe Schmerztoleranz</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Hohe Schmerztoleranz 3</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>Die ersten 3 Schadenskästchen je Zustandsmonitor ergeben keinen Verletzungsmodifikator.</note>
+        <group>Hohe Schmerztoleranz</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Magieradept</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>Erwacht mit Magie 1; verteilt Magie auf Adeptenkräfte oder magische Fertigkeiten, keine Projektion.</note>
+        <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Technomancer</quality></excludes>
+        <bonus><grantsmagic/><grantsspellcasting/></bonus>
+    </quality>
+    <quality>
+        <name>Magieresistenz 1</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+1 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
+        <group>Magieresistenz</group>
+        <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Magieresistenz 2</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+2 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
+        <group>Magieresistenz</group>
+        <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Magieresistenz 3</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+3 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
+        <group>Magieresistenz</group>
+        <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Magieresistenz 4</name>
+        <bp>20</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+4 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
+        <group>Magieresistenz</group>
+        <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Menschliches Aussehen</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>Geht meist als Mensch durch: Menschen begegnen neutral, voreingenommene Metamenschen eher skeptisch.</note>
+        <metatypes><metatype>Elf</metatype><metatype>Zwerg</metatype><metatype>Ork</metatype></metatypes>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Mut</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+2 Würfel gegen Furcht und Einschüchterung, auch magische.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Natürliche Immunität (natürlich)</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>Immun gegen eine natürliche Krankheit oder ein natürliches Toxin (eine Dosis je 12 − KON Stunden).</note>
+        <select label="Krankheit/Toxin">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Natürliche Immunität (synthetisch)</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>Immun gegen eine künstliche Krankheit oder ein künstliches Toxin (eine Dosis je 12 − KON Stunden).</note>
+        <select label="Krankheit/Toxin">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Pathogen- und Toxinresistenz (Pathogene)</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+1 Würfel gegen Krankheiten.</note>
+        <group>Pathogen- und Toxinresistenz</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Pathogen- und Toxinresistenz (Toxine)</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+1 Würfel gegen Toxine und Drogen.</note>
+        <group>Pathogen- und Toxinresistenz</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Pathogen- und Toxinresistenz (beides)</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>116</page>
+        <note>+1 Würfel gegen Krankheiten, Toxine und Drogen.</note>
+        <group>Pathogen- und Toxinresistenz</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Programmier-Genie</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>+2 Würfel auf eine bestimmte Matrix-Handlung mit Probe. Nur einmal wählbar.</note>
+        <select label="Matrix-Handlung">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Resistenz gegen Signalspitzen</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>1 Punkt natürlicher Biofeedback-Filter, addiert zu dem des Kommlinks.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Schlechte Verbindung</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>Ritualzauber gegen den Charakter haben −3 Würfel, auch hilfreiche.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Schnellheilung</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>+2 Würfel auf alle Heilungsproben für den Charakter, auch magische.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Schutzpatron</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>Ein Schutzpatron leitet die Magie des Charakters an, mit eigenen Vor- und Nachteilen.</note>
+        <select label="Schutzpatron">text</select>
+        <requires><quality>Zauberer</quality><quality>Magieradept</quality></requires>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Soziales Chamäleon</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>Beim ersten Treffen in einer neuen Umgebung +2 Würfel auf soziale Proben.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Talentiert</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>Eine Aktionsfertigkeit darf bis 7 steigen, auch bei der Erschaffung; der Schritt von 6 auf 7 kostet doppelt. Nur einmal wählbar.</note>
+        <select label="Fertigkeit">skill</select>
+        <bonus><aptitude/></bonus>
+    </quality>
+    <quality>
+        <name>Technomancer</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>Greift mit Resonanz 1 ohne Gerät auf die Matrix zu (lebende Persona).</note>
+        <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
         <bonus><grantsresonance/></bonus>
+    </quality>
+    <quality>
+        <name>Tierempathie</name>
+        <bp>10</bp>
+        <category>Positive</category>
         <source>SR4</source>
+        <page>117</page>
+        <note>+2 Würfel, um Tiere zu beeinflussen oder zu kontrollieren (auch Reiten).</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Überlebenswille 1</name>
+        <bp>5</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>1 zusätzliche Kästchen für überzähligen Schaden; Verletzungsmodifikatoren unverändert.</note>
+        <group>Überlebenswille</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Überlebenswille 2</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>2 zusätzliche Kästchen für überzähligen Schaden; Verletzungsmodifikatoren unverändert.</note>
+        <group>Überlebenswille</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Überlebenswille 3</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>3 zusätzliche Kästchen für überzähligen Schaden; Verletzungsmodifikatoren unverändert.</note>
+        <group>Überlebenswille</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Unauffälligkeit</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>117</page>
+        <note>Wer den Charakter in einer Menge erkennen oder beschatten will, hat −2 Würfel (nicht magisch oder in der Matrix).</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Vertrautes Terrain</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>118</page>
+        <note>In einem bestimmten Gebiet +2 Würfel auf Aktionsfertigkeiten und +4 auf passende Wissensfertigkeiten.</note>
+        <select label="Gebiet">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Zähigkeit</name>
+        <bp>10</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>118</page>
+        <note>Konstitution zählt bei Schadenswiderstand +1.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Zauberer</name>
+        <bp>15</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>118</page>
+        <note>Erwacht mit Magie 1; wirkt Zauber, beschwört Geister, nimmt astral wahr und projiziert.</note>
+        <excludes><quality>Adept</quality><quality>Magieradept</quality><quality>Technomancer</quality></excludes>
+        <bonus><grantsmagic/><grantsspellcasting/></bonus>
     </quality>
 
-    <!-- ══════════════════════════════════════════════════════
-         NEGATIVE QUALITIES (HANDICAPS)
-         ══════════════════════════════════════════════════════ -->
-
-    <!-- ── Metatyp-Qualities (Negative) ──────────────────── -->
-
+    <!-- ── Handicaps (S. 118-122) ── -->
     <quality>
-        <name>Unverkennbarer Stil</name>
+        <name>Abhängigkeit (Leicht)</name>
         <bp>-5</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
+        <page>118</page>
+        <note>Tägliches Verlangen, nach außen kaum sichtbar.</note>
+        <select label="Substanz">text</select>
+        <bonus/>
     </quality>
-
     <quality>
-        <name>Auffällige Hautpigmentierung</name>
+        <name>Abhängigkeit (Mittel)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>118</page>
+        <note>Mindestens tägliches Verlangen; −4 auf Proben, ihm zu widerstehen.</note>
+        <select label="Substanz">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Abhängigkeit (Schwer)</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>118</page>
+        <note>Ständiges Verlangen; −6 auf Proben, ihm zu widerstehen.</note>
+        <select label="Substanz">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Abhängigkeit (Ausgebrannt)</name>
+        <bp>-30</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>118</page>
+        <note>Wie schwer, dazu sichtbare Spuren und Essenz −1.</note>
+        <select label="Substanz">text</select>
+        <bonus><burnoutessence/></bonus>
+    </quality>
+    <quality>
+        <name>Allergie (Ungewöhnlich, Leicht)</name>
         <bp>-5</bp>
         <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Lästige Symptome bei Kontakt.</note>
+        <select label="Substanz">text</select>
         <bonus/>
-        <source>RC</source>
     </quality>
-
     <quality>
-        <name>Schlechte Selbstkontrolle (Rachsüchtig)</name>
+        <name>Allergie (Ungewöhnlich, Mittel)</name>
         <bp>-10</bp>
         <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Schmerzhafter Kontakt: −4 auf alle Proben, Waffen aus dem Stoff +2 Schaden.</note>
+        <select label="Substanz">text</select>
         <bonus/>
-        <source>RC</source>
     </quality>
-
     <quality>
-        <name>Neotenismus</name>
+        <name>Allergie (Ungewöhnlich, Schwer)</name>
+        <bp>-15</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Kontakt verursacht Schaden: −4 auf alle Proben, Waffen aus dem Stoff +4 Schaden.</note>
+        <select label="Substanz">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Allergie (Gewöhnlich, Leicht)</name>
         <bp>-10</bp>
         <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Lästige Symptome bei Kontakt.</note>
+        <select label="Substanz">text</select>
         <bonus/>
-        <source>RC</source>
     </quality>
-
-    <!-- ── Wählbare Handicaps (SR4 GRW) ───────────────────── -->
-
     <quality>
-        <name>Gebrechlich</name>
-        <bp>-20</bp>
+        <name>Allergie (Gewöhnlich, Mittel)</name>
+        <bp>-15</bp>
         <category>Negative</category>
-        <bonus>
-            <infirm/>
-        </bonus>
         <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Ungehobelt</name>
-        <bp>-20</bp>
-        <category>Negative</category>
-        <bonus>
-            <uncouth/>
-        </bonus>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Ungebildet</name>
-        <bp>-20</bp>
-        <category>Negative</category>
-        <bonus>
-            <uneducated/>
-        </bonus>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Pechvogel</name>
-        <bp>-20</bp>
-        <category>Negative</category>
+        <page>119</page>
+        <note>Schmerzhafter Kontakt: −4 auf alle Proben, Waffen aus dem Stoff +2 Schaden.</note>
+        <select label="Substanz">text</select>
         <bonus/>
-        <source>SR4</source>
     </quality>
-
     <quality>
-        <!-- GRW S. 120 (gegen PDF-Bild verifiziert). Hieß zuvor "Empfindliches System" (Übersetzung
-             des englischen "Sensitive System" aus dem C#-Original, im deutschen GRW nicht vorhanden). -->
+        <name>Allergie (Gewöhnlich, Schwer)</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Kontakt verursacht Schaden: −4 auf alle Proben, Waffen aus dem Stoff +4 Schaden.</note>
+        <select label="Substanz">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Astrales Leuchtfeuer</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Astrale Signaturen halten doppelt so lange; wer sie askennt, hat +2 Würfel.</note>
+        <requires><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></requires>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Elfenposer</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Ein Mensch, der als Elf durchgehen will; auffliegen schadet dem Ruf bei Elfen und Menschen.</note>
+        <metatypes><metatype>Mensch</metatype></metatypes>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Empfindliches Nervensystem</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>−2 Würfel gegen Schaden durch SimSinn, BTLs und Schwarzes IC.</note>
+        <group>Empfindliches Nervensystem</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Empfindliches Nervensystem (Hacker/Technomancer)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>−2 Würfel gegen Schaden durch SimSinn, BTLs und Schwarzes IC; höherer Bonus für Hacker und Technomancer.</note>
+        <group>Empfindliches Nervensystem</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Feindliche Geister</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Eine Geisterart ist dem Charakter feindlich gesonnen und belästigt ihn.</note>
+        <select label="Geisterart">text</select>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gezeichnet</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Nach schlechten Erfahrungen −2 Würfel auf Willenskraftproben gegen Schwarzes IC und BTLs.</note>
+        <group>Gezeichnet</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gezeichnet (Hacker/Technomancer)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>119</page>
+        <note>Nach schlechten Erfahrungen −2 Würfel auf Willenskraftproben gegen Schwarzes IC und BTLs; höherer Bonus für Hacker und Technomancer.</note>
+        <group>Gezeichnet</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gremlins 1</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 1 Einsen weniger ein.</note>
+        <group>Gremlins</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gremlins 2</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 2 Einsen weniger ein.</note>
+        <group>Gremlins</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gremlins 3</name>
+        <bp>-15</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 3 Einsen weniger ein.</note>
+        <group>Gremlins</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Gremlins 4</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 4 Einsen weniger ein.</note>
+        <group>Gremlins</group>
+        <bonus/>
+    </quality>
+    <quality>
         <name>Immunabstoßung</name>
         <bp>-15</bp>
         <category>Negative</category>
-        <bonus>
-            <doublescyberwareessence/>
-        </bonus>
         <source>SR4</source>
+        <page>120</page>
+        <note>Essenzverlust durch Cyberware zählt doppelt, Bioware normal.</note>
+        <bonus><doublescyberwareessence/></bonus>
     </quality>
-
     <quality>
-        <name>SÜNder</name>
+        <name>Inkompetenz</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Eine Aktionsfertigkeit kann nicht erlernt werden und gilt als ahnungslos. Mehrfach wählbar.</note>
+        <select label="Fertigkeit">skill</select>
+        <multiple/>
+        <bonus><incompetent/></bonus>
+    </quality>
+    <quality>
+        <name>Kampflähmung</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Erste Initiativeprobe im Kampf nur mit halber Initiative; −3 auf Überraschungsproben.</note>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Körperliche Schwäche</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Körperliche Fertigkeiten kosten doppelt, keine Körperlichen Fertigkeitsgruppen.</note>
+        <bonus><infirm/></bonus>
+    </quality>
+    <quality>
+        <name>Niedrige Schmerztoleranz</name>
         <bp>-10</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
+        <page>120</page>
+        <note>Verletzungsmodifikator −1 schon je 2 statt je 3 Schadenskästchen.</note>
+        <bonus/>
     </quality>
-
     <quality>
-        <name>SÜNder (National)</name>
-        <bp>-15</bp>
+        <name>Orkposer</name>
+        <bp>-5</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
+        <page>120</page>
+        <note>Will als Ork durchgehen; auffliegen schadet dem Ruf bei Orks.</note>
+        <metatypes><metatype>Mensch</metatype><metatype>Elf</metatype></metatypes>
+        <bonus/>
     </quality>
-
     <quality>
-        <name>SÜNder (Global)</name>
-        <bp>-25</bp>
+        <name>Pazifist (unnötige Gewalt)</name>
+        <bp>-5</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
+        <page>120</page>
+        <note>Meidet unnötige Gewalt und tötet nur in Notwehr.</note>
+        <group>Pazifist</group>
+        <bonus/>
     </quality>
-
+    <quality>
+        <name>Pazifist (jede Gewalt)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>120</page>
+        <note>Lehnt jede Gewalt gegen denkende Wesen ab; Verstöße führen in eine Depression.</note>
+        <group>Pazifist</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Programmier-Niete</name>
+        <bp>-5</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>121</page>
+        <note>−2 Würfel auf eine bestimmte Matrix-Handlung mit Probe.</note>
+        <select label="Matrix-Handlung">text</select>
+        <bonus/>
+    </quality>
     <quality>
         <name>Schwaches Immunsystem</name>
         <bp>-5</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Abhängigkeit (Mild)</name>
-        <bp>-5</bp>
-        <category>Negative</category>
+        <page>121</page>
+        <note>−2 Würfel gegen Krankheiten.</note>
         <bonus/>
-        <source>SR4</source>
     </quality>
-
     <quality>
-        <name>Abhängigkeit (Mäßig)</name>
+        <name>SimSinn-Desorientierung</name>
         <bp>-10</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Abhängigkeit (Stark)</name>
-        <bp>-20</bp>
-        <category>Negative</category>
+        <page>121</page>
+        <note>−2 Würfel auf alle Proben mit AR, VR oder SimSinn-Geräten.</note>
+        <group>SimSinn-Desorientierung</group>
         <bonus/>
-        <source>SR4</source>
     </quality>
-
     <quality>
-        <name>Allergie (Ungewöhnlich, Mild)</name>
-        <bp>-5</bp>
-        <category>Negative</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Allergie (Ungewöhnlich, Schwer)</name>
-        <bp>-10</bp>
-        <category>Negative</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Allergie (Häufig, Mild)</name>
-        <bp>-10</bp>
-        <category>Negative</category>
-        <bonus/>
-        <source>SR4</source>
-    </quality>
-
-    <quality>
-        <name>Allergie (Häufig, Schwer)</name>
+        <name>SimSinn-Desorientierung (Hacker/Technomancer)</name>
         <bp>-15</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
+        <page>121</page>
+        <note>−2 Würfel auf alle Proben mit AR, VR oder SimSinn-Geräten; höherer Bonus für Hacker und Technomancer.</note>
+        <group>SimSinn-Desorientierung</group>
+        <bonus/>
     </quality>
-
     <quality>
-        <name>Allergie (Verbreitet, Mild)</name>
-        <bp>-15</bp>
+        <name>SIN-Mensch (normale SIN)</name>
+        <bp>-5</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
+        <page>121</page>
+        <note>Legale SIN: Identität und Daten des Charakters sind in Datenbanken erfasst.</note>
+        <group>SIN-Mensch</group>
+        <bonus/>
     </quality>
-
     <quality>
-        <name>Allergie (Verbreitet, Schwer)</name>
+        <name>SIN-Mensch (kriminelle SIN)</name>
+        <bp>-10</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>121</page>
+        <note>Kriminelle SIN mit Strafregister; bei Straftaten leichter zu identifizieren.</note>
+        <group>SIN-Mensch</group>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Ungebildet</name>
         <bp>-20</bp>
         <category>Negative</category>
-        <bonus/>
         <source>SR4</source>
+        <page>121</page>
+        <note>Technische Fertigkeiten sowie akademische und berufliche Wissensfertigkeiten kosten doppelt, keine Technischen Fertigkeitsgruppen.</note>
+        <bonus><uneducated/></bonus>
+    </quality>
+    <quality>
+        <name>Ungehobelt</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>122</page>
+        <note>Soziale Fertigkeiten kosten doppelt, keine Sozialen Fertigkeitsgruppen.</note>
+        <bonus><uncouth/></bonus>
+    </quality>
+    <quality>
+        <name>Unglück</name>
+        <bp>-20</bp>
+        <category>Negative</category>
+        <source>SR4</source>
+        <page>122</page>
+        <note>Bei jedem Edge-Einsatz kehrt sich der Effekt bei einer 1 auf 1W6 ins Gegenteil.</note>
+        <bonus/>
+    </quality>
+
+    <!-- ── Metatyp-Fähigkeiten und Qualities der Metavarianten (nicht wählbar) ── -->
+    <quality>
+        <name>Restlichtverstärkung</name>
+        <bp>0</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>105</page>
+        <note>Natürliche Restlichtverstärkung (Besondere Fähigkeit des Metatyps).</note>
+        <metatype/>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Infrarotsicht</name>
+        <bp>0</bp>
+        <category>Positive</category>
+        <source>SR4</source>
+        <page>105</page>
+        <note>Natürliche Infrarotsicht (Besondere Fähigkeit des Metatyps).</note>
+        <metatype/>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Reißzähne</name>
+        <bp>0</bp>
+        <category>Positive</category>
+        <source>RC</source>
+        <note>Quality einer Metavariante (Runner's Companion).</note>
+        <metatype/>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Arkaner Dämpfer</name>
+        <bp>0</bp>
+        <category>Positive</category>
+        <source>RC</source>
+        <note>Quality einer Metavariante (Runner's Companion).</note>
+        <metatype/>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Unverkennbarer Stil</name>
+        <bp>0</bp>
+        <category>Negative</category>
+        <source>RC</source>
+        <note>Quality einer Metavariante (Runner's Companion).</note>
+        <metatype/>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Schlechte Selbstkontrolle (Rachsüchtig)</name>
+        <bp>0</bp>
+        <category>Negative</category>
+        <source>RC</source>
+        <note>Quality einer Metavariante (Runner's Companion).</note>
+        <metatype/>
+        <bonus/>
+    </quality>
+    <quality>
+        <name>Neotenismus</name>
+        <bp>0</bp>
+        <category>Negative</category>
+        <source>RC</source>
+        <note>Quality einer Metavariante (Runner's Companion).</note>
+        <metatype/>
+        <bonus/>
     </quality>
 
 </qualities>

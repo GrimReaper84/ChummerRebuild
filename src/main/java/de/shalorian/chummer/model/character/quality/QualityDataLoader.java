@@ -1,12 +1,16 @@
 package de.shalorian.chummer.model.character.quality;
 
 import static de.shalorian.chummer.utils.XmlUtils.childText;
+import static de.shalorian.chummer.utils.XmlUtils.firstChild;
 
 import de.shalorian.chummer.model.character.DataPaths;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,11 +51,11 @@ public class QualityDataLoader {
       doc.getDocumentElement().normalize();
 
       Map<String, QualityData> map = new LinkedHashMap<>();
-      NodeList nodes = doc.getDocumentElement().getElementsByTagName("quality");
+      NodeList nodes = doc.getDocumentElement().getChildNodes();
 
       for (int i = 0; i < nodes.getLength(); i++) {
         Node node = nodes.item(i);
-        if (!(node instanceof Element element)) {
+        if (!(node instanceof Element element) || !"quality".equals(element.getTagName())) {
           continue;
         }
         QualityData data = parseQuality(element);
@@ -68,32 +72,75 @@ public class QualityDataLoader {
     int bp = Integer.parseInt(childText(el, "bp"));
     QualityType type = "Positive".equals(childText(el, "category"))
         ? QualityType.POSITIVE : QualityType.NEGATIVE;
+    String pageText = childText(el, "page");
+    int page = pageText.isEmpty() ? 0 : Integer.parseInt(pageText);
 
-    boolean contributeToLimit = !"no".equals(childText(el, "limit"));
+    QualitySelection selection = QualitySelection.NONE;
+    String selectLabel = "";
+    Element select = firstChild(el, "select");
+    if (select != null) {
+      selection = QualitySelection.valueOf(select.getTextContent().trim().toUpperCase(Locale.ROOT));
+      selectLabel = select.getAttribute("label");
+    }
 
-    return new QualityData(name, bp, type, contributeToLimit,
-        Collections.unmodifiableSet(parseBonuses(el)));
+    String group = childText(el, "group");
+    QualityRules rules = new QualityRules(
+        group.isEmpty() ? null : group,
+        firstChild(el, "multiple") != null,
+        childTexts(el, "requires"),
+        childTexts(el, "excludes"),
+        childTexts(el, "metatypes"),
+        firstChild(el, "metatype") != null);
+
+    return new QualityData(name, bp, type, Collections.unmodifiableSet(parseBonuses(el)), page,
+        childText(el, "note"), selection, selectLabel, rules);
   }
 
-  private static final @NonNull Map<String, QualityBonusType> BONUS_TAGS = Map.of(
-      "uneducated", QualityBonusType.UNEDUCATED,
-      "uncouth", QualityBonusType.UNCOUTH,
-      "infirm", QualityBonusType.INFIRM,
-      "grantsmagic", QualityBonusType.GRANTS_MAGIC,
-      "grantsresonance", QualityBonusType.GRANTS_RESONANCE,
-      "grantsspellcasting", QualityBonusType.GRANTS_SPELLCASTING,
-      "doublescyberwareessence", QualityBonusType.DOUBLES_CYBERWARE_ESSENCE);
+  /** Texte aller Kind-Elemente des Listen-Elements {@code tag}, leer ohne Liste. */
+  private static @NonNull List<String> childTexts(@NonNull Element el, @NonNull String tag) {
+    Element list = firstChild(el, tag);
+    if (list == null) {
+      return List.of();
+    }
+    List<String> texts = new ArrayList<>();
+    NodeList children = list.getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      if (children.item(i) instanceof Element child) {
+        texts.add(child.getTextContent().trim());
+      }
+    }
+    return texts;
+  }
+
+  private static final @NonNull Map<String, QualityBonusType> BONUS_TAGS = Map.ofEntries(
+      Map.entry("uneducated", QualityBonusType.UNEDUCATED),
+      Map.entry("uncouth", QualityBonusType.UNCOUTH),
+      Map.entry("infirm", QualityBonusType.INFIRM),
+      Map.entry("grantsmagic", QualityBonusType.GRANTS_MAGIC),
+      Map.entry("grantsresonance", QualityBonusType.GRANTS_RESONANCE),
+      Map.entry("grantsspellcasting", QualityBonusType.GRANTS_SPELLCASTING),
+      Map.entry("doublescyberwareessence", QualityBonusType.DOUBLES_CYBERWARE_ESSENCE),
+      Map.entry("exceptionalattribute", QualityBonusType.EXCEPTIONAL_ATTRIBUTE),
+      Map.entry("lucky", QualityBonusType.LUCKY),
+      Map.entry("aptitude", QualityBonusType.APTITUDE),
+      Map.entry("incompetent", QualityBonusType.INCOMPETENT),
+      Map.entry("burnoutessence", QualityBonusType.BURNOUT_ESSENCE));
 
   private static @NonNull Set<QualityBonusType> parseBonuses(@NonNull Element el) {
     Set<QualityBonusType> bonuses = EnumSet.noneOf(QualityBonusType.class);
-    NodeList bonusNodes = el.getElementsByTagName("bonus");
-    if (bonusNodes.getLength() == 0) {
+    Element bonusEl = firstChild(el, "bonus");
+    if (bonusEl == null) {
       return bonuses;
     }
-    Element bonusEl = (Element) bonusNodes.item(0);
-    for (Map.Entry<String, QualityBonusType> entry : BONUS_TAGS.entrySet()) {
-      if (bonusEl.getElementsByTagName(entry.getKey()).getLength() > 0) {
-        bonuses.add(entry.getValue());
+    NodeList children = bonusEl.getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      if (children.item(i) instanceof Element child) {
+        QualityBonusType bonus = BONUS_TAGS.get(child.getTagName());
+        if (bonus == null) {
+          throw new IllegalStateException("Unbekannter Bonus-Tag <%s> bei %s".formatted(child.getTagName(),
+              childText(el, "name")));
+        }
+        bonuses.add(bonus);
       }
     }
     return bonuses;

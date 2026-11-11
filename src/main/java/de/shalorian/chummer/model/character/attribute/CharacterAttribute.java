@@ -9,6 +9,7 @@ public class CharacterAttribute {
   private final @NonNull AttributeType type;
   private final int min;
   private final int max;
+  private int maxBonus;
   private int value;
 
   public CharacterAttribute(@NonNull AttributeType type, @NonNull AttributeRange range) {
@@ -26,8 +27,18 @@ public class CharacterAttribute {
     return min;
   }
 
+  /** Natürliches Maximum, inklusive Bonus durch die Gabe Außergewöhnliches Attribut. */
   public int getMax() {
-    return max;
+    return max + maxBonus;
+  }
+
+  /**
+   * Setzt den Maximum-Bonus (Außergewöhnliches Attribut, GRW S. 115). Sinkt das Maximum unter den Wert, wird der
+   * Wert darauf gesenkt.
+   */
+  public void setMaxBonus(int maxBonus) {
+    this.maxBonus = maxBonus;
+    value = Math.min(value, getMax());
   }
 
   public int getValue() {
@@ -35,9 +46,9 @@ public class CharacterAttribute {
   }
 
   public void setValue(int newValue) {
-    if (newValue < min || newValue > max) {
+    if (newValue < min || newValue > getMax()) {
       throw new IllegalArgumentException(
-          "%s: Wert %d liegt außerhalb [%d/%d]".formatted(type, newValue, min, max));
+          "%s: Wert %d liegt außerhalb [%d/%d]".formatted(type, newValue, min, getMax()));
     }
     this.value = newValue;
   }
@@ -56,7 +67,7 @@ public class CharacterAttribute {
    */
   public int getBpCostForValue(int hypotheticalValue) {
     int cost = (hypotheticalValue - min) * BP_PER_POINT;
-    if (hypotheticalValue == max && min != max) {
+    if (hypotheticalValue == getMax() && min != getMax()) {
       cost += 15;
     }
     return cost;
