@@ -43,7 +43,7 @@ public class FinalizeDialogController {
 
   @FXML
   public void initialize() {
-    diceSumField.textProperty().addListener((obs, old, val) -> updateResult());
+    diceSumField.textProperty().addListener((_, _, _) -> updateResult());
   }
 
   public void setStage(@NonNull Stage stage) {

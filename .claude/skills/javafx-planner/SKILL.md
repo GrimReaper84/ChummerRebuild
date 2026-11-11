@@ -17,15 +17,19 @@ Original ab? Der Nutzer trifft diese Entscheidungen, du bereitest sie mit Empfeh
 
 | Eingabe | Quelle | Wenn sie fehlt |
 |---|---|---|
-| C#-Analyse | `docs/analysen/<feature>_analyse.md` | Nachfragen, ob `csharp-legacy-analyzer` zuerst laufen soll. Bei reinen UI-Retrofits oder Features ohne C#-Vorbild entbehrlich. |
-| Java-Analyse | `docs/analysen/<feature>_java_analyse.md` | Knapp selbst nachholen, wenn der Java-Stand aus der Sitzung bekannt ist, sonst nachfragen |
+| C#-Verhalten | verschlankt: selbst nach `csharp-legacy-analyzer` erheben, direkt in Abschnitt 4; sonst `docs/analysen/<feature>_analyse.md` | Bei reinen UI-Retrofits oder Features ohne C#-Vorbild entbehrlich |
+| Java-Ist | verschlankt: selbst nach `java-analyzer` erheben, direkt in Abschnitt 5; sonst `docs/analysen/<feature>_java_analyse.md` | Knapp halten, wenn der Java-Stand aus der Sitzung bekannt ist |
+| Designentscheidungen | `DECISIONS.md` | bindende frühere Entscheidungen mit Begründung; Widersprüche dem Nutzer vorlegen |
 | GRW | OCR-Text + PDF (Projektregeln Abschnitt 4) | — |
 | Alte UI | passender TabPage-Abschnitt in `frmCreate.Designer.cs`/`frmCareer.Designer.cs` | nur bei UI-Anteil |
 
 ## Vorgehen
 
-1. **Beide Analysen vollständig lesen.** Offene Fragen und "Nicht übernehmen ohne Prüfung"-Punkte
-   sammeln.
+1. **Grundlagen erheben bzw. lesen.** Im verschlankten Modus (Standard, Projektregeln Abschnitt 2)
+   C#-Verhalten und Java-Ist nach den Vorgehen der beiden Analyse-Skills selbst ermitteln und direkt
+   in die Abschnitte 4 und 5 des Plans schreiben; sonst beide Analysen vollständig lesen. Dazu
+   `DECISIONS.md` auf einschlägige Einträge prüfen. Offene Fragen und "Nicht übernehmen ohne
+   Prüfung"-Punkte sammeln.
 2. **Jede Fachregel gegen das GRW prüfen**, auch wenn die C#-Analyse sie als gesichert führt. Für jede
    Regel festhalten: GRW-Seite + Kurzzitat, oder "kein GRW-Beleg". Rechenbeispiele aus dem GRW notieren,
    sie werden später Tests.

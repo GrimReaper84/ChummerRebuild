@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
@@ -28,7 +28,7 @@ final class GearQuantityStepper {
    *                  dadurch aktuell
    */
   static @NonNull HBox create(@NonNull Gear gear, @NonNull Character character,
-      @NonNull StreetGearHost host, @NonNull Runnable onChanged) {
+      @NonNull CharacterTabHost host, @NonNull Runnable onChanged) {
     GearData data = gear.getData();
     Button minus = new Button("−");
     Label quantity = new Label(data.unit().format(gear.getQuantity()));
@@ -37,14 +37,14 @@ final class GearQuantityStepper {
     quantity.getStyleClass().add(STYLE_DETAIL_VALUE);
     plus.getStyleClass().add(STYLE_ATTR_BTN);
     minus.setDisable(!gear.canRemovePack());
-    minus.setOnAction(e -> {
+    minus.setOnAction(_ -> {
       if (gear.canRemovePack()) {
         gear.removePack();
         onChanged.run();
       }
     });
-    plus.setOnAction(e -> {
-      if (character.isCreated() && host.nuyenChargeFailed(character,
+    plus.setOnAction(_ -> {
+      if (character.isCreated() && host.services().nuyenChargeFailed(character,
           "Kauf: " + data.name() + " +" + data.unit().format(data.packSize()),
           gear.getPackPrice())) {
         return;

@@ -50,7 +50,7 @@ class CharacterWeaponTest {
     c.getEquipment().removeWeapon(first);
 
     assertEquals(1, c.getEquipment().getWeapons().size());
-    assertSame(second, c.getEquipment().getWeapons().get(0));
+    assertSame(second, c.getEquipment().getWeapons().getFirst());
   }
 
   @Test

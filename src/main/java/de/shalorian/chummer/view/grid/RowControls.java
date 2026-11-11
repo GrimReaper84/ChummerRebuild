@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Die vier UI-Elemente einer +/−-Zeile, wie sie {@link CharacterViewController#wireIncrementable} verdrahtet.
+ * Die vier UI-Elemente einer +/−-Zeile, wie sie {@link de.shalorian.chummer.view.tab.IncrementWiring#wire} verdrahtet.
  */
 public record RowControls(
     @NonNull Label valueLabel, @NonNull Label costLabel, @NonNull Button minus,

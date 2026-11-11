@@ -74,6 +74,6 @@ class CharacterSpecializationGroupDecoupleTest {
 
         assertFalse(c.canSpecializeSkill(klingen));
         // Kein setSkillSpecialization-Aufruf hier — die UI verdrahtet den Button ohnehin nur,
-        // wenn canSpecializeSkill() true liefert (siehe CharacterViewController.addSkillRow()).
+        // wenn canSpecializeSkill() true liefert (siehe SkillTabBuilder.addSkillRow()).
     }
 }

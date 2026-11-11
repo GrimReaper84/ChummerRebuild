@@ -13,7 +13,7 @@ import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
-/** Ausrüstung als Komponente des Charakters (docs/plaene/character_aufteilung_plan.md). */
+/** Ausrüstung als Komponente des Charakters (docs/plaene/archiv/character_aufteilung_plan.md). */
 class EquipmentTest {
 
   private static Character mensch() {

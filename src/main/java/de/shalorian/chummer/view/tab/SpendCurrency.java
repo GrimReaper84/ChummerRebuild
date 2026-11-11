@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import org.jspecify.annotations.NonNull;
 

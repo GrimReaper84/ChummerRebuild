@@ -78,7 +78,7 @@ class CharacterSpecializationEligibilityTest {
         Character c = mensch("Test");
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
 
-        assertFalse(c.canSpecializeKnowledgeSkill(c.getKnowledgeSkills().get(0)));
+        assertFalse(c.canSpecializeKnowledgeSkill(c.getKnowledgeSkills().getFirst()));
     }
 
     @Test
@@ -87,9 +87,9 @@ class CharacterSpecializationEligibilityTest {
         c.getAttribute(INT).setValue(3);
         c.getAttribute(LOG).setValue(3);
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(1);
+        c.getKnowledgeSkills().getFirst().setRating(1);
 
-        assertTrue(c.canSpecializeKnowledgeSkill(c.getKnowledgeSkills().get(0)));
+        assertTrue(c.canSpecializeKnowledgeSkill(c.getKnowledgeSkills().getFirst()));
     }
 
     @Test
@@ -108,7 +108,7 @@ class CharacterSpecializationEligibilityTest {
         c.addKnowledgeSkill("A", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("B", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("C", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(4);
+        c.getKnowledgeSkills().getFirst().setRating(4);
         c.getKnowledgeSkills().get(1).setRating(4);
         KnowledgeSkill dritte = c.getKnowledgeSkills().get(2);
         dritte.setRating(4); // Summe bereits 12 (Maximum)
@@ -120,7 +120,7 @@ class CharacterSpecializationEligibilityTest {
     void eligibilityCapsDoNotApplyInCareerMode() {
         Character c = mensch("Test");
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
         skill.setRating(1);
         c.setCreated(true);
 

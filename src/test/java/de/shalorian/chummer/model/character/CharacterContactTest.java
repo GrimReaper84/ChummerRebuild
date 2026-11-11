@@ -16,7 +16,7 @@ class CharacterContactTest {
         c.addContact("Sam", "Fixer im Barrens");
 
         assertEquals(1, c.getContacts().size());
-        Contact contact = c.getContacts().get(0);
+        Contact contact = c.getContacts().getFirst();
         assertEquals("Sam", contact.getName());
         assertEquals("Fixer im Barrens", contact.getDescription());
         assertEquals(Contact.MIN_RATING, contact.getConnection());
@@ -37,12 +37,12 @@ class CharacterContactTest {
         Character c = mensch("Test");
         c.addContact("Sam", null);
         c.addContact("Sam", "Anderer Sam");
-        Contact first = c.getContacts().get(0);
+        Contact first = c.getContacts().getFirst();
 
         c.removeContact(first);
 
         assertEquals(1, c.getContacts().size());
-        assertEquals("Anderer Sam", c.getContacts().get(0).getDescription());
+        assertEquals("Anderer Sam", c.getContacts().getFirst().getDescription());
     }
 
     @Test
@@ -56,7 +56,7 @@ class CharacterContactTest {
     void contactBpIsSumOfConnectionAndLoyalty() {
         Character c = mensch("Test");
         c.addContact("Sam", null);
-        Contact contact = c.getContacts().get(0);
+        Contact contact = c.getContacts().getFirst();
         contact.setConnection(4);
         contact.setLoyalty(3);
 
@@ -68,7 +68,7 @@ class CharacterContactTest {
         Character c = mensch("Test");
         c.addContact("Sam", null);
         c.addContact("Johnson", null);
-        c.getContacts().get(0).setConnection(2); // + Loyalty 1 = 3
+        c.getContacts().getFirst().setConnection(2); // + Loyalty 1 = 3
         c.getContacts().get(1).setConnection(5);
         c.getContacts().get(1).setLoyalty(5); // = 10
 
@@ -80,7 +80,7 @@ class CharacterContactTest {
         Character c = mensch("Test");
         int baseline = c.getSpentBP();
         c.addContact("Sam", null);
-        c.getContacts().get(0).setConnection(3);
+        c.getContacts().getFirst().setConnection(3);
 
         assertEquals(baseline + c.getContactBP(), c.getSpentBP());
     }
@@ -89,7 +89,7 @@ class CharacterContactTest {
     void removingContactReducesSpentBP() {
         Character c = mensch("Test");
         c.addContact("Sam", null);
-        Contact contact = c.getContacts().get(0);
+        Contact contact = c.getContacts().getFirst();
         contact.setConnection(5);
         contact.setLoyalty(5);
         int spentWithContact = c.getSpentBP();
@@ -105,7 +105,7 @@ class CharacterContactTest {
         Character c = mensch("Test");
         c.setCreated(true);
         c.addContact("Sam", null);
-        Contact contact = c.getContacts().get(0);
+        Contact contact = c.getContacts().getFirst();
         int karmaBefore = c.getKarmaTotal();
 
         contact.setConnection(6);

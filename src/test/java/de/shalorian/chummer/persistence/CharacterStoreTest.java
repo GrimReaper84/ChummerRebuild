@@ -93,13 +93,13 @@ class CharacterStoreTest {
   void roundtripPreservesKnowledgeSkills() throws IOException {
     Character original = mensch("Test");
     original.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-    original.getKnowledgeSkills().get(0).setRating(3);
+    original.getKnowledgeSkills().getFirst().setRating(3);
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals(1, loaded.getKnowledgeSkills().size());
-    KnowledgeSkill loadedSkill = loaded.getKnowledgeSkills().get(0);
+    KnowledgeSkill loadedSkill = loaded.getKnowledgeSkills().getFirst();
     assertEquals("Straßenkultur", loadedSkill.getName());
     assertEquals(KnowledgeSkillCategory.STREET, loadedSkill.getCategory());
     assertEquals(3, loadedSkill.getRating());
@@ -183,21 +183,21 @@ class CharacterStoreTest {
   void roundtripPreservesKnowledgeSkillSpecialization() throws IOException {
     Character original = mensch("Test");
     original.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-    KnowledgeSkill skill = original.getKnowledgeSkills().get(0);
+    KnowledgeSkill skill = original.getKnowledgeSkills().getFirst();
     skill.setRating(2);
     original.setKnowledgeSkillSpecialization(skill, "Bandenkriminalität");
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
-    assertEquals("Bandenkriminalität", loaded.getKnowledgeSkills().get(0).getSpecialization());
+    assertEquals("Bandenkriminalität", loaded.getKnowledgeSkills().getFirst().getSpecialization());
   }
 
   @Test
   void roundtripPreservesContacts() throws IOException {
     Character original = mensch("Test");
     original.addContact("Sam", "Fixer im Barrens, mag keine Überraschungen");
-    Contact contact = original.getContacts().get(0);
+    Contact contact = original.getContacts().getFirst();
     contact.setConnection(4);
     contact.setLoyalty(3);
     original.addContact("Sam", null); // Duplikat-Name bewusst erlaubt
@@ -206,7 +206,7 @@ class CharacterStoreTest {
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals(2, loaded.getContacts().size());
-    Contact loadedFirst = loaded.getContacts().get(0);
+    Contact loadedFirst = loaded.getContacts().getFirst();
     assertEquals("Sam", loadedFirst.getName());
     assertEquals("Fixer im Barrens, mag keine Überraschungen", loadedFirst.getDescription());
     assertEquals(4, loadedFirst.getConnection());
@@ -256,7 +256,7 @@ class CharacterStoreTest {
 
     assertEquals(Tradition.SHAMANIC, loaded.getTradition());
     assertEquals(1, loaded.getSpells().size());
-    assertEquals("Heilen", loaded.getSpells().get(0).name());
+    assertEquals("Heilen", loaded.getSpells().getFirst().name());
   }
 
   @Test
@@ -282,14 +282,14 @@ class CharacterStoreTest {
     ComplexFormData analyse = ComplexFormDataLoader.findByName("Analyse");
     assertNotNull(analyse);
     original.addComplexForm(analyse);
-    original.getComplexForms().get(0).setRating(3);
+    original.getComplexForms().getFirst().setRating(3);
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals(1, loaded.getComplexForms().size());
-    assertEquals("Analyse", loaded.getComplexForms().get(0).getName());
-    assertEquals(3, loaded.getComplexForms().get(0).getRating());
+    assertEquals("Analyse", loaded.getComplexForms().getFirst().getName());
+    assertEquals(3, loaded.getComplexForms().getFirst().getRating());
   }
 
   @Test

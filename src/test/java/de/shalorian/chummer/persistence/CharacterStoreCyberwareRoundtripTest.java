@@ -49,9 +49,9 @@ class CharacterStoreCyberwareRoundtripTest {
 
     List<Cyberware> implants = loaded.getEquipment().getCyberware();
     assertEquals(3, implants.size());
-    assertEquals("Datenbuchse", implants.get(0).getName());
-    assertEquals(CyberwareGrade.ALPHAWARE, implants.get(0).getGrade());
-    assertEquals(0, implants.get(0).getRating());
+    assertEquals("Datenbuchse", implants.getFirst().getName());
+    assertEquals(CyberwareGrade.ALPHAWARE, implants.getFirst().getGrade());
+    assertEquals(0, implants.getFirst().getRating());
     assertEquals("Dermalpanzerung", implants.get(1).getName());
     assertEquals(2, implants.get(1).getRating());
     assertEquals(EquipmentKind.BIOWARE, implants.get(2).getKind());
@@ -82,6 +82,6 @@ class CharacterStoreCyberwareRoundtripTest {
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals(1, loaded.getEquipment().getCyberware().size());
-    assertEquals(CyberwareGrade.STANDARD, loaded.getEquipment().getCyberware().get(0).getGrade());
+    assertEquals(CyberwareGrade.STANDARD, loaded.getEquipment().getCyberware().getFirst().getGrade());
   }
 }

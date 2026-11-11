@@ -41,7 +41,7 @@ public class KnowledgeSkillAddDialogController {
       }
     });
 
-    nameField.textProperty().addListener((obs, old, val) -> clearError());
+    nameField.textProperty().addListener((_, _, _) -> clearError());
   }
 
   public void setStage(@NonNull Stage stage) {

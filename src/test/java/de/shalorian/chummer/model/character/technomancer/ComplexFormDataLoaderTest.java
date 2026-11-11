@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Deckt die initiale, verifizierte Komplexe-Formen-Teilmenge ab (siehe {@code complexforms.xml}-
- * Kommentar und {@code docs/plaene/technomancer_plan.md} Schritt 1) — Kategorien "Standard" und
+ * Kommentar und {@code docs/plaene/archiv/technomancer_plan.md} Schritt 1) — Kategorien "Standard" und
  * "Hacking", analog zur bewusst unvollständigen Zauber-Teilmenge.
  */
 class ComplexFormDataLoaderTest {

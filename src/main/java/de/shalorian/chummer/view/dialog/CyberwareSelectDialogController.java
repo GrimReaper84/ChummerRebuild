@@ -63,7 +63,7 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   public void initialize() {
     gradeBox.getItems().setAll(CyberwareGrade.values());
     gradeBox.setConverter(new CyberwareGradeStringConverter());
-    gradeBox.setCellFactory(lv -> new ListCell<>() {
+    gradeBox.setCellFactory(_ -> new ListCell<>() {
       @Override
       protected void updateItem(@Nullable CyberwareGrade grade, boolean empty) {
         super.updateItem(grade, empty);
@@ -72,8 +72,8 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       }
     });
     gradeBox.setValue(CyberwareGrade.STANDARD);
-    gradeBox.valueProperty().addListener((obs, old, val) -> onListUpdated());
-    ratingBox.setCellFactory(lv -> new ListCell<>() {
+    gradeBox.valueProperty().addListener((_, _, _) -> onListUpdated());
+    ratingBox.setCellFactory(_ -> new ListCell<>() {
       @Override
       protected void updateItem(@Nullable Integer rating, boolean empty) {
         super.updateItem(rating, empty);
@@ -81,7 +81,7 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
         setDisable(!empty && rating != null && !isRatingAvailable(rating));
       }
     });
-    ratingBox.valueProperty().addListener((obs, old, val) -> updatePreview());
+    ratingBox.valueProperty().addListener((_, _, _) -> updatePreview());
     super.initialize();
   }
 

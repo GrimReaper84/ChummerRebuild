@@ -22,7 +22,8 @@ nicht anfangen, sondern nachfragen.
 | Eingabe | Quelle |
 |---|---|
 | Plan (führend) | `docs/plaene/<feature>_plan.md` — v.a. Abschnitt 11 (Umsetzungsschritte), 12 (Akzeptanzkriterien), 13 (Nutzerentscheidungen) |
-| Hintergrund | `docs/analysen/<feature>_analyse.md`, `..._java_analyse.md` (bei Unklarheiten im Plan) |
+| Hintergrund | Plan-Abschnitte 4/5; ältere Features: `docs/analysen/<feature>_analyse.md`, `..._java_analyse.md` (auch im Archiv) |
+| Designentscheidungen | `DECISIONS.md` |
 | Auftrag | Umfang laut Nutzer (alle Schritte oder einzelne) |
 
 Bei Review-Befunden statt eines Plans gelten die Umsetzungsaufträge des `java-code-quality-reviewer`
@@ -46,9 +47,13 @@ Bei Review-Befunden statt eines Plans gelten die Umsetzungsaufträge des `java-c
    die echten XML-Dateien.
 6. **Verifizieren:** `./gradlew build`. Testanzahl und Ergebnis aus `build/test-results` ermitteln. Die
    App nicht starten.
-7. **Nacharbeiten** laut Projektregeln Abschnitt 10 (`docs/feature_checklist.md`).
-8. **Abschluss-Review im frischen Kontext.** Nach grünem Build einen eigenen Agenten (Agent-Tool,
-   `general-purpose`, ohne Kontext dieser Sitzung) starten, der den Skill `java-code-quality-reviewer`
+   Im **verschlankten Modus** (Standard, Projektregeln Abschnitt 2) laufen alle Schritte des Plans am
+   Stück: nach jedem Schritt `./gradlew build`, kein Halt dazwischen, solange der Build grün ist und
+   keine Nutzerentscheidung berührt wird.
+7. **Nacharbeiten** laut Projektregeln Abschnitt 10 (`docs/feature_checklist.md`, `DECISIONS.md`,
+   fertigen Plan archivieren).
+8. **Abschluss-Review im frischen Kontext**, einmal pro Feature (nicht pro Schritt). Nach grünem
+   Build einen eigenen Agenten (Agent-Tool, `general-purpose`, ohne Kontext dieser Sitzung) starten, der den Skill `java-code-quality-reviewer`
    im **Diff-Modus** auf die Änderungen dieser Umsetzung anwendet. Der Auftrag an den Agenten nennt:
    den Plan (`docs/plaene/<feature>_plan.md`), den Basis-Commit bzw. "uncommittete Änderungen", die
    Aufforderung, zuerst `.claude/skills/_gemeinsam/projektregeln.md` und die Reviewer-SKILL.md zu lesen,

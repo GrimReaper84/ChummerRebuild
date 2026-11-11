@@ -55,19 +55,17 @@ public class MetatypeDataLoader {
 
       for (int i = 0; i < children.getLength(); i++) {
         Node node = children.item(i);
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
+        if (!(node instanceof Element metatypeEl)) {
           continue;
         }
-        Element metatypeEl = (Element) node;
 
         list.add(parseEntry(metatypeEl, false));
 
         NodeList grandchildren = metatypeEl.getChildNodes();
         for (int j = 0; j < grandchildren.getLength(); j++) {
           Node child = grandchildren.item(j);
-          if (child.getNodeType() == Node.ELEMENT_NODE
-              && "variant".equals(((Element) child).getTagName())) {
-            list.add(parseEntry((Element) child, true));
+          if (child instanceof Element variant && "variant".equals(variant.getTagName())) {
+            list.add(parseEntry(variant, true));
           }
         }
       }
@@ -88,10 +86,9 @@ public class MetatypeDataLoader {
     NodeList children = el.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       Node child = children.item(i);
-      if (child.getNodeType() != Node.ELEMENT_NODE) {
+      if (!(child instanceof Element childEl)) {
         continue;
       }
-      Element childEl = (Element) child;
       switch (childEl.getTagName()) {
         case "attribute" -> {
           AttributeType type = AttributeType.valueOf(childEl.getAttribute("name"));

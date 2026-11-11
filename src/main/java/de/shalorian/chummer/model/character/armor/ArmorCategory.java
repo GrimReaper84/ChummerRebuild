@@ -7,7 +7,7 @@ import org.jspecify.annotations.NonNull;
  * Unterschied beim Schutzwert: SR4-Grundregelwerk S. 372: "Helme und Schilde werden nicht als
  * eigenständige Panzerungsstücke behandelt, sondern erhöhen den Wert der getragenen Panzerung um ihre
  * Stufe." Die Kategorie "Kleidung" ist vorerst nicht enthalten (siehe {@code
- * docs/plaene/nuyen_ruestung_plan.md} Abschnitt 13).
+ * docs/plaene/archiv/nuyen_ruestung_plan.md} Abschnitt 13).
  */
 public enum ArmorCategory {
   ARMOR("Panzerung", false),

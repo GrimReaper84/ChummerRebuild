@@ -1,93 +1,121 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Diese Datei gibt Claude Code (claude.ai/code) Hinweise für die Arbeit an diesem Repository.
 
-## Build & Run
+## Build & Start
 
 ```bash
-./gradlew run          # Start the application
-./gradlew build        # Compile + test
-./gradlew test         # Run tests only
-./gradlew jar          # Build JAR
-./gradlew distZip      # Build distributable archive
+./gradlew run          # Anwendung starten
+./gradlew build        # Kompilieren + Tests (die Verifikation)
+./gradlew test         # Nur Tests
+./gradlew jar          # JAR bauen
+./gradlew distZip      # Verteilbares Archiv bauen
 ```
 
-**Java 21** is required (enforced via toolchain). Main class: `de.shalorian.chummer.App`.
+**Java 25** ist Pflicht (per Toolchain erzwungen; Gradle findet auch die JDKs aus `~/.jdks`). Hauptklasse: `de.shalorian.chummer.App`.
 
-## Architecture
+## Architektur
 
-**MVC with FXML.** Views are defined in `.fxml` files under `src/main/resources/de/shalorian/chummer/` and paired with
-controller classes in `src/main/java/de/shalorian/chummer/view/`.
+**MVC mit FXML.** Views liegen als `.fxml` unter `src/main/resources/de/shalorian/chummer/`, die zugehörigen
+Controller unter `src/main/java/de/shalorian/chummer/view/`.
 
-**Package structure:** `model/character` and `view` are split into feature-area subpackages to keep each package
-navigable (each holds only a handful of classes):
+**Package-Struktur:** `model.character` und `view` sind nach Fachbereichen in Unterpakete aufgeteilt, damit jedes
+Package überschaubar bleibt:
 
-- `model.character` (root): `Character` (aggregate root), `CharacterBiography`, `Contact`, `LogEntry`, `CatalogEntry`,
-  `DataPaths`
-- `model.character.attribute`, `.skill`, `.quality`, `.magic`, `.technomancer`, `.cyberware`, `.metatype`: data model classes for
-  the respective feature area (e.g. `Skill`/`SkillDataLoader` in `.skill`, `SpellData`/`Tradition` in `.magic`)
-- `view` (root): `MainWindowController`, `CharacterViewController`
-- `view.dialog`: all modal dialog controllers and their result/handle types
-- `view.converter`: JavaFX `StringConverter` implementations
-- `view.grid`: shared row-wiring types (`RowModel`, `RowControls`, `AttributeRowLabel`, `SkillSortMode`)
+- `model.character` (Wurzel): `Character` (Aggregatwurzel), `CharacterBiography`, `Contact`, `LogEntry`,
+  `CatalogEntry`, `DataPaths`
+- `model.character.attribute`, `.skill`, `.quality`, `.magic`, `.technomancer`, `.cyberware`, `.metatype`, `.armor`,
+  `.weapon`, `.gear`, `.vehicle`, `.lifestyle`, `.equipment`: Modellklassen des jeweiligen Bereichs (z.B.
+  `Skill`/`SkillDataLoader` in `.skill`, `SpellData`/`Tradition` in `.magic`); alle Kaufkategorien liegen in
+  `equipment.Equipment` (`character.getEquipment()`)
+- `view` (Wurzel): `MainWindowController`, `CharacterViewController`
+- `view.tab`: ein Builder je Tab des Charakterbogens (`AttributeTabBuilder`, `SkillTabBuilder` mit
+  `KnowledgeSkillSection`, `QualityTabBuilder`, `ContactTabBuilder`, `BiographyTabBuilder`, `MagicTabBuilder`,
+  `TechnomancerTabBuilder`, `CyberwareTabBuilder`, `StreetGearTabBuilder`, `WeaponTabBuilder`, `GearTabBuilder`,
+  `VehicleTabBuilder`, `LogTabBuilder`), ihre Anzeigewerte (`WeaponDetails`, `GearDetails`, `VehicleDetails`) und die
+  gemeinsamen Bausteine `CharacterTabHost`, `TabServices`, `IncrementWiring`
+- `view.dialog`: alle modalen Dialog-Controller und ihre Ergebnis-/Handle-Typen
+- `view.converter`: JavaFX-`StringConverter`
+- `view.grid`: gemeinsame Zeilen-Bausteine (`RowModel`, `RowControls`, `AttributeRowLabel`, `SkillSortMode`)
 
-`persistence` and `utils` remain flat (small enough to stay navigable). When adding a new class, place it in the
-subpackage matching its feature area rather than the package root.
+`persistence` und `utils` bleiben flach. Neue Klassen kommen in das Unterpaket ihres Fachbereichs, nicht in die
+Package-Wurzel.
 
-**Controller hierarchy:**
+**Controller-Hierarchie:**
 
-- `MainWindowController` — root; handles file menu, opens NewCharacterDialog, loads/saves via `CharacterStore`
-- `CharacterViewController` — child injected by main; renders the character sheet (Attributes, Skills, Log tabs)
-- `NewCharacterDialogController` / `LogEntryDialogController` — modal dialogs
+- `MainWindowController`: Wurzel; Dateimenü, öffnet den NewCharacterDialog, lädt/speichert über `CharacterStore`
+- `CharacterViewController`: vom Hauptfenster eingebunden; hält die FXML-Knoten und den Kopfbereich, erzeugt die
+  Tab-Builder und implementiert `CharacterTabHost`: Die Tabs melden fachliche Änderungen (z.B.
+  `onQualitiesChanged`), der Controller entscheidet zentral, was neu gebaut wird
+- `NewCharacterDialogController`, `LogEntryDialogController` und die Auswahldialoge in `view.dialog`: modale Dialoge
 
-**UI refresh pattern:** Controllers maintain `List<Runnable>` refresh lists. When model state changes, all registered
-refresh callbacks are called to rebuild the grid rows.
+**UI-Refresh:** Die Tab-Builder führen `List<Runnable>`-Refresh-Listen für ihre +/−-Zeilen (`refresh()`). Ändert sich
+ein Wert, der andere Zeilen beeinflusst, meldet der Tab `refreshRows()`, und der Controller ruft `refresh()` aller Tabs.
 
-**Data loading:** `MetatypeDataLoader` and `SkillDataLoader` parse XML on first access and cache the result. They return
-fresh copies of data objects for each new character. XML files live at `src/main/resources/de/shalorian/chummer/data/`.
+**Daten laden:** Die `XDataLoader` (z.B. `MetatypeDataLoader`, `SkillDataLoader`) lesen ihr XML beim ersten Zugriff
+und cachen es; für jeden neuen Charakter gibt es frische Kopien. Die XML-Dateien liegen unter
+`src/main/resources/de/shalorian/chummer/data/`.
 
-**Persistence:** `CharacterStore` converts `Character` ↔ `CharacterData` (DTO) and serializes to indented JSON via
-Jackson. File extension is `.json`.
+**Persistenz:** `CharacterStore` wandelt `Character` ↔ `CharacterData` (DTO) und schreibt eingerücktes JSON über
+Jackson. Dateiendung `.json`.
 
-## Game Rules (Shadowrun 4e)
+## Spielregeln (Shadowrun 4. Edition)
 
-The model enforces SR4 rules:
+Das Modell setzt die SR4-Regeln durch:
 
-- **Character creation:** 400 BP total; 10 BP per attribute point above racial minimum
-- **Skills:** 4 BP/rating (individual) or 10 BP/rating (group); max rating 6
-- **Resources:** BP explicitly assigned to resources (max. 50) buy equipment at 5,000 ¥ per BP, i.e. max. 250,000 ¥
+- **Charaktererschaffung:** 400 BP gesamt; 10 BP je Attributpunkt über dem Rassenminimum
+- **Fertigkeiten:** 4 BP je Stufe (einzeln) bzw. 10 BP je Stufe (Gruppe); Maximalstufe 6
+- **Ressourcen:** Den Ressourcen zugewiesene BP (max. 50) kaufen Ausrüstung zu 5.000 ¥ je BP, also max. 250.000 ¥
   (SR4-Grundregelwerk S. 110, `Character.NUYEN_PER_BP`)
-- **Career mode:** After finalizing, the assigned resource BP convert to starting Nuyen; attribute costs become (new
-  rating × 5) Karma; skill costs become (new rating × 2) Karma
-- **Metatypes:** 15 options (5 base races + 10 variants), each with specific attribute min/max ranges; variant
-  attributes override parent attributes
+- **Karrieremodus:** Nach dem Abschluss werden die Ressourcen-BP zu Start-Nuyen; Attribute kosten (neue Stufe × 5)
+  Karma, Fertigkeiten (neue Stufe × 2) Karma
+- **Metatypen:** 15 Optionen (5 Grundrassen + 10 Varianten) mit eigenen Attributbereichen; Varianten überschreiben die
+  Attribute der Grundrasse
 
-## Language
+## Sprache
 
-All user-facing strings, XML data, comments, and Javadoc are in **German**. Identifiers (class, method, field names)
-follow the existing code, which uses mostly **English** names (e.g. `Character.getEssence()`, `Cyberware`); German
-domain terms appear in texts and data, not in identifiers. Keep this consistent when adding code or data.
+**Alles ist Deutsch:** UI-Texte, XML-Daten, Kommentare, Javadoc, Skills, Projektregeln, `DECISIONS.md`, Pläne,
+Analysen, Berichte und Rückfragen an den Nutzer sowie Commit-Vorschläge. Bezeichner (Klassen, Methoden, Felder)
+folgen dem bestehenden Code mit überwiegend **englischen** Namen (z.B. `Character.getEssence()`, `Cyberware`);
+deutsche Fachbegriffe stehen in Texten und Daten, nicht in Bezeichnern. Spielbegriffe wie im deutschen GRW.
+
+## Regelwerk und Dokumentation
+
+| Was | Pfad |
+|---|---|
+| Designentscheidungen mit Begründung | `DECISIONS.md` |
+| Feature-Stand und Roadmap | `docs/feature_checklist.md` |
+| Pläne (fertige in `archiv/`) | `docs/plaene/` |
+| Analysen (fertige in `archiv/`) | `docs/analysen/` |
+| SR4-Grundregelwerk | `docs/rulebooks/grundregelwerk.pdf` (Scan), `grundregelwerk.txt` (Fließtext), `grundregelwerk_layout.txt` (Tabellen) |
+
+Befehle und Seitenberechnung: `.claude/skills/_gemeinsam/projektregeln.md`, Abschnitt 4.
 
 ## Workflows
 
-While analyzing the old repository to migrate a feature use the following skills:
+Ein Feature läuft im **verschlankten Modus** (Standard seit 2026-11-11, Details in den Projektregeln Abschnitt 2):
+ein gemeinsamer Plan `docs/plaene/<feature>_plan.md` mit C#-Verhalten, Java-Ist, GRW-Prüfung, Entscheidungen und
+Schritten; eine Freigabe; alle Schritte am Stück mit Build nach jedem Schritt; ein Abschluss-Review am Ende.
 
-- **csharp-legacy-analyzer** to analyze the old c# code
-- **java-analyzer** to analyze to existing java code
-- **javafx-planner** to compare the differences between the two analyzers and plan the javafx structure for the new
-  feature
-- **java-developer** to implement the newly planned code
-- **java-code-quality-reviewer** (diff mode) as the final step: after every implementation, java-developer starts a
-  separate agent with fresh context that reviews the diff with a focus on unnecessary complexity, over-abstraction and
-  duplication; it only reports, the user decides which findings get implemented
+Beteiligte Skills:
 
-While analyzing the existing code to check for code quality and make suggestion to increase the code quality use the
-following skill:
+- **csharp-legacy-analyzer**: Verhalten des alten C#-Codes (Abschnitt 4 des Plans)
+- **java-analyzer**: Ist-Stand des Java-Codes (Abschnitt 5 des Plans)
+- **javafx-planner**: Plan mit Zielarchitektur, JavaFX-UI, Tests und Schritten
+- **java-developer**: Umsetzung des freigegebenen Plans
+- **catalog-extractor**: Katalogdaten aus dem GRW in die XML-Kataloge übertragen bzw. prüfen (Nebenzweig, eigener
+  Schritt oder Schritt im Plan)
+- **java-code-quality-reviewer** (Diff-Modus) als letzter Schritt: java-developer startet nach der Umsetzung einen
+  eigenen Agenten mit frischem Kontext, der den Diff auf unnötige Komplexität, Überabstraktion und Duplikate prüft;
+  er berichtet nur, der Nutzer entscheidet, welche Befunde umgesetzt werden
 
-- **java-code-quality-reviewer** to review the code and suggest improvements
+Für Code-Qualitäts-Reviews an bestehendem Code:
 
-## RULES FOR CLAUDE
+- **java-code-quality-reviewer**: prüft den Code und schlägt Verbesserungen vor
 
-The following rules are imperative for every instance and every action the agent takes.
+## REGELN FÜR CLAUDE
 
-1. never try to implement code without being explicitly told to do so
+Die folgenden Regeln gelten zwingend für jede Instanz und jede Aktion des Agenten.
+
+1. Nie Code implementieren, ohne ausdrücklich dazu aufgefordert worden zu sein.
+2. Git ist schreibgeschützt: keine schreibenden Git-Aktionen, stattdessen Commit-Vorschläge machen.

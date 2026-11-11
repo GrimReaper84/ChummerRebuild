@@ -43,7 +43,7 @@ class EquipmentVehicleTest {
     Vehicle doberman = vehicle("GM-Nissan Doberman (Mittel)");
     Weapon lmg = new Weapon(Objects.requireNonNull(
         WeaponDataLoader.findByName("Ingram White Knight")));
-    doberman.mountWeapon(doberman.getMounts().get(0), lmg);
+    doberman.mountWeapon(doberman.getMounts().getFirst(), lmg);
     c.getEquipment().addVehicle(doberman);
 
     assertTrue(c.getEquipment().getWeapons().isEmpty());

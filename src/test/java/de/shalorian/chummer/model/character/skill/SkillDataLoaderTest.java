@@ -14,9 +14,9 @@ class SkillDataLoaderTest {
         List<Skill> first = SkillDataLoader.createFreshSkills();
         List<Skill> second = SkillDataLoader.createFreshSkills();
 
-        first.get(0).setRating(5);
+        first.getFirst().setRating(5);
 
-        assertEquals(0, second.get(0).getRating(), "Änderungen an einer Liste dürfen andere nicht beeinflussen");
+        assertEquals(0, second.getFirst().getRating(), "Änderungen an einer Liste dürfen andere nicht beeinflussen");
     }
 
     /**

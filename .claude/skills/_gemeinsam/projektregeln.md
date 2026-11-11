@@ -1,7 +1,7 @@
 # Gemeinsame Projektregeln – Chummer-Rebuild
 
 Gilt für alle Workflow-Skills (`csharp-legacy-analyzer`, `java-analyzer`, `javafx-planner`,
-`java-developer`, `java-code-quality-reviewer`). Jeder Skill liest diese Datei, bevor er arbeitet.
+`java-developer`, `java-code-quality-reviewer`, `catalog-extractor`). Jeder Skill liest diese Datei, bevor er arbeitet.
 Hier stehen die Dinge, die sich im Projekt als wichtig herausgestellt haben — meist, weil sie einmal
 schiefgegangen sind.
 
@@ -23,7 +23,7 @@ schiefgegangen sind.
 ## 1. Projekt in einem Absatz
 
 Neuaufbau des C#-WinForms-Tools **Chummer** (Charaktergenerator für **Shadowrun 4. Edition**, nicht
-SR5) als plattformunabhängige **JavaFX**-Anwendung (Java 21, Gradle, Error Prone + NullAway, JUnit 5,
+SR5) als plattformunabhängige **JavaFX**-Anwendung (Java 25, Gradle, Error Prone + NullAway, JUnit 5,
 Jackson, ControlsFX, MigLayout, Ikonli/FontAwesome 6). UI-Texte, XML-Daten, Kommentare und Javadoc
 sind **Deutsch** (Details in Abschnitt 6). Architektur und Package-Struktur: siehe `CLAUDE.md` im
 Projektroot.
@@ -47,7 +47,29 @@ bestand.
 
 Unabhängig davon kann `java-code-quality-reviewer` jederzeit für bestehenden Code aufgerufen werden.
 
-**Nach jedem Schritt anhalten und berichten.** Der Nutzer gibt jeden Schritt einzeln frei. Ein fertiger
+`catalog-extractor` ist ein Nebenzweig: Er legt Katalogdaten aus dem GRW an und prüft sie. Ein
+Feature-Plan nennt die Kataloge, die er braucht; ihre Übertragung ist ein eigener freigegebener Schritt
+(im verschlankten Modus innerhalb der Umsetzung, wenn der Plan ihn aufführt).
+
+**Verschlankter Modus (Nutzerentscheidung 2026-11-11, Standard bis auf Widerruf, aus dem
+Fallout2d20-Projekt übernommen):** Um Tokens zu sparen, läuft ein Feature so:
+1. **Ein gemeinsames Dokument** `docs/plaene/<feature>_plan.md` statt drei: C#-Verhalten, Java-Ist,
+   GRW-Prüfung, Scope-Entscheidungen und Umsetzungsschritte. Die Analyse-Skills liefern ihre Ergebnisse
+   als Abschnitte dieses Plans (Plan-Vorlage Abschnitt 4 „Gesichertes Altverhalten“ und 5 „Bestehende
+   Java-Struktur“); eigene `_analyse.md`/
+   `_java_analyse.md` entfallen. Fachliche Entscheidungen werden weiterhin vor bzw. im Plan per
+   AskUserQuestion eingeholt.
+2. **Eine Freigabe** für den ganzen Plan.
+3. **Alle Umsetzungsschritte am Stück**, `./gradlew build` nach jedem Schritt, kein Halt dazwischen.
+4. **Ein** Abschluss-Review im frischen Kontext am Ende des Features statt eines pro Teilschritt; der
+   Nutzer wählt die Befunde aus.
+
+Grund: getrennte Analysedokumente lesen dieselben Dateien mehrfach, Reviews pro Teilschritt kosten je
+~60–80k Tokens. Separate Analysedokumente nur, wenn der Nutzer sie ausdrücklich verlangt oder ein
+Feature so groß ist, dass der Plan sonst unlesbar wird (dann vorher fragen).
+
+**Nach jedem Schritt anhalten und berichten** (außerhalb des verschlankten Modus; dort nach dem Plan
+und nach dem Abschluss-Review). Der Nutzer gibt jeden Schritt einzeln frei. Ein fertiger
 Plan ist *keine* Freigabe zur Umsetzung — Code wird nur geschrieben, wenn der Nutzer das ausdrücklich
 sagt ("leg los", "setz das um"). Auch nicht als "kleine Reparatur" nebenbei. Grund: Der Nutzer will
 die Kontrolle darüber behalten, wann Code entsteht, und Zwischenergebnisse prüfen.
@@ -55,6 +77,9 @@ die Kontrolle darüber behalten, wann Code entsteht, und Zwischenergebnisse prü
 **Entscheidungen, die fachlich oder im Scope offen sind, gehören dem Nutzer.** Dafür gezielt
 nachfragen (AskUserQuestion), mit einer Empfehlung als erster Option. Kleine technische Details, die
 sich aus Code oder Konventionen klar ergeben, selbst entscheiden und im Ergebnis erwähnen.
+
+**Git ist schreibgeschützt.** Nie committen, stagen, stashen, pushen oder Branches wechseln; schreibende
+Git-Aktionen macht nur der Nutzer. Wenn ein Commit sinnvoll ist, eine Commit-Nachricht vorschlagen.
 
 **Abkürzungen, die der Nutzer bereits bestätigt hat:**
 - Reiner UI-Struktur-Abgleich (Layout eines Tabs gegen die alten `*.Designer.cs`) braucht nicht den
@@ -65,12 +90,14 @@ sich aus Code oder Konventionen klar ergeben, selbst entscheiden und im Ergebnis
 
 | Was | Pfad |
 |---|---|
-| C#-Analyse | `docs/analysen/<feature>_analyse.md` |
-| Java-Analyse | `docs/analysen/<feature>_java_analyse.md` |
-| Plan | `docs/plaene/<feature>_plan.md` |
-| Feature-Stand | `docs/feature_checklist.md` |
-| GRW (PDF, 411 S.) | `docs/rulebooks/Grundregelwerk_SR4.pdf` |
-| GRW (OCR-Text) | `docs/rulebooks/Grundregelwerk_SR4_ocr.txt` (Seiten durch `\f` getrennt) |
+| Designentscheidungen mit Begründung | `DECISIONS.md` (Projektroot) |
+| Plan (verschlankt: inkl. Analysen) | `docs/plaene/<feature>_plan.md`; fertige nach `docs/plaene/archiv/` |
+| C#-/Java-Analyse (nur auf Wunsch) | `docs/analysen/<feature>_analyse.md`, `..._java_analyse.md`; fertige nach `docs/analysen/archiv/` |
+| Katalogbericht | `docs/analysen/<katalog>_katalog.md` |
+| Feature-Stand + Roadmap | `docs/feature_checklist.md` (Roadmap: Abschnitt „Prioritisierte Reihenfolge“) |
+| GRW (PDF, 411 S.) | `docs/rulebooks/grundregelwerk.pdf` (Original-Scan) |
+| GRW (Fließtext) | `docs/rulebooks/grundregelwerk.txt` (Lesereihenfolge, Seiten durch `\f` getrennt) |
+| GRW (Tabellen) | `docs/rulebooks/grundregelwerk_layout.txt` (spaltentreu, gleiche Seitenumbrüche) |
 | C#-Original | `/home/luca/Chummer4_OriginalCode/chummer/Chummer/` (`cls*.cs`, `frm*.cs`) |
 | C#-Daten-XML | `/home/luca/Chummer4_OriginalCode/chummer/Chummer/bin/Release/data/*.xml` |
 | Alte UI-Struktur | `/home/luca/Chummer4_OriginalCode/chummer/Chummer/*.Designer.cs` (v.a. `frmCreate`/`frmCareer`) |
@@ -78,7 +105,8 @@ sich aus Code oder Konventionen klar ergeben, selbst entscheiden und im Ergebnis
 
 `<feature>` ist ein kurzer deutscher Slug in snake_case (z.B. `cyberware`, `wissensfertigkeiten`).
 Jeder Skill liest die Artefakte seiner Vorgänger aus diesen Pfaden und schreibt sein eigenes dorthin —
-so kann der nächste Schritt auch in einer neuen Sitzung ohne Kontextverlust weitermachen.
+so kann der nächste Schritt auch in einer neuen Sitzung ohne Kontextverlust weitermachen. Ein Dokument
+eines älteren Features kann im Archiv liegen; fehlt es ganz, ist das kein Fehler, dann zählt der Code.
 
 ## 4. Regelwerk (GRW) als Wahrheitsquelle
 
@@ -86,7 +114,12 @@ Das deutsche SR4-Grundregelwerk ist die maßgebliche Quelle, **nicht** der C#-Co
 enthält Bugs, Hausregeln und viel Inhalt aus Zusatzbänden. Deshalb wird jede Fachregel und jeder
 Katalogwert gegen das GRW geprüft, bevor er als gesichert gilt.
 
-**Suchen:** `grep -n "<Begriff>" docs/rulebooks/Grundregelwerk_SR4_ocr.txt`.
+**Dateien:** Das PDF ist ein Scan von 2009 mit schwacher OCR-Schicht. Beide Textdateien stammen aus
+einer eigenen OCR (`ocrmypdf --force-ocr -l deu`, dann `pdftotext -enc UTF-8` bzw. `pdftotext -enc
+UTF-8 -layout`); die OCR-PDF selbst wird nicht aufbewahrt. Neu erzeugen nur bei Bedarf, z.B. nach einem
+besseren Scan.
+
+**Suchen:** `grep -n "<Begriff>" docs/rulebooks/grundregelwerk.txt`.
 Englische C#-Begriffe haben oft eine eigene deutsche Übersetzung, z.B. *Submersion* → **Wandlung**,
 *Sensitive System* → **Immunabstoßung**, *Street Samurai* → Straßensamurai. Findet die englische Suche
 nichts, gezielt nach dem deutschen Begriff suchen, bevor "kein GRW-Beleg" gefolgert wird. Genau dieser
@@ -94,17 +127,20 @@ Fehler hat schon einmal ein Kern-Feature fälschlich als Zusatzband eingestuft.
 
 **Seite bestimmen:** PDF-Seite = Anzahl `\f` bis zur Zeile + 1:
 ```bash
-echo $(( $(head -n <ZEILE> docs/rulebooks/Grundregelwerk_SR4_ocr.txt | tr -cd '\f' | wc -c) + 1 ))
+echo $(( $(head -n <ZEILE> docs/rulebooks/grundregelwerk.txt | tr -cd '\f' | wc -c) + 1 ))
 ```
 Die gedruckte Buchseite liegt in der Regel **eine** Seite darunter (PDF 121 = Buch S. 120). In
 Zitaten die gedruckte Seite angeben und im Zweifel am Bild nachsehen.
 
-**Bild-Verifikation:** Der OCR-Text taugt für Fließtext, bei **Zahlentabellen und Namen** ist er
-unzuverlässig (Spalten vertauscht, Umlaute zerstört). Tabellenwerte, Kosten und Eigennamen deshalb am
+**Tabellen:** In `grundregelwerk.txt` sind Tabellenspalten auseinandergerissen. Tabellen zuerst in
+`grundregelwerk_layout.txt` lesen (gleiche Seite, Spalten bleiben in ihrer Zeile).
+
+**Bild-Verifikation:** Auch die Layout-Datei ist OCR. Bei **Zahlentabellen und Namen** bleibt sie
+fehleranfällig (Ziffern verlesen, Umlaute zerstört). Tabellenwerte, Kosten und Eigennamen deshalb am
 Seitenbild gegenlesen, bevor sie in Code oder Daten landen:
 ```bash
 gs -dQUIET -dSAFER -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dFirstPage=<N> -dLastPage=<M> \
-   -sOutputFile=<scratchpad>/seiten.pdf docs/rulebooks/Grundregelwerk_SR4.pdf 2>/dev/null
+   -sOutputFile=<scratchpad>/seiten.pdf docs/rulebooks/grundregelwerk.pdf 2>/dev/null
 ```
 Danach die kleine PDF mit dem Read-Tool öffnen (max. ~20 Seiten pro Aufruf). Die volle PDF ist zu
 groß zum direkten Lesen. Eindeutiger Fließtext braucht keine Bildprüfung.
@@ -143,15 +179,27 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
   ein Lambda das Feld einfängt und NullAway wirklich einen Build-Fehler wirft, strukturell lösen.
 - **Javadoc** für öffentliche und fachlich relevante APIs: Zweck, Regelbezug mit GRW-Zitat und Seite,
   Vorbedingungen, bewusste Abweichungen vom C#-Original. Nicht den Methodennamen wiederholen.
-- **Sprache:** UI-Texte, XML-Daten, Kommentare und Javadoc auf Deutsch. Bezeichner folgen dem
-  bestehenden Code (überwiegend englische Klassen-/Methodennamen wie `getEssence()`, deutsche
-  Fachbegriffe nur in Texten und Daten).
+- **Sprache: Deutsch** (Nutzervorgabe, bestätigt 2026-11-11). Deutsch sind UI-Texte, XML-Daten,
+  Kommentare, Javadoc, Testnamen-Kommentare, Skills, Projektregeln, `DECISIONS.md`, Pläne, Analysen,
+  Berichte und Rückfragen an den Nutzer sowie Commit-Vorschläge. Bezeichner folgen dem bestehenden
+  Code (überwiegend englische Klassen-/Methodennamen wie `getEssence()`, deutsche Fachbegriffe nur in
+  Texten und Daten). Spielbegriffe so, wie sie im deutschen GRW stehen.
+- **Moderne Java-Idiome (Nutzervorgabe 2026-11-11, Java 25):** Code ist generell auf das Sprachlevel der
+  Projekt-Java-Version ausgelegt (derzeit Java 25; bei einem Versionswechsel diese Regel und den
+  Reviewer-Skill anpassen). Die aktuelle Form statt älterer Entsprechungen: `getFirst()`/`getLast()`/`reversed()` statt `get(0)`/`get(size() - 1)`, `Stream.toList()`,
+  `List.of`/`Set.of`/`Map.of`, Records, Switch-Ausdrücke, Pattern Matching (`instanceof Foo foo`, Record- und
+  Typ-Muster im `switch`, auch bei DOM-Knoten: `node instanceof Element el` statt `getNodeType()` + Cast), Textblöcke für mehrzeilige feste Texte, unbenannte Variablen `_` für ungenutzte
+  Lambda- und Catch-Parameter (z.B. `(_, _, val) -> …`, `catch (IOException _)`), flexible Konstruktor-Rümpfe,
+  wo vor `this(…)`/`super(…)` geprüft werden muss. Achtung: `List.of`/`Set.of` lehnen `null` ab, auch in
+  `contains(null)`.
 - **Dezimalregeln** (z.B. Essenz) mit `BigDecimal` rechnen und an genau einer fachlichen Stelle runden.
   `double`-Summen erzeugen Artefakte an Ganzzahlgrenzen.
 - **Fachlogik in `Character` bzw. den Modellklassen**, nicht im Controller. Eine zentrale Methode pro
   Regel, keine Duplikate (das C#-Original rechnet dieselbe Summe teils viermal).
-- Bestehende Error-Prone-Warnungen (`UnusedMethod` an `@FXML`-Handlern, `JavaLangClash` bei
-  `Character`) sind bekannt. Neue Warnungen anderer Art vermeiden.
+- Bekannte Error-Prone-Warnung: `AvoidCommonTypeNames` bei `Character`. Neue Warnungen vermeiden.
+  `@FXML`-Handler sind von `UnusedMethod` ausgenommen (`build.gradle.kts`). Gewollte Identitätsvergleiche
+  (`==` auf dieselbe Instanz, z.B. Auswahl im Baum) gezielt an der Methode mit
+  `@SuppressWarnings("ReferenceEquality") // Identität gewollt: …` kennzeichnen, nicht global abschalten.
 
 ## 7. Bewährte Bausteine (nicht neu erfinden)
 
@@ -163,8 +211,9 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
 | Quality-Effekt | neuer Wert in `QualityBonusType` + Tag in `QualityDataLoader.BONUS_TAGS` + Auswertung in `Character` |
 | Persistenz | DTO-Klasse `XEntry` in `persistence` (public Felder, Default-Konstruktor), Feld in `CharacterData`, Mapping in `CharacterStore` (`toData`/`applyX`) |
 | Auswahl-Dialog | Subklasse von `CatalogSelectDialogController<T>` + eigene FXML (Vorbild `ComplexFormSelectDialog`) |
-| Rating-Zeile mit +/− | `RowModel`-Implementierung + `wireIncrementable()` (BP/Karma-Logik, Bestätigung) |
-| Tab-Inhalt | `buildXTab()` baut komplett neu auf; nach Änderungen Tab + abhängige Anzeigen neu bauen |
+| Tab-Inhalt | eigener `XTabBuilder` in `view.tab` (Vorbild `ContactTabBuilder`): Konstruktor mit FXML-Container(n), `CharacterTabHost` und ggf. `IncrementWiring`; `setCharacter`, `build()` baut komplett neu auf, `refresh()` für Zeilen-Refresher. Wirkt eine Änderung auf andere Tabs, eine fachliche Rückmeldung in `CharacterTabHost` ergänzen (z.B. `onImplantsChanged`) und im `CharacterViewController` entscheiden, was neu gebaut wird; Tabs rufen sich nie gegenseitig auf |
+| Dialoge, Hinweise, Abbuchung | `host.services()` (`TabServices`): `openDialog`, `warn`, `confirmYesNo`, `karmaChargeFailed`/`nuyenChargeFailed`, `confirmKarmaSpend` |
+| +/−-Zeile | `IncrementWiring.wire(...)` bzw. `wireFree(...)` mit einer `RowModel`-Implementierung |
 
 Vorhandene Muster bevorzugen und nur erweitern, wenn sie nicht passen. Erweiterungen der Basisklassen
 klein halten und im Ergebnis erwähnen.
@@ -180,7 +229,7 @@ klein halten und im Ergebnis erwähnen.
 - **Nicht nutzbare Elemente in Listen sichtbar, aber deaktiviert** zeigen, nicht ausblenden. Der Nutzer
   sieht dann, dass es sie gibt und warum sie gesperrt sind. Ganze Tabs dürfen weiterhin verschwinden,
   bis ihre Voraussetzung erfüllt ist (Magie/Technomancer).
-- **In `build*Tab()` kein `setDisable()` aus Live-Zustand**, wenn der Tab bei der relevanten Änderung
+- **In `build()` eines Tabs kein `setDisable()` aus Live-Zustand**, wenn der Tab bei der relevanten Änderung
   nicht neu gebaut wird. Prüfung stattdessen im Klick-Handler mit Warn-Notification. Das war schon
   einmal ein Bug (Button blieb nach Quality-Erwerb gesperrt).
 - **Hinweise/Limits:** `Notifications.create()...showWarning()` (ControlsFX), weiche Warnung statt harter
@@ -205,6 +254,9 @@ klein halten und im Ergebnis erwähnen.
 ## 10. Nacharbeiten nach einer Umsetzung
 
 - `docs/feature_checklist.md`: Status und Anmerkungen des Bereichs aktualisieren, Zurückgestelltes
-  festhalten.
+  festhalten, Roadmap nachziehen.
+- `DECISIONS.md`: die dauerhaften Entscheidungen des Features mit Begründung als neue Einträge
+  ergänzen (Regeln am Dateianfang); den fertigen Plan nach `docs/plaene/archiv/` verschieben, ggf.
+  zugehörige Analysen nach `docs/analysen/archiv/`.
 - Im Abschlussbericht Abweichungen vom Plan, neue GRW-Funde und offene Punkte klar benennen.
 - Nicht committen, außer der Nutzer bittet darum.

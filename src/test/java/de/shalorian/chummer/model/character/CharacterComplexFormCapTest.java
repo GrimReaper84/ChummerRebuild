@@ -57,7 +57,7 @@ class CharacterComplexFormCapTest {
   void ratingCapEqualsResonanceValueAtCreation() {
     Character c = technomancer("Test", 2);
     c.addComplexForm(analyse());
-    ComplexForm cf = c.getComplexForms().get(0);
+    ComplexForm cf = c.getComplexForms().getFirst();
 
     assertTrue(c.canRaiseComplexForm(cf)); // 1 -> 2 erlaubt (Cap = 2)
     cf.setRating(2);
@@ -69,7 +69,7 @@ class CharacterComplexFormCapTest {
     Character c = technomancer("Test", 2);
     c.setCreated(true);
     c.addComplexForm(analyse());
-    ComplexForm cf = c.getComplexForms().get(0);
+    ComplexForm cf = c.getComplexForms().getFirst();
     cf.setRating(2);
 
     assertFalse(c.canRaiseComplexForm(cf));
@@ -79,7 +79,7 @@ class CharacterComplexFormCapTest {
   void raisingResonanceRaisesTheCap() {
     Character c = technomancer("Test", 2);
     c.addComplexForm(analyse());
-    ComplexForm cf = c.getComplexForms().get(0);
+    ComplexForm cf = c.getComplexForms().getFirst();
     cf.setRating(2);
     assertFalse(c.canRaiseComplexForm(cf));
 

@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.equipment.Legality;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +30,7 @@ class WeaponDataLoaderTest {
   void loadsSixtyThreeWeaponsInAllCategories() {
     assertEquals(63, all().size());
     Set<WeaponCategory> used = all().stream().map(WeaponData::category).collect(Collectors.toSet());
-    assertEquals(Set.copyOf(Arrays.asList(WeaponCategory.values())), used);
+    assertEquals(Set.of(WeaponCategory.values()), used);
   }
 
   @Test

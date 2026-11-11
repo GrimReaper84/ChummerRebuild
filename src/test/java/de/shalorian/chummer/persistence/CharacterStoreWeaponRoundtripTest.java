@@ -35,10 +35,10 @@ class CharacterStoreWeaponRoundtripTest {
     CharacterStore.save(original, tempFile());
     List<Weapon> weapons = CharacterStore.load(tempFile()).getEquipment().getWeapons();
 
-    Gear arrows = weapons.get(0).getArrows().get(0);
+    Gear arrows = weapons.getFirst().getArrows().getFirst();
     assertEquals(4, arrows.getRating());
     assertEquals(20, arrows.getQuantity());
-    assertEquals(500 + 100, weapons.get(0).getTotalNuyenCost());
+    assertEquals(500 + 100, weapons.getFirst().getTotalNuyenCost());
   }
 
   @Test
@@ -55,7 +55,7 @@ class CharacterStoreWeaponRoundtripTest {
 
     Character loaded = CharacterStore.load(tempFile());
 
-    assertTrue(loaded.getEquipment().getWeapons().get(0).getArrows().isEmpty());
+    assertTrue(loaded.getEquipment().getWeapons().getFirst().getArrows().isEmpty());
     assertEquals(1, loaded.getEquipment().getWeapons().get(1).getArrows().size());
     assertTrue(loaded.getEquipment().getGear().isEmpty());
   }
@@ -80,8 +80,8 @@ class CharacterStoreWeaponRoundtripTest {
 
     List<Weapon> weapons = loaded.getEquipment().getWeapons();
     assertEquals(2, weapons.size());
-    assertEquals("Katana", weapons.get(0).getName());
-    assertEquals(0, weapons.get(0).getRating());
+    assertEquals("Katana", weapons.getFirst().getName());
+    assertEquals(0, weapons.getFirst().getRating());
     assertEquals("Bogen", weapons.get(1).getName());
     assertEquals(5, weapons.get(1).getRating());
     assertEquals(original.getEquipment().getWeaponNuyenCost(),
@@ -108,7 +108,7 @@ class CharacterStoreWeaponRoundtripTest {
     List<Weapon> weapons = CharacterStore.load(tempFile()).getEquipment().getWeapons();
 
     assertEquals(1, weapons.size());
-    assertEquals("Katana", weapons.get(0).getName());
+    assertEquals("Katana", weapons.getFirst().getName());
   }
 
   @Test
@@ -120,7 +120,7 @@ class CharacterStoreWeaponRoundtripTest {
     original.getEquipment().addWeapon(rifle);
 
     CharacterStore.save(original, tempFile());
-    Weapon loaded = CharacterStore.load(tempFile()).getEquipment().getWeapons().get(0);
+    Weapon loaded = CharacterStore.load(tempFile()).getEquipment().getWeapons().getFirst();
 
     assertEquals(rifle.getAccessories(), loaded.getAccessories());
     assertEquals(rifle.getTotalNuyenCost(), loaded.getTotalNuyenCost());
@@ -139,7 +139,7 @@ class CharacterStoreWeaponRoundtripTest {
         """, StandardCharsets.UTF_8);
 
     List<WeaponAccessory> accessories =
-        CharacterStore.load(tempFile()).getEquipment().getWeapons().get(0).getAccessories();
+        CharacterStore.load(tempFile()).getEquipment().getWeapons().getFirst().getAccessories();
 
     assertEquals(List.of(new WeaponAccessory(accessory("Lasermarkierer"), Mount.TOP)), accessories);
   }

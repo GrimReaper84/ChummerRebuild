@@ -51,10 +51,10 @@ public class QualityDataLoader {
 
       for (int i = 0; i < nodes.getLength(); i++) {
         Node node = nodes.item(i);
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
+        if (!(node instanceof Element element)) {
           continue;
         }
-        QualityData data = parseQuality((Element) node);
+        QualityData data = parseQuality(element);
         map.put(data.name(), data);
       }
       return map;

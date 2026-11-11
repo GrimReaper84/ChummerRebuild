@@ -62,7 +62,7 @@ class VehicleTest {
   void includedMountsCountAgainstLimit() {
     Vehicle doberman = vehicle("GM-Nissan Doberman (Mittel)");
     assertEquals(1, doberman.getMounts().size());
-    assertTrue(doberman.getMounts().get(0).isIncluded());
+    assertTrue(doberman.getMounts().getFirst().isIncluded());
     assertNotNull(doberman.mountProblem());
     assertThrows(IllegalStateException.class, doberman::addMount);
 
@@ -77,7 +77,7 @@ class VehicleTest {
   @Test
   void includedMountsCannotBeRemoved() {
     Vehicle doberman = vehicle("GM-Nissan Doberman (Mittel)");
-    WeaponMount included = doberman.getMounts().get(0);
+    WeaponMount included = doberman.getMounts().getFirst();
     assertThrows(IllegalArgumentException.class, () -> doberman.removeMount(included));
 
     Vehicle comet = vehicle("Mercury Comet (Mittelklassewagen)");

@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
@@ -34,7 +34,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
@@ -46,7 +45,7 @@ import org.tbee.javafx.scene.layout.MigPane;
  * Auswahl entfernen), links ein Baum der gekauften Gegenstände, rechts ein Detailbereich mit den
  * Werten und einem Mengen-Stepper. Abweichend vom Original gruppiert der Baum nach Bereich der
  * GRW-Ausrüstungsliste ({@link GearArea}); Lagerorte, "Equipped", Kommlink-Schalter und Fokusbindung
- * fehlen bewusst ({@code docs/plaene/gear_plan.md} Abschnitt 7). Einbauten (Betriebssystem im
+ * fehlen bewusst ({@code docs/plaene/archiv/gear_plan.md} Abschnitt 7). Einbauten (Betriebssystem im
  * Kommlink, Verstärkungen, Sensor-Funktionen, Magschloss-Zusätze) hängen als Kindknoten unter ihrem
  * Gerät und werden über "Einbauen" gekauft; Geräte mit Kapazität zeigen "belegt von gesamt".
  *
@@ -56,9 +55,9 @@ import org.tbee.javafx.scene.layout.MigPane;
 final class GearTabBuilder {
 
   private final @NonNull VBox container;
-  private final @NonNull StreetGearHost host;
+  private final @NonNull CharacterTabHost host;
 
-  GearTabBuilder(@NonNull VBox container, @NonNull StreetGearHost host) {
+  GearTabBuilder(@NonNull VBox container, @NonNull CharacterTabHost host) {
     this.container = container;
     this.host = host;
   }
@@ -77,7 +76,7 @@ final class GearTabBuilder {
     VBox details = new VBox(12);
     details.setPadding(new Insets(0, 0, 0, 16));
     Runnable showSelected = () -> showDetails(details, selectedGear(tree), character);
-    tree.getSelectionModel().selectedItemProperty().addListener((obs, old, now) -> showSelected.run());
+    tree.getSelectionModel().selectedItemProperty().addListener((_, _, _) -> showSelected.run());
 
     TreeItem<GearTreeEntry> toSelect = fillTree(tree, character, selected);
     if (toSelect != null) {
@@ -103,6 +102,7 @@ final class GearTabBuilder {
    *
    * @return der Knoten von {@code selected}, oder {@code null}
    */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: dieselbe Instanz wie die Auswahl
   private static @Nullable TreeItem<GearTreeEntry> fillTree(@NonNull TreeView<GearTreeEntry> tree,
       @NonNull Character character, @Nullable Gear selected) {
     Map<GearArea, TreeItem<GearTreeEntry>> groups = new EnumMap<>(GearArea.class);
@@ -160,7 +160,7 @@ final class GearTabBuilder {
     Button addBtn = new Button("Gegenstand hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(addBtn, FontAwesomeSolid.PLUS);
-    addBtn.setOnAction(e -> onAddGear(character));
+    addBtn.setOnAction(_ -> onAddGear(character));
 
     Button installBtn = new Button("In ausgewählten Gegenstand einbauen");
     installBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -170,7 +170,7 @@ final class GearTabBuilder {
       Gear gear = selectedGear(tree);
       return gear == null || gear.getData().accepts() == null;
     }, tree.getSelectionModel().selectedItemProperty()));
-    installBtn.setOnAction(e -> {
+    installBtn.setOnAction(_ -> {
       Gear gear = selectedGear(tree);
       if (gear == null) {
         return;
@@ -179,13 +179,8 @@ final class GearTabBuilder {
       if (!gear.canInstallAnyOf(GearDataLoader.getAllGear().values())) {
         String capacity = GearDetails.of(gear).capacity();
         capacity = capacity.isEmpty() ? "" : " (Kapazität " + capacity + ")";
-        Notifications.create()
-            .title("Kein Einbau möglich")
-            .text(gear.getName() + ": kein weiterer Einbau möglich" + capacity
-                + "; zuerst einen Einbau entfernen.")
-            .position(Pos.BOTTOM_RIGHT)
-            .owner(container.getScene().getWindow())
-            .showWarning();
+        host.services().warn("Kein Einbau möglich", gear.getName()
+            + ": kein weiterer Einbau möglich" + capacity + "; zuerst einen Einbau entfernen.");
         return;
       }
       onInstall(character, gear);
@@ -197,7 +192,7 @@ final class GearTabBuilder {
     // Bindung an die Baumauswahl (UI-Zustand): Bereichsknoten lassen sich nicht entfernen.
     removeBtn.disableProperty().bind(Bindings.createBooleanBinding(
         () -> selectedGear(tree) == null, tree.getSelectionModel().selectedItemProperty()));
-    removeBtn.setOnAction(e -> {
+    removeBtn.setOnAction(_ -> {
       Gear gear = selectedGear(tree);
       if (gear != null) {
         character.getEquipment().removeGear(gear);
@@ -235,7 +230,7 @@ final class GearTabBuilder {
    * @param onChanged baut den Tab nach einer Mengenänderung neu auf
    */
   static void showGearDetails(@NonNull VBox details, @NonNull Gear gear,
-      @NonNull Character character, @NonNull StreetGearHost host, @NonNull Runnable onChanged) {
+      @NonNull Character character, @NonNull CharacterTabHost host, @NonNull Runnable onChanged) {
     GearDetails d = GearDetails.of(gear);
     Label title = new Label(d.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
@@ -293,21 +288,21 @@ final class GearTabBuilder {
    */
   private void onAddGear(@NonNull Character character) {
     try {
-      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml", "Gegenstand hinzufügen");
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml", "Gegenstand hinzufügen");
       GearSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
       ctrl.setCharacter(character);
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(gear -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + gear.getDisplayName(), gear.getNuyenCost())) {
           return;
         }
         onGearChanged(character, character.getEquipment().addGear(gear));
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 
@@ -317,7 +312,7 @@ final class GearTabBuilder {
    */
   private void onInstall(@NonNull Character character, @NonNull Gear device) {
     try {
-      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml",
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml",
           "Einbau in " + device.getDisplayName());
       GearSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
@@ -325,7 +320,7 @@ final class GearTabBuilder {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(child -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + child.getDisplayName() + " für " + device.getDisplayName(),
             child.getNuyenCost())) {
           return;
@@ -333,8 +328,8 @@ final class GearTabBuilder {
         device.install(child);
         onGearChanged(character, child);
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 

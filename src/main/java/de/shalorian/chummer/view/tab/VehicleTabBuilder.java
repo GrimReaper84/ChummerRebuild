@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
@@ -40,7 +40,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
@@ -52,23 +51,23 @@ import org.tbee.javafx.scene.layout.MigPane;
  * (gruppiert nach den Kategorien der GRW-Fahrzeugtabelle S. 397) mit Riggeradapter, Halterungen samt
  * Waffen und Ausrüstung samt Einbauten als Kindknoten, rechts ein Detailbereich. Mitgelieferte Teile
  * stehen zuerst und lassen sich nicht entfernen. Abweichend vom Original fehlen Slots, Matrixattribute,
- * Zubehör an Fahrzeugwaffen, Eigenname, Notizen und Orte ({@code docs/plaene/fahrzeuge_plan.md}).
+ * Zubehör an Fahrzeugwaffen, Eigenname, Notizen und Orte ({@code docs/plaene/archiv/fahrzeuge_plan.md}).
  *
  * <p>Regeln werden im Klick-Handler geprüft und als Hinweis gemeldet; Buttons sind nur an die
  * Baumauswahl gebunden (Projektregeln §8). Nach jeder Änderung wird der Tab neu aufgebaut und die
  * Auswahl erhalten. Im Karrieremodus wird jeder Kauf über das Nuyen-Log abgebucht.
  */
-final class VehicleTabBuilder {
+public final class VehicleTabBuilder {
 
   private final @NonNull VBox container;
-  private final @NonNull StreetGearHost host;
+  private final @NonNull CharacterTabHost host;
 
-  VehicleTabBuilder(@NonNull VBox container, @NonNull StreetGearHost host) {
+  public VehicleTabBuilder(@NonNull VBox container, @NonNull CharacterTabHost host) {
     this.container = container;
     this.host = host;
   }
 
-  void build(@NonNull Character character) {
+  public void build(@NonNull Character character) {
     build(character, null);
   }
 
@@ -82,7 +81,7 @@ final class VehicleTabBuilder {
     VBox details = new VBox(12);
     details.setPadding(new Insets(0, 0, 0, 16));
     Runnable showSelected = () -> showDetails(details, selectedEntry(tree), character);
-    tree.getSelectionModel().selectedItemProperty().addListener((obs, old, now) -> showSelected.run());
+    tree.getSelectionModel().selectedItemProperty().addListener((_, _, _) -> showSelected.run());
 
     TreeItem<VehicleTreeEntry> toSelect = fillTree(tree, character, selected);
     if (toSelect != null) {
@@ -110,6 +109,7 @@ final class VehicleTabBuilder {
    * @return der Knoten von {@code selected} (Fahrzeug, Halterung, Waffe oder Gegenstand), oder
    *     {@code null}
    */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: dieselbe Instanz wie die Auswahl
   private static @Nullable TreeItem<VehicleTreeEntry> fillTree(
       @NonNull TreeView<VehicleTreeEntry> tree, @NonNull Character character,
       @Nullable Object selected) {
@@ -156,6 +156,7 @@ final class VehicleTabBuilder {
   }
 
   /** Hängt einen Gegenstand samt Einbauten an und liefert den Knoten der Auswahl. */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: dieselbe Instanz wie die Auswahl
   private static @Nullable TreeItem<VehicleTreeEntry> addGearItem(
       @NonNull TreeItem<VehicleTreeEntry> parent, @NonNull Vehicle vehicle, @NonNull Gear gear,
       @Nullable Object selected, @Nullable TreeItem<VehicleTreeEntry> selectedItem) {
@@ -207,17 +208,17 @@ final class VehicleTabBuilder {
   private @NonNull HBox buildToolbar(@NonNull Character character,
       @NonNull TreeView<VehicleTreeEntry> tree) {
     Button addBtn = button("Fahrzeug hinzufügen", FontAwesomeSolid.PLUS);
-    addBtn.setOnAction(e -> onAddVehicle(character));
+    addBtn.setOnAction(_ -> onAddVehicle(character));
 
     // Bindungen nur an die Baumauswahl (UI-Zustand); Regeln prüfen die Handler.
     Button riggerBtn = vehicleButton("Riggeradapter einbauen", FontAwesomeSolid.GAMEPAD, tree);
-    riggerBtn.setOnAction(e -> withVehicle(tree, v -> onAddRiggerAdapter(character, v)));
+    riggerBtn.setOnAction(_ -> withVehicle(tree, v -> onAddRiggerAdapter(character, v)));
 
     Button mountBtn = vehicleButton("Waffenhalterung einbauen", FontAwesomeSolid.CROSSHAIRS, tree);
-    mountBtn.setOnAction(e -> withVehicle(tree, v -> onAddMount(character, v)));
+    mountBtn.setOnAction(_ -> withVehicle(tree, v -> onAddMount(character, v)));
 
     Button weaponBtn = vehicleButton("Waffe in Halterung einsetzen", FontAwesomeSolid.BULLSEYE, tree);
-    weaponBtn.setOnAction(e -> {
+    weaponBtn.setOnAction(_ -> {
       VehicleTreeEntry entry = selectedEntry(tree);
       Vehicle vehicle = entry == null ? null : entry.vehicle();
       if (entry != null && vehicle != null) {
@@ -226,7 +227,7 @@ final class VehicleTabBuilder {
     });
 
     Button gearBtn = vehicleButton("Ausrüstung ins Fahrzeug legen", FontAwesomeSolid.BOX_OPEN, tree);
-    gearBtn.setOnAction(e -> withVehicle(tree, v -> onAddGear(character, v)));
+    gearBtn.setOnAction(_ -> withVehicle(tree, v -> onAddGear(character, v)));
 
     Button installBtn = button("In ausgewählten Gegenstand einbauen", FontAwesomeSolid.MICROCHIP);
     installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
@@ -234,7 +235,7 @@ final class VehicleTabBuilder {
       Gear gear = entry == null ? null : entry.gear();
       return gear == null || gear.getData().accepts() == null;
     }, tree.getSelectionModel().selectedItemProperty()));
-    installBtn.setOnAction(e -> {
+    installBtn.setOnAction(_ -> {
       VehicleTreeEntry entry = selectedEntry(tree);
       Gear gear = entry == null ? null : entry.gear();
       Vehicle vehicle = entry == null ? null : entry.vehicle();
@@ -246,7 +247,7 @@ final class VehicleTabBuilder {
     Button removeBtn = button("Auswahl entfernen", FontAwesomeSolid.TRASH);
     removeBtn.disableProperty().bind(Bindings.createBooleanBinding(
         () -> selectedVehicle(tree) == null, tree.getSelectionModel().selectedItemProperty()));
-    removeBtn.setOnAction(e -> {
+    removeBtn.setOnAction(_ -> {
       VehicleTreeEntry entry = selectedEntry(tree);
       if (entry != null) {
         onRemove(character, entry);
@@ -383,29 +384,29 @@ final class VehicleTabBuilder {
 
   private void onAddVehicle(@NonNull Character character) {
     try {
-      DialogHandle dialog = host.openDialog("VehicleSelectDialog.fxml", "Fahrzeug hinzufügen");
+      DialogHandle dialog = host.services().openDialog("VehicleSelectDialog.fxml", "Fahrzeug hinzufügen");
       VehicleSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
       ctrl.setCharacter(character);
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(vehicle -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + vehicle.getName(), vehicle.getNuyenCost())) {
           return;
         }
         character.getEquipment().addVehicle(vehicle);
         onChanged(character, vehicle);
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 
   private void onAddRiggerAdapter(@NonNull Character character, @NonNull Vehicle vehicle) {
     String problem = vehicle.riggerAdapterProblem();
     if (problem != null) {
-      warn("Kein Riggeradapter möglich", problem);
+      host.services().warn("Kein Riggeradapter möglich", problem);
       return;
     }
     if (!chargeModification(character, vehicle, VehicleModification.RIGGER_ADAPTER)) {
@@ -418,7 +419,7 @@ final class VehicleTabBuilder {
   private void onAddMount(@NonNull Character character, @NonNull Vehicle vehicle) {
     String problem = vehicle.mountProblem();
     if (problem != null) {
-      warn("Keine weitere Waffenhalterung", problem);
+      host.services().warn("Keine weitere Waffenhalterung", problem);
       return;
     }
     if (!chargeModification(character, vehicle, VehicleModification.WEAPON_MOUNT)) {
@@ -428,17 +429,20 @@ final class VehicleTabBuilder {
   }
 
   /**
-   * Prüft die Verfügbarkeit einer Modifikation und bucht sie im Karrieremodus ab.
+   * Prüft die Verfügbarkeit einer Modifikation und bucht sie im Karrieremodus ab. Die beiden
+   * GRW-Modifikationen (Verf. 4 bzw. 8V, GRW S. 395) liegen unter der Erschaffungsgrenze, die Prüfung
+   * schlägt derzeit also nie an; sie bleibt für künftige Modifikationen aus weiteren Tabellen.
    *
    * @return true, wenn eingebaut werden darf
    */
   private boolean chargeModification(@NonNull Character character, @NonNull Vehicle vehicle,
       @NonNull VehicleModification mod) {
     if (!character.getEquipment().isAvailableForPurchase(mod.availability(), 0)) {
-      warn("Nicht verfügbar", mod.getDisplayName() + " ist bei der Erschaffung nicht verfügbar");
+      host.services().warn("Nicht verfügbar",
+          mod.getDisplayName() + " ist bei der Erschaffung nicht verfügbar");
       return false;
     }
-    return !(character.isCreated() && host.nuyenChargeFailed(character,
+    return !(character.isCreated() && host.services().nuyenChargeFailed(character,
         "Kauf: " + mod.getDisplayName() + " für " + vehicle.getName(), mod.cost()));
   }
 
@@ -450,16 +454,16 @@ final class VehicleTabBuilder {
       @Nullable WeaponMount selectedMount) {
     WeaponMount mount = selectedMount != null ? selectedMount : vehicle.firstFreeMount();
     if (mount == null) {
-      warn("Keine freie Waffenhalterung", vehicle.getName()
+      host.services().warn("Keine freie Waffenhalterung", vehicle.getName()
           + " hat keine freie Waffenhalterung; zuerst eine Waffenhalterung einbauen.");
       return;
     }
     if (mount.getWeapon() != null) {
-      warn("Halterung belegt", "Die gewählte Waffenhalterung ist bereits belegt.");
+      host.services().warn("Halterung belegt", "Die gewählte Waffenhalterung ist bereits belegt.");
       return;
     }
     try {
-      DialogHandle dialog = host.openDialog("WeaponSelectDialog.fxml",
+      DialogHandle dialog = host.services().openDialog("WeaponSelectDialog.fxml",
           "Waffe für " + vehicle.getName());
       WeaponSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
@@ -469,10 +473,10 @@ final class VehicleTabBuilder {
       ctrl.getResult().ifPresent(weapon -> {
         String problem = vehicle.weaponProblem(mount, weapon.getData());
         if (problem != null) {
-          warn("Waffe passt nicht", problem);
+          host.services().warn("Waffe passt nicht", problem);
           return;
         }
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + weapon.getDisplayName() + " für " + vehicle.getName(),
             weapon.getTotalNuyenCost())) {
           return;
@@ -480,14 +484,14 @@ final class VehicleTabBuilder {
         vehicle.mountWeapon(mount, weapon);
         onChanged(character, weapon);
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 
   private void onAddGear(@NonNull Character character, @NonNull Vehicle vehicle) {
     try {
-      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml",
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml",
           "Ausrüstung für " + vehicle.getName());
       GearSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
@@ -495,14 +499,14 @@ final class VehicleTabBuilder {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(gear -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + gear.getDisplayName() + " für " + vehicle.getName(), gear.getNuyenCost())) {
           return;
         }
         onChanged(character, vehicle.addGear(gear));
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 
@@ -511,13 +515,13 @@ final class VehicleTabBuilder {
     // Prüfung im Handler statt Sperre aus Live-Zustand (Projektregeln §8)
     if (!device.canInstallAnyOf(GearDataLoader.getAllGear().values())) {
       String capacity = GearDetails.of(device).capacity();
-      warn("Kein Einbau möglich", device.getName() + ": kein weiterer Einbau möglich"
+      host.services().warn("Kein Einbau möglich", device.getName() + ": kein weiterer Einbau möglich"
           + (capacity.isEmpty() ? "" : " (Kapazität " + capacity + ")")
           + "; zuerst einen Einbau entfernen.");
       return;
     }
     try {
-      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml",
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml",
           "Einbau in " + device.getDisplayName());
       GearSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
@@ -525,7 +529,7 @@ final class VehicleTabBuilder {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(child -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + child.getDisplayName() + " für " + vehicle.getName(),
             child.getNuyenCost())) {
           return;
@@ -533,8 +537,8 @@ final class VehicleTabBuilder {
         device.install(child);
         onChanged(character, child);
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 
@@ -551,8 +555,8 @@ final class VehicleTabBuilder {
     WeaponMount mount = entry.mount();
     Gear gear = entry.gear();
     if (entry.isVehicle()) {
-      if (host.confirm("Fahrzeug entfernen",
-          "\"" + vehicle.getName() + "\" samt Ausstattung wirklich entfernen?")) {
+      if (host.services().confirmYesNo("Fahrzeug entfernen",
+          "\"" + vehicle.getName() + "\" samt Ausstattung wirklich entfernen?", "")) {
         character.getEquipment().removeVehicle(vehicle);
         onChanged(character, null);
       }
@@ -584,16 +588,8 @@ final class VehicleTabBuilder {
   }
 
   private void warnIncluded(@NonNull String name) {
-    warn("Mitgeliefert", name + " ist im Fahrzeug enthalten und kann nicht entfernt werden.");
-  }
-
-  private void warn(@NonNull String title, @NonNull String text) {
-    Notifications.create()
-        .title(title)
-        .text(text)
-        .position(Pos.BOTTOM_RIGHT)
-        .owner(container.getScene().getWindow())
-        .showWarning();
+    host.services().warn("Mitgeliefert",
+        name + " ist im Fahrzeug enthalten und kann nicht entfernt werden.");
   }
 
   private void onChanged(@NonNull Character character, @Nullable Object selected) {

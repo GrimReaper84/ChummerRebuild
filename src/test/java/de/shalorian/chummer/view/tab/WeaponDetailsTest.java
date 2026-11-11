@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

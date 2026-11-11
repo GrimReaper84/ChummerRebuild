@@ -129,7 +129,7 @@ public enum AccessoryRule {
 
   /** Ob die Waffe einen der Feuermodi hat (Modus-Spalte z.B. "HM/SM/AM"). */
   private static boolean hasMode(@NonNull WeaponData data, String... modes) {
-    List<String> weaponModes = Arrays.asList(data.mode().split("/"));
+    List<String> weaponModes = List.of(data.mode().split("/"));
     return Arrays.stream(modes).anyMatch(weaponModes::contains);
   }
 }

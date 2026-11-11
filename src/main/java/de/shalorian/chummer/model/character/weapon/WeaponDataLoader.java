@@ -54,10 +54,10 @@ public class WeaponDataLoader {
 
       for (int i = 0; i < nodes.getLength(); i++) {
         Node node = nodes.item(i);
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
+        if (!(node instanceof Element element)) {
           continue;
         }
-        WeaponData data = parseItem((Element) node);
+        WeaponData data = parseItem(element);
         map.put(data.name(), data);
       }
       return map;

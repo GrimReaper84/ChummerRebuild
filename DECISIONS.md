@@ -1,0 +1,221 @@
+# Designentscheidungen
+
+Kurze Entscheidungsprotokolle (ADRs): was entschieden wurde und warum, wo der Code allein es nicht zeigt. Details
+eines Features stehen im Code, seinem Javadoc und den Tests.
+
+**Regeln für diese Datei**
+- Ein Eintrag kommt hinzu, wenn eine Entscheidung am Code schwer erkennbar ist, eine echte Wahl war oder eine Lücke
+  im Grundregelwerk (GRW) füllt. Routine-Details der UI nicht aufnehmen.
+- Alte Entscheidungen nie umschreiben: als **überholt** markieren und einen neuen Eintrag anlegen.
+- Regeln mit GRW-Seite und kurzem Wortlaut belegen (Projektregeln Abschnitt 4).
+
+Die Einträge bis 2026-11-11 wurden aus Abschnitt 13 der archivierten Pläne (`docs/plaene/archiv/`) und den
+Projekt-Notizen zusammengetragen. **Warum (r)** kennzeichnet eine nachträglich aus dem Zusammenhang rekonstruierte
+Begründung; bitte korrigieren, wenn die ursprüngliche anders war.
+
+## Projekt und Vorgehen
+
+### ADR-001: Das GRW entscheidet, nicht das C#-Original (2026-08-04)
+Jede Fachregel und jeder Katalogwert wird gegen das deutsche SR4-Grundregelwerk geprüft, bevor er gilt.
+**Warum:** Das Original enthält Bugs, Hausregeln und viel Zusatzband-Inhalt.
+
+### ADR-002: GRW-Kern zuerst, Zusatzbände später per Regelwerk-Schalter (2026-08-04, 2026-09-27)
+Inhalte ohne GRW-Beleg werden zurückgestellt und dem Nutzer vorgelegt. Regelwerke sollen später einzeln zuschaltbar
+werden; bis dahin `source`/`page` je Katalogeintrag sauber pflegen.
+**Warum:** Nur Geprüftes soll als „fertig“ gelten; der Schalter braucht saubere Quellenangaben.
+
+### ADR-003: Alles Deutsch, Bezeichner englisch (2026-08-04, bestätigt 2026-11-11)
+UI, Daten, Kommentare, Javadoc, Skills und Projektdokumente sind deutsch; Klassen- und Methodennamen folgen dem
+bestehenden englischen Stil.
+**Warum (r):** Zielgruppe und Regelwerk sind deutsch; englische Bezeichner passen zu Java-Konventionen und Bibliotheken.
+
+### ADR-004: Kataloge klein und verifiziert starten (2026-08-08)
+Neue Kataloge beginnen mit einer am GRW geprüften Teilmenge (z.B. 2+ Einträge je Kategorie); die Vervollständigung
+ist ein eigener Auftrag (Zauber, Qualities, Komplexe Formen, Cyberware).
+**Warum:** Fehlerfreie Daten sind wichtiger als Vollständigkeit; das Übertragen ist der größte Aufwand.
+
+### ADR-005: Keine Halbfunktionen (2026-09-27)
+Lieber eine Kategorie ganz weglassen, als sie ohne Kernmechanik anzubieten (z.B. keine Cybergliedmaßen ohne
+Attributersatz).
+**Warum:** Halbe Funktionen erzeugen falsche Charakterwerte.
+
+### ADR-006: Code nur auf ausdrücklichen Auftrag, Git nur lesend (dauerhaft)
+Pläne sind keine Umsetzungsfreigabe; schreibende Git-Aktionen macht nur der Nutzer.
+**Warum:** Der Nutzer will steuern, wann Code entsteht, und Zwischenstände prüfen.
+
+### ADR-007: Abschluss-Review im frischen Kontext (2026-09-30)
+Nach jeder Umsetzung prüft ein eigener Agent den Diff auf Komplexität, Überabstraktion und Duplikate und berichtet nur.
+**Warum:** Wer den Code geschrieben hat, stellt die eigenen Entscheidungen kaum infrage.
+
+### ADR-008: Verschlankter Feature-Ablauf (2026-11-11)
+Ein gemeinsamer Plan mit Analysen, eine Freigabe, alle Schritte am Stück, ein Review pro Feature (aus dem
+Fallout2d20-Projekt übernommen).
+**Warum:** Getrennte Analysedokumente und Reviews pro Teilschritt waren die größten Tokenkosten.
+
+### ADR-009: Keine Live-GUI-Prüfung durch den Agenten (2026-08)
+Verifikation ist `./gradlew build`; die App wird nicht gestartet.
+**Warum:** Das Display ist der echte Desktop des Nutzers, es gibt keine Klick-Automatisierung.
+
+## Architektur und Code
+
+### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)
+Keine verschachtelten Klassen, Records, Enums oder Interfaces, auch nicht `private`.
+**Warum:** Dauerhafte Nutzervorgabe für Übersicht.
+
+### ADR-011: XML-Kataloge mit statischem Loader-Cache (2026-08)
+Je Katalog eine XML-Datei und ein `XDataLoader` mit einmaligem Laden; Instanzklassen referenzieren ihr `XData`.
+**Warum (r):** Nähe zu den C#-Daten-XMLs erleichtert den Abgleich; Katalogdaten sind unveränderlich.
+
+### ADR-012: Kaufbereiche in `Equipment`, Zugriff über `character.getEquipment()` (2026-10-04)
+Alle Kaufkategorien (inkl. Cyber-/Bioware) liegen in `model.character.equipment.Equipment` mit Rückreferenz auf
+`Character`; keine dauerhaften Delegatoren. Essenz-Kombinationsregel und Immunabstoßung bleiben in `Character`.
+**Warum:** `Character` war zu groß (Sonar S6539); Equipment braucht Modus, Attribute und Fertigkeiten.
+
+### ADR-013: Abwärtskompatibilität der Speicherdateien ist (noch) nicht nötig (2026-08)
+Unbekannte Namen beim Laden überspringen statt abzustürzen; Formatänderungen im Ergebnis nennen.
+**Warum:** Das Tool ist noch nicht im Einsatz.
+
+### ADR-014: `Skill.linkedAttribute` als Text statt Summentyp (2026-08-08)
+**Warum:** Das Feld dient nur der Anzeige; ein Summentyp aus `AttributeType`/`SpecialAttributeType` wäre unnötig.
+
+### ADR-015: Gemeinsame Basis für Auswahldialoge (2026-08-08)
+`CatalogSelectDialogController<T>` als Basis aller Katalog-Auswahldialoge.
+**Warum:** Jeder neue Katalog brauchte sonst einen fast gleichen Dialog.
+
+### ADR-038: Java 25 LTS, Versionen wie im Fallout2d20-Projekt (2026-11-11)
+Toolchain 25, JavaFX 25.0.4, Error Prone 2.50.0, NullAway 0.14.2, Jackson 2.22.4, ControlsFX 11.2.6, MigLayout
+11.5.1; gewollte Identitätsvergleiche per `@SuppressWarnings("ReferenceEquality")` an der Methode statt globaler
+Abschaltung.
+**Warum:** IDE stand schon auf Java 25; Error Prone 2.26 lief unter JDK 25 nicht, die Fallout-Kombination ist
+erprobt. Die Prüfung bleibt für künftige echte Verwechslungen von `==` und `equals` aktiv.
+
+### ADR-039: Auslieferung wie Fallout2d20, aber ohne Modularisierung (2026-11-11)
+Releases über GitHub (Installer und portables ZIP mit eingebautem Java je Betriebssystem); Chummer bekommt dafür
+**kein** `module-info`, sondern nutzt das Plugin `org.beryx.runtime` für nicht-modulare Anwendungen. `distZip` mit den
+nativen JavaFX-JARs aller Plattformen entfällt dann.
+**Warum:** Nutzer müssen kein Java installieren; eine nachträgliche Modularisierung lohnt den Aufwand nicht.
+
+### ADR-040: Moderne Java-Idiome als Regel (2026-11-11)
+Neuer und bestehender Code nutzt die Formen bis Java 25 (Projektregeln Abschnitt 6); umgestellt wurden u.a. 101 ×
+`get(0)` → `getFirst()`, ungenutzte Lambda-/Catch-Parameter → `_` und die DOM-Knotenprüfung der XML-Loader
+auf `instanceof Element el`. Der Reviewer-Skill prüft auf das Sprachlevel Java 25 und wird bei einem
+Versionswechsel mit angepasst.
+**Warum:** Nutzervorgabe aus dem Fallout2d20-Projekt; kürzer und zeigt die Absicht (z.B. „Parameter bewusst
+ungenutzt“).
+
+### ADR-041: Ein Builder je Tab, zentrale Neuaufbau-Entscheidung (2026-11-11)
+Der `CharacterViewController` (vorher 3067 Zeilen) hält nur noch FXML-Knoten, Kopfbereich und Tab-Sichtbarkeit; jeder
+Tab ist ein Builder in `view.tab`. Tabs melden fachliche Änderungen über `CharacterTabHost`, der Controller entscheidet
+an einer Stelle, was neu gebaut wird. Dienste (`TabServices`) und +/−-Verdrahtung (`IncrementWiring`) sind eigene
+Klassen. Das FXML bleibt unverändert (kein `fx:include`).
+**Warum:** Der Controller war unübersichtlich; Querabhängigkeiten zwischen Tabs stehen jetzt an einer Stelle statt
+verstreut in den Tabs. Nutzerentscheidungen per Rückfrage (Package `view.tab`, fachliche Rückmeldungen, ein Host).
+
+## Fachregeln: Entscheidungen, wo das GRW schweigt oder unklar ist
+
+### ADR-016: Weiche Warnungen statt harter Sperren (2026-08, 2026-09-27)
+Regelverstöße als Notification; hart blockiert wird nur, wo das GRW eindeutig „muss“ sagt (Restgeld < 0 blockiert den
+Abschluss, GRW S. 111). Essenz ≤ 0 bei Erschaffung bleibt bewusst eine weiche Warnung, obwohl GRW S. 111 sie ausschließt.
+**Warum:** Nutzerentscheidung; Korrekturen sollen möglich bleiben.
+
+### ADR-017: Magier-Erkennung über `QualityBonusType.GRANTS_SPELLCASTING` (2026-08-08)
+Nicht über den Namen der Gabe.
+**Warum:** Typsicher und erweiterbar (z.B. Mystischer Adept).
+
+### ADR-018: Tradition als Enum mit Standardwert, kein Pflicht-Gate (2026-08-08)
+Hermetisch/Schamanistisch, Default Hermetisch; Zauber sind ohne vorherige Wahl lernbar, jeder Zauber nur einmal.
+**Warum:** Das GRW-Kern kennt genau diese zwei Traditionen; ein Zustand „keine Tradition“ bringt nur Sonderfälle.
+
+### ADR-019: Adepten und Wandlung zurückgestellt (2026-08-08)
+**Warum:** Eigene Folgefeatures ohne vorhandenes Initiations-/Kräfte-Fundament.
+
+### ADR-020: Technomancer ohne Stream-Auswahl (2026-08-08)
+Feste Schwund-Formel „Willenskraft + Resonanz“, keine Stream-Validierung.
+**Warum:** Das GRW-Kern kennt den Begriff „Stream“ nicht.
+
+### ADR-021: Komplexe Formen: Cap immer, kein Nachkappen, Start bei Stufe 1 (2026-08-08)
+Das Resonanz-Cap gilt in Erschaffung und Karriere; sinkt RES nachträglich, bleiben höhere Stufen bestehen.
+**Warum:** GRW formuliert das Cap als durchgehende Regel; Nachkappen würde Karma vernichten (r).
+
+### ADR-022: Cyberware-Erstschnitt: 4 Grades, Essenz auf 2 Nachkommastellen (2026-09-27)
+Ohne Cybergliedmaßen, Essenzloch und Kapazität; Essenz mit `BigDecimal`, an einer Stelle gerundet. Immunabstoßung nach
+GRW-Funktion (nur Cyberware verdoppelt).
+**Warum:** Kleiner, geprüfter Schnitt; `double`-Summen erzeugen Rundungsartefakte.
+
+### ADR-023: Nuyen, Rüstung und Lebensstil (2026-09-27)
+Lebensstil nur die 6 GRW-Stufen; Startkapital würfelt die App, Wurf editierbar; Verfügbarkeit ≤ 12 bei Erschaffung,
+darüber sichtbar-deaktiviert; Helme/Schilde zählen zur Behinderung (GRW S. 372); durch Behinderung reduzierte GES/REA
+fällt vorläufig nicht unter 1 (GRW nennt keine Untergrenze).
+**Warum:** Nutzerentscheidungen beim Plan; die Untergrenze wird entfernt, falls weitere Regelwerke sie nicht bestätigen.
+
+### ADR-024: Waffen in drei Ausbaustufen, Bogen als Stufenmodell (2026-09-28)
+A Grundkatalog, B berechnete Werte, C Zubehör; Bogen als ein Eintrag mit Mindeststärke 1–8; Unterlauf- und
+Flechette-Varianten als Hinweistext; HK-XM30-Umbausätze zurückgestellt.
+**Warum:** Kleine Schritte; Bogenvarianten unterscheiden sich nur in der Stufe.
+
+### ADR-025: Kein Würfelpool vor dem Würfelpool-Feature (2026-09-28)
+Waffen und Fahrzeuge zeigen Fertigkeit und Wert, keinen Pool.
+**Warum:** Würfelpools kommen geschlossen mit Roadmap Stufe 3.
+
+### ADR-026: Waffenzubehör nach den Zubehörtexten (2026-09-30, 2026-10-04)
+Eingebautes Zubehör als `<included>`-Liste (kostenlos, belegt keine Halterung, RK schon im Tabellenwert); Zweibein/
+Dreibein-RK in den Klammerwert (GRW S. 357); Taser nur aufmontiert; Einschränkungen laut S. 367/368 (Airburst,
+Schnelllader, Ersatzladestreifen, Gasventil); Gyrostabilisator ohne Schrotflinten. Holster, Armhalterung und
+Smart-Feuerplattform gehören zur Ausrüstung.
+**Warum:** Wortlaut der Zubehörtexte; das C# übernimmt die Einschränkungen nicht vollständig.
+
+### ADR-027: Ausrüstung: Stufengrenze 6, Preisspannen, Zusammenführen (2026-10-04)
+Stufengrenze 6 bei Erschaffung allgemein (GRW S. 111); bei Preisspannen gibt der Spieler den Preis ein (Untergrenze =
+GRW-Mindestpreis); gleiche Gegenstände werden zusammengeführt; Menge nachträglich änderbar (Verbrauch ohne
+Erstattung), Stufe nur beim Kauf; Lagerorte zurückgestellt.
+**Warum:** Nutzerentscheidungen beim Gear-Plan.
+
+### ADR-028: Einbauten datengetrieben, Betriebssystem als Kind des Kommlinks (2026-10-04, 2026-10-08)
+Kapazität und erlaubte Einbauten stehen in `gear.xml`; Kamera/Mikrofon sind Gerät und Sensor-Funktion zugleich;
+Sensorpakete ohne GRW-Preis zu 0 ¥ mit Hinweis.
+**Warum:** Das GRW listet beide Verwendungen; Sensorpakete haben in Tabelle S. 381 keinen Preis.
+
+### ADR-029: Munition, Pfeile und Bolzen (2026-10-04, 2026-10-08)
+Pfeile im Waffen-Tab am Bogen (Stufe 1–8, Schaden nach min(Pfeil, Bogen), fester Preis); Bolzen als normale Ausrüstung.
+**Warum:** Pfeile hängen am Bogen; die Bolzentabelle S. 361 hat keine Stufe.
+
+### ADR-030: Fahrzeuge (2026-10-09)
+Eigener Haupttab; Waffenhalterung für Feuerwaffen bis LMG plus Granatwerfer; mitgelieferte Halterungen zählen gegen
+Rumpf ÷ 3; alle Ausrüstung darf ins Fahrzeug; Fahrzeugwaffen zeigen nur Tabellenwerte und bekommen kein Zubehör;
+Autosoft-Typ als Auswahl der fünf GRW-Typen; Matrix-Upgrades und Eigenname zurückgestellt; „Sensorpaket (Hand)“
+heißt „Sensorpaket (Hand/Minidrohne)“ (GRW S. 381).
+**Warum:** Nutzerentscheidungen beim Fahrzeug-Plan; GRW S. 395 „ein LMG oder eine kleinere Waffe“.
+
+### ADR-031: Fertigkeitszugang über die Gaben (2026-10-09)
+`Character.canRaiseSkill/canRaiseGroup` regeln den Zugang; Arkana auch für Mundane; beim Entfernen von Magier/
+Technomant Ja/Nein-Abfrage, gesperrte Fertigkeiten fallen auf 0.
+**Warum:** GRW S. 146–154; stilles Weiterführen gesperrter Werte würde BP verfälschen (r).
+
+### ADR-032: Wissensfertigkeiten: Vorschlagsliste zurückholen (2026-08-06)
+Die Namensvorschläge (Sprachen, Lingos) sollen wiederkommen, aus C#-Liste und GRW S. 156, ohne Zusatzband-Begriffe.
+Noch offen.
+**Warum:** Nicht alle Spieler haben SR-spezifische Begriffe im Kopf.
+
+## Benutzeroberfläche
+
+### ADR-033: Deaktivieren statt Ausblenden (2026-08-08)
+Nicht nutzbare Listeneinträge bleiben sichtbar-deaktiviert; nur ganze Tabs dürfen bis zu ihrer Voraussetzung fehlen.
+**Warum:** Ausgeblendete Einträge führten zu einem Refresh-Bug; der Nutzer soll sehen, was es gibt.
+
+### ADR-034: Tabs gegen die alten Designer.cs aufbauen (2026-09-25)
+Controls, Gruppierung und Reihenfolge aus `frmCreate`/`frmCareer.Designer.cs`, keine Pixelpositionen; bewusst
+verbesserte Muster bleiben.
+**Warum:** Vertraute Bedienung für Chummer-Nutzer.
+
+### ADR-035: Master-Detail mit Kategorienbaum für Waffen, Gear, Fahrzeuge (2026-09-30)
+Links Baum nach Kategorie, rechts Detailbereich; überholt die frühere Entscheidung „Baum mit Spalten“ (2026-09-28).
+Rüstung folgt später.
+**Warum:** Der Nutzer fand die Detailansicht deutlich übersichtlicher.
+
+### ADR-036: Kategorie-Filter alphabetisch (2026-10-08)
+In `CatalogSelectDialogController` mit deutschem Collator, „Alle“ oben; überholt die GRW-Reihenfolge.
+**Warum:** Schneller beim Suchen.
+
+### ADR-037: Fertigkeits-Sortierung als nicht gespeicherter UI-Zustand (2026-08)
+ToggleButton-Paar statt ComboBox; der Modus wird nicht gespeichert.
+**Warum (r):** Reine Ansichtssache, kein Charakterzustand.

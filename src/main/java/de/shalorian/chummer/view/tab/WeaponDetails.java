@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.skill.Skill;
@@ -8,6 +8,7 @@ import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponRange;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Anzeigewerte des Detailbereichs im Waffen-Unter-Tab. Enthält nur fertige Texte und keine
@@ -51,26 +52,10 @@ record WeaponDetails(
     WeaponData data = weapon.getData();
     String damage = character.getEquipment().getWeaponDamageText(weapon);
     Skill skill = character.getEquipment().getWeaponSkill(weapon);
-    RangeBands bands = character.getEquipment().getWeaponRangeBands(weapon);
-    WeaponRange range = data.range();
-    return new WeaponDetails(
-        weapon.getDisplayName(),
-        data.category().getDisplayName(),
-        skill.getName() + " " + skill.getRating(),
-        orDash(damage),
+    return build(weapon, skill.getName() + " " + skill.getRating(), damage,
         // Berechnet wurde genau dann, wenn der Text von der GRW-Formel abweicht.
         damage.equals(data.damage()) ? "" : data.damage(),
-        weapon.getRecoil().displayText(),
-        orDash(data.armorPiercing()),
-        orDash(data.reach()),
-        orDash(data.mode()),
-        orDash(data.ammo()),
-        weapon.getAvailabilityText(),
-        costText(weapon),
-        data.source() + " S. " + data.page(),
-        bands == null ? List.of() : bands.bandTexts(),
-        range == null ? "" : rangeNote(range),
-        data.note());
+        character.getEquipment().getWeaponRangeBands(weapon));
   }
 
   /**
@@ -80,15 +65,20 @@ record WeaponDetails(
    * S. 203, 287) sind zurückgestellt.
    */
   static @NonNull WeaponDetails ofMounted(@NonNull Weapon weapon) {
+    return build(weapon, NO_VALUE, weapon.getData().damage(), "", weapon.getRangeBands(0));
+  }
+
+  /** Gemeinsamer Aufbau; nur Fertigkeit, Schaden und Reichweiten hängen vom Einsatz ab. */
+  private static @NonNull WeaponDetails build(@NonNull Weapon weapon, @NonNull String skillText,
+      @NonNull String damage, @NonNull String damageFormula, @Nullable RangeBands bands) {
     WeaponData data = weapon.getData();
-    RangeBands bands = weapon.getRangeBands(0);
     WeaponRange range = data.range();
     return new WeaponDetails(
         weapon.getDisplayName(),
         data.category().getDisplayName(),
-        NO_VALUE,
-        orDash(data.damage()),
-        "",
+        skillText,
+        orDash(damage),
+        damageFormula,
         weapon.getRecoil().displayText(),
         orDash(data.armorPiercing()),
         orDash(data.reach()),

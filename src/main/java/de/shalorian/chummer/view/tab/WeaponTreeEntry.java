@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.weapon.IncludedAccessory;

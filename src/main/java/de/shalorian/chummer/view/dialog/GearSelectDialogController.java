@@ -93,7 +93,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   @FXML
   @Override
   public void initialize() {
-    ratingBox.setCellFactory(lv -> new ListCell<>() {
+    ratingBox.setCellFactory(_ -> new ListCell<>() {
       @Override
       protected void updateItem(@Nullable Integer rating, boolean empty) {
         super.updateItem(rating, empty);
@@ -103,15 +103,15 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     });
     priceField.setTextFormatter(new TextFormatter<String>(
         change -> change.getControlNewText().matches("\\d{0,7}") ? change : null));
-    ratingBox.valueProperty().addListener((obs, old, val) -> {
+    ratingBox.valueProperty().addListener((_, _, _) -> {
       showFixedPackPrice();
       updatePreview();
     });
-    quantitySpinner.valueProperty().addListener((obs, old, val) -> updatePreview());
-    extraField.textProperty().addListener((obs, old, val) -> updatePreview());
-    extraBox.getEditor().textProperty().addListener((obs, old, val) -> updatePreview());
-    extraBox.valueProperty().addListener((obs, old, val) -> updatePreview());
-    priceField.textProperty().addListener((obs, old, val) -> updatePreview());
+    quantitySpinner.valueProperty().addListener((_, _, _) -> updatePreview());
+    extraField.textProperty().addListener((_, _, _) -> updatePreview());
+    extraBox.getEditor().textProperty().addListener((_, _, _) -> updatePreview());
+    extraBox.valueProperty().addListener((_, _, _) -> updatePreview());
+    priceField.textProperty().addListener((_, _, _) -> updatePreview());
     super.initialize();
   }
 
@@ -369,7 +369,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     try {
       return new Gear(selected, rating, quantity(selected), extraText(selected),
           selected.variableCost() ? enteredPackPrice() : null);
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException _) {
       return null; // Zusatztext fehlt, Preis unter Minimum o.Ä. — Gear prüft die Regeln
     }
   }

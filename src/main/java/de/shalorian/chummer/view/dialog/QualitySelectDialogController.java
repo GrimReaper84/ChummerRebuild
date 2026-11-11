@@ -41,8 +41,8 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
   @Override
   public void initialize() {
     super.initialize();
-    onlySelectableBox.selectedProperty().addListener((obs, old, val) -> updateList());
-    gratisBox.selectedProperty().addListener((obs, old, val) -> onListUpdated());
+    onlySelectableBox.selectedProperty().addListener((_, _, _) -> updateList());
+    gratisBox.selectedProperty().addListener((_, _, _) -> onListUpdated());
     okButton.setDisable(true);
     addAgainButton.setDisable(true);
   }

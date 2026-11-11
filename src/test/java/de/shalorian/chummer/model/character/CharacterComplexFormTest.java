@@ -44,8 +44,8 @@ class CharacterComplexFormTest {
     c.addComplexForm(analyse());
 
     assertEquals(1, c.getComplexForms().size());
-    assertEquals("Analyse", c.getComplexForms().get(0).getName());
-    assertEquals(1, c.getComplexForms().get(0).getRating());
+    assertEquals("Analyse", c.getComplexForms().getFirst().getName());
+    assertEquals(1, c.getComplexForms().getFirst().getRating());
   }
 
   @Test
@@ -86,7 +86,7 @@ class CharacterComplexFormTest {
     c.addComplexForm(analyse());
     int baseline = c.getSpentBP();
 
-    c.getComplexForms().get(0).setRating(3);
+    c.getComplexForms().getFirst().setRating(3);
 
     assertEquals(baseline + 2, c.getSpentBP());
   }

@@ -25,7 +25,7 @@ class CharacterKnowledgeSkillSpecializationBpTest {
         c.getAttribute(INT).setValue(3);
         c.getAttribute(LOG).setValue(3); // Pool = 18
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
         skill.setRating(2);
 
         assertEquals(2, c.getKnowledgeSkillPointsUsed());
@@ -40,7 +40,7 @@ class CharacterKnowledgeSkillSpecializationBpTest {
         c.getAttribute(LOG).setValue(1); // Pool = 6
         c.addQuality(QualityDataLoader.findByName("Ungebildet"), false);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
         skill.setRating(2); // zählt doppelt: 4 Punkte
         c.setKnowledgeSkillSpecialization(skill, "Ares Macrotechnology");
 
@@ -54,7 +54,7 @@ class CharacterKnowledgeSkillSpecializationBpTest {
         c.getAttribute(INT).setValue(3);
         c.getAttribute(LOG).setValue(3); // Pool = 18
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
         skill.setRating(2);
 
         assertEquals(0, c.getKnowledgeSkillSpecializationBP());
@@ -66,7 +66,7 @@ class CharacterKnowledgeSkillSpecializationBpTest {
         c.getAttribute(INT).setValue(1);
         c.getAttribute(LOG).setValue(1); // Pool = 6
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
         skill.setRating(6); // Pool exakt ausgeschöpft
 
         assertEquals(2, c.getKnowledgeSkillSpecializationBP());
@@ -78,7 +78,7 @@ class CharacterKnowledgeSkillSpecializationBpTest {
         c.getAttribute(INT).setValue(1);
         c.getAttribute(LOG).setValue(1); // Pool = 6
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
         skill.setRating(6); // Pool exakt ausgeschöpft
         c.setKnowledgeSkillSpecialization(skill, "Bandenkriminalität");
 

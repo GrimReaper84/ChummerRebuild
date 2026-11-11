@@ -11,7 +11,7 @@ import org.jspecify.annotations.NonNull;
  *
  * <p>Bewusst nur die vier GRW-Kern-Kategorien — Adapsin- und Second-Hand-Varianten aus dem
  * C#-Original stammen aus dem Zusatzband Arsenal und sind nicht Teil dieses Feature-Schnitts (siehe
- * {@code docs/plaene/cyberware_plan.md} Abschnitt 13).
+ * {@code docs/plaene/archiv/cyberware_plan.md} Abschnitt 13).
  */
 public enum CyberwareGrade {
   STANDARD("Standard", "1", 1, true),

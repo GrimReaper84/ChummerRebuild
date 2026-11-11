@@ -67,7 +67,7 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
   @FXML
   @Override
   public void initialize() {
-    ratingBox.setCellFactory(lv -> new ListCell<>() {
+    ratingBox.setCellFactory(_ -> new ListCell<>() {
       @Override
       protected void updateItem(@Nullable Integer rating, boolean empty) {
         super.updateItem(rating, empty);
@@ -75,7 +75,7 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
         setDisable(!empty && rating != null && !isRatingAvailable(rating));
       }
     });
-    ratingBox.valueProperty().addListener((obs, old, val) -> updatePreview());
+    ratingBox.valueProperty().addListener((_, _, _) -> updatePreview());
     super.initialize();
   }
 

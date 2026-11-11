@@ -146,11 +146,11 @@ class CharacterMagicResonanceEssencePenaltyTest {
     var analyse = ComplexFormDataLoader.findByName("Analyse");
     assertNotNull(analyse);
     c.addComplexForm(analyse);
-    assertTrue(c.canRaiseComplexForm(c.getComplexForms().get(0)));
+    assertTrue(c.canRaiseComplexForm(c.getComplexForms().getFirst()));
 
     c.getEquipment().addCyberware(cyberware("0.2"));
 
-    assertFalse(c.canRaiseComplexForm(c.getComplexForms().get(0)));
+    assertFalse(c.canRaiseComplexForm(c.getComplexForms().getFirst()));
   }
 
   @Test

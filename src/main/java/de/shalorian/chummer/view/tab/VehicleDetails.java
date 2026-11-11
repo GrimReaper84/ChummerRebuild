@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.vehicle.VehicleData;
@@ -45,7 +45,7 @@ record VehicleDetails(
 
   static @NonNull VehicleDetails of(@NonNull Vehicle vehicle) {
     VehicleData data = vehicle.getData();
-    long occupied = vehicle.getMounts().stream().filter(m -> m.getWeapon() != null).count();
+    int occupied = vehicle.getMountedWeapons().size();
     return new VehicleDetails(
         data.name(),
         data.category().getDisplayName(),

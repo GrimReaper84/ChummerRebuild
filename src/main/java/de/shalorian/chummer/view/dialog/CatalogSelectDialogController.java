@@ -39,13 +39,13 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
   public void initialize() {
     refreshCategoryOptions();
 
-    categoryBox.valueProperty().addListener((obs, old, val) -> updateList());
-    searchField.textProperty().addListener((obs, old, val) -> updateList());
+    categoryBox.valueProperty().addListener((_, _, _) -> updateList());
+    searchField.textProperty().addListener((_, _, _) -> updateList());
 
     itemListView.getSelectionModel().selectedItemProperty()
-        .addListener((obs, old, val) -> onListUpdated());
+        .addListener((_, _, _) -> onListUpdated());
 
-    itemListView.setCellFactory(lv -> new ListCell<>() {
+    itemListView.setCellFactory(_ -> new ListCell<>() {
       @Override
       protected void updateItem(@Nullable T item, boolean empty) {
         super.updateItem(item, empty);

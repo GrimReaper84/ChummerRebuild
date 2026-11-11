@@ -23,7 +23,7 @@ mehr raten, was davon fachlich verbindlich ist.
   `clsCharacter.cs`, `clsEquipment.cs`, `clsUnique.cs`, `clsImprovement.cs` sowie in `frmCreate.cs`/
   `frmCareer.cs` (Erstellungs- vs. Karrieremodus) und den `frmSelect*.cs`-Dialogen.
 - Daten unter `.../bin/Release/data/*.xml` (Feld `<source>` zeigt, aus welchem Buch ein Eintrag stammt).
-- GRW: `docs/rulebooks/Grundregelwerk_SR4_ocr.txt` (+ PDF für Bildprüfung).
+- GRW: `docs/rulebooks/grundregelwerk.txt`, Tabellen in `grundregelwerk_layout.txt` (+ PDF für Bildprüfung).
 
 ## Vorgehen
 
@@ -40,7 +40,10 @@ mehr raten, was davon fachlich verbindlich ist.
    widerlegt (GRW sagt etwas anderes), nur im C# (kein GRW-Beleg → Hinweis auf Zusatzband oder
    Hausregel) oder unklar. Bei 0 Treffern die deutsche Übersetzung des Begriffs suchen, bevor "kein
    Beleg" gefolgert wird.
-6. **Datei schreiben:** `docs/analysen/<feature>_analyse.md`, dann anhalten und dem Nutzer die
+6. **Ergebnis festhalten.** Im **verschlankten Modus** (Standard, Projektregeln Abschnitt 2) keine
+   eigene Datei: Die Befunde gehen als Abschnitt 4 „Gesichertes Altverhalten“ in den Plan
+   `docs/plaene/<feature>_plan.md`, und es geht ohne Halt mit Java-Ist und Planung weiter. Nur auf
+   ausdrücklichen Wunsch: `docs/analysen/<feature>_analyse.md` schreiben, dann anhalten und die
    wichtigsten Befunde, Widersprüche C# vs. GRW und offenen Fragen kurz berichten.
 
 Bei großem Umfang (viele Klassen, >1.500 Zeilen relevanter Code) bietet es sich an, die Analyse an

@@ -45,10 +45,9 @@ public class SkillDataLoader {
 
       for (int i = 0; i < children.getLength(); i++) {
         Node node = children.item(i);
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
+        if (!(node instanceof Element el)) {
           continue;
         }
-        Element el = (Element) node;
 
         if ("group".equals(el.getTagName())) {
           String groupName = el.getAttribute("name");

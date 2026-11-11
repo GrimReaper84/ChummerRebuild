@@ -91,7 +91,7 @@ class CommlinkStatsTest {
     Gear device = commlinkWith("Erika Elite", "Mangadyne Deva");
     assertEquals(3_300, device.getNuyenCost());
 
-    Gear os = device.getInstalled().get(0);
+    Gear os = device.getInstalled().getFirst();
     assertTrue(device.uninstall(os));
     assertFalse(device.uninstall(os));
     assertEquals(2_500, device.getNuyenCost());

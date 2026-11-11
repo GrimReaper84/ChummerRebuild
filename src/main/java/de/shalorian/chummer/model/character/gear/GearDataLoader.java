@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.gear;
 
 import static de.shalorian.chummer.utils.XmlUtils.childText;
+import static de.shalorian.chummer.utils.XmlUtils.firstChild;
 
 import de.shalorian.chummer.model.character.DataPaths;
 import de.shalorian.chummer.model.character.equipment.Availability;
@@ -52,10 +53,10 @@ public class GearDataLoader {
 
       for (int i = 0; i < nodes.getLength(); i++) {
         Node node = nodes.item(i);
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
+        if (!(node instanceof Element element)) {
           continue;
         }
-        GearData data = parseItem((Element) node);
+        GearData data = parseItem(element);
         if (map.put(data.name(), data) != null) {
           throw new IllegalStateException("Doppelter Ausrüstungsname: " + data.name());
         }
@@ -137,10 +138,5 @@ public class GearDataLoader {
     }
     String kind = extra.getAttribute("kind");
     return kind.isEmpty() ? ExtraKind.TEXT : ExtraKind.valueOf(kind);
-  }
-
-  private static @Nullable Element firstChild(@NonNull Element parent, @NonNull String tag) {
-    NodeList nodes = parent.getElementsByTagName(tag);
-    return nodes.getLength() == 0 ? null : (Element) nodes.item(0);
   }
 }

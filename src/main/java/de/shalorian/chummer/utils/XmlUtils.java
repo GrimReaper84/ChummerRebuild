@@ -1,6 +1,7 @@
 package de.shalorian.chummer.utils;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -17,14 +18,26 @@ public final class XmlUtils {
    * versehentlich gelesen werden.
    */
   public static @NonNull String childText(@NonNull Element parent, @NonNull String tag) {
+    Element child = firstChild(parent, tag);
+    if (child == null) {
+      return "";
+    }
+    String text = child.getTextContent();
+    return text == null ? "" : text.trim();
+  }
+
+  /**
+   * Erstes direktes Kind-Element {@code tag} von {@code parent}, bzw. {@code null}, wenn es fehlt;
+   * z.B. um Attribute eines Elements zu lesen. Wie {@link #childText} nur direkte Kinder.
+   */
+  public static @Nullable Element firstChild(@NonNull Element parent, @NonNull String tag) {
     NodeList list = parent.getChildNodes();
     for (int i = 0; i < list.getLength(); i++) {
       Node node = list.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE && tag.equals(node.getNodeName())) {
-        String text = node.getTextContent();
-        return text == null ? "" : text.trim();
+      if (node instanceof Element element && tag.equals(element.getTagName())) {
+        return element;
       }
     }
-    return "";
+    return null;
   }
 }

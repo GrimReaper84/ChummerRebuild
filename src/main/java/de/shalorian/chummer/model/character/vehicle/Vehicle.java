@@ -266,6 +266,7 @@ public class Vehicle {
   }
 
   /** Ob {@code item} mitgeliefert ist (Objektreferenz). */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: gleiche Geräte sind nicht dasselbe Stück
   public boolean isIncluded(@NonNull Gear item) {
     return includedGear.stream().anyMatch(g -> g == item);
   }

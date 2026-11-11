@@ -51,7 +51,8 @@ public class CharacterAttribute {
 
   /**
    * BP-Kosten, die dieses Attribut bei einem hypothetischen Wert hätte — für eine
-   * Budget-Vorschau vor einer tatsächlichen Erhöhung (siehe {@link Character#canRaiseAttributeAtCreation}).
+   * Budget-Vorschau vor einer tatsächlichen Erhöhung (siehe {@link
+   * de.shalorian.chummer.model.character.Character#canRaiseAttributeAtCreation}).
    */
   public int getBpCostForValue(int hypotheticalValue) {
     int cost = (hypotheticalValue - min) * BP_PER_POINT;

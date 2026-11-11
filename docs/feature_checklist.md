@@ -84,7 +84,7 @@
 
 | Feature                                                       | Status | Anmerkung        |
 |---------------------------------------------------------------|--------|------------------|
-| Wissensfertigkeiten-Pool ((INT + LOG) × 3 freie Punkte)       | ✅      | Korrigierte Formel (nicht INT×2, siehe `docs/analysen/wissensfertigkeiten_analyse.md`) |
+| Wissensfertigkeiten-Pool ((INT + LOG) × 3 freie Punkte)       | ✅      | Korrigierte Formel (nicht INT×2, siehe `docs/analysen/archiv/wissensfertigkeiten_analyse.md`) |
 | Hinzufügen/Entfernen von Wissensfertigkeiten                  | ✅      | Freitext-Name, Dialog mit Kategorie-Auswahl, Duplikat-Prüfung |
 | Kategorie (Akademisch, Hobby, Beruflich, Straße + Sprache)    | ✅      | `KnowledgeSkillCategory`-Enum, GRW-Terminologie: INTEREST→HOBBY umbenannt, 2026-08-04 (kein Migrationspfad für alte Speicherdateien) |
 | BP-Kosten: 2 BP/Punkt (nur wenn Pool überschritten)           | ✅      | Gemeinsamer Pool über alle Wissensfertigkeiten, Uneducated verdoppelt Poolverbrauch |
@@ -114,7 +114,7 @@
 
 | Feature                                                   | Status | Anmerkung        |
 |-----------------------------------------------------------|--------|------------------|
-| Kontakt hinzufügen (Name, Kurzbeschreibung, Connection, Loyalty) | ✅ | `Contact`-Modell, eigener Tab, Add/Edit-Dialog (Beschreibung als Tooltip), 2026-08-07. Bewusst reduzierter Scope: kein Enemy/Pet-Unterschied, keine Gruppenkontakt-Modifikatoren (kein GRW-Beleg im Kernregelwerk, siehe `docs/analysen/kontakte_analyse.md`) |
+| Kontakt hinzufügen (Name, Kurzbeschreibung, Connection, Loyalty) | ✅ | `Contact`-Modell, eigener Tab, Add/Edit-Dialog (Beschreibung als Tooltip), 2026-08-07. Bewusst reduzierter Scope: kein Enemy/Pet-Unterschied, keine Gruppenkontakt-Modifikatoren (kein GRW-Beleg im Kernregelwerk, siehe `docs/analysen/archiv/kontakte_analyse.md`) |
 | BP-Kosten: 1 BP pro Kontaktpunkt (Connection + Loyalty)   | ✅      | GRW S. 113 bestätigt: "Kosten = Connectionstufe + Loyalitätsstufe", `Character.getContactBP()` |
 | ~~Freie Kontaktpunkte: CHA × 2~~                          | ✅      | **Widerlegt** (2026-08-04): Im GRW-Erstellungskapitel zu Connections (S. 113) wird Charisma kein einziges Mal erwähnt — Kontakte werden ganz normal aus dem allgemeinen 400-GP-Budget bezahlt, kein eigener CHA-basierter Freibetrag. Kein Freibetrag implementiert |
 | Karrieremodus: Kontakte frei bearbeitbar, ohne Karma-Kosten | ✅ | GRW: Connections werden nicht mit Karma gekauft ("müssen sie sich auf die harte Tour verdienen"), neue `wireFreeIncrementable()`-UI-Methode |
@@ -125,8 +125,8 @@
 
 > Scope-Entscheidung (2026-08-08): Nur reine **Magier** umgesetzt (Tradition + Zauber-Erlernen).
 > Adept-Kräfte und Mystic-Adept-Split sind bewusst zurückgestellt (eigenes Folgefeature). Details:
-> `docs/analysen/magie_analyse.md` (C#-Analyse), `docs/analysen/magie_java_analyse.md` (Java-Ist-Analyse),
-> `docs/plaene/magie_plan.md` (Umsetzungsplan inkl. aller Entscheidungen).
+> `docs/analysen/archiv/magie_analyse.md` (C#-Analyse), `docs/analysen/archiv/magie_java_analyse.md` (Java-Ist-Analyse),
+> `docs/plaene/archiv/magie_plan.md` (Umsetzungsplan inkl. aller Entscheidungen).
 
 | Feature                                                | Status | Anmerkung                                                                                                                                                                                                                                                            |
 |---------------------------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -151,11 +151,11 @@
 
 | Feature                                    | Status | Anmerkung |
 |--------------------------------------------|--------|-----------|
-| RES-Attribut aktivieren (via Quality)      | ✅      | **Korrektur (2026-08-08):** bereits umgesetzt im Zuge des Sonderattribute-Features (analog zur EDG/MAG/RES-Korrektur vom 2026-08-06) — Quality "Technomant" (5 BP, `qualities.xml`), `QualityBonusType.GRANTS_RESONANCE`, `Character.hasResonance()`/`syncMagicOrResonance()`, Magie/Resonanz-Exklusivität, Persistenz. GRW S. 106 bestätigt. Checkliste war nicht mit dem Code synchron, siehe `docs/analysen/technomancer_java_analyse.md` |
-| Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/technomancer_plan.md`) |
+| RES-Attribut aktivieren (via Quality)      | ✅      | **Korrektur (2026-08-08):** bereits umgesetzt im Zuge des Sonderattribute-Features (analog zur EDG/MAG/RES-Korrektur vom 2026-08-06) — Quality "Technomant" (5 BP, `qualities.xml`), `QualityBonusType.GRANTS_RESONANCE`, `Character.hasResonance()`/`syncMagicOrResonance()`, Magie/Resonanz-Exklusivität, Persistenz. GRW S. 106 bestätigt. Checkliste war nicht mit dem Code synchron, siehe `docs/analysen/archiv/technomancer_java_analyse.md` |
+| Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/archiv/technomancer_plan.md`) |
 | Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (20 GRW-Einträge), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
 | Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ❌ | **Lücke gefunden 2026-09-27:** GRW S. 112: "Die maximale Anzahl an komplexen Formen, mit denen ein Charakter das Spiel beginnen kann, entspricht – unabhängig von ihrer Stufe – dem doppelten Logikattribut". Im Code nicht geprüft (nur der Stufen-Cap); kleiner Folgeauftrag analog `canAddSpellAtCreation()` |
-| Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/technomancer_analyse.md`) |
+| Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/archiv/technomancer_analyse.md`) |
 
 ---
 
@@ -184,7 +184,7 @@
 | Kleidung, Lederjacke/-mantel                  | ❌      | Zurückgestellt bis Zusatzbände (Runner's Kompendium/Arsenal) vorliegen |
 | Rüstungsmodifikationen, GKP-/UEO-Zubehör      | ❌      | Zurückgestellt |
 | Schild-Malus −1 auf körperliche Proben        | ❌      | Zurückgestellt (keine Würfelpools im Modell) |
-| Darstellung als Baum + Detailbereich          | ❌      | Nutzerentscheidung 2026-09-30: Waffen-Muster (`docs/plaene/waffen_detailansicht_plan.md`) gefällt, Umstellung der Rüstung aber auf später verschoben. Die CSS-Klassen `detail-*` sind dafür schon allgemein angelegt |
+| Darstellung als Baum + Detailbereich          | ❌      | Nutzerentscheidung 2026-09-30: Waffen-Muster (`docs/plaene/archiv/waffen_detailansicht_plan.md`) gefällt, Umstellung der Rüstung aber auf später verschoben. Die CSS-Klassen `detail-*` sind dafür schon allgemein angelegt |
 
 ---
 
@@ -202,7 +202,7 @@
 
 | Feature                     | Status | Anmerkung        |
 |-----------------------------|--------|------------------|
-| Waffen kaufen und verwalten | ✅      | Teil A umgesetzt 2026-09-28 (`docs/plaene/waffen_plan.md`): 63 GRW-Kern-Waffen (Tabellen S. 361/363/366, am Bild geprüft) mit Tabellenwerten als Text, Bogen mit Stufe 1–8 (Mindeststärke), Kauf/Entfernen, Nuyen-Budget, Verfügbarkeit ≤ 12 (sichtbar-deaktiviert), Karriere-Kauf über Nuyen-Log, Persistenz; Unter-Tab "Waffen" seit 2026-09-30 als Baum nach Kategorie + Detailbereich wie im Original (`docs/plaene/waffen_detailansicht_plan.md`; vom Nutzer angesehen und für gut befunden) |
+| Waffen kaufen und verwalten | ✅      | Teil A umgesetzt 2026-09-28 (`docs/plaene/archiv/waffen_plan.md`): 63 GRW-Kern-Waffen (Tabellen S. 361/363/366, am Bild geprüft) mit Tabellenwerten als Text, Bogen mit Stufe 1–8 (Mindeststärke), Kauf/Entfernen, Nuyen-Budget, Verfügbarkeit ≤ 12 (sichtbar-deaktiviert), Karriere-Kauf über Nuyen-Log, Persistenz; Unter-Tab "Waffen" seit 2026-09-30 als Baum nach Kategorie + Detailbereich wie im Original (`docs/plaene/archiv/waffen_detailansicht_plan.md`; vom Nutzer angesehen und für gut befunden) |
 | Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ✅ | Teil B umgesetzt 2026-09-30: Schaden aus Stärke (GRW S. 188, STR÷2 aufgerundet; Bogen nach Mindeststärke S. 361), Reichweiten laut Tabelle S. 179 (am Bild geprüft; `<range>` je Waffe, Abweichungen laut Waffentext: Hämmerli 620S, Mossberg AM-CMDT, Spezielle Waffen S. 362/365), Fertigkeit mit Wert je Kategorie (S. 147/148, 360–366). Tabelle aktualisiert sich bei Attribut-/Fertigkeitsänderung. **Einschränkungen:** Exotische Waffen teilen sich je eine Fertigkeit (GRW: je Waffe eigene); Pfeilstufe nicht modelliert; kein Würfelpool (Roadmap Stufe 3) |
 | Zubehör mit Halterungen     | ✅      | Teil C umgesetzt 2026-10-04: 16 GRW-Zubehörteile (Tabelle S. 368, am Bild geprüft) an Halterungen Lauf/Unterlauf/Aufmontiert je Waffenklasse (S. 357), eine pro Halterung, Zubehör ohne Halterung mehrfach; Sonderregeln laut Zubehörtexten S. 367/368 (Gasventil nur Automatikpistolen/MPs/Sturmgewehre/MGs und nicht entfernbar, Schalldämpfer EM/HM ohne Revolver, Schallunterdrücker SM/AM, Schockpolster und Gyrostabilisator nur Gewehre/schwere Waffen, Airburst nur Granat-/Raketenwerfer, Schnelllader nur Revolver, Ersatzladestreifen nur Ladestreifen-Waffen, Projektilwaffen nur Lasermarkierer/Smartgun); mitgeliefertes Zubehör laut Waffentexten S. 362–366 (`<included>`), höchstens ein Gasventil/Smartgunsystem/Schockpolster je Waffe; RK "x (y)" inkl. Zubehör (Gasventil fest, alles andere im Klammerwert); internes Smartgunsystem kostet den Waffenpreis; Budget, Karriere-Kauf, Persistenz. **Einschränkungen:** Spezielle Waffen ohne Halterung (kein GRW-Beleg); Airburst verlangt kein Smartgunsystem; HK-XM30-Umbausätze zurückgestellt (nur `<note>`) |
 | Waffenmodifikationen        | ❌      | Nur Arsenal, zurückgestellt |
@@ -214,11 +214,11 @@
 
 | Feature                      | Status | Anmerkung        |
 |------------------------------|--------|------------------|
-| Allgemeine Ausrüstung kaufen | ✅ | Gear Teil A (`docs/plaene/gear_plan.md`, 2026-10-04): Unter-Tab "Ausrüstung" (Baum nach Bereich + Detailbereich), 140 Einträge aus 28 GRW-Tabellen (S. 368, 374–385, 395, am Bild übertragen), Menge in Packungsschritten mit Zusammenführen, Pflicht-Zusatztext (Lizenz mit Vorauswahl), Preisspannen mit Mindestpreis, Karriere-Kauf/Mengenerhöhung über das Nuyen-Log, Persistenz. UI vom Nutzer noch nicht angesehen |
+| Allgemeine Ausrüstung kaufen | ✅ | Gear Teil A (`docs/plaene/archiv/gear_plan.md`, 2026-10-04): Unter-Tab "Ausrüstung" (Baum nach Bereich + Detailbereich), 140 Einträge aus 28 GRW-Tabellen (S. 368, 374–385, 395, am Bild übertragen), Menge in Packungsschritten mit Zusammenführen, Pflicht-Zusatztext (Lizenz mit Vorauswahl), Preisspannen mit Mindestpreis, Karriere-Kauf/Mengenerhöhung über das Nuyen-Log, Persistenz. UI vom Nutzer noch nicht angesehen |
 | Stufe ≤ 6 bei Erschaffung (allgemein) | ✅ | `Equipment.isAvailableForPurchase` (GRW S. 111), gilt für alle Kaufkategorien mit Stufe |
 | Kommlink mit Prozessor/Signal + Betriebssystem (Firewall/System) | ✅ | Gear Teil B (2026-10-08): 9 Kommlinks, 6 Betriebssysteme (GRW S. 374, am Bild); Betriebssystem als Kindknoten, gekauft über "Betriebssystem installieren", höchstens eins je Kommlink; System ≤ Prozessor (S. 260) mit Hinweis im Detailbereich; Kommlinks/Betriebssysteme sind Einzelstücke (Menge 1, kein Zusammenführen). UI vom Nutzer noch nicht angesehen |
 | Matrixprogramme mit Preisbändern | ✅ | Gear Teil B: 6 Zeilen der Tabelle S. 376 (Preis bis Stufe 3 / ab Stufe 4), Programmname als Pflicht-Zusatztext (Freitext, keine Programmliste). Programme "System"/"Firewall" sind reine Käufe ohne Wirkung auf Kommlink-Werte |
-| Kommlink-Aufrüstungen, laufende Programme/Matrix-Regeln | ❌ | Zurückgestellt; Programme nicht einem Kommlink zugeordnet. **Korrektur 2026-10-09:** GRW-Preise gibt es doch: Tabelle "Preise für Hardware-Upgrades" S. 261 (Prozessor/Signal, Modulstufe 1–6, am Bild geprüft), Regel S. 260 ("nur um bis zu +2 über die Originalstufen", ein Modul je Attribut); Firewall/System als Softwarepaket zu den Programmpreisen S. 376. Umsetzung bleibt offen (gemeinsam mit Fahrzeug-Matrix-Upgrades zu entscheiden, `docs/analysen/fahrzeuge_analyse.md` F12) |
+| Kommlink-Aufrüstungen, laufende Programme/Matrix-Regeln | ❌ | Zurückgestellt; Programme nicht einem Kommlink zugeordnet. **Korrektur 2026-10-09:** GRW-Preise gibt es doch: Tabelle "Preise für Hardware-Upgrades" S. 261 (Prozessor/Signal, Modulstufe 1–6, am Bild geprüft), Regel S. 260 ("nur um bis zu +2 über die Originalstufen", ein Modul je Attribut); Firewall/System als Softwarepaket zu den Programmpreisen S. 376. Umsetzung bleibt offen (gemeinsam mit Fahrzeug-Matrix-Upgrades zu entscheiden, `docs/analysen/archiv/fahrzeuge_analyse.md` F12) |
 | Sensoren, Sicht-/Audioverstärkung, Magschloss-Zusätze (Kapazität) | ✅ | Gear Teil C (2026-10-08): 10 visuelle/optische Geräte, 8 Sichtverstärkungen, 3 Audiosensoren, 3 Audioverstärkungen, 3 Sensorpakete (RFID/Mikro/Hand, 0 ¥ mangels GRW-Preis), 12 Sensor-Funktionen (inkl. Kamera/Mikrofon als Sensor), 3 Magschloss-Zusätze (GRW S. 378–382, am Bild). Einbau über "Einbauen" mit Kapazitätsprüfung, Verfügbarkeitszuschläge erhöhen die Verfügbarkeit des Geräts (auch für die Grenze 12 bei Erschaffung). UI vom Nutzer noch nicht angesehen |
 | Drohnen-/Fahrzeug-Sensorpakete | ✅ | Fahrzeug-Feature (2026-10-09): Stationär/kleine Drohne 5/4, Mittlere Drohne 6/4, Große Drohne 8/4, Fahrzeug 12/5 (Kapazität/Signal, GRW S. 381); "Sensorpaket (Hand)" heißt jetzt "Sensorpaket (Hand/Minidrohne)" wie die GRW-Zeile (alte Speicherdateien verlieren diesen Eintrag beim Laden) |
 | Autosoft-Typ als Auswahl | ✅ | 2026-10-09: Abwehr, Clearsight, Elektronische Kriegsführung, Steuerung, Zielerfassung (GRW S. 287); ohne Unterangabe Waffe/Fahrzeugtyp (Nutzerentscheidung) |
@@ -237,7 +237,7 @@
 
 | Feature                        | Status | Anmerkung        |
 |--------------------------------|--------|------------------|
-| Fahrzeuge und Drohnen kaufen | ✅ | 2026-10-09 (`docs/plaene/fahrzeuge_plan.md`): eigener Haupttab "Fahrzeuge & Drohnen" (Baum nach GRW-Kategorie + Detailbereich), 37 Einträge der GRW-Tabelle S. 397 (am Bild, Werte aus dem GRW statt C#: Everglades 25.500 ¥, Sensor der Luftfahrzeuge), Verf. ≤ 12 sichtbar-deaktiviert, Restgeld bzw. Karriere-Abbuchung, Persistenz. Anzeige: Zustandsmonitor 8 + ⌈Rumpf/2⌉ (S. 197), Gerätestufe 3/4 (S. 261), Sensor mit Ø eingebauter Sensoren (S. 380). UI vom Nutzer noch nicht angesehen |
+| Fahrzeuge und Drohnen kaufen | ✅ | 2026-10-09 (`docs/plaene/archiv/fahrzeuge_plan.md`): eigener Haupttab "Fahrzeuge & Drohnen" (Baum nach GRW-Kategorie + Detailbereich), 37 Einträge der GRW-Tabelle S. 397 (am Bild, Werte aus dem GRW statt C#: Everglades 25.500 ¥, Sensor der Luftfahrzeuge), Verf. ≤ 12 sichtbar-deaktiviert, Restgeld bzw. Karriere-Abbuchung, Persistenz. Anzeige: Zustandsmonitor 8 + ⌈Rumpf/2⌉ (S. 197), Gerätestufe 3/4 (S. 261), Sensor mit Ø eingebauter Sensoren (S. 380). UI vom Nutzer noch nicht angesehen |
 | Riggeradapter, Waffenhalterungen | ✅ | GRW S. 395/396: je 2.500 ¥ (Verf. 4 bzw. 8V); Drohnen haben den Riggeradapter (S. 398); Halterungen ≤ Rumpf ÷ 3 inkl. mitgelieferter (Doberman, Steel Lynx, Wasp, Citymaster, Cutlass) |
 | Waffen in Halterungen | ✅ | Feuerwaffen bis LMG + Granatwerfer (GRW S. 395 + Nutzerentscheidung), eine je Halterung, nur Tabellenwerte (ohne Fertigkeit/Würfelpool); gehören nicht zu den Charakterwaffen |
 | Ausrüstung im Fahrzeug | ✅ | Beliebige Ausrüstung, mitgeliefertes Sensorpaket mit Einbau von Sensor-Funktionen, mitgelieferte Autosofts (Doberman, Steel Lynx, Stormcloud, Fly-Spy) und Medkit 4 (AutoDoc) kostenlos und nicht entfernbar |
@@ -249,7 +249,7 @@
 | Arsenal-Inhalte (Slots, Mod-Boni, weitere Fahrzeuge/Mods), Gebrauchtwagen, Verkauf | ❌ | Zusatzband bzw. kein GRW-Beleg, zurückgestellt |
 
 --------------------------------|--------|------------------|
-| Fahrzeuge kaufen und verwalten | ❌      | Komplett fehlend. Analysen: `docs/analysen/fahrzeuge_analyse.md` (C#/GRW), `docs/analysen/fahrzeuge_java_analyse.md` (Java-Ist, 2026-10-09). Schon vorhanden: Riggerkontrolle (Cyberware), Autosoft und Medkit (Gear), Fahrzeugfertigkeiten |
+| Fahrzeuge kaufen und verwalten | ❌      | Komplett fehlend. Analysen: `docs/analysen/archiv/fahrzeuge_analyse.md` (C#/GRW), `docs/analysen/archiv/fahrzeuge_java_analyse.md` (Java-Ist, 2026-10-09). Schon vorhanden: Riggerkontrolle (Cyberware), Autosoft und Medkit (Gear), Fahrzeugfertigkeiten |
 
 ---
 
@@ -352,9 +352,39 @@
 
 ## Prioritisierte Reihenfolge für nächste Schritte
 
+**Als Nächstes (Stand 2026-11-11):**
+
+Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038), Fallout-Workflow (ADR-008).
+
+*Technik und Aufräumen*
+
+1. ✅ **Moderne Java-Idiome (2026-11-11)**: `getFirst()`/`getLast()`/`reversed()`, `Stream.toList()`, Switch-Ausdrücke, Pattern
+   Matching, unbenannte Variablen `_`, flexible Konstruktor-Rümpfe, wo sinnvoll; Regel in die Projektregeln
+   Abschnitt 6, bestehende Stellen umstellen (103 × `get(0)`/`size() - 1`).
+2. ✅ **`CharacterViewController` aufgeteilt (2026-11-11, ADR-041)**, jetzt 481 Zeilen; vorher 3062 Zeilen: eine Klasse je Tab nach dem Muster der bestehenden
+   `WeaponTabBuilder`/`GearTabBuilder`/`VehicleTabBuilder`.
+   Bekannte Abweichung: `StreetGearTabBuilder` und `VehicleTabBuilder` bekommen den Charakter noch per
+   `build(character)` statt `setCharacter` + `build()` wie die übrigen Builder (bewusst nicht vereinheitlicht).
+3. **Auslieferung über GitHub Releases** wie im Fallout2d20-Projekt: Release-Workflow bei Tag `v*` auf Ubuntu,
+   Windows und macOS, je Installer (`.msi`/`.deb`/`.dmg`) plus portables ZIP mit eingebautem Java, Tag-Prüfung
+   gegen die Version. Chummer bleibt **nicht modular**, daher Plugin `org.beryx.runtime` statt `org.beryx.jlink`
+   (ADR-039). Fällt dabei weg: die nativen JavaFX-JARs aller Plattformen in `build.gradle.kts` und `distZip`.
+   Dazu gehören App-Icon, Version an einer Stelle (`gradle.properties`) und ein CI-Workflow für Pull Requests.
+
+*Fachliche Features (Kandidaten, Reihenfolge offen)*
+
+4. **Qualities vervollständigen** mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
+   siehe Abschnitt 6).
+5. **Adepten** (Adeptenkräfte, Mystischer Adept), bei Magie bewusst zurückgestellt.
+6. **Würfelpools**, Condition Monitor, Initiative (Stufe 3 unten; Analyse `docs/analysen/wuerfelpools_analyse.md`
+   liegt vor).
+7. **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035).
+8. **Kataloge vervollständigen**: Zauber (10 von 84 GRW-Kern), Komplexe Formen, Cyberware/Bioware.
+9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
+
 > **Regelwerk-Abgleich (2026-08-04):** Die komplette Roadmap wurde gegen das SR4-Grundregelwerk geprüft,
-> bevor weitere Features umgesetzt werden — siehe `docs/analysen/regelwerk_abgleich_stufe2_roadmap.md` und
-> `docs/analysen/regelwerk_abgleich_stufe3_roadmap.md`. Ergebnis: fast alles ist solide belegt, bis auf zwei
+> bevor weitere Features umgesetzt werden — siehe `docs/analysen/archiv/regelwerk_abgleich_stufe2_roadmap.md` und
+> `docs/analysen/archiv/regelwerk_abgleich_stufe3_roadmap.md`. Ergebnis: fast alles ist solide belegt, bis auf zwei
 > Punkte ohne GRW-Beleg (s.u., auf Niedrig gesetzt) und zwei korrigierte Annahmen (Kontakte, Komplexe
 > Formen, siehe jeweilige Abschnitte oben).
 
@@ -371,11 +401,12 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 **Stufe 2 – Erweiterte Features**
 
 1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
-2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung (GRW-Kern S. 284, zurückgestellt)
-3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
-4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
-5. **Waffen** ✅ Teil A (2026-09-28), Teil B (2026-09-30) und Teil C Zubehör (2026-10-04) umgesetzt (`docs/plaene/waffen_plan.md`)
-6. Gear — Verfügbarkeitsregeln bestätigt, Kommlink-Details bei Umsetzung gezielt nachschlagen. **Vorarbeit erledigt (2026-10-04):** alle Kaufkategorien liegen in `model.character.equipment.Equipment` (`character.getEquipment()`, `docs/plaene/character_aufteilung_plan.md`, Sonar S6539) — Gear gehört dorthin, nicht nach `Character`. **Teil A umgesetzt (2026-10-04)**, offen: Teil B (Kommlinks/Matrix), C (Kapazität), D (Munition/Pfeile/Granaten/Sprengstoffe)
+2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/archiv/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung (GRW-Kern S. 284, zurückgestellt)
+3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/archiv/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
+4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
+5. **Waffen** ✅ Teil A (2026-09-28), Teil B (2026-09-30) und Teil C Zubehör (2026-10-04) umgesetzt (`docs/plaene/archiv/waffen_plan.md`)
+6. **Gear** ✅ Teile A–D umgesetzt (2026-10-04 bis 2026-10-08, `docs/plaene/archiv/gear_plan.md`): Grundgerüst, Kommlinks/Matrix, Kapazität/Einbauten, Munition/Pfeile/Granaten/Sprengstoffe. Offen: Kommlink-Aufrüstungen und Matrix-Upgrades, Lagerorte
+7. **Fahrzeuge & Drohnen** ✅ umgesetzt (2026-10-09, `docs/plaene/archiv/fahrzeuge_plan.md`): 37 GRW-Fahrzeuge, Riggeradapter, Waffenhalterungen, Ausrüstung im Fahrzeug. Offen: Zubehör an Fahrzeugwaffen, Matrix-Upgrades, Eigenname, Würfelpools/Fahrzeugkampf
 
 **Stufe 3 – Abgeleitete Werte & Gameplay**
 

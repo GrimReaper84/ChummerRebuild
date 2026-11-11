@@ -5,7 +5,7 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Katalogeintrag einer Komplexen Form aus {@code complexforms.xml} (GRW-Kern-Teilmenge, siehe {@code
- * docs/analysen/technomancer_analyse.md}). Reines Referenz-/Anzeigeobjekt ohne Berechnung und ohne
+ * docs/analysen/archiv/technomancer_analyse.md}). Reines Referenz-/Anzeigeobjekt ohne Berechnung und ohne
  * Rating — anders als bei Zaubern ist das Rating einer Komplexen Form Charakter-spezifisch, nicht Teil
  * des Katalogeintrags (siehe {@link ComplexForm}).
  */

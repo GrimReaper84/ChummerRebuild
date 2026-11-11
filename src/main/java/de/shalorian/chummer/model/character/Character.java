@@ -220,7 +220,7 @@ public class Character {
    * <p>Ein durch Behinderung reduzierter Wert fällt nicht unter {@value
    * #MIN_ENCUMBERED_ATTRIBUTE_VALUE}. Das GRW nennt dafür keine Untergrenze; die Grenze ist eine
    * vorläufige Nutzerentscheidung bis zu einem Beleg in weiteren Regelwerken (siehe {@code
-   * docs/plaene/nuyen_ruestung_plan.md} Abschnitt 13).
+   * docs/plaene/archiv/nuyen_ruestung_plan.md} Abschnitt 13).
    */
   public int getAugmentedAttributeValue(@NonNull AttributeType type) {
     int base = getAttribute(type).getValue();
@@ -312,7 +312,7 @@ public class Character {
   /**
    * Ob die Essenz während der Charaktererschaffung auf 0 oder darunter gefallen ist, was das GRW für
    * Startcharaktere nicht erlaubt. Wird bewusst nur als Warnung angezeigt, nicht als harte Sperre
-   * (konsistent mit der übrigen Validierung, siehe {@code docs/plaene/cyberware_plan.md} Abschnitt 13).
+   * (konsistent mit der übrigen Validierung, siehe {@code docs/plaene/archiv/cyberware_plan.md} Abschnitt 13).
    * Im Karrieremodus immer {@code false}.
    */
   public boolean isEssenceBelowCreationMinimum() {
@@ -361,7 +361,7 @@ public class Character {
    * #getEssencePenalty()}, nicht unter 0. Der investierte Wert ({@link SpecialAttribute#getValue()})
    * bleibt bewusst unverändert, weil sich BP-Kosten und Rückerstattung bei der Erstellung nach ihm
    * richten; die Essenz-Reduktion wird ausschließlich hier abgeleitet (keine Mutation von {@link
-   * SpecialAttribute}, siehe {@code docs/plaene/cyberware_plan.md} Abschnitt 13).
+   * SpecialAttribute}, siehe {@code docs/plaene/archiv/cyberware_plan.md} Abschnitt 13).
    *
    * @return wirksamer Wert, oder 0 wenn weder Magie noch Resonanz freigeschaltet sind
    */
@@ -442,6 +442,7 @@ public class Character {
    * über {@link #raiseGroup(String)} gesteigert werden) zählen dabei nicht mit, da für Gruppen
    * ein eigener Cap gilt. Im Karrieremodus gilt dieser Erstellungs-Cap nicht.
    */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: "eine andere Fertigkeit als diese"
   public boolean canRaiseSkillAtCreation(@NonNull Skill skill) {
     if (created) {
       return true;
@@ -943,6 +944,7 @@ public class Character {
    * Wissensfertigkeit auf Wert 6 oder maximal zwei auf Wert 5 (übrige max. 4). Die Muttersprache
    * ist von beiden Regeln ausgenommen. Im Karrieremodus gilt dieser Erstellungs-Cap nicht.
    */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: "eine andere Fertigkeit als diese"
   public boolean canRaiseKnowledgeSkillAtCreation(@NonNull KnowledgeSkill skill) {
     if (created || skill.isNativeLanguage()) {
       return true;

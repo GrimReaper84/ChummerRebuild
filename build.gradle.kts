@@ -16,7 +16,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -58,6 +58,8 @@ tasks.withType<JavaCompile>().configureEach {
     options.errorprone {
         option("NullAway:AnnotatedPackages", "de.shalorian.chummer")
         option("NullAway:ExcludedFieldAnnotations", "javafx.fxml.FXML")
+        // FXML-Handler ruft der FXMLLoader per Reflection auf.
+        option("UnusedMethod:ExemptingMethodAnnotations", "javafx.fxml.FXML")
         error("NullAway")
     }
 }

@@ -33,7 +33,7 @@ class CharacterSpellTest {
     c.addSpell(heilen());
 
     assertEquals(1, c.getSpells().size());
-    assertEquals("Heilen", c.getSpells().get(0).name());
+    assertEquals("Heilen", c.getSpells().getFirst().name());
   }
 
   @Test

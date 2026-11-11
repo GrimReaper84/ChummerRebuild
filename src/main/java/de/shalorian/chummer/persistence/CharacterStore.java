@@ -304,7 +304,7 @@ public class CharacterStore {
       }
       try {
         weapon.addArrows(arrows);
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException _) {
         // kein Bogen bzw. keine Pfeile: überspringen
       }
     }
@@ -347,27 +347,35 @@ public class CharacterStore {
         vehicle.installRiggerAdapter();
       }
       applyMounts(vehicle, entry.mounts);
-      List<Gear> included = vehicle.getIncludedGear();
-      for (int i = 0; i < Math.min(included.size(), entry.includedGear.size()); i++) {
-        Gear device = included.get(i);
-        GearEntry savedDevice = entry.includedGear.get(i);
-        if (!device.getName().equals(savedDevice.name)) {
-          continue;
-        }
-        for (GearEntry childEntry : savedDevice.installed) {
-          Gear child = toGear(childEntry);
-          if (child != null && device.installProblem(child.getData(), child.getRating()) == null) {
-            device.install(child);
-          }
-        }
-      }
-      for (GearEntry gearEntry : entry.gear) {
-        Gear gear = toGear(gearEntry);
-        if (gear != null && !gear.getData().category().isInstalledOnly()) {
-          vehicle.addGear(gear);
-        }
-      }
+      applyIncludedGear(vehicle, entry.includedGear);
+      applyVehicleGear(vehicle, entry.gear);
       character.getEquipment().addVehicle(vehicle);
+    }
+  }
+
+  /**
+   * Stellt die Einbauten der mitgelieferten Geräte positionsweise wieder her; ein Eintrag, dessen Name
+   * nicht zum Katalog-Gerät an derselben Position passt, wird übersprungen.
+   */
+  private static void applyIncludedGear(@NonNull Vehicle vehicle,
+      @NonNull List<GearEntry> entries) {
+    List<Gear> included = vehicle.getIncludedGear();
+    for (int i = 0; i < Math.min(included.size(), entries.size()); i++) {
+      Gear device = included.get(i);
+      GearEntry savedDevice = entries.get(i);
+      if (device.getName().equals(savedDevice.name)) {
+        installChildren(device, savedDevice.installed);
+      }
+    }
+  }
+
+  /** Stellt die ins Fahrzeug gekaufte Ausrüstung wieder her; reine Einbauten werden übersprungen. */
+  private static void applyVehicleGear(@NonNull Vehicle vehicle, @NonNull List<GearEntry> entries) {
+    for (GearEntry gearEntry : entries) {
+      Gear gear = toGear(gearEntry);
+      if (gear != null && !gear.getData().category().isInstalledOnly()) {
+        vehicle.addGear(gear);
+      }
     }
   }
 
@@ -406,16 +414,21 @@ public class CharacterStore {
     Gear gear;
     try {
       gear = new Gear(gearData, entry.rating, entry.quantity, entry.extra, entry.packPrice);
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException _) {
       return null;
     }
-    for (GearEntry childEntry : entry.installed) {
+    installChildren(gear, entry.installed);
+    return gear;
+  }
+
+  /** Baut die gespeicherten Einbauten in {@code target} ein; unpassende werden übersprungen. */
+  private static void installChildren(@NonNull Gear target, @NonNull List<GearEntry> entries) {
+    for (GearEntry childEntry : entries) {
       Gear child = toGear(childEntry);
-      if (child != null && gear.installProblem(child.getData(), child.getRating()) == null) {
-        gear.install(child);
+      if (child != null && target.installProblem(child.getData(), child.getRating()) == null) {
+        target.install(child);
       }
     }
-    return gear;
   }
 
   private static void applyAccessory(@NonNull Weapon weapon, @NonNull AccessoryEntry entry) {
@@ -426,7 +439,7 @@ public class CharacterStore {
     try {
       Mount mount = entry.mount == null ? null : Mount.valueOf(entry.mount);
       weapon.addAccessory(new WeaponAccessory(accessoryData, mount));
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException _) {
       // unbekannte Halterung oder Teil passt nicht: überspringen
     }
   }
@@ -531,8 +544,7 @@ public class CharacterStore {
   private static void applyContacts(@NonNull Character character, @NonNull CharacterData data) {
     for (ContactEntry entry : data.contacts) {
       character.addContact(entry.name, entry.description);
-      List<Contact> contacts = character.getContacts();
-      Contact added = contacts.get(contacts.size() - 1);
+      Contact added = character.getContacts().getLast();
       added.setConnection(entry.connection);
       added.setLoyalty(entry.loyalty);
     }

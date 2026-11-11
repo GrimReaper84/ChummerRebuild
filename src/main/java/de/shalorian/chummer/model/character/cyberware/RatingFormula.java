@@ -9,7 +9,7 @@ import org.jspecify.annotations.NonNull;
  * Wertet die Formel-Felder der Cyberware-/Bioware-Kataloge (Essenzkosten, Preis) für eine konkrete
  * Stufe aus. Im C#-Original wurden diese Ausdrücke per XPath berechnet; der Java-Rebuild braucht nur
  * die in den GRW-Tabellen tatsächlich vorkommenden, linearen Muster (siehe {@code
- * docs/analysen/cyberware_analyse.md}, Regel "Essenzkosten-Formel pro Item").
+ * docs/analysen/archiv/cyberware_analyse.md}, Regel "Essenzkosten-Formel pro Item").
  *
  * <p>Unterstützte Ausdrücke (Leerzeichen beliebig, Dezimaltrenner {@code .}):
  * <ul>
@@ -23,7 +23,7 @@ import org.jspecify.annotations.NonNull;
  * Jeder andere Ausdruck führt zu einer {@link IllegalArgumentException} statt eines stillen
  * Fallbacks — ein unbekanntes Muster ist ein Datenfehler im Katalog und soll früh auffallen. Komplexere
  * Formeln des C#-Originals ({@code FixedValues(...)}, verschachtelte Ausdrücke) werden bewusst nicht
- * unterstützt, siehe {@code docs/plaene/cyberware_plan.md} Abschnitt 13 (akzeptiertes Risiko).
+ * unterstützt, siehe {@code docs/plaene/archiv/cyberware_plan.md} Abschnitt 13 (akzeptiertes Risiko).
  */
 public final class RatingFormula {
 

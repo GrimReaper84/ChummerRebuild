@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
@@ -22,10 +22,10 @@ import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import de.shalorian.chummer.view.dialog.AccessorySelectDialogController;
-import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
-import de.shalorian.chummer.view.grid.GridSupport;
+import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import de.shalorian.chummer.view.dialog.WeaponSelectDialogController;
+import de.shalorian.chummer.view.grid.GridSupport;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
@@ -55,7 +55,7 @@ import org.tbee.javafx.scene.layout.MigPane;
  * (mitgeliefertes zuerst, wie "Part of base Weapon" im Original), rechts ein Detailbereich mit allen
  * Werten des gewählten Knotens. Abweichend vom Original ist der Baum nach Waffenkategorie gruppiert
  * (statt nach Waffenorten), und es gibt keinen Würfelpool (Roadmap Stufe 3); siehe {@code
- * docs/plaene/waffen_detailansicht_plan.md}.
+ * docs/plaene/archiv/waffen_detailansicht_plan.md}.
  *
  * <p>Nach Kauf/Entfernen wird der Tab neu aufgebaut. Schaden, Reichweiten und Fertigkeitswert hängen an
  * Stärke und Fertigkeiten; {@link #refresh()} baut deshalb nur den Detailbereich der aktuellen Auswahl
@@ -68,10 +68,10 @@ final class WeaponTabBuilder {
       {"Kurz (±0)", "Mittel (−1)", "Weit (−3)", "Extrem (−6)"};
 
   private final @NonNull VBox container;
-  private final @NonNull StreetGearHost host;
+  private final @NonNull CharacterTabHost host;
   private @Nullable Runnable detailRefresher;
 
-  WeaponTabBuilder(@NonNull VBox container, @NonNull StreetGearHost host) {
+  WeaponTabBuilder(@NonNull VBox container, @NonNull CharacterTabHost host) {
     this.container = container;
     this.host = host;
   }
@@ -102,7 +102,7 @@ final class WeaponTabBuilder {
     VBox details = new VBox(12);
     details.setPadding(new Insets(0, 0, 0, 16));
     Runnable showSelected = () -> showDetails(details, selectedEntry(tree), character);
-    tree.getSelectionModel().selectedItemProperty().addListener((obs, old, now) -> showSelected.run());
+    tree.getSelectionModel().selectedItemProperty().addListener((_, _, _) -> showSelected.run());
     detailRefresher = showSelected;
 
     TreeItem<WeaponTreeEntry> toSelect =
@@ -131,6 +131,7 @@ final class WeaponTabBuilder {
    *
    * @return der Knoten der gewünschten Auswahl, oder {@code null}
    */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: dieselbe Instanz wie die Auswahl
   private static @Nullable TreeItem<WeaponTreeEntry> fillTree(@NonNull TreeView<WeaponTreeEntry> tree,
       @NonNull Character character, @Nullable Weapon selectedWeapon,
       @Nullable Object selectedChild) {
@@ -205,7 +206,7 @@ final class WeaponTabBuilder {
     Button addBtn = new Button("Waffe hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(addBtn, FontAwesomeSolid.PLUS);
-    addBtn.setOnAction(e -> onAddWeapon(character));
+    addBtn.setOnAction(_ -> onAddWeapon(character));
 
     Button addAccessoryBtn = new Button("Zubehör zur ausgewählten Waffe hinzufügen");
     addAccessoryBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -215,7 +216,7 @@ final class WeaponTabBuilder {
       Weapon weapon = selectedWeapon(tree);
       return weapon == null || !weapon.getData().category().acceptsAccessories();
     }, tree.getSelectionModel().selectedItemProperty()));
-    addAccessoryBtn.setOnAction(e -> onAddAccessory(character, tree));
+    addAccessoryBtn.setOnAction(_ -> onAddAccessory(character, tree));
 
     Button addArrowsBtn = new Button("Pfeile zum ausgewählten Bogen hinzufügen");
     addArrowsBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -224,7 +225,7 @@ final class WeaponTabBuilder {
       Weapon weapon = selectedWeapon(tree);
       return weapon == null || !weapon.takesArrows();
     }, tree.getSelectionModel().selectedItemProperty()));
-    addArrowsBtn.setOnAction(e -> onAddArrows(character, tree));
+    addArrowsBtn.setOnAction(_ -> onAddArrows(character, tree));
 
     Button removeBtn = new Button("Ausgewählte Waffe, Zubehör bzw. Pfeile entfernen");
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -242,7 +243,7 @@ final class WeaponTabBuilder {
       }
       return !entry.isWeapon() && entry.arrows() == null;
     }, tree.getSelectionModel().selectedItemProperty()));
-    removeBtn.setOnAction(e -> onRemoveSelected(character, tree));
+    removeBtn.setOnAction(_ -> onRemoveSelected(character, tree));
 
     HBox toolbar = new HBox(8);
     toolbar.setAlignment(Pos.CENTER_LEFT);
@@ -429,22 +430,22 @@ final class WeaponTabBuilder {
 
   private void onAddWeapon(@NonNull Character character) {
     try {
-      DialogHandle dialog = host.openDialog("WeaponSelectDialog.fxml", "Waffe hinzufügen");
+      DialogHandle dialog = host.services().openDialog("WeaponSelectDialog.fxml", "Waffe hinzufügen");
       WeaponSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
       ctrl.setCharacter(character);
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(weapon -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + weapon.getDisplayName(), weapon.getNuyenCost())) {
           return;
         }
         character.getEquipment().addWeapon(weapon);
         onWeaponsChanged(character, weapon, null);
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 
@@ -455,7 +456,7 @@ final class WeaponTabBuilder {
       return;
     }
     try {
-      DialogHandle dialog = host.openDialog("AccessorySelectDialog.fxml",
+      DialogHandle dialog = host.services().openDialog("AccessorySelectDialog.fxml",
           "Zubehör für " + weapon.getDisplayName());
       AccessorySelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
@@ -463,7 +464,7 @@ final class WeaponTabBuilder {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(accessory -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + accessory.getName() + " für " + weapon.getDisplayName(),
             weapon.getAccessoryNuyenCost(accessory.data()))) {
           return;
@@ -471,8 +472,8 @@ final class WeaponTabBuilder {
         weapon.addAccessory(accessory);
         onWeaponsChanged(character, weapon, accessory);
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 
@@ -486,7 +487,7 @@ final class WeaponTabBuilder {
       return;
     }
     try {
-      DialogHandle dialog = host.openDialog("GearSelectDialog.fxml",
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml",
           "Pfeile für " + weapon.getDisplayName());
       GearSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
@@ -494,15 +495,15 @@ final class WeaponTabBuilder {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(arrows -> {
-        if (character.isCreated() && host.nuyenChargeFailed(character,
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + arrows.getDisplayName() + " für " + weapon.getDisplayName(),
             arrows.getNuyenCost())) {
           return;
         }
         onWeaponsChanged(character, weapon, weapon.addArrows(arrows));
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 

@@ -50,10 +50,10 @@ public class ComplexFormDataLoader {
 
       for (int i = 0; i < nodes.getLength(); i++) {
         Node node = nodes.item(i);
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
+        if (!(node instanceof Element element)) {
           continue;
         }
-        ComplexFormData data = parseComplexForm((Element) node);
+        ComplexFormData data = parseComplexForm(element);
         map.put(data.name(), data);
       }
       return map;

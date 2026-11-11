@@ -56,7 +56,7 @@ class CharacterStoreVehicleRoundtripTest {
     original.getEquipment().addVehicle(comet);
 
     Vehicle doberman = vehicle("GM-Nissan Doberman (Mittel)");
-    doberman.mountWeapon(doberman.getMounts().get(0), weapon("Ares Antioch-2"));
+    doberman.mountWeapon(doberman.getMounts().getFirst(), weapon("Ares Antioch-2"));
     original.getEquipment().addVehicle(doberman);
 
     CharacterStore.save(original, tempFile());
@@ -64,21 +64,21 @@ class CharacterStoreVehicleRoundtripTest {
 
     List<Vehicle> vehicles = loaded.getEquipment().getVehicles();
     assertEquals(2, vehicles.size());
-    Vehicle loadedComet = vehicles.get(0);
+    Vehicle loadedComet = vehicles.getFirst();
     assertTrue(loadedComet.isRiggerAdapterPurchased());
     List<WeaponMount> mounts = loadedComet.getMounts();
     assertEquals(2, mounts.size());
-    assertEquals("Ingram White Knight", Objects.requireNonNull(mounts.get(0).getWeapon()).getName());
+    assertEquals("Ingram White Knight", Objects.requireNonNull(mounts.getFirst().getWeapon()).getName());
     assertNull(mounts.get(1).getWeapon());
     assertEquals(1, loadedComet.getGear().size());
-    assertEquals(3, loadedComet.getGear().get(0).getRating());
+    assertEquals(3, loadedComet.getGear().getFirst().getRating());
     assertEquals(1, Objects.requireNonNull(loadedComet.getSensorPackage()).getInstalled().size());
 
     Vehicle loadedDoberman = vehicles.get(1);
     assertEquals(1, loadedDoberman.getMounts().size());
-    assertTrue(loadedDoberman.getMounts().get(0).isIncluded());
+    assertTrue(loadedDoberman.getMounts().getFirst().isIncluded());
     assertEquals("Ares Antioch-2",
-        Objects.requireNonNull(loadedDoberman.getMounts().get(0).getWeapon()).getName());
+        Objects.requireNonNull(loadedDoberman.getMounts().getFirst().getWeapon()).getName());
     assertEquals(3, loadedDoberman.getIncludedGear().size());
 
     assertEquals(original.getEquipment().getVehicleNuyenCost(),
@@ -100,9 +100,9 @@ class CharacterStoreVehicleRoundtripTest {
 
     List<Vehicle> vehicles = loaded.getEquipment().getVehicles();
     assertEquals(1, vehicles.size());
-    Vehicle lynx = vehicles.get(0);
+    Vehicle lynx = vehicles.getFirst();
     assertFalse(lynx.isRiggerAdapterPurchased()); // Drohne: mitgeliefert, kein Kauf
     assertEquals(1, lynx.getMounts().size());     // Rumpf 4: keine zweite Halterung
-    assertNull(lynx.getMounts().get(0).getWeapon()); // Sturmkanone passt nicht
+    assertNull(lynx.getMounts().getFirst().getWeapon()); // Sturmkanone passt nicht
   }
 }

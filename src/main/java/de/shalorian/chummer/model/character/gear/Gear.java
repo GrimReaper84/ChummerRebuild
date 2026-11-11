@@ -253,7 +253,7 @@ public class Gear {
     if (data.category() != GearCategory.COMMLINKS) {
       return null;
     }
-    return CommlinkStats.of(data, installed.isEmpty() ? null : installed.get(0).data);
+    return CommlinkStats.of(data, installed.isEmpty() ? null : installed.getFirst().data);
   }
 
   // --- Verfügbarkeit ---

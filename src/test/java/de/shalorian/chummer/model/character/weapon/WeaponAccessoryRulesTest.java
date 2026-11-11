@@ -116,7 +116,7 @@ class WeaponAccessoryRulesTest {
 
     Weapon uzi = weapon("Uzi IV");
     mount(uzi, "Gasventilsystem 2", Mount.BARREL);
-    WeaponAccessory gasVent = uzi.getAccessories().get(0);
+    WeaponAccessory gasVent = uzi.getAccessories().getFirst();
     assertThrows(IllegalStateException.class, () -> uzi.removeAccessory(gasVent));
   }
 

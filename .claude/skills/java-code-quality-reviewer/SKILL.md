@@ -41,8 +41,10 @@ frischem Kontext (siehe Projektregeln Abschnitt 2). Dann gilt zusätzlich:
 - **Nur belegbare Befunde:** konkrete Stelle (`Datei:Zeile`), konkreter Grund. Keine
   Clean-Code-Floskeln.
 - **Wenige gute statt viele kleine:** höchstens 10 priorisierte Befunde, Kleinkram gebündelt am Ende.
-- **Keine pauschale Modernisierung.** Streams, Records, `Optional` oder neue Interfaces nur vorschlagen,
-  wenn sie im konkreten Fall Lesbarkeit, Fehlerrobustheit oder Testbarkeit verbessern.
+- **Sprachlevel Java 25.** Code soll generell auf das Sprachlevel von Java 25 ausgelegt sein; ältere Formen,
+  für die es eine aktuelle Entsprechung gibt (Projektregeln Abschnitt 6, „Moderne Java-Idiome“), sind ein
+  Befund. Wird die Java-Version des Projekts angehoben, diesen Punkt und die Regel in Abschnitt 6 mit
+  anpassen.
 - **Kein Code ändern.** Kurze illustrierende Schnipsel sind erlaubt, wenn sie klar als Beispiel
   markiert sind.
 

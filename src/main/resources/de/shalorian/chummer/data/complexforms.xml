@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Komplexen-Formen (Kategorien "Standard" und
-  "Hacking", direkt gegen docs/rulebooks/Grundregelwerk_SR4_ocr.txt verifiziert, Kapitel
+  "Hacking", direkt gegen docs/rulebooks/grundregelwerk.txt verifiziert, Kapitel
   STANDARDPROGRAMME/HACKING-PROGRAMME S. ca. 266-270). Komplexe Formen werden laut GRW nach den
   Programmen benannt, deren Funktion sie nachbilden ("Der Einfachheit halber werden Komplexe Formen
   nach den Programmen benannt, deren Funktion sie nachbilden"). Die Kategorien "Skillsofts"/"ARE
   Programs"/"Autosoft" aus dem C#-Original sind bewusst nicht Teil dieser Version (siehe
-  docs/analysen/technomancer_analyse.md). Biofeedback-Filter ist laut GRW explizit NICHT als Komplexe
+  docs/analysen/archiv/technomancer_analyse.md). Biofeedback-Filter ist laut GRW explizit NICHT als Komplexe
   Form wählbar (Technomancer besitzen sie angeboren als Teil der Lebenden Persona) und daher hier
   ausgelassen.
 -->

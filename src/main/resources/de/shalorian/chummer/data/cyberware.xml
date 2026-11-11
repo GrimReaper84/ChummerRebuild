@@ -8,7 +8,7 @@
   in der Charakter-Instanz eingerechnet (siehe CyberwareGrade). Formelfelder verwenden die
   RatingFormula-Syntax ("Rating * X", Dezimalpunkt statt Komma).
 
-  Bewusst NICHT enthalten (siehe docs/plaene/cyberware_plan.md Abschnitt 13):
+  Bewusst NICHT enthalten (siehe docs/plaene/archiv/cyberware_plan.md Abschnitt 13):
   - Cybergliedmaßen, Cyberglied-Verbesserungen/-Zubehör, Cyberimplantatwaffen (Kernmechanik
     Attributersatz bzw. Kapazität/Waffen-Integration ist zurückgestellt)
   - Einträge mit Kapazitäts-Basissystem (Cyberaugen/Cyberohren) und Einträge mit nicht-linearer

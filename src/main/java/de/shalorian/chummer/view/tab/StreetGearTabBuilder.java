@@ -1,4 +1,4 @@
-package de.shalorian.chummer.view;
+package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
@@ -50,22 +50,21 @@ import org.tbee.javafx.scene.layout.MigPane;
  * Waffen-Unter-Tab baut {@link WeaponTabBuilder}, den Ausrüstungs-Unter-Tab {@link GearTabBuilder}).
  * Die Unter-Tabs werden bei jeder Änderung komplett neu aufgebaut; die Rüstungs-Kopfzeile
  * (Konstitution) und die Waffenwerte (Stärke, Fertigkeiten) hängen zusätzlich am Charakter und werden
- * deshalb über {@link #refresh()} beim Refresh des {@link CharacterViewController} nachgezogen. Alles
- * außerhalb dieses Tabs erreicht der Builder ausschließlich über den {@link StreetGearHost}.
+ * deshalb über {@link #refresh()} beim Refresh des {@code CharacterViewController} nachgezogen. Alles
+ * außerhalb dieses Tabs erreicht der Builder ausschließlich über den {@link CharacterTabHost}.
  */
-final class StreetGearTabBuilder {
+public final class StreetGearTabBuilder {
 
-  private static final String NUYEN_SUFFIX = " ¥";
 
   private final @NonNull VBox lifestyleContainer;
   private final @NonNull VBox armorContainer;
-  private final @NonNull StreetGearHost host;
+  private final @NonNull CharacterTabHost host;
   private final @NonNull WeaponTabBuilder weaponTab;
   private final @NonNull GearTabBuilder gearTab;
   private final @NonNull List<Runnable> armorRefreshers = new ArrayList<>();
 
-  StreetGearTabBuilder(@NonNull VBox lifestyleContainer, @NonNull VBox armorContainer,
-      @NonNull VBox weaponContainer, @NonNull VBox gearContainer, @NonNull StreetGearHost host) {
+  public StreetGearTabBuilder(@NonNull VBox lifestyleContainer, @NonNull VBox armorContainer,
+      @NonNull VBox weaponContainer, @NonNull VBox gearContainer, @NonNull CharacterTabHost host) {
     this.lifestyleContainer = lifestyleContainer;
     this.armorContainer = armorContainer;
     this.host = host;
@@ -74,7 +73,7 @@ final class StreetGearTabBuilder {
   }
 
   /** Baut alle Unter-Tabs für {@code character} neu auf. */
-  void build(@NonNull Character character) {
+  public void build(@NonNull Character character) {
     buildLifestyleTab(character);
     buildArmorTab(character);
     weaponTab.build(character);
@@ -85,7 +84,7 @@ final class StreetGearTabBuilder {
    * Zieht die von Attributen und Fertigkeiten abhängigen Anzeigen nach: Schutz/Behinderung der Rüstung
    * sowie der Detailbereich der gewählten Waffe (Schaden, Reichweiten, Fertigkeitswert).
    */
-  void refresh() {
+  public void refresh() {
     armorRefreshers.forEach(Runnable::run);
     weaponTab.refresh();
   }
@@ -123,7 +122,7 @@ final class StreetGearTabBuilder {
     addLifestyleRow(grid, 1, "Monate im Voraus:", buildLifestyleMonthsStepper(character));
     addLifestyleCostRows(grid, 2, lifestyle);
     addLifestyleRow(grid, 4, "Startkapital-Wurf:", new Label(
-        level.getDice() + "W6 × " + level.getMultiplier() + NUYEN_SUFFIX));
+        level.getDice() + "W6 × " + SpendCurrency.NUYEN.formatAmount(level.getMultiplier())));
     addLifestyleHint("Die Stufe bestimmt beim Abschluss den Startkapital-Wurf; nicht ausgegebene "
         + "Ressourcen verfallen (GRW S. 114).");
   }
@@ -137,9 +136,9 @@ final class StreetGearTabBuilder {
 
   private void addLifestyleCostRows(@NonNull MigPane grid, int row, @NonNull Lifestyle lifestyle) {
     addLifestyleRow(grid, row, "Monatskosten:",
-        new Label(lifestyle.getLevel().getMonthlyCost() + NUYEN_SUFFIX));
+        new Label(SpendCurrency.NUYEN.formatAmount(lifestyle.getLevel().getMonthlyCost())));
     addLifestyleRow(grid, row + 1, "Gesamtkosten:",
-        new Label(lifestyle.getNuyenCost() + NUYEN_SUFFIX));
+        new Label(SpendCurrency.NUYEN.formatAmount(lifestyle.getNuyenCost())));
   }
 
   private @NonNull ComboBox<LifestyleLevel> buildLifestyleLevelBox(@NonNull Character character) {
@@ -148,7 +147,7 @@ final class StreetGearTabBuilder {
     levelBox.getItems().setAll(LifestyleLevel.values());
     levelBox.setConverter(new LifestyleLevelStringConverter());
     levelBox.setValue(lifestyle.getLevel());
-    levelBox.valueProperty().addListener((obs, old, val) -> {
+    levelBox.valueProperty().addListener((_, _, val) -> {
       if (val != null) {
         lifestyle.setLevel(val);
         onLifestyleChanged(character);
@@ -167,13 +166,13 @@ final class StreetGearTabBuilder {
     plus.getStyleClass().add(STYLE_ATTR_BTN);
     // Der Tab wird nach jeder Änderung neu aufgebaut, daher bleibt dieser Zustand aktuell.
     minus.setDisable(lifestyle.getMonths() <= Lifestyle.MIN_MONTHS);
-    minus.setOnAction(e -> {
+    minus.setOnAction(_ -> {
       if (lifestyle.getMonths() > Lifestyle.MIN_MONTHS) {
         lifestyle.setMonths(lifestyle.getMonths() - 1);
         onLifestyleChanged(character);
       }
     });
-    plus.setOnAction(e -> {
+    plus.setOnAction(_ -> {
       lifestyle.setMonths(lifestyle.getMonths() + 1);
       onLifestyleChanged(character);
     });
@@ -238,7 +237,8 @@ final class StreetGearTabBuilder {
     Label encumbranceLabel = new Label();
     encumbranceLabel.getStyleClass().add(STYLE_BP_LABEL);
     Label costLabel =
-        new Label("Kosten: " + character.getEquipment().getArmorNuyenCost() + NUYEN_SUFFIX);
+        new Label("Kosten: "
+            + SpendCurrency.NUYEN.formatAmount(character.getEquipment().getArmorNuyenCost()));
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     Runnable refreshSummary = () -> {
@@ -265,11 +265,11 @@ final class StreetGearTabBuilder {
 
   private @NonNull HBox buildArmorToolbar(@NonNull Character character) {
     Button addBtn = toolbarButton("Rüstung hinzufügen", FontAwesomeSolid.PLUS);
-    addBtn.setOnAction(e -> onAddArmor(character));
+    addBtn.setOnAction(_ -> onAddArmor(character));
     Button equipAllBtn = toolbarButton("Alle anlegen", FontAwesomeSolid.CHECK_DOUBLE);
-    equipAllBtn.setOnAction(e -> onSetAllArmorEquipped(character, true));
+    equipAllBtn.setOnAction(_ -> onSetAllArmorEquipped(character, true));
     Button unequipAllBtn = toolbarButton("Alle ablegen", FontAwesomeSolid.SQUARE);
-    unequipAllBtn.setOnAction(e -> onSetAllArmorEquipped(character, false));
+    unequipAllBtn.setOnAction(_ -> onSetAllArmorEquipped(character, false));
 
     HBox toolbar = new HBox(8);
     toolbar.setAlignment(Pos.CENTER_LEFT);
@@ -308,7 +308,7 @@ final class StreetGearTabBuilder {
     Label categoryLabel = new Label(data.category().getDisplayName());
     Label protectionLabel = new Label(data.protectionText());
     Label availabilityLabel = new Label(data.availabilityText());
-    Label priceLabel = new Label(piece.getNuyenCost() + NUYEN_SUFFIX);
+    Label priceLabel = new Label(SpendCurrency.NUYEN.formatAmount(piece.getNuyenCost()));
     Label sourceLabel = new Label(data.source() + " S. " + data.page());
     CheckBox equippedBox = new CheckBox();
     Button removeBtn = new Button("Entfernen");
@@ -323,11 +323,11 @@ final class StreetGearTabBuilder {
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
     equippedBox.setSelected(piece.isEquipped());
-    equippedBox.setOnAction(e -> {
+    equippedBox.setOnAction(_ -> {
       piece.setEquipped(equippedBox.isSelected());
       onArmorChanged(character);
     });
-    removeBtn.setOnAction(e -> {
+    removeBtn.setOnAction(_ -> {
       character.getEquipment().removeArmor(piece);
       onArmorChanged(character);
     });
@@ -342,7 +342,7 @@ final class StreetGearTabBuilder {
    */
   private void onAddArmor(@NonNull Character character) {
     try {
-      DialogHandle dialog = host.openDialog("ArmorSelectDialog.fxml", "Rüstung hinzufügen");
+      DialogHandle dialog = host.services().openDialog("ArmorSelectDialog.fxml", "Rüstung hinzufügen");
       ArmorSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
       ctrl.setCharacter(character);
@@ -350,14 +350,14 @@ final class StreetGearTabBuilder {
 
       ctrl.getResult().ifPresent(data -> {
         if (character.isCreated()
-            && host.nuyenChargeFailed(character, "Kauf: " + data.name(), data.cost())) {
+            && host.services().nuyenChargeFailed(character, "Kauf: " + data.name(), data.cost())) {
           return;
         }
         character.getEquipment().addArmor(new Armor(data));
         onArmorChanged(character);
       });
-    } catch (IOException e) {
-      host.showDialogLoadError();
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
     }
   }
 

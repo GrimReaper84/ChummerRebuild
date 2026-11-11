@@ -11,7 +11,7 @@ import org.jspecify.annotations.NonNull;
  * zu steigern": 2 Karma für eine neue Komplexe Form, Karma in Höhe der neuen Stufe für jede weitere
  * Steigerung) — eigene Konstanten statt Wiederverwendung von {@code Character}s
  * Wissensfertigkeiten-Konstanten, um eine versehentliche Kopplung zwischen beiden Feature-Bereichen zu
- * vermeiden, siehe {@code docs/plaene/technomancer_plan.md} Abschnitt 13.
+ * vermeiden, siehe {@code docs/plaene/archiv/technomancer_plan.md} Abschnitt 13.
  */
 public class ComplexForm {
 
@@ -58,7 +58,8 @@ public class ComplexForm {
   /**
    * Karma-Kosten, um von {@code currentRating} auf {@code currentRating + 1} zu steigern (bzw. um die
    * Komplexe Form neu zu erlernen, wenn {@code currentRating == 0}). Entspricht exakt {@link
-   * Character#getKnowledgeSkillKarmaCost(KnowledgeSkill)}, siehe Klassen-Javadoc.
+   * de.shalorian.chummer.model.character.Character#getKnowledgeSkillKarmaCost}, siehe
+   * Klassen-Javadoc.
    */
   public int getKarmaCost(int currentRating) {
     return currentRating == 0 ? KARMA_NEW : (currentRating + 1) * KARMA_PER_RATING;

@@ -41,7 +41,7 @@ class CharacterSpecializationKarmaCostTest {
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
 
         // Zum Vergleich: die reguläre Rating-Karma-Kosten-Methode verdoppelt hier tatsächlich.
-        assertEquals(4, c.getKnowledgeSkillKarmaCost(c.getKnowledgeSkills().get(0)));
+        assertEquals(4, c.getKnowledgeSkillKarmaCost(c.getKnowledgeSkills().getFirst()));
         // Die Spezialisierungskosten bleiben davon unberührt.
         assertEquals(2, c.getSpecializationKarmaCost());
     }

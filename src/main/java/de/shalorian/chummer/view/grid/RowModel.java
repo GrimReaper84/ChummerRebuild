@@ -3,8 +3,8 @@ package de.shalorian.chummer.view.grid;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Zugriff auf einen einzelnen erhöh-/senkbaren Wert (Attribut, Skillgruppen-Rating oder Skill-Rating), den {@link CharacterViewController#wireIncrementable} unabhängig
- * vom fachlichen Hintergrund verdrahten kann.
+ * Zugriff auf einen einzelnen erhöh-/senkbaren Wert (Attribut, Skillgruppen-Rating oder Skill-Rating), den
+ * {@link de.shalorian.chummer.view.tab.IncrementWiring#wire} unabhängig vom fachlichen Hintergrund verdrahten kann.
  */
 public interface RowModel {
 

@@ -44,8 +44,8 @@ class CharacterStoreGearRoundtripTest {
 
     List<Gear> gear = loaded.getEquipment().getGear();
     assertEquals(4, gear.size());
-    assertEquals(4, gear.get(0).getRating());
-    assertNull(gear.get(0).getChosenPackPrice());
+    assertEquals(4, gear.getFirst().getRating());
+    assertNull(gear.getFirst().getChosenPackPrice());
     assertEquals(40, gear.get(1).getQuantity());
     assertEquals("Jagdlizenz", gear.get(2).getExtra());
     assertEquals(3, gear.get(2).getRating());
@@ -65,9 +65,9 @@ class CharacterStoreGearRoundtripTest {
     List<Gear> gear = CharacterStore.load(tempFile()).getEquipment().getGear();
 
     assertEquals(2, gear.size());
-    assertEquals("Mangadyne Deva", gear.get(0).getInstalled().get(0).getName());
+    assertEquals("Mangadyne Deva", gear.getFirst().getInstalled().getFirst().getName());
     assertTrue(gear.get(1).getInstalled().isEmpty());
-    assertEquals(1_800, gear.get(0).getNuyenCost());
+    assertEquals(1_800, gear.getFirst().getNuyenCost());
   }
 
   @Test
@@ -85,8 +85,8 @@ class CharacterStoreGearRoundtripTest {
     List<Gear> gear = CharacterStore.load(tempFile()).getEquipment().getGear();
 
     assertEquals(1, gear.size());
-    assertEquals(1, gear.get(0).getInstalled().size());
-    assertEquals("Vector Xim", gear.get(0).getInstalled().get(0).getName());
+    assertEquals(1, gear.getFirst().getInstalled().size());
+    assertEquals("Vector Xim", gear.getFirst().getInstalled().getFirst().getName());
   }
 
   @Test
@@ -100,8 +100,8 @@ class CharacterStoreGearRoundtripTest {
 
     List<Gear> gear = CharacterStore.load(tempFile()).getEquipment().getGear();
 
-    assertEquals(1, gear.get(0).getInstalled().size());
-    assertEquals("Infrarot", gear.get(0).getInstalled().get(0).getName());
+    assertEquals(1, gear.getFirst().getInstalled().size());
+    assertEquals("Infrarot", gear.getFirst().getInstalled().getFirst().getName());
   }
 
   @Test
@@ -127,7 +127,7 @@ class CharacterStoreGearRoundtripTest {
     List<Gear> gear = CharacterStore.load(tempFile()).getEquipment().getGear();
 
     assertEquals(1, gear.size());
-    assertEquals("Survival-Kit", gear.get(0).getName());
-    assertEquals(2, gear.get(0).getQuantity());
+    assertEquals("Survival-Kit", gear.getFirst().getName());
+    assertEquals(2, gear.getFirst().getQuantity());
   }
 }

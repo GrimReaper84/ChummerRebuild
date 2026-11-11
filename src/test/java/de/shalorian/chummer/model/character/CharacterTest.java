@@ -143,10 +143,10 @@ class CharacterTest {
     @Test
     void karmaAndNuyenTotalSumAllEntries() {
         Character c = mensch("Test");
-        c.addKarmaEntry(new LogEntry("Missionserfolg", 10, java.time.LocalDate.now()));
-        c.addKarmaEntry(new LogEntry("Attribut erhöht", -5, java.time.LocalDate.now()));
-        c.addNuyenEntry(new LogEntry("Startkapital", 6000, java.time.LocalDate.now()));
-        c.addNuyenEntry(new LogEntry("Ausrüstung", -2000, java.time.LocalDate.now()));
+        c.addKarmaEntry(new LogEntry("Missionserfolg", 10, java.time.LocalDate.of(2026, 1, 1)));
+        c.addKarmaEntry(new LogEntry("Attribut erhöht", -5, java.time.LocalDate.of(2026, 1, 1)));
+        c.addNuyenEntry(new LogEntry("Startkapital", 6000, java.time.LocalDate.of(2026, 1, 1)));
+        c.addNuyenEntry(new LogEntry("Ausrüstung", -2000, java.time.LocalDate.of(2026, 1, 1)));
         assertEquals(5, c.getKarmaTotal());
         assertEquals(4000, c.getNuyenTotal());
     }

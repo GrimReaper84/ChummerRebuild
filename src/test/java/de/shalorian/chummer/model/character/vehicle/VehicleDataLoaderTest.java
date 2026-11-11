@@ -1,11 +1,11 @@
 package de.shalorian.chummer.model.character.vehicle;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 class VehicleDataLoaderTest {
@@ -68,7 +68,7 @@ class VehicleDataLoaderTest {
   void matchesGrwVehicleTableExactly() {
     List<String> actual = VehicleDataLoader.getAllVehicles().values().stream()
         .map(VehicleDataLoaderTest::row)
-        .collect(Collectors.toList());
+        .toList();
     assertEquals(GRW_TABLE, actual);
   }
 
@@ -84,7 +84,7 @@ class VehicleDataLoaderTest {
   @Test
   void everyVehicleComesWithItsSensorPackageFirst() {
     for (VehicleData data : VehicleDataLoader.getAllVehicles().values()) {
-      String pack = data.includedGear().get(0).name();
+      String pack = data.includedGear().getFirst().name();
       assertTrue(pack.startsWith("Sensorpaket ("), data.name());
     }
     assertEquals("Sensorpaket (Fahrzeug)", firstGear("Mercury Comet (Mittelklassewagen)"));
@@ -96,7 +96,7 @@ class VehicleDataLoaderTest {
   }
 
   private static String firstGear(String vehicle) {
-    return find(vehicle).includedGear().get(0).name();
+    return find(vehicle).includedGear().getFirst().name();
   }
 
   /** Mitgelieferte Ausstattung laut Fahrzeugtexten GRW S. 395–398. */
@@ -122,6 +122,18 @@ class VehicleDataLoaderTest {
     assertEquals(1, find("Ares Citymaster (Aufruhrbekämpfungsfahrzeug)").includedMounts());
     assertEquals(2, find("Morgan Cutlass (Patrouillenboot)").includedMounts());
     assertEquals(0, find("Mercury Comet (Mittelklassewagen)").includedMounts());
+  }
+
+  /**
+   * Mitgelieferte Ausrüstung muss zum Ausrüstungskatalog passen (Name, Stufe, Zusatztext); das prüft
+   * der {@link Vehicle}-Konstruktor über {@code Gear}, deshalb wird jedes Katalogfahrzeug probeweise
+   * gebaut.
+   */
+  @Test
+  void everyCatalogVehicleCanBeBuilt() {
+    for (VehicleData data : VehicleDataLoader.getAllVehicles().values()) {
+      assertDoesNotThrow(() -> new Vehicle(data), data.name());
+    }
   }
 
   /** Mitgelieferte Halterungen halten die Grenze Rumpf ÷ 3 ein (GRW S. 395). */

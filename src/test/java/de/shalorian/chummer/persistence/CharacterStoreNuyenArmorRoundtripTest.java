@@ -42,8 +42,8 @@ class CharacterStoreNuyenArmorRoundtripTest {
 
     List<Armor> armor = loaded.getEquipment().getArmor();
     assertEquals(2, armor.size());
-    assertEquals("Panzerjacke", armor.get(0).getName());
-    assertTrue(armor.get(0).isEquipped());
+    assertEquals("Panzerjacke", armor.getFirst().getName());
+    assertTrue(armor.getFirst().isEquipped());
     assertEquals("Helm", armor.get(1).getName());
     assertFalse(armor.get(1).isEquipped());
     assertEquals(LifestyleLevel.MIDDLE, loaded.getEquipment().getLifestyle().getLevel());

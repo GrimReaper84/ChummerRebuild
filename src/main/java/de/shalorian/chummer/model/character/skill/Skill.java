@@ -77,7 +77,7 @@ public class Skill {
    * maximal eine Spezialisierung pro Fertigkeit (SR4-Grundregelwerk S. 312: "Ein Charakter darf
    * nur eine Spezialisierung pro Fertigkeit besitzen") — ein neuer Wert überschreibt einen
    * vorhandenen. Für gruppierte, noch gekoppelte Fertigkeiten prüft {@link
-   * Character#canSpecializeSkill(Skill)} die Zulässigkeit; dieses Feld selbst erzwingt das nicht.
+   * de.shalorian.chummer.model.character.Character#canSpecializeSkill(Skill)} die Zulässigkeit; dieses Feld selbst erzwingt das nicht.
    */
   public @Nullable String getSpecialization() {
     return specialization;

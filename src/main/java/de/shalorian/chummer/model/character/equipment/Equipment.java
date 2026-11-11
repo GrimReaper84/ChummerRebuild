@@ -31,7 +31,7 @@ import org.jspecify.annotations.Nullable;
  * Ausrüstung, Fahrzeuge, Lebensstil) samt Kaufprüfung, Schutzwerten, Waffenwerten und der Summe der ausgegebenen
  * Nuyen. Komponente des Aggregats {@link Character}, erreichbar über {@link Character#getEquipment()};
  * künftige Kaufkategorien gehören hierher. Ausgelagert, damit {@code Character} nicht mit jeder
- * Kaufkategorie wächst (SonarQube S6539, {@code docs/plaene/character_aufteilung_plan.md}).
+ * Kaufkategorie wächst (SonarQube S6539, {@code docs/plaene/archiv/character_aufteilung_plan.md}).
  *
  * <p>Die Rückreferenz {@code owner} liefert, was die Ausrüstungsregeln vom Charakter brauchen:
  * Erstellungs- oder Karrieremodus ({@link Character#isCreated()}), Konstitution für die

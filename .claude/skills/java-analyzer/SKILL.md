@@ -36,8 +36,11 @@ die Sonderattribute oder die RES-Freischaltung. Deshalb zählt nur der Code, nic
 4. **Tests nach abgesichertem Verhalten bewerten**, nicht nur nach Existenz.
 5. **Doku-Drift festhalten:** Stimmt `docs/feature_checklist.md` nicht mit dem Code überein, das
    benennen. Die Korrektur der Checkliste gehört zum Ergebnis dazu.
-6. **Datei schreiben:** `docs/analysen/<feature>_java_analyse.md`, dann anhalten und kurz berichten.
-   Wichtigster Fund zuerst, besonders wenn schon mehr existiert als erwartet.
+6. **Ergebnis festhalten.** Im **verschlankten Modus** (Standard, Projektregeln Abschnitt 2) keine
+   eigene Datei: Der Ist-Stand geht als Abschnitt 5 „Bestehende Java-Struktur“ in den Plan
+   `docs/plaene/<feature>_plan.md`, ohne Halt weiter zur Planung. Nur auf ausdrücklichen Wunsch:
+   `docs/analysen/<feature>_java_analyse.md` schreiben, dann anhalten und kurz berichten. Wichtigster
+   Fund zuerst, besonders wenn schon mehr existiert als erwartet.
 
 Bei kleinem Umfang oder wenn der Java-Stand aus der laufenden Sitzung schon bekannt ist, reicht die
 Kompaktform (Abschnitte 1, 2, 5, 6 unten).

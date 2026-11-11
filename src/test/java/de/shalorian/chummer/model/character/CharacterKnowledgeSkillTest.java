@@ -49,7 +49,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(INT).setValue(3);
         c.getAttribute(LOG).setValue(3); // Pool = 18
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(6);
+        c.getKnowledgeSkills().getFirst().setRating(6);
 
         assertEquals(0, c.getKnowledgeSkillOverflowBP());
     }
@@ -61,7 +61,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(LOG).setValue(1); // Pool = 6
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
-        c.getKnowledgeSkills().get(0).setRating(3);
+        c.getKnowledgeSkills().getFirst().setRating(3);
         c.getKnowledgeSkills().get(1).setRating(4); // Summe 7, Überschuss 1
 
         assertEquals(2, c.getKnowledgeSkillOverflowBP()); // 1 Punkt * 2 BP
@@ -74,7 +74,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(LOG).setValue(1); // Pool = 6
         c.addQuality(QualityDataLoader.findByName("Ungebildet"), false);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
-        c.getKnowledgeSkills().get(0).setRating(4); // zählt doppelt: 8 Punkte verbraucht
+        c.getKnowledgeSkills().getFirst().setRating(4); // zählt doppelt: 8 Punkte verbraucht
 
         assertEquals(8, c.getKnowledgeSkillPointsUsed());
         assertEquals(4, c.getKnowledgeSkillOverflowBP()); // Überschuss 2 * 2 BP
@@ -97,7 +97,7 @@ class CharacterKnowledgeSkillTest {
         int baseline = c.getSpentBP();
 
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(6);
+        c.getKnowledgeSkills().getFirst().setRating(6);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
         c.getKnowledgeSkills().get(1).setRating(2); // Summe 8, Überschuss 2 -> 4 BP
 
@@ -111,7 +111,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(LOG).setValue(3); // Pool = 18
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
 
-        assertEquals(0, c.getKnowledgeSkillIncrementBP(c.getKnowledgeSkills().get(0)));
+        assertEquals(0, c.getKnowledgeSkillIncrementBP(c.getKnowledgeSkills().getFirst()));
     }
 
     @Test
@@ -120,7 +120,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(INT).setValue(1);
         c.getAttribute(LOG).setValue(1); // Pool = 6
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(6); // Pool exakt ausgeschöpft
+        c.getKnowledgeSkills().getFirst().setRating(6); // Pool exakt ausgeschöpft
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.HOBBY);
 
         assertEquals(2, c.getKnowledgeSkillIncrementBP(c.getKnowledgeSkills().get(1)));
@@ -131,14 +131,14 @@ class CharacterKnowledgeSkillTest {
         Character c = mensch("Test");
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
 
-        assertEquals(2, c.getKnowledgeSkillKarmaCost(c.getKnowledgeSkills().get(0)));
+        assertEquals(2, c.getKnowledgeSkillKarmaCost(c.getKnowledgeSkills().getFirst()));
     }
 
     @Test
     void karmaCostFollowsRatingPlusOneStaffel() {
         Character c = mensch("Test");
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
 
         skill.setRating(1);
         assertEquals(2, c.getKnowledgeSkillKarmaCost(skill)); // (1+1)*1
@@ -153,7 +153,7 @@ class CharacterKnowledgeSkillTest {
         c.addQuality(QualityDataLoader.findByName("Ungebildet"), false);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
 
-        assertEquals(4, c.getKnowledgeSkillKarmaCost(c.getKnowledgeSkills().get(0))); // 2 * 2
+        assertEquals(4, c.getKnowledgeSkillKarmaCost(c.getKnowledgeSkills().getFirst())); // 2 * 2
     }
 
     @Test
@@ -191,7 +191,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(INT).setValue(6);
         c.getAttribute(LOG).setValue(6); // großer Pool, damit die Verdopplungs-Grenze nicht stört
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        KnowledgeSkill skill = c.getKnowledgeSkills().get(0);
+        KnowledgeSkill skill = c.getKnowledgeSkills().getFirst();
         skill.setRating(3);
 
         assertTrue(c.canRaiseKnowledgeSkillAtCreation(skill));
@@ -203,7 +203,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(INT).setValue(6);
         c.getAttribute(LOG).setValue(6);
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(6);
+        c.getKnowledgeSkills().getFirst().setRating(6);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
         KnowledgeSkill firmenkunde = c.getKnowledgeSkills().get(1);
         firmenkunde.setRating(5);
@@ -217,7 +217,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(INT).setValue(6);
         c.getAttribute(LOG).setValue(6);
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(5);
+        c.getKnowledgeSkills().getFirst().setRating(5);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
         KnowledgeSkill firmenkunde = c.getKnowledgeSkills().get(1);
         firmenkunde.setRating(4);
@@ -239,7 +239,7 @@ class CharacterKnowledgeSkillTest {
         c.getAttribute(INT).setValue(6);
         c.getAttribute(LOG).setValue(6);
         c.addKnowledgeSkill("Straßenkultur", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(6);
+        c.getKnowledgeSkills().getFirst().setRating(6);
         c.addKnowledgeSkill("Firmenkunde", KnowledgeSkillCategory.PROFESSIONAL);
         KnowledgeSkill firmenkunde = c.getKnowledgeSkills().get(1);
         firmenkunde.setRating(5);
@@ -260,7 +260,7 @@ class CharacterKnowledgeSkillTest {
         c.addKnowledgeSkill("A", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("B", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("C", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(4);
+        c.getKnowledgeSkills().getFirst().setRating(4);
         c.getKnowledgeSkills().get(1).setRating(4);
         KnowledgeSkill dritte = c.getKnowledgeSkills().get(2);
         dritte.setRating(3); // Summe bislang 11, Obergrenze 12
@@ -278,7 +278,7 @@ class CharacterKnowledgeSkillTest {
         c.addKnowledgeSkill("A", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("B", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("C", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(4);
+        c.getKnowledgeSkills().getFirst().setRating(4);
         c.getKnowledgeSkills().get(1).setRating(4);
         c.getKnowledgeSkills().get(2).setRating(4); // Summe bereits 12 (Maximum)
         c.addKnowledgeSkill("D", KnowledgeSkillCategory.ACADEMIC);
@@ -295,7 +295,7 @@ class CharacterKnowledgeSkillTest {
         c.addKnowledgeSkill("A", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("B", KnowledgeSkillCategory.STREET);
         c.addKnowledgeSkill("C", KnowledgeSkillCategory.STREET);
-        c.getKnowledgeSkills().get(0).setRating(4);
+        c.getKnowledgeSkills().getFirst().setRating(4);
         c.getKnowledgeSkills().get(1).setRating(4);
         c.getKnowledgeSkills().get(2).setRating(4);
         c.addKnowledgeSkill("D", KnowledgeSkillCategory.ACADEMIC);

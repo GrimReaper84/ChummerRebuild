@@ -61,7 +61,7 @@ class CharacterFinalizeTest {
     assertEquals(2_600, capital);
     assertEquals(1, c.getNuyenLog().size());
     assertEquals(2_600, c.getNuyenTotal());
-    assertEquals("Startkapital (Lebensstil Mittelschicht)", c.getNuyenLog().get(0).description());
+    assertEquals("Startkapital (Lebensstil Mittelschicht)", c.getNuyenLog().getFirst().description());
     assertTrue(c.isCreated());
     assertEquals(0, c.getNuyenBP());
   }

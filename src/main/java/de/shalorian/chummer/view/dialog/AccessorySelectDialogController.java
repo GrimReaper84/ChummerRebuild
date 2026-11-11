@@ -62,7 +62,7 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
   @Override
   public void initialize() {
     mountBox.setConverter(new MountStringConverter());
-    mountBox.valueProperty().addListener((obs, old, val) -> updatePreview());
+    mountBox.valueProperty().addListener((_, _, _) -> updatePreview());
     super.initialize();
   }
 
@@ -129,7 +129,7 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
     } else if (!selected.equals(mountSource)) {
       List<Mount> free = weapon.freeMounts(selected);
       mountBox.getItems().setAll(free);
-      mountBox.setValue(free.isEmpty() ? null : free.get(0));
+      mountBox.setValue(free.isEmpty() ? null : free.getFirst());
       mountBox.setDisable(free.size() < 2);
     }
     mountSource = selected;

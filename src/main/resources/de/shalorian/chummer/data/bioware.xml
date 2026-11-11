@@ -10,7 +10,7 @@
 
   Bewusst NICHT enthalten: Bioware mit Attributboni (z.B. Muskelverstärkung, Zerebralbooster,
   Synapsenbeschleuniger), solange Attributboni durch Implantate nicht modelliert sind (siehe
-  docs/plaene/cyberware_plan.md Abschnitt 13). Verfügbarkeit (<avail>, <legality> E/V) gegen das
+  docs/plaene/archiv/cyberware_plan.md Abschnitt 13). Verfügbarkeit (<avail>, <legality> E/V) gegen das
   PDF-Bild verifiziert; fehlendes <avail> = "–".
 -->
 <bioware>
