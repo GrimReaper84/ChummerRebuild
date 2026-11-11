@@ -6,6 +6,7 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.FinalizeDialogController;
@@ -25,6 +26,7 @@ import de.shalorian.chummer.view.tab.TechnomancerTabBuilder;
 import de.shalorian.chummer.view.tab.VehicleTabBuilder;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -176,7 +178,13 @@ public class CharacterViewController implements CharacterTabHost {
       if (character == null || newVal == null || old == null) {
         return;
       }
-      character.setMetatype(newVal);
+      List<CharacterQuality> removed = character.setMetatype(newVal);
+      if (!removed.isEmpty()) {
+        services.warn("Qualities entfernt", "Passen nicht zu %s: %s".formatted(newVal.name(),
+            removed.stream().map(CharacterQuality::displayName).collect(Collectors.joining(", "))));
+        onQualitiesChanged();
+        return;
+      }
       attributeTab.build();
       updateBpDisplay();
       refreshRows();

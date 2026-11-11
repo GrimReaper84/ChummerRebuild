@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character;
 
+import static de.shalorian.chummer.model.character.QualityTestSupport.selected;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,7 +92,7 @@ class CharacterImmunabstossungEssenceTest {
     Character c = withImmunabstossung();
     c.getEquipment().addCyberware(implant(EquipmentKind.CYBERWARE, "1.0"));
 
-    c.removeQuality(IMMUNABSTOSSUNG);
+    c.removeQuality(selected(c, IMMUNABSTOSSUNG));
 
     assertEquals(5.0, c.getEssence());
   }

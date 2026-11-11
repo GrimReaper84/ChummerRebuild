@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.skill.Skill;
 import org.junit.jupiter.api.Test;
+import static de.shalorian.chummer.model.character.QualityTestSupport.selected;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,7 +57,7 @@ class CharacterMagicianTest {
     assertNotNull(magier);
 
     c.addQuality(magier, false);
-    c.removeQuality("Zauberer");
+    c.removeQuality(selected(c, "Zauberer"));
 
     assertFalse(c.isMagician());
   }

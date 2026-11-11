@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character;
 
+import static de.shalorian.chummer.model.character.QualityTestSupport.selected;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,9 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.skill.Skill;
+import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +41,7 @@ class CharacterQualityRulesTest {
     assertEquals(6, c.getAttribute(AttributeType.AGI).getMax());
 
     c.getAttribute(AttributeType.STR).setValue(7);
-    c.removeQuality("Außergewöhnliches Attribut");
+    c.removeQuality(selected(c, "Außergewöhnliches Attribut"));
     assertEquals(6, c.getAttribute(AttributeType.STR).getValue());
   }
 
@@ -105,7 +108,7 @@ class CharacterQualityRulesTest {
     assertNotNull(c.getQualityBlockReason(q("Schutzpatron"), false));
     c.addQuality(q("Zauberer"), false);
     c.addQuality(q("Schutzpatron"), false, "Drache");
-    c.removeQuality("Zauberer");
+    c.removeQuality(selected(c, "Zauberer"));
     assertTrue(c.getSelectedQualities().isEmpty());
   }
 
@@ -150,5 +153,44 @@ class CharacterQualityRulesTest {
     Character c = of("Mensch");
     assertNotNull(c.getQualityBlockReason(q("Restlichtverstärkung"), false));
     assertThrows(IllegalArgumentException.class, () -> c.addQuality(q("Talentiert"), false));
+  }
+
+  @Test
+  void uneducatedIsBlockedWhileATechnicalGroupHasARating() {
+    Character c = of("Mensch");
+    c.raiseGroup("Elektronik");
+    assertNotNull(c.getQualityBlockReason(q("Ungebildet"), false));
+    c.lowerGroup("Elektronik");
+    assertNull(c.getQualityBlockReason(q("Ungebildet"), false));
+  }
+
+  @Test
+  void metatypeChangeRemovesQualitiesThatNoLongerFit() {
+    Character c = of("Mensch");
+    c.addQuality(q("Elfenposer"), false);
+    c.addQuality(q("Glück"), false);
+
+    List<CharacterQuality> removed = c.setMetatype(MetatypeDataLoader.find("Elf"));
+
+    assertEquals(List.of("Elfenposer"), removed.stream().map(r -> r.data().name()).toList());
+    assertEquals(List.of("Glück"), c.getSelectedQualities().stream().map(r -> r.data().name()).toList());
+  }
+
+  @Test
+  void removalConsequencesNameDependentsAndLoweredValues() {
+    Character c = of("Mensch");
+    c.addQuality(q("Zauberer"), false);
+    c.addQuality(q("Schutzpatron"), false, "Drache");
+    assertEquals(List.of("Schutzpatron (Drache) wird mit entfernt"),
+        c.getQualityRemovalConsequences(selected(c, "Zauberer")));
+
+    c.addQuality(q("Talentiert"), true, "Pistolen");
+    skill(c, "Pistolen").setRating(7);
+    assertEquals(List.of("Pistolen 7 → 6"), c.getQualityRemovalConsequences(selected(c, "Talentiert")));
+
+    c.addQuality(q("Außergewöhnliches Attribut"), true, "STR");
+    c.getAttribute(AttributeType.STR).setValue(7);
+    assertEquals(1, c.getQualityRemovalConsequences(selected(c, "Außergewöhnliches Attribut")).size());
+    assertTrue(c.getQualityRemovalConsequences(selected(c, "Schutzpatron")).isEmpty());
   }
 }

@@ -12,8 +12,6 @@ final class QualityNameMigration {
 
   private static final @NonNull Map<String, String> OLD_TO_GRW = Map.ofEntries(
       Map.entry("Magier", "Zauberer"),
-      Map.entry("Magieradept", "Magieradept"),
-      Map.entry("Technomancer", "Technomancer"),
       Map.entry("Gebrechlich", "Körperliche Schwäche"),
       Map.entry("Glückspilz", "Glück"),
       Map.entry("Pechvogel", "Unglück"),

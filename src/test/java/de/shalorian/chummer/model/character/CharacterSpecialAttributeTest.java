@@ -4,6 +4,7 @@ import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import org.junit.jupiter.api.Test;
+import static de.shalorian.chummer.model.character.QualityTestSupport.selected;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -136,7 +137,7 @@ class CharacterSpecialAttributeTest {
     c.getMagicOrResonance().setValue(4); // (4-1)*10 = 30 BP ausgegeben
     assertEquals(30, c.getSpecialAttributeBP());
 
-    c.removeQuality("Zauberer");
+    c.removeQuality(selected(c, "Zauberer"));
 
     assertFalse(c.hasMagic());
     assertNull(c.getMagicOrResonance());
@@ -157,7 +158,7 @@ class CharacterSpecialAttributeTest {
         java.time.LocalDate.now(java.time.ZoneId.systemDefault())));
     int karmaBefore = c.getKarmaTotal();
 
-    c.removeQuality("Zauberer");
+    c.removeQuality(selected(c, "Zauberer"));
 
     assertFalse(c.hasMagic());
     assertNull(c.getMagicOrResonance());

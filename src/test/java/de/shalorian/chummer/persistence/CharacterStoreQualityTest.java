@@ -3,6 +3,7 @@ package de.shalorian.chummer.persistence;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
@@ -45,5 +46,24 @@ class CharacterStoreQualityTest {
 
     List<CharacterQuality> loaded = CharacterStore.load(file).getSelectedQualities();
     assertEquals("Zauberer", loaded.getFirst().data().name());
+  }
+
+  /** Qualities werden vor Attributen und Fertigkeiten geladen, sonst lägen die erhöhten Werte über dem Maximum. */
+  @Test
+  void raisedMaximaSurviveSaveAndLoad() throws IOException {
+    Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    c.addQuality(Objects.requireNonNull(QualityDataLoader.findByName("Talentiert")), false, "Pistolen");
+    c.addQuality(Objects.requireNonNull(QualityDataLoader.findByName("Außergewöhnliches Attribut")), true, "STR");
+    c.addQuality(Objects.requireNonNull(QualityDataLoader.findByName("Glück")), true);
+    Objects.requireNonNull(c.getSkill("Pistolen")).setRating(7);
+    c.getAttribute(AttributeType.STR).setValue(7);
+    c.getEdge().setValue(8);
+    File file = dir.resolve("max.json").toFile();
+    CharacterStore.save(c, file);
+
+    Character loaded = CharacterStore.load(file);
+    assertEquals(7, Objects.requireNonNull(loaded.getSkill("Pistolen")).getRating());
+    assertEquals(7, loaded.getAttribute(AttributeType.STR).getValue());
+    assertEquals(8, loaded.getEdge().getValue());
   }
 }

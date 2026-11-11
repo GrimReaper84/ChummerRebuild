@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character;
 
+import static de.shalorian.chummer.model.character.QualityTestSupport.selected;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -166,7 +167,7 @@ class CharacterMagicResonanceEssencePenaltyTest {
     Character c = withQuality("Zauberer");
     c.getEquipment().addCyberware(cyberware("0.2"));
 
-    c.removeQuality("Zauberer");
+    c.removeQuality(selected(c, "Zauberer"));
 
     assertFalse(c.hasMagic());
     assertEquals(0, c.getEffectiveMagicOrResonanceValue());

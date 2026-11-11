@@ -39,8 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -161,12 +159,23 @@ public class Character {
     return biography;
   }
 
-  public void setMetatype(@NonNull MetatypeData metatype) {
+  /**
+   * Wechselt den Metatyp. Gewählte Qualities, die nur für bestimmte Metatypen gelten (z.B. Elfenposer), werden
+   * entfernt, wenn der neue Metatyp nicht passt, samt ihren Folgen (siehe {@link #removeQuality}).
+   *
+   * @return die dabei entfernten Qualities, für den Hinweis in der UI
+   */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau diese Einträge
+  public @NonNull List<CharacterQuality> setMetatype(@NonNull MetatypeData metatype) {
     this.metatype = metatype;
     initAttributes(metatype);
     this.edge = initEdge(metatype);
     initMetatypeQualities(metatype);
+    List<CharacterQuality> before = getSelectedQualities();
+    before.stream().filter(q -> !fitsMetatype(q.data().rules())).forEach(this::removeQuality);
     applyQualityEffects();
+    List<CharacterQuality> after = getSelectedQualities();
+    return before.stream().filter(q -> after.stream().noneMatch(a -> a == q)).toList();
   }
 
   public @NonNull Map<AttributeType, CharacterAttribute> getAttributes() {
@@ -481,14 +490,11 @@ public class Character {
    * grundsätzliche Zugriffsvoraussetzung ist.
    */
   private boolean isSkillAccessible(@NonNull Skill skill) {
-    return isSkillAccessible(skill, isMagician(), hasResonance(), getIncompetentSkillNames(qualities));
+    return !hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())
+        && isSkillAccessible(skill, isMagician(), hasResonance());
   }
 
-  private static boolean isSkillAccessible(@NonNull Skill skill, boolean magician,
-      boolean resonance, @NonNull Set<String> incompetent) {
-    if (incompetent.contains(skill.getName())) {
-      return false;
-    }
+  private static boolean isSkillAccessible(@NonNull Skill skill, boolean magician, boolean resonance) {
     return switch (skill.getCategory()) {
       case MAGICAL -> magician || ARCANA_SKILL.equals(skill.getName());
       case RESONANCE -> resonance;
@@ -694,14 +700,10 @@ public class Character {
    *
    * @param choice Auswahl laut {@link QualityData#selection()} (Fertigkeitsname, {@link AttributeType}-Name oder
    *               Freitext), sonst leer
-   * @throws IllegalArgumentException mit dem Grund aus {@link #getQualityBlockReason} bzw. {@link
-   *                                  #getQualityChoiceProblem}
+   * @throws IllegalArgumentException mit dem Grund aus {@link #getQualityAddProblem}
    */
   public void addQuality(@NonNull QualityData data, boolean gratis, @NonNull String choice) {
-    String reason = getQualityBlockReason(data, gratis);
-    if (reason == null) {
-      reason = getQualityChoiceProblem(data, choice);
-    }
+    String reason = getQualityAddProblem(data, gratis, choice);
     if (reason != null) {
       throw new IllegalArgumentException(reason);
     }
@@ -710,10 +712,20 @@ public class Character {
   }
 
   /**
+   * Warum {@code data} mit dieser Auswahl nicht hinzugefügt werden kann, oder {@code null}: erst {@link
+   * #getQualityBlockReason}, dann {@link #getQualityChoiceProblem}. Einzige Prüfung für Modell, Dialog und Tab.
+   */
+  public @Nullable String getQualityAddProblem(@NonNull QualityData data, boolean gratis, @NonNull String choice) {
+    String reason = getQualityBlockReason(data, gratis);
+    return reason != null ? reason : getQualityChoiceProblem(data, choice);
+  }
+
+  /**
    * Warum {@code data} gerade nicht gewählt werden kann (unabhängig von der Auswahl), oder {@code null}. Prüft die
    * Regeln aus GRW S. 114–122: nur durch den Metatyp, schon gewählt (außer mehrfach wählbare), eine Stufe je
-   * Gruppe, Metatyp, Voraussetzung und Ausschluss sowie bei der Erschaffung die 35-GP-Grenzen (S. 114, 118; nicht
-   * für Gratis-Qualities). Grundlage für den Auswahldialog und {@link #addQuality}.
+   * Gruppe, Metatyp, Voraussetzung und Ausschluss, keine schon gekaufte Fertigkeitsgruppe bei Ungebildet, Ungehobelt
+   * und Körperlicher Schwäche (S. 120–122) sowie bei der Erschaffung die Grenzen von 35 BP (S. 114, 118; nicht für
+   * Gratis-Qualities).
    */
   public @Nullable String getQualityBlockReason(@NonNull QualityData data, boolean gratis) {
     QualityRules rules = data.rules();
@@ -729,7 +741,7 @@ public class Character {
     if (group != null && selected.stream().anyMatch(q -> group.equals(q.data().rules().group()))) {
       return "Nur eine Stufe bzw. Variante von „%s“".formatted(group);
     }
-    if (!rules.metatypes().isEmpty() && !rules.metatypes().contains(metatype.baseName())) {
+    if (!fitsMetatype(rules)) {
       return "Nur für " + String.join(", ", rules.metatypes());
     }
     if (!rules.requires().isEmpty()
@@ -743,15 +755,42 @@ public class Character {
     if (conflict.isPresent()) {
       return "Nicht zusammen mit " + conflict.get().data().name();
     }
+    SkillCategory doubled = doubledCategory(data);
+    if (doubled != null) {
+      for (Skill s : skills.values()) {
+        String g = s.getGroupName();
+        if (g != null && s.getCategory() == doubled && isGroupCoupled(g) && getGroupRating(g) > 0) {
+          return "Fertigkeitsgruppe %s hat bereits einen Wert".formatted(g);
+        }
+      }
+    }
     if (!created && !gratis) {
       if (data.type() == QualityType.POSITIVE
           && getPositiveQualityBP() + data.bp() > MAX_POSITIVE_QUALITY_BP) {
-        return "Höchstens %d GP für Gaben bei der Erschaffung".formatted(MAX_POSITIVE_QUALITY_BP);
+        return "Höchstens %d BP für Gaben bei der Erschaffung".formatted(MAX_POSITIVE_QUALITY_BP);
       }
       if (data.type() == QualityType.NEGATIVE
           && getNegativeQualityBP() + Math.abs(data.bp()) > MAX_NEGATIVE_QUALITY_BP) {
-        return "Höchstens %d GP aus Handicaps bei der Erschaffung".formatted(MAX_NEGATIVE_QUALITY_BP);
+        return "Höchstens %d BP aus Handicaps bei der Erschaffung".formatted(MAX_NEGATIVE_QUALITY_BP);
       }
+    }
+    return null;
+  }
+
+  private boolean fitsMetatype(@NonNull QualityRules rules) {
+    return rules.metatypes().isEmpty() || rules.metatypes().contains(metatype.baseName());
+  }
+
+  /** Kategorie, deren Fertigkeiten diese Quality verteuert und deren Gruppen sie sperrt (GRW S. 120–122). */
+  private static @Nullable SkillCategory doubledCategory(@NonNull QualityData data) {
+    if (data.bonuses().contains(QualityBonusType.UNEDUCATED)) {
+      return SkillCategory.TECHNICAL;
+    }
+    if (data.bonuses().contains(QualityBonusType.UNCOUTH)) {
+      return SkillCategory.SOCIAL;
+    }
+    if (data.bonuses().contains(QualityBonusType.INFIRM)) {
+      return SkillCategory.PHYSICAL;
     }
     return null;
   }
@@ -793,13 +832,6 @@ public class Character {
     applyQualityEffects();
   }
 
-  /** Entfernt alle gewählten Qualities dieses Namens, siehe {@link #removeQuality(CharacterQuality)}. */
-  public void removeQuality(@NonNull String name) {
-    getSelectedQualities().stream()
-        .filter(q -> q.data().name().equals(name))
-        .forEach(this::removeQuality);
-  }
-
   /**
    * Entfernt eine gewählte Quality. Gaben, deren Voraussetzung damit wegfällt (z.B. Schutzpatron ohne Zauberer),
    * werden mit entfernt. Falls dies die letzte Quality war, die Magie bzw. Resonanz freigeschaltet hat, wird das
@@ -807,19 +839,13 @@ public class Character {
    * einer automatischen Rückerstattung, im Karrieremodus gibt es keine Karma-Rückerstattung. Fertigkeiten, die
    * dadurch nicht mehr zugänglich sind, werden auf 0 gesetzt (siehe {@link
    * #getSkillsLockedByRemovingQuality(CharacterQuality)}); Werte über einem gesunkenen Maximum (Talentiert,
-   * Außergewöhnliches Attribut, Glück) sinken darauf.
+   * Außergewöhnliches Attribut, Glück) sinken darauf. {@link #getQualityRemovalConsequences} listet diese Folgen
+   * vorher auf.
    */
-  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Eintrag
   public void removeQuality(@NonNull CharacterQuality quality) {
-    List<Skill> locked = getSkillsLockedByRemovingQuality(quality);
-    qualities.removeIf(q -> q == quality);
-    boolean removedDependent = true;
-    while (removedDependent) {
-      removedDependent = qualities.removeIf(q -> q.source() == QualitySource.SELECTED
-          && !q.data().rules().requires().isEmpty()
-          && getSelectedQualities().stream()
-              .noneMatch(other -> q.data().rules().requires().contains(other.data().name())));
-    }
+    List<CharacterQuality> removed = getRemovalSet(quality);
+    List<Skill> locked = getSkillsLockedWithout(removed);
+    qualities.removeIf(q -> containsSame(removed, q));
     applyQualityEffects();
     locked.forEach(s -> {
       s.setRating(0);
@@ -850,53 +876,96 @@ public class Character {
   }
 
   private boolean hasQualityBonus(@NonNull QualityBonusType bonus) {
-    return qualities.stream().anyMatch(q -> q.data().bonuses().contains(bonus));
+    return hasQualityBonus(qualities, bonus);
+  }
+
+  private static boolean hasQualityBonus(@NonNull List<CharacterQuality> from, @NonNull QualityBonusType bonus) {
+    return from.stream().anyMatch(q -> q.data().bonuses().contains(bonus));
   }
 
   private boolean hasQualityChoice(@NonNull QualityBonusType bonus, @NonNull String choice) {
+    return hasQualityChoice(qualities, bonus, choice);
+  }
+
+  private static boolean hasQualityChoice(@NonNull List<CharacterQuality> from, @NonNull QualityBonusType bonus,
+      @NonNull String choice) {
+    return from.stream().anyMatch(q -> q.data().bonuses().contains(bonus) && q.choice().equals(choice));
+  }
+
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Eintrag
+  private static boolean containsSame(@NonNull List<CharacterQuality> list, @NonNull CharacterQuality quality) {
+    return list.stream().anyMatch(q -> q == quality);
+  }
+
+  /** Die Quality selbst plus alle gewählten Gaben, deren Voraussetzung damit wegfällt (auch über mehrere Stufen). */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Eintrag
+  private @NonNull List<CharacterQuality> getRemovalSet(@NonNull CharacterQuality quality) {
+    List<CharacterQuality> remaining = new ArrayList<>(getSelectedQualities());
+    remaining.removeIf(q -> q == quality);
+    boolean removedDependent = true;
+    while (removedDependent) {
+      List<CharacterQuality> current = List.copyOf(remaining);
+      removedDependent = remaining.removeIf(q -> !q.data().rules().requires().isEmpty()
+          && current.stream().noneMatch(other -> q.data().rules().requires().contains(other.data().name())));
+    }
     return qualities.stream()
-        .anyMatch(q -> q.data().bonuses().contains(bonus) && q.choice().equals(choice));
+        .filter(q -> q == quality || (q.source() == QualitySource.SELECTED && !containsSame(remaining, q)))
+        .toList();
   }
 
-  /** Namen der Fertigkeiten, die durch Inkompetenz gesperrt sind (GRW S. 120). */
-  private @NonNull Set<String> getIncompetentSkillNames(@NonNull List<CharacterQuality> from) {
-    return from.stream()
-        .filter(q -> q.data().bonuses().contains(QualityBonusType.INCOMPETENT))
-        .map(CharacterQuality::choice)
-        .collect(Collectors.toSet());
-  }
-
-  /** Wie {@link #getSkillsLockedByRemovingQuality(CharacterQuality)} für alle gewählten Qualities dieses Namens. */
-  public @NonNull List<Skill> getSkillsLockedByRemovingQuality(@NonNull String name) {
-    return getSkillsLockedWithout(q -> isSelectedQuality(q, name));
+  /**
+   * Was das Entfernen dieser Quality zusätzlich bewirkt, als Zeilen für die Rückfrage: mit entfernte Gaben, nicht mehr
+   * erlernbare Fertigkeiten (auf 0) und Werte über einem gesunkenen Maximum (Talentiert, Außergewöhnliches
+   * Attribut, Glück). Leer, wenn nur die Quality selbst wegfällt.
+   */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Eintrag
+  public @NonNull List<String> getQualityRemovalConsequences(@NonNull CharacterQuality quality) {
+    List<CharacterQuality> removed = getRemovalSet(quality);
+    List<CharacterQuality> remaining = qualities.stream().filter(q -> !containsSame(removed, q)).toList();
+    List<String> lines = new ArrayList<>();
+    removed.stream().filter(q -> q != quality).forEach(q -> lines.add(q.displayName() + " wird mit entfernt"));
+    List<Skill> locked = getSkillsLockedWithout(removed);
+    locked.forEach(s -> lines.add("%s %d → 0 (nicht mehr erlernbar)".formatted(s.getName(), s.getRating())));
+    for (Skill s : skills.values()) {
+      if (!locked.contains(s) && s.getRating() > Skill.MAX_RATING
+          && !hasQualityChoice(remaining, QualityBonusType.APTITUDE, s.getName())) {
+        lines.add("%s %d → %d".formatted(s.getName(), s.getRating(), Skill.MAX_RATING));
+      }
+    }
+    for (CharacterAttribute a : attributes.values()) {
+      String type = a.getType().name();
+      if (a.getValue() == a.getMax()
+          && hasQualityChoice(QualityBonusType.EXCEPTIONAL_ATTRIBUTE, type)
+          && !hasQualityChoice(remaining, QualityBonusType.EXCEPTIONAL_ATTRIBUTE, type)) {
+        lines.add("%s %d → %d".formatted(a.getType().getDisplayName(), a.getValue(), a.getMax() - 1));
+      }
+    }
+    if (edge.getValue() == edge.getMax() && hasQualityBonus(QualityBonusType.LUCKY)
+        && !hasQualityBonus(remaining, QualityBonusType.LUCKY)) {
+      lines.add("%s %d → %d".formatted(edge.getType().getDisplayName(), edge.getValue(), edge.getMax() - 1));
+    }
+    return lines;
   }
 
   /**
    * Aktive Fertigkeiten mit Wert > 0, die nach dem Entfernen dieser Quality nicht mehr zugänglich
    * wären (siehe {@link #isSkillAccessible(Skill)}), z.B. Hexerei nach Entfernen der Gabe "Zauberer"
-   * oder Tasken nach Entfernen der Gabe "Technomancer". {@link #removeQuality(String)} setzt genau
+   * oder Tasken nach Entfernen der Gabe "Technomancer"; mit entfernte Gaben zählen mit. {@link
+   * #removeQuality(CharacterQuality)} setzt genau
    * diese Fertigkeiten samt Spezialisierung auf 0, damit keine Werte stehen bleiben, die BP kosten,
    * aber nicht mehr nutzbar sind. Die UI fragt vorher nach, wenn die Liste nicht leer ist.
    */
-  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Eintrag
   public @NonNull List<Skill> getSkillsLockedByRemovingQuality(@NonNull CharacterQuality quality) {
-    return getSkillsLockedWithout(q -> q == quality);
+    return getSkillsLockedWithout(getRemovalSet(quality));
   }
 
-  private @NonNull List<Skill> getSkillsLockedWithout(@NonNull Predicate<CharacterQuality> removed) {
-    List<CharacterQuality> remaining = qualities.stream().filter(removed.negate()).toList();
-    boolean magician = remaining.stream()
-        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_SPELLCASTING));
-    boolean resonance = remaining.stream()
-        .anyMatch(q -> q.data().bonuses().contains(QualityBonusType.GRANTS_RESONANCE));
-    Set<String> incompetent = getIncompetentSkillNames(remaining);
+  private @NonNull List<Skill> getSkillsLockedWithout(@NonNull List<CharacterQuality> removed) {
+    List<CharacterQuality> remaining = qualities.stream().filter(q -> !containsSame(removed, q)).toList();
+    boolean magician = hasQualityBonus(remaining, QualityBonusType.GRANTS_SPELLCASTING);
+    boolean resonance = hasQualityBonus(remaining, QualityBonusType.GRANTS_RESONANCE);
     return skills.values().stream()
-        .filter(s -> s.getRating() > 0 && !isSkillAccessible(s, magician, resonance, incompetent))
+        .filter(s -> s.getRating() > 0 && !isSkillAccessible(s, magician, resonance))
         .toList();
-  }
-
-  private static boolean isSelectedQuality(@NonNull CharacterQuality q, @NonNull String name) {
-    return q.source() == QualitySource.SELECTED && q.data().name().equals(name);
   }
 
   /**
@@ -942,12 +1011,7 @@ public class Character {
   }
 
   public boolean isSkillCostDoubled(@NonNull SkillCategory category) {
-    return switch (category) {
-      case TECHNICAL -> isUneducated();
-      case SOCIAL -> isUncouth();
-      case PHYSICAL -> isInfirm();
-      default -> false;
-    };
+    return qualities.stream().anyMatch(q -> doubledCategory(q.data()) == category);
   }
 
   // --- Wissensfertigkeiten ---

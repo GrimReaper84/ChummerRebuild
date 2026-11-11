@@ -114,8 +114,7 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
   }
 
   private @Nullable String blockReason(@NonNull QualityData q) {
-    Character c = this.character;
-    return c == null ? null : c.getQualityBlockReason(q, gratisBox.isSelected());
+    return character == null ? null : character.getQualityBlockReason(q, gratisBox.isSelected());
   }
 
   @Override
@@ -142,10 +141,9 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
     choiceLabel.setText(q.selectLabel().isEmpty() ? "Auswahl:" : q.selectLabel() + ":");
     choiceField.clear();
     Collator collator = Collator.getInstance(Locale.GERMAN);
-    Character c = this.character;
     switch (q.selection()) {
-      case SKILL -> choiceBox.getItems().setAll(c == null ? List.of()
-          : c.getSkills().stream().map(Skill::getName).sorted(collator).toList());
+      case SKILL -> choiceBox.getItems().setAll(character == null ? List.of()
+          : character.getSkills().stream().map(Skill::getName).sorted(collator).toList());
       case ATTRIBUTE -> choiceBox.getItems().setAll(
           Arrays.stream(AttributeType.values()).map(AttributeType::getDisplayName).toList());
       default -> choiceBox.getItems().clear();
@@ -179,12 +177,10 @@ public class QualitySelectDialogController extends CatalogSelectDialogController
 
   private void updateButtons() {
     QualityData selected = itemListView.getSelectionModel().getSelectedItem();
-    Character c = this.character;
     String problem = null;
     if (selected != null) {
-      problem = blockReason(selected);
-      if (problem == null && c != null) {
-        problem = c.getQualityChoiceProblem(selected, currentChoice(selected));
+      if (character != null) {
+        problem = character.getQualityAddProblem(selected, gratisBox.isSelected(), currentChoice(selected));
       }
       String page = selected.page() > 0 ? "GRW S. %d. ".formatted(selected.page()) : "";
       detailLabel.setText(page + selected.note() + (problem == null ? "" : "\n→ " + problem));

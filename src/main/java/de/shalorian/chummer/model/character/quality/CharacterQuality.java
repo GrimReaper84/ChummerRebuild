@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character.quality;
 
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -17,5 +18,16 @@ public record CharacterQuality(
 
   public CharacterQuality(@NonNull QualityData data, @NonNull QualitySource source) {
     this(data, source, false, "");
+  }
+
+  /** Name mit Auswahl, z.B. "Talentiert (Pistolen)" oder "Außergewöhnliches Attribut (Stärke)". */
+  public @NonNull String displayName() {
+    if (choice.isEmpty()) {
+      return data.name();
+    }
+    String shown = data.selection() == QualitySelection.ATTRIBUTE
+        ? AttributeType.valueOf(choice).getDisplayName()
+        : choice;
+    return "%s (%s)".formatted(data.name(), shown);
   }
 }

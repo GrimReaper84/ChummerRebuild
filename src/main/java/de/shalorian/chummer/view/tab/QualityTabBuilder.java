@@ -11,12 +11,9 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
-import de.shalorian.chummer.model.character.quality.QualitySelection;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.quality.QualityType;
-import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.QualitySelectDialogController;
 import de.shalorian.chummer.view.dialog.QualitySelectResult;
@@ -167,7 +164,7 @@ public final class QualityTabBuilder {
   private void addQualityRow(@NonNull GridPane grid, int row, @NonNull CharacterQuality q) {
     boolean isMetatype = q.source() == QualitySource.METATYPE;
 
-    Label qualityNameLabel = new Label(displayName(q));
+    Label qualityNameLabel = new Label(q.displayName());
     qualityNameLabel.getStyleClass().add(isMetatype ? "quality-metatype" : STYLE_ATTR_NAME);
     if (!q.data().note().isEmpty()) {
       String page = q.data().page() > 0 ? "GRW S. %d: ".formatted(q.data().page()) : "";
@@ -202,17 +199,6 @@ public final class QualityTabBuilder {
     }
   }
 
-  /** Name mit Auswahl, z.B. "Talentiert (Pistolen)" oder "Außergewöhnliches Attribut (Stärke)". */
-  static @NonNull String displayName(@NonNull CharacterQuality q) {
-    if (q.choice().isEmpty()) {
-      return q.data().name();
-    }
-    String choice = q.data().selection() == QualitySelection.ATTRIBUTE
-        ? AttributeType.valueOf(q.choice()).getDisplayName()
-        : q.choice();
-    return "%s (%s)".formatted(q.data().name(), choice);
-  }
-
   /**
    * Entfernt eine gewählte Quality. Handicaps im Karrieremodus loswerden kostet die doppelten GP-Kosten in Karma (siehe
    * {@link Character#getQualityKarmaCost}); alle anderen Fälle (Erstellungsmodus, Gaben, Gratis-Qualities) bleiben unverändert kostenlos.
@@ -222,8 +208,8 @@ public final class QualityTabBuilder {
     if (c == null) {
       return;
     }
-    String qualityName = displayName(q);
-    if (!confirmLockedSkillsReset(c, q)) {
+    String qualityName = q.displayName();
+    if (!confirmRemovalConsequences(c, q)) {
       return;
     }
     if (c.isCreated() && q.data().type() == QualityType.NEGATIVE && !q.gratis()) {
@@ -237,25 +223,20 @@ public final class QualityTabBuilder {
   }
 
   /**
-   * Fragt per Ja/Nein-Dialog nach, wenn das Entfernen der Quality aktive Fertigkeiten mit Wert > 0
-   * unzugänglich macht (z.B. Hexerei ohne die Gabe "Zauberer"); diese werden beim Entfernen auf 0
-   * gesetzt (siehe {@link Character#removeQuality(CharacterQuality)}). Ohne betroffene Fertigkeiten keine
-   * Abfrage.
+   * Fragt per Ja/Nein-Dialog nach, wenn das Entfernen mehr bewirkt als den Wegfall der Quality: mit entfernte Gaben,
+   * nicht mehr erlernbare Fertigkeiten und gesunkene Maxima (siehe {@link
+   * Character#getQualityRemovalConsequences(CharacterQuality)}). Ohne solche Folgen keine Abfrage.
    *
    * @return true, wenn entfernt werden darf
    */
-  private boolean confirmLockedSkillsReset(@NonNull Character c, @NonNull CharacterQuality q) {
-    List<Skill> locked = c.getSkillsLockedByRemovingQuality(q);
-    String qualityName = displayName(q);
-    if (locked.isEmpty()) {
+  private boolean confirmRemovalConsequences(@NonNull Character c, @NonNull CharacterQuality q) {
+    List<String> consequences = c.getQualityRemovalConsequences(q);
+    if (consequences.isEmpty()) {
       return true;
     }
-    String skillList = locked.stream()
-        .map(s -> "• %s %d".formatted(s.getName(), s.getRating()))
-        .collect(Collectors.joining("\n"));
-    return host.services().confirmYesNo("Gabe entfernen", "\"%s\" wirklich entfernen?".formatted(qualityName),
-        "Ohne diese Gabe sind folgende Fertigkeiten nicht mehr erlernbar und werden auf 0 "
-            + "gesetzt:\n" + skillList);
+    String list = consequences.stream().map(line -> "• " + line).collect(Collectors.joining("\n"));
+    return host.services().confirmYesNo("Quality entfernen", "\"%s\" wirklich entfernen?".formatted(q.displayName()),
+        "Dabei ändert sich außerdem:\n" + list);
   }
 
   private void onAddQuality(@NonNull QualityType filter) {
@@ -304,10 +285,7 @@ public final class QualityTabBuilder {
 
   private void tryAddQuality(@NonNull Character ch, @NonNull QualitySelectResult r) {
     // Erst prüfen, dann Karma abbuchen, damit bei einer Ablehnung kein Karma verloren geht.
-    String problem = ch.getQualityBlockReason(r.data(), r.gratis());
-    if (problem == null) {
-      problem = ch.getQualityChoiceProblem(r.data(), r.choice());
-    }
+    String problem = ch.getQualityAddProblem(r.data(), r.gratis(), r.choice());
     if (problem != null) {
       host.services().warn("Nicht wählbar", problem);
       return;

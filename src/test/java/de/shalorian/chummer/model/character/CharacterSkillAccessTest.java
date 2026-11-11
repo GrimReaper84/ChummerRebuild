@@ -6,6 +6,7 @@ import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.skill.Skill;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
+import static de.shalorian.chummer.model.character.QualityTestSupport.selected;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -108,9 +109,9 @@ class CharacterSkillAccessTest {
     skill(c, "Arcana").setRating(2);
     int bpWithSkills = c.getRemainingBP();
 
-    assertEquals(4, c.getSkillsLockedByRemovingQuality("Zauberer").size());
+    assertEquals(4, c.getSkillsLockedByRemovingQuality(selected(c, "Zauberer")).size());
 
-    c.removeQuality("Zauberer");
+    c.removeQuality(selected(c, "Zauberer"));
 
     assertEquals(0, c.getGroupRating("Hexerei"));
     assertEquals(0, skill(c, "Askennen").getRating());
@@ -124,9 +125,9 @@ class CharacterSkillAccessTest {
     Character c = withQuality("Technomancer");
     c.raiseGroup("Tasken");
 
-    assertEquals(3, c.getSkillsLockedByRemovingQuality("Technomancer").size());
+    assertEquals(3, c.getSkillsLockedByRemovingQuality(selected(c, "Technomancer")).size());
 
-    c.removeQuality("Technomancer");
+    c.removeQuality(selected(c, "Technomancer"));
 
     assertEquals(0, c.getGroupRating("Tasken"));
   }
@@ -139,13 +140,13 @@ class CharacterSkillAccessTest {
     assertNotNull(beidhaendig);
     c.addQuality(beidhaendig, false);
 
-    assertTrue(c.getSkillsLockedByRemovingQuality("Beidhändigkeit").isEmpty());
+    assertTrue(c.getSkillsLockedByRemovingQuality(selected(c, "Beidhändigkeit")).isEmpty());
   }
 
   @Test
   void noLockedSkillsWithoutRatings() {
     Character c = withQuality("Zauberer");
 
-    assertTrue(c.getSkillsLockedByRemovingQuality("Zauberer").isEmpty());
+    assertTrue(c.getSkillsLockedByRemovingQuality(selected(c, "Zauberer")).isEmpty());
   }
 }
