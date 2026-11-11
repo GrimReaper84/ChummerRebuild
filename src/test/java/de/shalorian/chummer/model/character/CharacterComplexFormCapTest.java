@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * SR4-Grundregelwerk (Kapitel Komplexe Formen): "Die Grundstufe einer Komplexen Form kann das
- * Resonanzattribut des Technomancers nicht überschreiten." — anders als der reine Erstellungs-Cap
+ * SR4-Grundregelwerk (Kapitel Komplexe Formen): Die Stufe einer Komplexen Form ist durch die Resonanz
+ * begrenzt — anders als der reine Erstellungs-Cap
  * bei Fertigkeiten/Zaubern gilt dieser Cap laut Regeltext durchgehend, nicht nur bei der
  * Charaktererschaffung.
  */

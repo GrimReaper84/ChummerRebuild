@@ -7,7 +7,7 @@ import org.jspecify.annotations.NonNull;
  * Implantatkategorie ("Grade") einer Cyber- oder Bioware mit ihrem Essenz- und Preis-Multiplikator.
  * Werte laut SR4-Grundregelwerk, Tabelle <i>Implantatkategorien</i> (S. 359, gegen das PDF-Bild
  * verifiziert): Standard ×1/×1, Alphaware ×0,8/×2, Betaware ×0,7/×4, Deltaware ×0,5/×10. Gilt
- * gleichermaßen für Cyberware und Bioware ("Cyberware und Bioware ist in vier Kategorien erhältlich").
+ * gleichermaßen für Cyberware und Bioware (beide gibt es laut GRW in diesen vier Kategorien).
  *
  * <p>Bewusst nur die vier GRW-Kern-Kategorien — Adapsin- und Second-Hand-Varianten aus dem
  * C#-Original stammen aus dem Zusatzband Arsenal und sind nicht Teil dieses Feature-Schnitts (siehe
@@ -48,7 +48,7 @@ public enum CyberwareGrade {
 
   /**
    * Ob diese Kategorie bei der Charaktererschaffung gekauft werden darf. SR4-Grundregelwerk S. 359:
-   * "Nur Standard- und Alphaware können bei der Charaktererschaffung gekauft werden." Im
+   * bei der Erschaffung nur Standard- und Alphaware. Im
    * Karrieremodus sind alle vier Kategorien erhältlich.
    */
   public boolean isAvailableAtCreation() {

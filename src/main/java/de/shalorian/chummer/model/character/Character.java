@@ -240,8 +240,8 @@ public class Character {
   /**
    * Liefert das freigeschaltete Magic- oder Resonance-Sonderattribut, oder {@code null}, wenn der
    * Charakter keine entsprechende Quality besitzt (siehe {@link #hasMagic()}/{@link
-   * #hasResonance()}). SR4-Grundregelwerk: "Magie und Resonanz sind Attribute, die sich
-   * gegenseitig ausschließen" — ein Charakter kann nie beide gleichzeitig besitzen.
+   * #hasResonance()}). Laut SR4-Grundregelwerk schließen Magie und Resonanz einander aus — ein
+   * Charakter kann nie beide gleichzeitig besitzen.
    */
   public @Nullable SpecialAttribute getMagicOrResonance() {
     return magicOrResonance;
@@ -259,9 +259,8 @@ public class Character {
   /**
    * Prüft, ob der Charakter speziell die Gabe "Magier" besitzt — anders als {@link #hasMagic()}
    * (liefert auch für Adepten {@code true}, da diese ebenfalls ein Magie-Attribut besitzen), grenzt
-   * dies auf Charaktere ein, die tatsächlich Zauber wirken dürfen. SR4-Grundregelwerk S. 148: "Wenn
-   * nicht anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder Magieradept und
-   * einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder anwenden." Steuert die
+   * dies auf Charaktere ein, die tatsächlich Zauber wirken dürfen. SR4-Grundregelwerk S. 148: Magische
+   * Fertigkeiten grundsätzlich nur für Zauberer und Magieradepten mit Magie ab 1. Steuert die
    * Sichtbarkeit des Magie-Tabs sowie den Zugang zu den magischen Aktionsfertigkeiten (siehe
    * {@link #isSkillAccessible(Skill)}).
    */
@@ -286,9 +285,9 @@ public class Character {
   /**
    * Essenz des Charakters, auf {@value #ESSENCE_DECIMALS} Nachkommastellen gerundet. Alle Charaktere
    * beginnen mit Essenz 6 (metatypunabhängig); davon wird der Essenzverlust durch Implantate nach der
-   * GRW-Kombinationsregel abgezogen (S. 111): "Essenzverlust durch Cyberware und Bioware wird getrennt berechnet
-   * und notiert. Der höhere der beiden Werte wird vollständig von der Essenz abgezogen, der andere Wert
-   * nur zur Hälfte" — also {@code 6 − max(ΣCyber, ΣBio) − min(ΣCyber, ΣBio) / 2}. GRW-Beispiel: 1,5
+   * GRW-Kombinationsregel abgezogen (S. 111): Cyberware- und Bioware-Verlust werden getrennt summiert,
+   * der größere zählt voll, der kleinere halb — also {@code 6 − max(ΣCyber, ΣBio) − min(ΣCyber, ΣBio) / 2}.
+   * GRW-Beispiel: 1,5
    * Cyberware + 2,5 Bioware ergibt 6 − 2,5 − 0,75 = 2,75.
    *
    * <p>Dies ist die <b>einzige</b> Stelle der Essenzberechnung — bewusste Abweichung vom C#-Original,
@@ -345,11 +344,9 @@ public class Character {
 
   /**
    * Um wie viele Punkte Magie bzw. Resonanz (Wert UND Maximum) durch Essenzverlust sinken.
-   * SR4-Grundregelwerk S. 208: "Für jeden angefangenen Punkt Essenzverlust werden das Magieattribut
-   * des Charakters und sein maximaler Magiewert um jeweils 1 Punkt reduziert. Bei einem Charakter mit
-   * Magie 4, dessen Essenz auf 5,8 sinkt, beträgt die Magie 3 und das Magiemaximum 5" — also
-   * {@code ceiling(6 − Essenz)}. Gilt ebenso für Resonanz (GRW S. 111: "Jeder Essenzverlust
-   * beeinflusst auch die Magie bzw. die Resonanz eines Charakters"). Einheitlich für Erstellungs-
+   * SR4-Grundregelwerk S. 208: Jeder angebrochene Punkt Essenzverlust senkt Magie und Magiemaximum um
+   * je 1 (GRW-Beispiel: Magie 4 bei Essenz 5,8 ergibt Magie 3, Maximum 5) — also
+   * {@code ceiling(6 − Essenz)}. Gilt laut GRW S. 111 ebenso für Resonanz. Einheitlich für Erstellungs-
    * und Karrieremodus (kein modusabhängiger Sonderfall wie im C#-Original).
    */
   public int getEssencePenalty() {
@@ -405,9 +402,8 @@ public class Character {
 
   /**
    * Schaltet Magic/Resonance frei bzw. setzt es zurück, je nachdem ob nach der letzten
-   * Quality-Änderung noch eine freischaltende Quality vorhanden ist. GRW: Charaktere mit der
-   * entsprechenden Gabe "erhalten automatisch einen Magiewert von 1" bzw. "einen Resonanzwert von
-   * 1" — daher Startwert 1, nicht 0. Der Reset auf {@code null} verwirft automatisch die BP-Kosten
+   * Quality-Änderung noch eine freischaltende Quality vorhanden ist. Laut GRW beginnt Magie bzw.
+   * Resonanz mit der entsprechenden Gabe bei 1 — daher Startwert 1, nicht 0. Der Reset auf {@code null} verwirft automatisch die BP-Kosten
    * des Sonderattributs (siehe {@link #getSpecialAttributeBP()}): In der Erschaffungsphase
    * entspricht das einer Rückerstattung der ausgegebenen Punkte, im Karrieremodus bleibt bereits
    * verbuchtes Karma dagegen unrückerstattet (siehe {@link #getKarmaLog()}).
@@ -466,15 +462,11 @@ public class Character {
   /**
    * Prüft, ob der Charakter diese aktive Fertigkeit überhaupt erwerben darf:
    * <ul>
-   *   <li>Magische Fertigkeiten nur mit der Gabe "Magier" (SR4-Grundregelwerk S. 148: "Wenn nicht
-   *       anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder Magieradept und
-   *       einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder anwenden.").
-   *       Ausnahme Arcana (S. 148): "Die Fertigkeit kann nicht nur von Erwachten, sondern auch von
-   *       Mundanen erlernt werden". Dass Adepten mit der Kraft Astrale Wahrnehmung auch Askennen und
+   *   <li>Magische Fertigkeiten nur mit der Gabe "Magier" (SR4-Grundregelwerk S. 148: grundsätzlich nur
+   *       für Zauberer und Magieradepten mit Magie ab 1). Ausnahme Arcana (S. 148), die auch Mundane
+   *       lernen dürfen. Dass Adepten mit der Kraft Astrale Wahrnehmung auch Askennen und
    *       Astralkampf nutzen dürfen (S. 109), ist mangels Adeptenkräften noch nicht abgebildet.</li>
-   *   <li>Resonanzfertigkeiten nur für Technomancer (S. 151: "Diese Kategorie beinhaltet
-   *       Fertigkeiten, die nur von Charakteren mit der Gabe Technomancer (S. 117) gewählt werden
-   *       können.").</li>
+   *   <li>Resonanzfertigkeiten nur für Technomancer (S. 151, Gabe S. 117).</li>
    * </ul>
    * Die Sperre gilt auch im Karrieremodus, da sie keine Erschaffungsregel, sondern eine
    * grundsätzliche Zugriffsvoraussetzung ist.
@@ -589,8 +581,8 @@ public class Character {
 
   /**
    * Prüft, ob eine Steigerung dieser Fertigkeitsgruppe um 1 während der Charaktererschaffung
-   * regelkonform wäre: "Bei der Charaktererschaffung beträgt der Maximalwert für
-   * Fertigkeitsgruppen 4." Im Karrieremodus gilt dieser Erstellungs-Cap nicht (dort bis
+   * regelkonform wäre: Bei der Erschaffung sind Fertigkeitsgruppen auf Stufe 4 begrenzt (GRW S. 109).
+   * Im Karrieremodus gilt dieser Erstellungs-Cap nicht (dort bis
    * {@link Skill#MAX_RATING}).
    */
   public boolean canRaiseGroupAtCreation(@NonNull String groupName) {
@@ -772,9 +764,8 @@ public class Character {
 
   /**
    * Karma-Kosten im Karrieremodus, um eine neue Quality zu erwerben bzw. ein bestehendes
-   * Handicap wieder loszuwerden: die doppelten GP-Kosten der Quality ("der Charakter muss
-   * Karmapunkte in Höhe der doppelten Generierungspunkte der Gabe zahlen" / "durch die
-   * Bezahlung der doppelten Generierungspunkte des Handicaps").
+   * Handicap wieder loszuwerden: laut GRW in beiden Fällen das Doppelte der GP-Kosten der Quality in
+   * Karma.
    */
   public int getQualityKarmaCost(@NonNull QualityData data) {
     return Math.abs(data.bp()) * 2;
@@ -939,8 +930,7 @@ public class Character {
   /**
    * Prüft, ob eine Steigerung dieser Wissensfertigkeit um 1 während der Charaktererschaffung
    * regelkonform wäre: die Gesamtpunktzahl (Pool + Zusatzpunkte) darf den freien Pool höchstens
-   * verdoppeln ("Ein Charakter kann die Gesamtzahl an Wissensfertigkeitspunkten zu Beginn des
-   * Spiels maximal verdoppeln"), und wie bei aktiven Fertigkeiten gilt entweder maximal eine
+   * verdoppeln (GRW S. 109), und wie bei aktiven Fertigkeiten gilt entweder maximal eine
    * Wissensfertigkeit auf Wert 6 oder maximal zwei auf Wert 5 (übrige max. 4). Die Muttersprache
    * ist von beiden Regeln ausgenommen. Im Karrieremodus gilt dieser Erstellungs-Cap nicht.
    */
@@ -989,9 +979,8 @@ public class Character {
 
   /**
    * Prüft, ob diese Wissensfertigkeit spezialisiert werden darf: Mindestrating
-   * {@value #MIN_RATING_FOR_SPECIALIZATION} (SR4-Grundregelwerk S. 109: "Genau wie bei den
-   * Aktionsfertigkeiten kann sich ein Charakter auch bei Wissensfertigkeiten spezialisieren" —
-   * dieselbe Mindestrating-Voraussetzung wie bei aktiven Fertigkeiten, siehe {@link
+   * {@value #MIN_RATING_FOR_SPECIALIZATION} (SR4-Grundregelwerk S. 109: Wissensfertigkeiten lassen sich
+   * wie Aktionsfertigkeiten spezialisieren — dieselbe Mindestrating-Voraussetzung wie bei aktiven Fertigkeiten, siehe {@link
    * #canSpecializeSkill(Skill)}), keine Spezialisierung für die Muttersprache. Während der
    * Charaktererschaffung darf der Spezialisierungs-Beitrag den Pool nicht über die
    * Verdopplungsgrenze hinaus belasten (analog zu {@link
@@ -1019,8 +1008,7 @@ public class Character {
 
   /**
    * Karrieremodus-Kosten, um eine Spezialisierung (aktive Fertigkeit oder Wissensfertigkeit) neu
-   * zu setzen oder zu ändern. SR4-Grundregelwerk S. 312: "Eine Spezialisierung zu erwerben kostet
-   * 2 Karmapunkte" — gilt identisch für beide Fertigkeitsarten. Bewusst unabhängig von
+   * zu setzen oder zu ändern. SR4-Grundregelwerk S. 312: 2 Karma je Spezialisierung — gilt identisch für beide Fertigkeitsarten. Bewusst unabhängig von
    * Uneducated/Uncouth/Infirm und daher **nicht** über {@link Skill#getKarmaCost(boolean)} bzw.
    * {@link #getKnowledgeSkillKarmaCost(KnowledgeSkill)} zu berechnen — jene Methoden verdoppeln bei
    * Rating-Steigerungen, das GRW nennt für Spezialisierungen aber keine solche Sonderregel.
@@ -1170,8 +1158,8 @@ public class Character {
   /**
    * Prüft, ob das Rating einer Komplexen Form um 1 gesteigert werden darf (bzw., bei einer noch nicht
    * gelernten Form, ob sie überhaupt gelernt werden darf): die neue Stufe darf das aktuelle
-   * Resonanzattribut nicht überschreiten (SR4-Grundregelwerk: "Die Grundstufe einer Komplexen Form kann
-   * das Resonanzattribut des Technomancers nicht überschreiten"). Anders als die reinen
+   * Resonanzattribut nicht überschreiten (SR4-Grundregelwerk: Stufe einer Komplexen Form höchstens
+   * Resonanz). Anders als die reinen
    * Erstellungs-Caps bei Fertigkeiten gilt dieser Cap **durchgehend**, auch im Karrieremodus, da er
    * keine Erschaffungsregel ist, sondern eine grundsätzliche Grenze. Maßgeblich ist der durch
    * Essenzverlust ggf. reduzierte Resonanzwert ({@link #getEffectiveMagicOrResonanceValue()}).
@@ -1198,9 +1186,7 @@ public class Character {
 
   /**
    * Ressourcengeld für Ausrüstungskäufe bei der Erschaffung: Ressourcen-BP × {@value #NUYEN_PER_BP}
-   * ¥. SR4-Grundregelwerk S. 110: "Für jeden GP, den der Spieler in Ausrüstung investiert, kann der
-   * Charakter Waffen, Panzerung, Cyberware und andere Ausrüstung im Wert von 5.000 ¥ erwerben, bis zu
-   * einem Maximum von 50 GP oder 250.000 ¥."
+   * ¥. SR4-Grundregelwerk S. 110: 5.000 ¥ Ausrüstung je GP, höchstens 50 GP (250.000 ¥).
    */
   public int getResourceNuyen() {
     return nuyenBP * NUYEN_PER_BP;
@@ -1219,8 +1205,8 @@ public class Character {
 
   /**
    * Gründe, die einen Abschluss der Charaktererschaffung verhindern; leer, wenn abgeschlossen werden
-   * darf. Derzeit nur negatives Restgeld (GRW S. 111: "Wenn der Spieler zum Schluss einfach nicht
-   * genügend Nuyen hat […], muss er dies bis zum Ende der Charaktererschaffung tun"). Essenz ≤ 0 ist
+   * darf. Derzeit nur negatives Restgeld (GRW S. 111: Fehlendes Geld muss vor Ende der Erschaffung
+   * ausgeglichen werden). Essenz ≤ 0 ist
    * bewusst kein Hinderungsgrund, sondern bleibt eine weiche Warnung (Nutzerentscheidung, siehe
    * {@link #isEssenceBelowCreationMinimum()}).
    */
@@ -1238,9 +1224,8 @@ public class Character {
    * Schließt die Charaktererschaffung ab und wechselt in den Karrieremodus. Das Startkapital wird nach
    * SR4-Grundregelwerk S. 114 aus dem Lebensstil erwürfelt ({@link
    * de.shalorian.chummer.model.character.lifestyle.LifestyleLevel#startingCapital(int, int)}) und als
-   * erster Nuyen-Log-Eintrag gebucht. Übriges Ressourcengeld verfällt ("Nuyen, die bei der Zuteilung
-   * von Ressourcen nicht für Ausrüstung ausgegeben werden, werden nicht ins Spiel übernommen") und
-   * fließt nur als Bonus in den Wurf ein. Ersetzt die frühere Controller-Logik, die das volle
+   * erster Nuyen-Log-Eintrag gebucht. Übriges Ressourcengeld verfällt (GRW S. 114: nicht ausgegebenes
+   * Ressourcengeld geht nicht ins Spiel über) und fließt nur als Bonus in den Wurf ein. Ersetzt die frühere Controller-Logik, die das volle
    * Ressourcengeld als Startkapital gebucht hat. Die Ressourcen-BP werden wie bisher auf 0 gesetzt.
    *
    * @param diceSum vom Spieler bzw. der App gewürfelte Summe der Lebensstil-W6

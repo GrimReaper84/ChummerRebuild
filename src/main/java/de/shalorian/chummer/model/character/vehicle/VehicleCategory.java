@@ -32,7 +32,7 @@ public enum VehicleCategory {
     return displayName;
   }
 
-  /** Ob es sich um Drohnen handelt (GRW S. 398: "Alle Drohnen sind mit einem Riggeradapter ausgestattet."). */
+  /** Ob es sich um Drohnen handelt (GRW S. 398: Drohnen haben immer einen Riggeradapter). */
   public boolean isDrone() {
     return this == DRONES;
   }

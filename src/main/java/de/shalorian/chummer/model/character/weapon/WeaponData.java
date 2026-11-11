@@ -16,8 +16,8 @@ import org.jspecify.annotations.Nullable;
  * bedeuten, dass die Tabelle der Kategorie diese Spalte nicht führt (z.B. Modus bei Nahkampfwaffen).
  *
  * <p>Einzige Waffe mit Stufe ist der Bogen: GRW S. 361 führt ihn mit der Mindeststärke als Stufe
- * ("STR Min"), Verfügbarkeit "STR Min x 2" und Preis "STR Min x 100 ¥"; High-Tech-Bögen sind "auf eine
- * maximale Stärke von 8 begrenzt".
+ * ("STR Min"), Verfügbarkeit "STR Min x 2" und Preis "STR Min x 100 ¥"; High-Tech-Bögen gehen höchstens bis
+ * Stärke 8.
  *
  * @param reach         Nahkampf-Reichweite ("–", "1", "2"), leer bei Fernkampfwaffen
  * @param damage        Schadenscode als GRW-Text

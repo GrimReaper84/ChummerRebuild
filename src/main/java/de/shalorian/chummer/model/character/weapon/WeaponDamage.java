@@ -8,10 +8,10 @@ import org.jspecify.annotations.Nullable;
 /**
  * Wertet die Schadenscodes der GRW-Waffentabellen für eine konkrete Stärke aus.
  *
- * <p>SR4-Grundregelwerk S. 188: "Der Schaden der meisten Nahkampfwaffen beträgt Stärke ÷ 2
- * (aufgerundet), modifiziert durch die Waffe." Wurfwaffen (Shuriken, Wurfmesser) nutzen dieselbe
- * Schreibweise (S. 361). Beim Bogen bestimmt die Mindeststärke den Schaden (S. 361: "Die
- * Mindeststärke der Waffe wird auch für die Bestimmung des Schadens und der Reichweite benutzt").
+ * <p>SR4-Grundregelwerk S. 188: Nahkampfschaden meist halbe Stärke (aufgerundet) plus Waffenwert.
+ * Wurfwaffen (Shuriken, Wurfmesser) nutzen dieselbe
+ * Schreibweise (S. 361). Beim Bogen bestimmt die Mindeststärke Schaden und Reichweite
+ * (S. 361).
  *
  * <p>Ausgewertet werden bewusst nur genau diese GRW-Muster, jeweils mit X ∈ {K, G} und optionalem
  * Suffix "(e)" (Elektrizität) bzw. "(f)" (Flechette):

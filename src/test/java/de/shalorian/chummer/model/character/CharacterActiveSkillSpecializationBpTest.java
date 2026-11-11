@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * SR4-Grundregelwerk S. 109: "Spezialisierungen kosten nur 2 GP" — fixer Preis pro spezialisierter
+ * SR4-Grundregelwerk S. 109: 2 GP je Spezialisierung — fixer Preis pro spezialisierter
  * aktiver Fertigkeit, unabhängig vom Rating oder dem übrigen Budget.
  */
 class CharacterActiveSkillSpecializationBpTest {

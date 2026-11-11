@@ -56,14 +56,13 @@ public enum WeaponCategory {
 
   /**
    * Name der aktiven Kampffertigkeit, mit der Waffen dieser Kategorie geführt bzw. abgefeuert werden
-   * (Fertigkeiten GRW S. 147/148, Zuordnung laut Kategorietexten S. 360–366, z.B. S. 362 "Taser …
-   * werden mit der Fertigkeit Pistolen abgefeuert", S. 363 "Maschinenpistolen werden mit der
-   * Fertigkeit Schnellfeuerwaffen abgefeuert", S. 365 "Schrotflinten werden mit der Fertigkeit
-   * Gewehre abgefeuert", S. 365 "Diese Waffen werden mit der Fertigkeit Schwere Waffen abgefeuert").
+   * (Fertigkeiten GRW S. 147/148, Zuordnung laut Kategorietexten S. 360–366, z.B. Taser → Pistolen
+   * (S. 362), MPs → Schnellfeuerwaffen (S. 363), Schrotflinten → Gewehre, schwere Waffen → Schwere
+   * Waffen (beide S. 365)).
    * Bögen und Armbrüste nutzen Projektilwaffen, Wurfwaffen die gleichnamige Fertigkeit (S. 148).
    *
-   * <p><b>Einschränkung:</b> Laut GRW S. 365 benötigt jede Spezielle Waffe "eine auf sie
-   * zugeschnittene Fertigkeit Exotische Fernkampfwaffe", und Exotische Nahkampfwaffen müssen ebenfalls
+   * <p><b>Einschränkung:</b> Laut GRW S. 365 braucht jede Spezielle Waffe ihre eigene
+   * Fertigkeit Exotische Fernkampfwaffe, und Exotische Nahkampfwaffen müssen ebenfalls
    * je Waffe gelernt werden (S. 148). Das Fertigkeitsmodell kennt bisher nur je eine gemeinsame
    * exotische Fertigkeit; deren Wert gilt hier für alle exotischen Waffen.
    */
@@ -72,10 +71,8 @@ public enum WeaponCategory {
   }
 
   /**
-   * Halterungen für Zubehör. SR4-Grundregelwerk S. 357: "Holdout-Pistolen besitzen keine Halterung.
-   * Pistolen (einschließlich Automatikpistolen) verfügen über Halterungen für Lauf- und aufmontiertes
-   * Zubehör. MPs, alle Gewehre und schweren Waffen haben aufmontierte, Lauf- und
-   * Unterlaufhalterungen."
+   * Halterungen für Zubehör. SR4-Grundregelwerk S. 357: Holdouts keine; Pistolen und Automatikpistolen
+   * Lauf und aufmontiert; MPs, Gewehre und schwere Waffen zusätzlich Unterlauf.
    *
    * <p>Ergänzungen ohne ausdrückliche GRW-Zeile: Taser nur aufmontiert (Nutzerentscheidung
    * 2026-09-30, wie im Original-Chummer); Bögen und Armbrüste aufmontiert und Unterlauf, damit die
@@ -112,8 +109,8 @@ public enum WeaponCategory {
   }
 
   /**
-   * Ob es sich um Projektilwaffen handelt (GRW S. 357: "Projektilwaffen können nur mit einem
-   * Lasermarkierer oder Smartgunsystem ausgerüstet werden").
+   * Ob es sich um Projektilwaffen handelt (GRW S. 357: an ihnen nur Lasermarkierer oder
+   * Smartgunsystem).
    */
   public boolean isProjectile() {
     return this == BOWS || this == CROSSBOWS;
@@ -121,8 +118,7 @@ public enum WeaponCategory {
 
   /**
    * Ob Waffen dieser Kategorie in eine Waffenhalterung eines Fahrzeugs passen. SR4-Grundregelwerk
-   * S. 395: "Eine Waffenhalterung kann ein LMG oder eine kleinere Waffe sowie 250 Schuss Munition
-   * aufnehmen." Erlaubt sind deshalb die Feuerwaffen bis einschließlich der Leichten
+   * S. 395: Waffen bis LMG. Erlaubt sind deshalb die Feuerwaffen bis einschließlich der Leichten
    * Maschinengewehre, zusätzlich Granatwerfer (Nutzerentscheidung 2026-10-09); Nahkampf-, Wurf- und
    * Projektilwaffen, Mittlere und Schwere MGs, Sturmkanonen und Raketenwerfer nicht.
    */

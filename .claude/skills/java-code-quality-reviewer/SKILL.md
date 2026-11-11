@@ -29,8 +29,8 @@ frischem Kontext (siehe Projektregeln Abschnitt 2). Dann gilt zusätzlich:
   - Sind Tests redundant, falsch benannt oder prüfen Argumente, die keine Rolle spielen?
 - **Designentscheidungen dürfen infrage gestellt werden**, auch solche aus dem Plan, wenn eine einfachere
   Lösung dasselbe fachliche Ziel erreicht. Solche Punkte als "Planentscheidung, Nutzer fragen" markieren.
-- **GRW-Zitate im neuen Javadoc stichprobenartig prüfen** (Seitenzahl = gedruckte Seite, Projektregeln
-  Abschnitt 4).
+- **GRW-Belege im neuen Javadoc stichprobenartig prüfen** (Seitenzahl = gedruckte Seite, eigene Worte statt
+  GRW-Wortlaut, Projektregeln Abschnitt 4).
 - Ausgabe A in kompakter Form; höchstens 7 Befunde. "Keine relevanten Befunde" ist ein gültiges Ergebnis.
 - Keine Dateien ändern, nichts committen.
 

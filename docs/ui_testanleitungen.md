@@ -25,7 +25,7 @@ teilen sich seit diesem Refactoring eine gemeinsame private Hilfsmethode `openDi
 für den FXML-/Stage-Aufbau. Diese Anleitung prüft, dass beide Dialoge sich weiterhin
 identisch verhalten wie vor der Extraktion.
 
-1. App starten: `./gradlew run`. Das Hauptfenster "Chummer – SR4 Charakter Manager"
+1. App starten: `./gradlew run`. Das Hauptfenster "Chummer SR4 Reborn <Version>"
    öffnet sich mit der Menüleiste (Datei-Menü).
 2. Menü **Datei → Neu** (oder `Strg+N`). Der Dialog "Neuer Charakter" öffnet sich.
 3. Im Feld **Name** einen beliebigen Namen eingeben, z. B. `Testperson`.
@@ -79,7 +79,7 @@ Anleitung prüft, dass optisch nichts kaputt ist und dass `hidemode 3` den Minus
 Karrieremodus wirklich lückenlos entfernt (der eigentliche Grund für den Wechsel zu
 MigLayout).
 
-1. App starten: `./gradlew run`. Das Hauptfenster "Chummer – SR4 Charakter Manager"
+1. App starten: `./gradlew run`. Das Hauptfenster "Chummer SR4 Reborn <Version>"
    öffnet sich.
 2. Menü **Datei → Neu** (oder `Strg+N`). Dialog "Neuer Charakter" öffnet sich.
 3. Name `Testperson`, Metatyp `Mensch`, auf **Erstellen** klicken.

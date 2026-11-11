@@ -117,9 +117,8 @@ public class Equipment {
   /**
    * Ob ein Gegenstand mit dieser Verfügbarkeit in dieser Stufe aktuell gekauft werden darf: bei der
    * Charaktererschaffung nur bis Stufe {@value Availability#MAX_RATING_AT_CREATION} und
-   * Verfügbarkeit {@value Availability#MAX_AVAILABILITY_AT_CREATION} (SR4-Grundregelwerk S. 111: "Die
-   * Maximalstufe, die ein während der Charaktererschaffung erworbener Ausrüstungsgegenstand aufweisen
-   * darf, beträgt 6. Die höchste Verfügbarkeit ist 12."), im Karrieremodus immer. Gilt für alle
+   * Verfügbarkeit {@value Availability#MAX_AVAILABILITY_AT_CREATION} (SR4-Grundregelwerk S. 111), im
+   * Karrieremodus immer. Gilt für alle
    * Kaufkategorien mit Stufe; Gegenstände ohne Stufe übergeben {@code 0}. Wie bei {@link
    * #isCyberwareGradeAvailable(CyberwareGrade)} prüft die UI diese Regel, nicht {@code add…()}, damit
    * der Persistenz-Pfad unverändert laden kann.
@@ -171,11 +170,9 @@ public class Equipment {
   }
 
   /**
-   * Ballistik-Schutzwert der angelegten Rüstung. SR4-Grundregelwerk S. 190: "Wenn ein Charakter mehr
-   * als ein Panzerungsstück gleichzeitig trägt, wird nur der höchste Wert (für jeweils Ballistik oder
-   * Stoß) beachtet. Einige Panzerungsgegenstände, wie Helme und Schilde, liefern einen Bonus auf die
-   * Panzerungsstufe" — und S. 372: Helme und Schilde "erhöhen den Wert der getragenen Panzerung um
-   * ihre Stufe". Also höchstes angelegtes Panzerungsteil + Summe aller angelegten Helm-/Schild-Boni.
+   * Ballistik-Schutzwert der angelegten Rüstung. SR4-Grundregelwerk S. 190: Bei mehreren Panzerungen
+   * zählt je Ballistik und Stoß nur der höchste Wert; Helme und Schilde geben einen Bonus, der laut
+   * S. 372 ihrer Stufe entspricht. Also höchstes angelegtes Panzerungsteil + Summe aller angelegten Helm-/Schild-Boni.
    */
   public int getArmorBallistic() {
     return protectionValue(ArmorData::ballistic);
@@ -264,8 +261,8 @@ public class Equipment {
   }
 
   /**
-   * Schaden der Waffe für diesen Charakter (GRW S. 188: "Stärke ÷ 2 (aufgerundet), modifiziert durch
-   * die Waffe"; beim Bogen nach Mindeststärke). Grundlage ist die wirksame Stärke ({@link
+   * Schaden der Waffe für diesen Charakter (GRW S. 188: halbe Stärke aufgerundet plus Waffenmodifikator;
+   * beim Bogen nach Mindeststärke). Grundlage ist die wirksame Stärke ({@link
    * Character#getAugmentedAttributeValue(AttributeType)}), die derzeit der investierten entspricht,
    * da es noch keine Stärkemodifikatoren gibt.
    */
@@ -356,8 +353,8 @@ public class Equipment {
   /**
    * Summe aller Kaufpreise, die gegen das Ressourcengeld zählen: Cyber-/Bioware, Rüstung, Waffen,
    * übrige Ausrüstung, Fahrzeuge und Lebensstil (Monatskosten × Monate). Zentrale Summenstelle — künftige
-   * Kaufkategorien werden hier ergänzt. GRW S. 111: "Startcharaktere müssen den Preis für
-   * Ausrüstungsgegenstände vollständig bezahlen."
+   * Kaufkategorien werden hier ergänzt. GRW S. 111: Bei der Erschaffung wird jeder Gegenstand zum vollen
+   * Preis bezahlt.
    */
   public int getSpentNuyen() {
     return getCyberwareNuyenCost() + getArmorNuyenCost() + getWeaponNuyenCost()

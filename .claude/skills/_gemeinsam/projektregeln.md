@@ -130,7 +130,7 @@ Fehler hat schon einmal ein Kern-Feature fälschlich als Zusatzband eingestuft.
 echo $(( $(head -n <ZEILE> docs/rulebooks/grundregelwerk.txt | tr -cd '\f' | wc -c) + 1 ))
 ```
 Die gedruckte Buchseite liegt in der Regel **eine** Seite darunter (PDF 121 = Buch S. 120). In
-Zitaten die gedruckte Seite angeben und im Zweifel am Bild nachsehen.
+Belegen die gedruckte Seite angeben und im Zweifel am Bild nachsehen.
 
 **Tabellen:** In `grundregelwerk.txt` sind Tabellenspalten auseinandergerissen. Tabellen zuerst in
 `grundregelwerk_layout.txt` lesen (gleiche Seite, Spalten bleiben in ihrer Zeile).
@@ -145,14 +145,16 @@ gs -dQUIET -dSAFER -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dFirstPage=<N> -dLastPag
 Danach die kleine PDF mit dem Read-Tool öffnen (max. ~20 Seiten pro Aufruf). Die volle PDF ist zu
 groß zum direkten Lesen. Eindeutiger Fließtext braucht keine Bildprüfung.
 
-**Zitieren:** Fachregeln in Analysen, Plänen und Javadoc mit Seite und kurzem Wortlaut belegen, z.B.
-`SR4-Grundregelwerk S. 359: "Nur Standard- und Alphaware können bei der Charaktererschaffung gekauft
-werden."` So kann man später nachvollziehen, woher eine Regel kommt.
+**Belegen:** Fachregeln mit gedruckter Seite und einer Zusammenfassung **in eigenen Worten** belegen, z.B.
+`SR4-Grundregelwerk S. 359: bei der Erschaffung nur Standard- und Alphaware.` So kann man später nachvollziehen,
+woher eine Regel kommt. Wörtliche Kurzzitate sind nur in Analysen und Plänen erlaubt (`docs/plaene`,
+`docs/analysen`; gitignored, bleiben lokal).
 
-**Kein Regelwerkstext 1:1 in Katalogen (Nutzervorgabe 2026-11-11).** XML-Kataloge und alles, was die App
-anzeigt, enthalten nur Werte, Namen, Seitenangaben und Beschreibungen **in eigenen Worten**, nie wörtlich
-übernommene Sätze aus dem GRW. Grund: Das Projekt wird öffentlich (GPL-3.0), der Regelwerkstext ist urheberrechtlich
-geschützt. Gilt für neue Kataloge und für die Überarbeitung der bestehenden.
+**Kein Regelwerkstext 1:1 in versionierten Dateien (Nutzervorgabe 2026-11-11).** Alles, was ins Repository kommt
+(Java-Code samt Javadoc und Kommentaren, XML-Kataloge, FXML, UI-Texte, versionierte Doku wie
+`docs/feature_checklist.md`), enthält nur Werte, Namen, Seitenangaben und Beschreibungen **in eigenen Worten**, nie
+wörtlich übernommene Sätze aus dem GRW. Grund: Das Projekt ist öffentlich (GPL-3.0), der Regelwerkstext ist
+urheberrechtlich geschützt. Wer aus einem Plan Belege in Javadoc übernimmt, formuliert sie dabei um.
 
 **Nichts erfinden.** Katalogdaten (Zauber, Qualities, Implantate …) nur aus einer tatsächlich
 gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
@@ -182,7 +184,8 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
 - **Null-Handling:** jspecify `@NonNull`/`@Nullable`, NullAway ist als Fehler aktiv. Nullable Felder
   **direkt** prüfen (`if (field == null) return;`), keine lokale Hilfsvariable nur für NullAway. Nur wenn
   ein Lambda das Feld einfängt und NullAway wirklich einen Build-Fehler wirft, strukturell lösen.
-- **Javadoc** für öffentliche und fachlich relevante APIs: Zweck, Regelbezug mit GRW-Zitat und Seite,
+- **Javadoc** für öffentliche und fachlich relevante APIs: Zweck, Regelbezug mit GRW-Seite und eigener
+  Zusammenfassung (kein Wortlaut, Abschnitt 4),
   Vorbedingungen, bewusste Abweichungen vom C#-Original. Nicht den Methodennamen wiederholen.
 - **Sprache: Deutsch** (Nutzervorgabe, bestätigt 2026-11-11). Deutsch sind UI-Texte, XML-Daten,
   Kommentare, Javadoc, Testnamen-Kommentare, Skills, Projektregeln, `DECISIONS.md`, Pläne, Analysen,

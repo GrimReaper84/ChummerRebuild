@@ -308,11 +308,11 @@ public final class VehicleTabBuilder {
     } else if (mount != null) {
       showTextDetails(details, VehicleModification.WEAPON_MOUNT.getDisplayName(),
           VehicleDetails.mountText(vehicle, mount)
-              + ". Nimmt ein LMG oder eine kleinere Waffe sowie 250 Schuss Munition auf (GRW S. 395).");
+              + ". Platz für eine Waffe bis LMG und 250 Schuss (GRW S. 395).");
     } else if (entry.riggerAdapter()) {
       showTextDetails(details, VehicleModification.RIGGER_ADAPTER.getDisplayName(),
           vehicle.isRiggerAdapterIncluded()
-              ? "Alle Drohnen sind mit einem Riggeradapter ausgestattet (GRW S. 398)."
+              ? "Bei Drohnen serienmäßig eingebaut (GRW S. 398)."
               : "Nachgerüstet (" + VehicleModification.RIGGER_ADAPTER.cost() + " ¥). Damit kann ein"
                   + " Charakter mit Riggerkontrolle das Fahrzeug riggen (GRW S. 395).");
     } else if (gear != null) {

@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * SR4-Grundregelwerk: Edge ist vom Rassenmaximum-Bonus ausgenommen ("10 GP pro Attributsstufe
- * [ausgenommen Maximierung]"), Magic/Resonance erhalten denselben Bonus wie Standardattribute
+ * SR4-Grundregelwerk: Edge ist vom Rassenmaximum-Bonus ausgenommen (immer 10 GP je Stufe), Magic/Resonance erhalten denselben Bonus wie Standardattribute
  * (6. Punkt kostet 25 GP). Karma-Kosten im Karrieremodus folgen für alle drei Sonderattribute
  * derselben Formel wie Standardattribute (neue Stufe × 5).
  */
@@ -14,7 +13,7 @@ class SpecialAttributeTest {
 
   @Test
   void edgeBpCostHasNoRacialMaxBonus() {
-    // Mensch-Edge-Spanne 2-7 (GRW S. 105: "Besondere Fähigkeiten: +1 Edge")
+    // Mensch-Edge-Spanne 2-7 (GRW S. 105: Menschen haben +1 Edge)
     SpecialAttribute edge = new SpecialAttribute(SpecialAttributeType.EDGE, 2, 7, false);
     edge.setValue(7);
     assertEquals(50, edge.getBpCost()); // (7-2) * 10, kein +15-Bonus
@@ -36,7 +35,7 @@ class SpecialAttributeTest {
 
   @Test
   void karmaCostIsNewValueTimesFiveForAllSpecialAttributes() {
-    // GRW, Kapitel Attribut-Steigerung: "Die Kosten... betragen die neue Stufe x 5" — explizit
+    // GRW, Kapitel Attribut-Steigerung: neue Stufe × 5 Karma — explizit
     // inklusive Edge/Magie/Resonanz, keine Ausnahme für Edge (anders als bei der BP-Formel).
     SpecialAttribute edge = new SpecialAttribute(SpecialAttributeType.EDGE, 2, 7, false);
     edge.setValue(4);

@@ -24,10 +24,9 @@ import org.jspecify.annotations.Nullable;
  * <p><b>Einbauten:</b> Geräte mit {@link #accepts()} nehmen Gegenstände dieser Kategorie auf
  * (Kommlink → Betriebssystem, Brille → Sichtverstärkung, Sensorpaket → Sensor-Funktion, Magschloss →
  * Zusätze). Hat das Gerät eine {@link #capacity()}, darf die Summe der {@link #capacityCost()} seiner
- * Einbauten sie nicht übersteigen. SR4-Grundregelwerk S. 379: "Jede Verstärkung verbraucht 1 Punkt
- * Kapazität" (Ultraschall 2), Audioverstärkung "1 Punkt Kapazität (pro Stufe)"; S. 380: "die
- * gesamte Kapazität der einzelnen Sensoren darf die Kapazitätsstufe des Paketes nicht
- * überschreiten". Steht die Verfügbarkeit als Zuschlag in der Tabelle ("+4", "+4E"), erhöht sie die
+ * Einbauten sie nicht übersteigen. SR4-Grundregelwerk S. 379: Sichtverstärkungen belegen je 1 Punkt
+ * (Ultraschall 2), Audioverstärkung "1 Punkt Kapazität (pro Stufe)"; S. 380: Die Sensoren eines Pakets
+ * dürfen zusammen nicht mehr Kapazität belegen, als das Paket hat. Steht die Verfügbarkeit als Zuschlag in der Tabelle ("+4", "+4E"), erhöht sie die
  * Verfügbarkeit des Geräts ({@link #availabilitySurcharge()}); der Preis eines Einbaus zählt immer
  * zum Gerät.
  *

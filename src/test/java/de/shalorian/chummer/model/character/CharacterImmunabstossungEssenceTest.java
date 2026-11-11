@@ -17,8 +17,7 @@ import de.shalorian.chummer.model.character.quality.QualityType;
 import org.junit.jupiter.api.Test;
 
 /**
- * GRW S. 120, Handicap "Immunabstoßung": "Alle Essenzverluste durch Cyberware-Implantate werden
- * verdoppelt. Dieses Handicap wirkt sich nicht auf den Essenzverlust durch Bioware aus."
+ * GRW S. 120, Handicap "Immunabstoßung": doppelter Essenzverlust durch Cyberware, Bioware unverändert.
  */
 class CharacterImmunabstossungEssenceTest {
 

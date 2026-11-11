@@ -122,8 +122,7 @@ class WeaponAccessoryRulesTest {
 
   @Test
   void noSecondGasVentOrSmartgunWhenOneIsIncluded() {
-    // GRW S. 367: "Waffen, die bereits ein eingebautes Gasventilsystem besitzen, können nicht mit
-    // einem weiteren ausgerüstet werden."
+    // GRW S. 367: Eine Waffe mit Gasventil ab Werk bekommt kein zweites.
     assertNotNull(weapon("Ingram White Knight").mountProblem(accessory("Gasventilsystem 3")));
     assertNotNull(weapon("Ares Predator IV").mountProblem(accessory("Smartgunsystem, extern")));
     assertNotNull(weapon("Ares Predator IV").mountProblem(accessory("Smartgunsystem, intern")));

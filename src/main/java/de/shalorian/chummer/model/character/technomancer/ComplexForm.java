@@ -7,8 +7,7 @@ import org.jspecify.annotations.NonNull;
  * Eine von einem Charakter gelernte Komplexe Form (Rating-Instanz eines {@link ComplexFormData}-
  * Katalogeintrags). Wird laut SR4-Grundregelwerk immer mit Stufe 1 gelernt ({@code min == 1} — anders
  * als bei Wissensfertigkeiten gibt es kein "gekanntes Rating 0"). Die Kosten-Formel entspricht laut GRW
- * exakt der einer Wissensfertigkeit ("kostet das gleiche, wie eine Wissensfertigkeit zu erlernen bzw.
- * zu steigern": 2 Karma für eine neue Komplexe Form, Karma in Höhe der neuen Stufe für jede weitere
+ * exakt der einer Wissensfertigkeit (2 Karma für eine neue Komplexe Form, Karma in Höhe der neuen Stufe für jede weitere
  * Steigerung) — eigene Konstanten statt Wiederverwendung von {@code Character}s
  * Wissensfertigkeiten-Konstanten, um eine versehentliche Kopplung zwischen beiden Feature-Bereichen zu
  * vermeiden, siehe {@code docs/plaene/archiv/technomancer_plan.md} Abschnitt 13.
@@ -16,9 +15,9 @@ import org.jspecify.annotations.NonNull;
 public class ComplexForm {
 
   public static final int MIN_RATING = 1;
-  /** BP-Kosten pro Stufenpunkt bei Erstellung — fixer Preis, keine Staffelung (GRW: "1 GP pro Stufenpunkt"). */
+  /** BP-Kosten pro Stufenpunkt bei Erstellung — fixer Preis, keine Staffelung (GRW S. 112: 1 GP je Stufe). */
   public static final int BP_PER_RATING = 1;
-  /** Karma-Kosten, um eine neue Komplexe Form (Stufe 1) zu erlernen (GRW: "2 Karmapunkte für eine neue Komplexe Form"). */
+  /** Karma-Kosten, um eine neue Komplexe Form (Stufe 1) zu erlernen (GRW: 2 Karma). */
   public static final int KARMA_NEW = 2;
 
   private static final int KARMA_PER_RATING = 1;

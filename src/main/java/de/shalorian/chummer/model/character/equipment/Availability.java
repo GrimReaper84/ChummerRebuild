@@ -8,8 +8,8 @@ import org.jspecify.annotations.NonNull;
  * 5"}, ausgewertet über {@link RatingFormula}) plus {@link Legality}. Gemeinsamer Baustein für alle
  * Kaufkategorien (Cyberware, Rüstung, künftig Waffen und Gear).
  *
- * <p>SR4-Grundregelwerk S. 111: "Die Maximalstufe, die ein während der Charaktererschaffung
- * erworbener Ausrüstungsgegenstand aufweisen darf, beträgt 6. Die höchste Verfügbarkeit ist 12." Die
+ * <p>SR4-Grundregelwerk S. 111: Bei der Erschaffung gekaufte Ausrüstung hat höchstens Stufe 6 und
+ * Verfügbarkeit 12. Die
  * Implantatkategorien (Alpha-/Beta-/Deltaware) haben im GRW keinen Verfügbarkeitsmodifikator
  * (Tabelle S. 359 nennt nur Essenz und Preis) — anders als im C#-Original wird deshalb hier nichts
  * aufgeschlagen.

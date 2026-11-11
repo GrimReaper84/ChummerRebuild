@@ -117,7 +117,7 @@
 | Kontakt hinzufügen (Name, Kurzbeschreibung, Connection, Loyalty) | ✅ | `Contact`-Modell, eigener Tab, Add/Edit-Dialog (Beschreibung als Tooltip), 2026-08-07. Bewusst reduzierter Scope: kein Enemy/Pet-Unterschied, keine Gruppenkontakt-Modifikatoren (kein GRW-Beleg im Kernregelwerk, siehe `docs/analysen/archiv/kontakte_analyse.md`) |
 | BP-Kosten: 1 BP pro Kontaktpunkt (Connection + Loyalty)   | ✅      | GRW S. 113 bestätigt: "Kosten = Connectionstufe + Loyalitätsstufe", `Character.getContactBP()` |
 | ~~Freie Kontaktpunkte: CHA × 2~~                          | ✅      | **Widerlegt** (2026-08-04): Im GRW-Erstellungskapitel zu Connections (S. 113) wird Charisma kein einziges Mal erwähnt — Kontakte werden ganz normal aus dem allgemeinen 400-GP-Budget bezahlt, kein eigener CHA-basierter Freibetrag. Kein Freibetrag implementiert |
-| Karrieremodus: Kontakte frei bearbeitbar, ohne Karma-Kosten | ✅ | GRW: Connections werden nicht mit Karma gekauft ("müssen sie sich auf die harte Tour verdienen"), neue `wireFreeIncrementable()`-UI-Methode |
+| Karrieremodus: Kontakte frei bearbeitbar, ohne Karma-Kosten | ✅ | GRW: Connections werden nicht mit Karma gekauft (sie müssen im Spiel erarbeitet werden), neue `wireFreeIncrementable()`-UI-Methode |
 
 ---
 
@@ -154,7 +154,7 @@
 | RES-Attribut aktivieren (via Quality)      | ✅      | **Korrektur (2026-08-08):** bereits umgesetzt im Zuge des Sonderattribute-Features (analog zur EDG/MAG/RES-Korrektur vom 2026-08-06) — Quality "Technomant" (5 BP, `qualities.xml`), `QualityBonusType.GRANTS_RESONANCE`, `Character.hasResonance()`/`syncMagicOrResonance()`, Magie/Resonanz-Exklusivität, Persistenz. GRW S. 106 bestätigt. Checkliste war nicht mit dem Code synchron, siehe `docs/analysen/archiv/technomancer_java_analyse.md` |
 | Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/archiv/technomancer_plan.md`) |
 | Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (20 GRW-Einträge), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
-| Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ❌ | **Lücke gefunden 2026-09-27:** GRW S. 112: "Die maximale Anzahl an komplexen Formen, mit denen ein Charakter das Spiel beginnen kann, entspricht – unabhängig von ihrer Stufe – dem doppelten Logikattribut". Im Code nicht geprüft (nur der Stufen-Cap); kleiner Folgeauftrag analog `canAddSpellAtCreation()` |
+| Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ❌ | **Lücke gefunden 2026-09-27:** GRW S. 112: Zu Spielbeginn höchstens doppelt so viele Komplexe Formen wie Logik, egal welcher Stufe. Im Code nicht geprüft (nur der Stufen-Cap); kleiner Folgeauftrag analog `canAddSpellAtCreation()` |
 | Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/archiv/technomancer_analyse.md`) |
 
 ---
@@ -218,7 +218,7 @@
 | Stufe ≤ 6 bei Erschaffung (allgemein) | ✅ | `Equipment.isAvailableForPurchase` (GRW S. 111), gilt für alle Kaufkategorien mit Stufe |
 | Kommlink mit Prozessor/Signal + Betriebssystem (Firewall/System) | ✅ | Gear Teil B (2026-10-08): 9 Kommlinks, 6 Betriebssysteme (GRW S. 374, am Bild); Betriebssystem als Kindknoten, gekauft über "Betriebssystem installieren", höchstens eins je Kommlink; System ≤ Prozessor (S. 260) mit Hinweis im Detailbereich; Kommlinks/Betriebssysteme sind Einzelstücke (Menge 1, kein Zusammenführen). UI vom Nutzer noch nicht angesehen |
 | Matrixprogramme mit Preisbändern | ✅ | Gear Teil B: 6 Zeilen der Tabelle S. 376 (Preis bis Stufe 3 / ab Stufe 4), Programmname als Pflicht-Zusatztext (Freitext, keine Programmliste). Programme "System"/"Firewall" sind reine Käufe ohne Wirkung auf Kommlink-Werte |
-| Kommlink-Aufrüstungen, laufende Programme/Matrix-Regeln | ❌ | Zurückgestellt; Programme nicht einem Kommlink zugeordnet. **Korrektur 2026-10-09:** GRW-Preise gibt es doch: Tabelle "Preise für Hardware-Upgrades" S. 261 (Prozessor/Signal, Modulstufe 1–6, am Bild geprüft), Regel S. 260 ("nur um bis zu +2 über die Originalstufen", ein Modul je Attribut); Firewall/System als Softwarepaket zu den Programmpreisen S. 376. Umsetzung bleibt offen (gemeinsam mit Fahrzeug-Matrix-Upgrades zu entscheiden, `docs/analysen/archiv/fahrzeuge_analyse.md` F12) |
+| Kommlink-Aufrüstungen, laufende Programme/Matrix-Regeln | ❌ | Zurückgestellt; Programme nicht einem Kommlink zugeordnet. **Korrektur 2026-10-09:** GRW-Preise gibt es doch: Tabelle "Preise für Hardware-Upgrades" S. 261 (Prozessor/Signal, Modulstufe 1–6, am Bild geprüft), Regel S. 260 (höchstens +2 auf die Ausgangsstufe, ein Modul je Attribut); Firewall/System als Softwarepaket zu den Programmpreisen S. 376. Umsetzung bleibt offen (gemeinsam mit Fahrzeug-Matrix-Upgrades zu entscheiden, `docs/analysen/archiv/fahrzeuge_analyse.md` F12) |
 | Sensoren, Sicht-/Audioverstärkung, Magschloss-Zusätze (Kapazität) | ✅ | Gear Teil C (2026-10-08): 10 visuelle/optische Geräte, 8 Sichtverstärkungen, 3 Audiosensoren, 3 Audioverstärkungen, 3 Sensorpakete (RFID/Mikro/Hand, 0 ¥ mangels GRW-Preis), 12 Sensor-Funktionen (inkl. Kamera/Mikrofon als Sensor), 3 Magschloss-Zusätze (GRW S. 378–382, am Bild). Einbau über "Einbauen" mit Kapazitätsprüfung, Verfügbarkeitszuschläge erhöhen die Verfügbarkeit des Geräts (auch für die Grenze 12 bei Erschaffung). UI vom Nutzer noch nicht angesehen |
 | Drohnen-/Fahrzeug-Sensorpakete | ✅ | Fahrzeug-Feature (2026-10-09): Stationär/kleine Drohne 5/4, Mittlere Drohne 6/4, Große Drohne 8/4, Fahrzeug 12/5 (Kapazität/Signal, GRW S. 381); "Sensorpaket (Hand)" heißt jetzt "Sensorpaket (Hand/Minidrohne)" wie die GRW-Zeile (alte Speicherdateien verlieren diesen Eintrag beim Laden) |
 | Autosoft-Typ als Auswahl | ✅ | 2026-10-09: Abwehr, Clearsight, Elektronische Kriegsführung, Steuerung, Zielerfassung (GRW S. 287); ohne Unterangabe Waffe/Fahrzeugtyp (Nutzerentscheidung) |
@@ -374,7 +374,9 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    `README.md`; lokal `.deb` und Linux-ZIP gebaut. Offen: erster echter Lauf der Workflows (Windows/macOS ungetestet),
    erstes Release (Tag).
 
-   **Vor dem ersten öffentlichen Release:** alle XML-Kataloge auf wörtlich übernommenen GRW-Text prüfen (v.a.
+   ✅ **Kataloge geprüft (2026-11-11, `docs/analysen/wortlaut_katalog.md`):** 22 Stellen umformuliert. Offen:
+   Javadoc-Zitate (≈ 70) und zwei Tooltips im Java-Code, siehe Bericht Abschnitt 6.
+   Ursprünglicher Auftrag: alle XML-Kataloge auf wörtlich übernommenen GRW-Text prüfen (v.a.
    `<note>`, Beschreibungen, Kommentare) und in eigene Worte fassen (Projektregeln Abschnitt 4, Nutzervorgabe
    2026-11-11), am besten mit `catalog-extractor` je Katalog.
 

@@ -112,8 +112,10 @@ Klassen. Das FXML bleibt unverändert (kein `fx:include`).
 verstreut in den Tabs. Nutzerentscheidungen per Rückfrage (Package `view.tab`, fachliche Rückmeldungen, ein Host).
 
 ### ADR-042: Kein Regelwerkstext 1:1 in Katalogen und Anzeige (2026-11-11)
-Kataloge enthalten nur Werte, Namen, Seitenangaben und eigene Kurzbeschreibungen; bestehende Kataloge werden vor dem
-ersten öffentlichen Release darauf geprüft.
+Kataloge enthalten nur Werte, Namen, Seitenangaben und eigene Kurzbeschreibungen. Seit 2026-11-11 gilt das für alle
+versionierten Dateien, auch Javadoc, Kommentare, Tests und UI-Texte: Regelbelege dort als Seite plus eigene
+Zusammenfassung statt Wortlaut. Wörtliche Kurzzitate nur noch in den lokalen Plänen und Analysen (`docs/`, gitignored).
+Bestand geprüft und umformuliert am 2026-11-11 (Kataloge 22 Stellen, Java-Code rund 100 Zitate).
 **Warum:** Das Projekt wird öffentlich (GPL-3.0), der GRW-Text ist urheberrechtlich geschützt.
 
 ### ADR-043: Release-Pakete mit JavaFX aus der JDK, Name und Icon (2026-11-11)

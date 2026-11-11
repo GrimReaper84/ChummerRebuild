@@ -86,11 +86,9 @@ public enum LifestyleLevel {
   }
 
   /**
-   * Startkapital in Nuyen nach SR4-Grundregelwerk S. 114: "Nuyen, die bei der Zuteilung von
-   * Ressourcen nicht für Ausrüstung ausgegeben werden, werden nicht ins Spiel übernommen. […] Wenn der
-   * Charakter noch Nuyen von seinen Ressourcen übrig hat, kann er das Wurfergebnis für jeweils 100 ¥,
-   * die er übrig hat, um +1 erhöhen, dieser Bonus darf maximal der Anzahl der Würfel x 3 entsprechen
-   * […]. Das Gesamtresultat wird mit dem angegebenen Geldmultiplikator multipliziert." Also {@code
+   * Startkapital in Nuyen nach SR4-Grundregelwerk S. 114: Restgeld aus den Ressourcen verfällt, gibt
+   * aber je volle 100 ¥ +1 auf den Wurf (höchstens 3 je Würfel); die Summe wird mit dem Multiplikator
+   * des Lebensstils malgenommen. Also {@code
    * (Würfelsumme + restBonus(Rest)) × Multiplikator}.
    *
    * @param diceSum        Summe der gewürfelten W6, muss in [{@link #getMinDiceSum()}, {@link

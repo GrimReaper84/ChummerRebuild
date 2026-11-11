@@ -51,7 +51,7 @@ class GearCapacityTest {
 
   @Test
   void ultrasoundNeedsTwoCapacity() {
-    // GRW S. 379: "Diese Verstärkung verbraucht 2 Punkte Kapazität."
+    // GRW S. 379: belegt 2 Punkte Kapazität
     assertNotNull(gear("Brille", 1).installProblem(find("Ultraschall"), 0));
     assertNull(gear("Brille", 2).installProblem(find("Ultraschall"), 0));
   }

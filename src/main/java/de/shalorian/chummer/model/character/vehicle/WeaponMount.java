@@ -5,8 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Eine Waffenhalterung eines Fahrzeugs mit höchstens einer eingesetzten Waffe. SR4-Grundregelwerk
- * S. 395: "Eine Waffenhalterung kann ein LMG oder eine kleinere Waffe sowie 250 Schuss Munition
- * aufnehmen." Mitgelieferte Halterungen (laut Fahrzeugtext, z.B. beim GM-Nissan Doberman) sind im
+ * S. 395: eine Waffe bis LMG und 250 Schuss. Mitgelieferte Halterungen (laut Fahrzeugtext, z.B. beim GM-Nissan Doberman) sind im
  * Fahrzeugpreis enthalten und lassen sich nicht ausbauen; Waffen setzt {@link Vehicle} ein, das die
  * Regeln prüft.
  */

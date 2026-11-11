@@ -60,7 +60,7 @@ class MissilePriceTest {
 
   @Test
   void miniGrenadeHasTheSamePrice() {
-    // GRW S. 370: "Minigranaten haben den gleichen Preis und die gleiche Wirkung"
+    // GRW S. 370: Minigranaten kosten und wirken wie normale Granaten
     Gear grenade = new Gear(find("Splittergranate"), 0, 2, "Standard", null);
     Gear mini = new Gear(find("Splittergranate"), 0, 2, "Minigranate", null);
 

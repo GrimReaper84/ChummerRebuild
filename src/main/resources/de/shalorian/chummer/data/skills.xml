@@ -113,10 +113,8 @@
     <skill name="Schiffe"             attribute="REA" category="VEHICLE"/>
 
     <!-- ── MAGIE (S. 148–150) ─────────────────────────────── -->
-    <!-- S. 148: "Wenn nicht anders angegeben, können nur Charaktere mit einer der Gaben Zauberer oder
-         Magieradept und einem Magieattribut von mindestens 1 magische Fertigkeiten erwerben oder
-         anwenden." Ausnahme Arcana: "kann nicht nur von Erwachten, sondern auch von Mundanen erlernt
-         werden" — siehe Character#isSkillAccessible(Skill). -->
+    <!-- S. 148: Magische Fertigkeiten stehen grundsätzlich nur Zauberern und Magieradepten mit Magie ab 1
+         offen; Arcana dürfen auch Mundane lernen (S. 150) — siehe Character#isSkillAccessible(Skill). -->
 
     <group name="Beschwören" category="MAGICAL">
         <skill name="Binden"      attribute="MAG"/>
@@ -136,8 +134,7 @@
     <skill name="Verzaubern"  attribute="MAG" category="MAGICAL"/>
 
     <!-- ── RESONANZ (S. 151) ──────────────────────────────── -->
-    <!-- "Diese Kategorie beinhaltet Fertigkeiten, die nur von Charakteren mit der Gabe Technomancer
-         (S. 117) gewählt werden können." -->
+    <!-- Nur für Charaktere mit der Gabe Technomancer (S. 117). -->
 
     <group name="Tasken" category="RESONANCE">
         <skill name="Dekompilieren" attribute="RES"/>

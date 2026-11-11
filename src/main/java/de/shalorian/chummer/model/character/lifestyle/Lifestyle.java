@@ -4,13 +4,13 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Der gekaufte Lebensstil eines Charakters: Stufe und Anzahl im Voraus bezahlter Monate.
- * SR4-Grundregelwerk S. 111: "Charaktere können immer nur einen Lebensstil kaufen, wobei sie ihn
- * mehrere Monate im Voraus erwerben können." Jeder Charakter hat genau einen Lebensstil (Default
+ * SR4-Grundregelwerk S. 111: ein Lebensstil je Charakter, auf Wunsch mehrere Monate im Voraus bezahlt.
+ * Jeder Charakter hat genau einen Lebensstil (Default
  * {@link LifestyleLevel#STREET}, 1 Monat — kostenlos), er wird deshalb nie {@code null}.
  */
 public class Lifestyle {
 
-  /** Mindestens ein Monat muss bezahlt sein ("Jeder muss irgendwo wohnen", GRW S. 111). */
+  /** Mindestens ein Monat muss bezahlt sein (eine Unterkunft braucht jeder, GRW S. 111). */
   public static final int MIN_MONTHS = 1;
 
   private @NonNull LifestyleLevel level;

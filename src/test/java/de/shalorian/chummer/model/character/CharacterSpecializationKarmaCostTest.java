@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * SR4-Grundregelwerk S. 312: "Eine Spezialisierung zu erwerben kostet 2 Karmapunkte" — gilt
+ * SR4-Grundregelwerk S. 312: 2 Karma je Spezialisierung — gilt
  * identisch für aktive Fertigkeiten und Wissensfertigkeiten, ohne Uneducated/Uncouth/Infirm-
  * Verdopplung (anders als reguläre Rating-Steigerungen).
  */

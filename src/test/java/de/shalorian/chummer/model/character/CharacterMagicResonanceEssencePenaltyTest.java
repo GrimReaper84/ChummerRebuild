@@ -18,8 +18,7 @@ import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
 import org.junit.jupiter.api.Test;
 
 /**
- * GRW S. 208: "Für jeden angefangenen Punkt Essenzverlust werden das Magieattribut des Charakters und
- * sein maximaler Magiewert um jeweils 1 Punkt reduziert" — gilt ebenso für Resonanz (S. 111).
+ * GRW S. 208: Jeder angebrochene Punkt Essenzverlust senkt Magie und Magiemaximum um je 1 — gilt ebenso für Resonanz (S. 111).
  */
 class CharacterMagicResonanceEssencePenaltyTest {
 

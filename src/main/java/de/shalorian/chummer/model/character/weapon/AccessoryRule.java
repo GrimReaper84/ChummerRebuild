@@ -27,31 +27,28 @@ import org.jspecify.annotations.NonNull;
 public enum AccessoryRule {
 
   /**
-   * S. 367: "Gasventilsysteme können in Automatikpistolen, Maschinenpistolen, Sturmgewehre und
-   * Maschinengewehre eingebaut werden. … Einmal installierte Gasventilsysteme können nicht mehr
-   * entfernt werden. Waffen, die bereits ein eingebautes Gasventilsystem besitzen, können nicht mit
-   * einem weiteren ausgerüstet werden."
+   * S. 367: nur für Automatikpistolen, MPs, Sturmgewehre und Maschinengewehre; einmal eingebaut nicht
+   * mehr entfernbar, und eine Waffe mit Gasventil bekommt kein zweites.
    */
   GAS_VENT("nur Automatikpistolen, Maschinenpistolen, Sturmgewehre und Maschinengewehre",
       true, true),
 
   /**
-   * S. 367: "Ein Schalldämpfer kann nur bei Einzelschuss- oder halbautomatischen Waffen (und nicht bei
-   * Revolvern) benutzt werden." Revolver = Munition aus der Trommel {@code (tr)} (S. 368 Schnelllader).
+   * S. 367: nur für Waffen mit Einzelschuss oder Halbautomatik, nicht für Revolver. Revolver = Munition aus der Trommel {@code (tr)} (S. 368 Schnelllader).
    */
   SUPPRESSOR("nur Einzelschuss- oder halbautomatische Waffen, keine Revolver", false, false),
 
-  /** S. 367: "speziell für Salvenmodus- und vollautomatische Waffen entwickelt". */
+  /** S. 367: für Waffen mit Salve oder Dauerfeuer gedacht. */
   SOUND_SUPPRESSOR("nur Waffen mit Salvenmodus oder Vollautomatik", false, false),
 
   /**
-   * S. 368: "kann auf die feste Schulterstütze eines Gewehrs, einer Schrotflinte oder einer schweren
-   * Waffe aufgebracht werden". Höchstens eines je Waffe, da es nur eine Schulterstütze gibt.
+   * S. 368: passt auf die feste Schulterstütze von Gewehren, Schrotflinten und schweren Waffen.
+   * Höchstens eines je Waffe, da es nur eine Schulterstütze gibt.
    */
   SHOCK_PAD("nur Gewehre, Schrotflinten und schwere Waffen", true, false),
 
   /**
-   * S. 367: "ein beweglicher Gyrostabilisatorarm für ein Gewehr oder eine schwere Waffe". Anders als
+   * S. 367: Stabilisierungsarm für Gewehre und schwere Waffen. Anders als
    * beim Schockpolster nennt der Text keine Schrotflinten.
    */
   GYROSTABILIZER("nur Gewehre und schwere Waffen", false, false),
@@ -62,10 +59,10 @@ public enum AccessoryRule {
    */
   SMARTGUN("", true, false),
 
-  /** S. 367: "Dieses Smartgun-Zubehör für Granat-/Raketenwerfer". */
+  /** S. 367: Smartgun-Zubehör nur für Granat- und Raketenwerfer. */
   AIRBURST("nur Granat- und Raketenwerfer", false, false),
 
-  /** S. 367: "für das schnelle Nachladen eines Revolvers (Pistolen mit einer Trommel)". */
+  /** S. 367: zum schnellen Nachladen von Revolvern (Trommelpistolen). */
   SPEEDLOADER("nur Revolver (Munition aus der Trommel)", false, false),
 
   /** S. 367: zusätzliche Ladestreifen, also nur Waffen mit Ladestreifen {@code (s)} (S. 357). */

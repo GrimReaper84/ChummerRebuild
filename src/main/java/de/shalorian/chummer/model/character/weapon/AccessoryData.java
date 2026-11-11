@@ -33,8 +33,7 @@ public record AccessoryData(
 ) implements CatalogEntry {
 
   /**
-   * Preisangabe des internen Smartgunsystems. GRW S. 368: "Eine Feuerwaffe nachträglich mit einem
-   * internen Smartgunsystem auszurüsten, verdoppelt den Preis der Waffe."
+   * Preisangabe des internen Smartgunsystems. GRW S. 368: Nachrüsten kostet noch einmal den Waffenpreis.
    */
   public static final String WEAPON_PRICE = "Waffenpreis";
 

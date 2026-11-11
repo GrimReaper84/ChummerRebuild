@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * SR4-Grundregelwerk S. 312: "Ein Charakter darf nur eine Spezialisierung pro Fertigkeit
- * besitzen" — strukturell durch ein Einzelfeld erzwungen.
+ * SR4-Grundregelwerk S. 312: höchstens eine Spezialisierung je Fertigkeit — strukturell durch ein Einzelfeld erzwungen.
  */
 class SkillSpecializationTest {
 

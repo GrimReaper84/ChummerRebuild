@@ -16,7 +16,7 @@
         <attribute name="INT" min="1" max="6"/>
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="1" max="6"/>
-        <!-- GRW S. 105: "Besondere Fähigkeiten: +1 Edge" — einziger Metatyp-Bonus des Menschen -->
+        <!-- GRW S. 105: Menschen erhalten als einzigen Metatyp-Bonus einen Punkt Edge mehr -->
         <edge min="2" max="7"/>
 
         <variant name="Nachtmensch" bp="40">

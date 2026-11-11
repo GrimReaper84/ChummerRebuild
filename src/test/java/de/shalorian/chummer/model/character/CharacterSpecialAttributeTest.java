@@ -8,10 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * SR4-Grundregelwerk (Sonderattribute): Edge ist für jeden Charakter sofort verfügbar, mit
- * rassenabhängiger Spanne (Mensch 2-7, sonst 1-6, GRW S. 105: "Besondere Fähigkeiten: +1 Edge"
- * nur beim Menschen). Magic/Resonance sind 0/nicht vorhanden, bis eine passende Quality gewählt
- * wird ("erhalten automatisch einen Magiewert von 1"), und schließen sich gegenseitig aus
- * ("Magie und Resonanz sind Attribute, die sich gegenseitig ausschließen").
+ * rassenabhängiger Spanne (Mensch 2-7, sonst 1-6; laut GRW S. 105 bekommt nur der Mensch +1 Edge).
+ * Magic/Resonance sind 0/nicht vorhanden, bis eine passende Quality gewählt wird (dann Startwert 1),
+ * und schließen einander aus.
  */
 class CharacterSpecialAttributeTest {
 

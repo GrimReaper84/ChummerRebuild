@@ -4,9 +4,8 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Kategorie eines Rüstungsteils aus der GRW-Tabelle <i>Panzerung</i> (S. 373). Entscheidend ist der
- * Unterschied beim Schutzwert: SR4-Grundregelwerk S. 372: "Helme und Schilde werden nicht als
- * eigenständige Panzerungsstücke behandelt, sondern erhöhen den Wert der getragenen Panzerung um ihre
- * Stufe." Die Kategorie "Kleidung" ist vorerst nicht enthalten (siehe {@code
+ * Unterschied beim Schutzwert: SR4-Grundregelwerk S. 372: Helme und Schilde zählen nicht als eigene
+ * Panzerung, sondern addieren ihre Stufe zur getragenen. Die Kategorie "Kleidung" ist vorerst nicht enthalten (siehe {@code
  * docs/plaene/archiv/nuyen_ruestung_plan.md} Abschnitt 13).
  */
 public enum ArmorCategory {

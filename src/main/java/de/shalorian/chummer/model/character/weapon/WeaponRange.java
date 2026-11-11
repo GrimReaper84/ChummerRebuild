@@ -6,13 +6,11 @@ import org.jspecify.annotations.NonNull;
  * Zeilen der Tabelle <i>Waffenreichweiten</i> (SR4-Grundregelwerk S. 179, gegen das PDF-Bild
  * verifiziert). Der Anzeigename ist zugleich der Wert von {@code <range>} in {@code weapons.xml};
  * welche Zeile eine Waffe nutzt, steht dort je Waffe, weil das GRW einzelnen Waffen eine andere Zeile
- * als ihrer Kategorie zuweist (z.B. S. 362 Hämmerli 620S: "verwenden Sie die Reichweiten für schwere
- * Pistolen"; S. 365 Parashield Pfeilgewehr: "benutzt die Reichweiten eines Sportgewehrs").
+ * als ihrer Kategorie zuweist (z.B. S. 362 Hämmerli 620S mit den Reichweiten
+ * schwerer Pistolen; S. 365 Parashield Pfeilgewehr mit denen eines Sportgewehrs).
  *
  * <p>Bei Bögen und Wurfwaffen sind die Werte Vielfache der Stärke ("bis STR x 10"), beim Bogen der
- * Mindeststärke (S. 180: "bzw. bei Bögen auf seiner Mindeststärke"). Granatwerfer haben eine
- * Minimalreichweite von 5 Metern (S. 184: "Die Minimalreichweite eines Granatwerfers beträgt 5
- * Meter"), Raketenwerfer beginnen laut Tabelle bei 20 Metern.
+ * Mindeststärke (S. 180). Granatwerfer haben eine Minimalreichweite von 5 Metern (S. 184), Raketenwerfer beginnen laut Tabelle bei 20 Metern.
  *
  * <p>Nicht enthalten: die Zeilen für geworfene Granaten (Granaten kommen mit dem Gear-Feature).
  */

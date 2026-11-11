@@ -86,7 +86,7 @@
         <category>Feuerwaffenzubehör</category>
         <avail>2</avail>
         <cost>75</cost>
-        <note>Erhöht den Tarn-Modifikator des enthaltenen Gegenstandes um −1 (GRW S. 368).</note>
+        <note>Der darin getragene Gegenstand ist um 1 schwerer zu entdecken (Tarnmodifikator −1, GRW S. 368).</note>
         <source>SR4</source>
         <page>368</page>
     </item>

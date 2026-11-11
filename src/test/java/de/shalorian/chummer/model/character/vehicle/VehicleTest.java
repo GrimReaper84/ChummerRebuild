@@ -39,7 +39,7 @@ class VehicleTest {
     return new Gear(Objects.requireNonNull(GearDataLoader.findByName(name), name), rating);
   }
 
-  /** GRW S. 197: "Ein Fahrzeug mit Rumpf 3 hat beispielsweise einen Zustandsmonitor mit 10 Kästchen." */
+  /** GRW-Beispiel S. 197: Rumpf 3 ergibt 10 Kästchen. */
   @Test
   void conditionMonitorMatchesGrwExample() {
     assertEquals(10, withBody(3).getConditionMonitor());
@@ -88,7 +88,7 @@ class VehicleTest {
     assertTrue(comet.getMountedWeapons().isEmpty());
   }
 
-  /** GRW S. 395: "ein LMG oder eine kleinere Waffe"; Granatwerfer laut Nutzerentscheidung 2026-10-09. */
+  /** GRW S. 395: Waffen bis LMG; Granatwerfer laut Nutzerentscheidung 2026-10-09. */
   @Test
   void mountAcceptsUpToLmgAndGrenadeLaunchers() {
     Vehicle comet = vehicle("Mercury Comet (Mittelklassewagen)");
@@ -154,7 +154,7 @@ class VehicleTest {
     assertEquals(2, first.getQuantity());
   }
 
-  /** GRW S. 398: "Alle Drohnen sind mit einem Riggeradapter ausgestattet." */
+  /** GRW S. 398: Drohnen haben immer einen Riggeradapter. */
   @Test
   void dronesHaveRiggerAdapter() {
     Vehicle drone = vehicle("Lockheed Optic-X (Klein)");

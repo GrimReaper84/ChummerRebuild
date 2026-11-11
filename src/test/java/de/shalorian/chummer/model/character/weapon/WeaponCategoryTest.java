@@ -90,7 +90,7 @@ class WeaponCategoryTest {
     assertFalse(WeaponCategory.BLADES.usesAmmunition());
   }
 
-  /** GRW S. 395: "ein LMG oder eine kleinere Waffe", dazu Granatwerfer (Nutzerentscheidung 2026-10-09). */
+  /** GRW S. 395: Waffen bis LMG, dazu Granatwerfer (Nutzerentscheidung 2026-10-09). */
   @Test
   void vehicleMountTakesFirearmsUpToLightMgAndGrenadeLaunchers() {
     Set<WeaponCategory> allowed = Arrays.stream(WeaponCategory.values())

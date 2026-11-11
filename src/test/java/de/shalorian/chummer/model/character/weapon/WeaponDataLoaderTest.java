@@ -137,7 +137,7 @@ class WeaponDataLoaderTest {
 
   @Test
   void weaponTextsOverrideTheCategoryRange() {
-    // GRW S. 362: "verwenden Sie die Reichweiten für schwere Pistolen"
+    // GRW S. 362: nutzt die Reichweiten schwerer Pistolen
     assertEquals(WeaponRange.HEAVY_PISTOL, find("Hämmerli 620S").range());
     // GRW S. 365: "Sie verschießt ausschließlich Flechettemunition"
     assertEquals(WeaponRange.SHOTGUN_FLECHETTE, find("Mossberg AM-CMDT").range());

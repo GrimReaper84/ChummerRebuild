@@ -15,8 +15,7 @@ import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
 /**
- * Pfeile am Bogen. GRW S. 361: "Berechnen Sie den Schaden anhand der niedrigsten Stufe des Pfeils
- * oder Bogens"; Bogenschaden (STR Min + 2)K; Pfeil 5 ¥, Injektionspfeil 50 ¥ (Preis fest).
+ * Pfeile am Bogen. GRW S. 361: Schaden nach der niedrigeren Stufe von Pfeil und Bogen; Bogenschaden (STR Min + 2)K; Pfeil 5 ¥, Injektionspfeil 50 ¥ (Preis fest).
  */
 class ArrowDamageTest {
 

@@ -55,7 +55,7 @@
         <avail>4</avail>
         <legality>E</legality>
         <cost>200</cost>
-        <note>Kann nach dem Einbau nicht mehr entfernt werden.</note>
+        <note>Fest eingebaut, nicht wieder ausbaubar.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -68,7 +68,7 @@
         <avail>6</avail>
         <legality>E</legality>
         <cost>400</cost>
-        <note>Kann nach dem Einbau nicht mehr entfernt werden.</note>
+        <note>Fest eingebaut, nicht wieder ausbaubar.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -79,7 +79,7 @@
         <rule>GYROSTABILIZER</rule>
         <avail>7</avail>
         <cost>3000</cost>
-        <note>Neutralisiert bis zu 6 Punkte Rückstoß- und Bewegungsmodifikatoren; keine RK (S. 367).</note>
+        <note>Gleicht bis zu 6 Punkte Abzüge durch Rückstoß und Bewegung aus; selbst kein RK-Wert (S. 367).</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -91,7 +91,7 @@
         <projectile/>
         <avail>2</avail>
         <cost>100</cost>
-        <note>+1 Würfelpool für Fernkampfangriffe, nicht kumulativ mit Smartlink-Boni.</note>
+        <note>Fernkampf +1 Würfel; entfällt, wenn schon ein Smartlink-Bonus greift.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -101,7 +101,7 @@
         <mount>Aufmontiert</mount>
         <avail>3</avail>
         <cost>50</cost>
-        <note>Erlaubt es, um eine Ecke zu zielen.</note>
+        <note>Zielen um Ecken herum.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -113,7 +113,7 @@
         <avail>8</avail>
         <legality>V</legality>
         <cost>200</cost>
-        <note>−4 auf Wahrnehmungsproben, um die Benutzung der Waffe oder den Schützen zu bemerken.</note>
+        <note>Wahrnehmung −4, wer den Schuss oder Schützen bemerken will.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -125,7 +125,7 @@
         <avail>12</avail>
         <legality>V</legality>
         <cost>300</cost>
-        <note>−4 auf Wahrnehmungsproben, um die Benutzung der Waffe oder den Schützen zu bemerken; nach 300 Schuss Salven- oder Vollautomatikfeuer zu ersetzen.</note>
+        <note>Wahrnehmung −4, wer den Schuss oder Schützen bemerken will; verschleißt nach 300 Schuss Salven-/Dauerfeuer.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -159,7 +159,7 @@
         <avail>4</avail>
         <legality>E</legality>
         <cost>400</cost>
-        <note>+2 Würfelpool auf Fernkampfproben zusammen mit einem Smartlink.</note>
+        <note>Mit Smartlink Fernkampf +2 Würfel.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -170,7 +170,7 @@
         <avail>6</avail>
         <legality>E</legality>
         <cost>Waffenpreis</cost>
-        <note>+2 Würfelpool auf Fernkampfproben zusammen mit einem Smartlink. Nachträglicher Einbau verdoppelt den Preis der Waffe.</note>
+        <note>Mit Smartlink Fernkampf +2 Würfel. Wird es später eingebaut, kostet das den doppelten Waffenpreis.</note>
         <source>SR4</source>
         <page>368</page>
     </item>

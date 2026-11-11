@@ -18,21 +18,20 @@ public enum ExtraKind {
   TEXT,
   /**
    * Lizenz einer gefälschten Lizenz: Vorauswahl der GRW-Beispiele plus Freitext. SR4-Grundregelwerk
-   * S. 377: Gefälschte Lizenzen gibt es "für den Kauf lizenzierter Waren … oder bestimmte Aktivitäten
-   * (Jagd, verdecktes Tragen einer Waffe, Zauberei usw.)"; S. 131 nennt Detektiv-Lizenz, Führerschein
-   * und Waffenlizenz. Nicht modelliert: S. 359 "Eine gefälschte Lizenz ist immer mit einer falschen
-   * SIN verbunden".
+   * S. 377: Gefälschte Lizenzen decken lizenzpflichtige Waren oder Tätigkeiten ab (z.B. Jagd, verdecktes
+   * Waffentragen, Zauberei); S. 131 nennt Detektiv-Lizenz, Führerschein und Waffenlizenz. Nicht
+   * modelliert: Laut S. 359 hängt jede gefälschte Lizenz an einer falschen SIN.
    */
   LICENSE,
   /**
-   * Waffenklasse, für die Munition hergestellt ist. SR4-Grundregelwerk S. 368/369: "Der Einfachheit
-   * halber können Waffen einer Klasse die Munition untereinander austauschen". Auswahl der
+   * Waffenklasse, für die Munition hergestellt ist. SR4-Grundregelwerk S. 368/369: Munition passt
+   * vereinfacht in alle Waffen derselben Klasse. Auswahl der
    * Waffenklassen mit Munition ({@link WeaponCategory#usesAmmunition()}), kein Freitext.
    */
   WEAPON_CLASS,
   /**
-   * Standardgranate oder Minigranate. SR4-Grundregelwerk S. 370: "Minigranaten haben den gleichen Preis und
-   * die gleiche Wirkung wie normale Granaten." Auswahl, kein Freitext.
+   * Standardgranate oder Minigranate. SR4-Grundregelwerk S. 370: Minigranaten kosten und wirken wie
+   * normale Granaten. Auswahl, kein Freitext.
    */
   GRENADE_FORM,
   /**

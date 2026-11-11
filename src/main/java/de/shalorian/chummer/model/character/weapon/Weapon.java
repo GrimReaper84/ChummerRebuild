@@ -15,14 +15,13 @@ import org.jspecify.annotations.Nullable;
  * mehrfach gekauft werden, daher arbeitet {@code Equipment#removeWeapon} über die Objektreferenz.
  *
  * <p>Montageregeln (SR4-Grundregelwerk S. 357, 367/368): Zubehör braucht eine passende, freie
- * Halterung der Waffenkategorie ("An jeder Halterung kann nur jeweils ein Zubehörteil montiert
- * werden"), Zubehör ohne Halterung ist mehrfach möglich. Eingebautes Zubehör belegt keine Halterung.
+ * Halterung der Waffenkategorie (je Halterung ein Teil), Zubehör ohne Halterung ist mehrfach möglich. Eingebautes Zubehör belegt keine Halterung.
  * Dazu kommen die Sonderregeln aus {@link AccessoryRule} und die Beschränkung der Projektilwaffen.
  *
  * <p><b>Pfeile:</b> Ein Bogen führt seine Pfeile als Stapel ({@link Gear} der Kategorie {@link
  * GearCategory#ARROWS}, Nutzerentscheidung 2026-10-04: Pfeile im Waffen-Tab am Bogen). Gleiche Pfeile
- * werden zusammengeführt; ihr Preis zählt zur Waffe. GRW S. 361: "Berechnen Sie den Schaden anhand
- * der niedrigsten Stufe des Pfeils oder Bogens" ({@link #getArrowDamageText(Gear)}).
+ * werden zusammengeführt; ihr Preis zählt zur Waffe. GRW S. 361: Der Schaden richtet sich nach der
+ * niedrigeren Stufe von Pfeil und Bogen ({@link #getArrowDamageText(Gear)}).
  */
 public class Weapon {
 
@@ -87,7 +86,7 @@ public class Weapon {
 
   /**
    * Preis eines Zubehörteils an dieser Waffe; das interne Smartgunsystem kostet den Waffenpreis (GRW
-   * S. 368: "verdoppelt den Preis der Waffe").
+   * S. 368).
    */
   public int getAccessoryNuyenCost(@NonNull AccessoryData accessory) {
     return accessory.costFor(getNuyenCost());
@@ -185,8 +184,8 @@ public class Weapon {
   /**
    * Entfernt ein Zubehörteil.
    *
-   * @throws IllegalStateException bei fest eingebautem Zubehör (GRW S. 367: "Einmal installierte
-   *                               Gasventilsysteme können nicht mehr entfernt werden.")
+   * @throws IllegalStateException bei fest eingebautem Zubehör (GRW S. 367: Gasventile bleiben nach
+   *                               dem Einbau drin)
    */
   public void removeAccessory(@NonNull WeaponAccessory accessory) {
     if (accessory.data().isPermanent()) {
@@ -277,8 +276,8 @@ public class Weapon {
 
   /**
    * Stärke, nach der Schaden und Reichweite berechnet werden: beim Bogen seine Mindeststärke (= Stufe),
-   * sonst die des Charakters. GRW S. 361: "Die Mindeststärke der Waffe wird auch für die Bestimmung
-   * des Schadens und der Reichweite benutzt". Der Schaden mit bestimmten Pfeilen steht in {@link
+   * sonst die des Charakters. GRW S. 361: Beim Bogen bestimmt die Mindeststärke Schaden und
+   * Reichweite. Der Schaden mit bestimmten Pfeilen steht in {@link
    * #getArrowDamageText(Gear)}.
    */
   private int effectiveStrength(int strength) {

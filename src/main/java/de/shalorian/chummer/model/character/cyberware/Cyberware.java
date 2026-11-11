@@ -10,8 +10,8 @@ import org.jspecify.annotations.NonNull;
  * stufenbehafteten Einträgen ({@link CyberwareData#hasRating()}) — die gewählte Stufe.
  *
  * <p>Essenzkosten = Katalog-Essenzformel (für die Stufe ausgewertet) × Essenz-Multiplikator der
- * Grade; Preis = Katalog-Preisformel × Preis-Multiplikator der Grade (GRW S. 359: "Die Preise für
- * Cyberware und Bioware gelten für die Standardvarianten"). Die Essenzkosten werden hier bewusst
+ * Grade; Preis = Katalog-Preisformel × Preis-Multiplikator der Grade (GRW S. 359: Katalogpreise sind
+ * Standardware-Preise). Die Essenzkosten werden hier bewusst
  * <b>nicht</b> gerundet — gerundet wird einheitlich erst bei der Gesamt-Essenz auf Charakterebene.
  * Anders als Zauber/Komplexe Formen darf dasselbe Implantat mehrfach eingebaut werden, daher arbeitet
  * {@code Equipment#removeCyberware} über die Objektreferenz.

@@ -73,7 +73,7 @@ weglassen.
 ## 7. JavaFX-Planung             (Tab/Dialog, Designer.cs-Abgleich, Sichtbarkeit, Modi, Refresh-Pfade;
                                    oder "Keine JavaFX-Anpassung erforderlich.")
 ## 8. Plattformcheck             (nur echte Risiken; Standardfall: Classpath-Ressourcen, UTF-8)
-## 9. Javadoc-Plan               (welche Regelzitate wohin)
+## 9. Javadoc-Plan               (welche Regelbelege wohin; im Javadoc Seite + eigene Worte, kein Wortlaut)
 ## 10. Testplan                  (Tabelle: Test | Ebene | Zweck | Grundlage – GRW-Beispiele zuerst)
 ## 11. Umsetzungsschritte für den Coding-Agenten
 ## 12. Akzeptanzkriterien

@@ -67,9 +67,8 @@ public class Vehicle {
   // --- Werte ---
 
   /**
-   * Kästchen des Zustandsmonitors. SR4-Grundregelwerk S. 197: "Der Zustandsmonitor eines Fahrzeugs
-   * besteht aus einer Anzahl von Kästchen gleich 8 + Hälfte (aufgerundet) seines Rumpfattributs. Ein
-   * Fahrzeug mit Rumpf 3 hat beispielsweise einen Zustandsmonitor mit 10 Kästchen."
+   * Kästchen des Zustandsmonitors. SR4-Grundregelwerk S. 197: 8 plus halber Rumpf (aufgerundet);
+   * GRW-Beispiel: Rumpf 3 ergibt 10 Kästchen.
    */
   public int getConditionMonitor() {
     return CONDITION_MONITOR_BASE + (data.body() + 1) / 2;
@@ -82,11 +81,9 @@ public class Vehicle {
 
   /**
    * Durchschnittliche Stufe der im Sensorpaket eingebauten Sensoren, oder leer, solange keine
-   * eingebaut sind (dann gilt die Sensorstufe laut Katalog). SR4-Grundregelwerk S. 380: "Bei
-   * Fahrzeugen steht die Sensorstufe für das Sensorenpaket […]. Das Sensorenpaket […] entspricht der
-   * durchschnittlichen Stufe aller in dem Paket enthaltenen Sensoren (aufgerundet). Sensoren, die über
-   * keine Stufeneinteilung verfügen, werden in diesem Fall so behandelt, als ob sie über eine Stufe
-   * entsprechend der des Sensorpaketes verfügen würden." Als Stufe des Pakets gilt die Sensorstufe laut
+   * eingebaut sind (dann gilt die Sensorstufe laut Katalog). SR4-Grundregelwerk S. 380: Die Stufe des
+   * Sensorpakets ist der aufgerundete Durchschnitt seiner Sensoren; Sensoren ohne eigene Stufe zählen mit
+   * der Stufe des Pakets. Als Stufe des Pakets gilt die Sensorstufe laut
    * Katalog.
    */
   public @NonNull OptionalInt getAverageSensorRating() {
@@ -111,9 +108,8 @@ public class Vehicle {
   // --- Riggeradapter ---
 
   /**
-   * Ob das Fahrzeug einen Riggeradapter hat. SR4-Grundregelwerk S. 398: "Alle Drohnen sind mit einem
-   * Riggeradapter ausgestattet." S. 284: Passagierfahrzeuge "haben diese Ausstattung normalerweise
-   * nicht, können jedoch auch damit ausgerüstet werden".
+   * Ob das Fahrzeug einen Riggeradapter hat. SR4-Grundregelwerk S. 398: Drohnen haben ihn immer;
+   * S. 284: Passagierfahrzeuge in der Regel nicht, er lässt sich aber nachrüsten.
    */
   public boolean hasRiggerAdapter() {
     return isRiggerAdapterIncluded() || riggerAdapterPurchased;
@@ -166,8 +162,7 @@ public class Vehicle {
   }
 
   /**
-   * Höchstzahl der Waffenhalterungen. SR4-Grundregelwerk S. 395: "Ein Fahrzeug kann mit so vielen
-   * Waffenhalterungen ausgestattet werden, wie seinem Rumpf ÷ 3 (abgerundet) entspricht."
+   * Höchstzahl der Waffenhalterungen. SR4-Grundregelwerk S. 395: Rumpf ÷ 3, abgerundet.
    * Mitgelieferte Halterungen zählen mit (Nutzerentscheidung 2026-10-09).
    */
   public int getMaxMounts() {
@@ -212,7 +207,7 @@ public class Vehicle {
 
   /**
    * Warum {@code weapon} nicht in {@code mount} eingesetzt werden kann, oder {@code null}: Die Halterung
-   * muss leer sein und die Waffe "ein LMG oder eine kleinere Waffe" (GRW S. 395, siehe {@link
+   * muss leer sein und die Waffe höchstens ein LMG (GRW S. 395, siehe {@link
    * de.shalorian.chummer.model.character.weapon.WeaponCategory#fitsVehicleMount()}).
    */
   public @Nullable String weaponProblem(@NonNull WeaponMount mount, @NonNull WeaponData weapon) {

@@ -3,9 +3,8 @@ package de.shalorian.chummer.model.character.weapon;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Halterung für Waffenzubehör. SR4-Grundregelwerk S. 357 (<i>Ausrüstungswerte</i>): "Gibt an, wo an
- * einer Waffe Zubehör angebracht werden kann: Unterlauf, Lauf oder aufmontiert. An jeder Halterung kann
- * nur jeweils ein Zubehörteil montiert werden." Der Anzeigename ist zugleich der Wert von {@code
+ * Halterung für Waffenzubehör. SR4-Grundregelwerk S. 357 (<i>Ausrüstungswerte</i>): Unterlauf, Lauf
+ * oder aufmontiert, je Halterung ein Zubehörteil. Der Anzeigename ist zugleich der Wert von {@code
  * <mount>} in {@code weapon_accessories.xml}.
  */
 public enum Mount {

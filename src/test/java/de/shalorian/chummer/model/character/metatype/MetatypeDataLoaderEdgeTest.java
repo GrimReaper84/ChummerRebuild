@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * GRW S. 105: Nur der Mensch bekommt "Besondere Fähigkeiten: +1 Edge" (Edge 2-7), alle anderen
+ * GRW S. 105: Nur der Mensch bekommt +1 Edge (Edge 2-7), alle anderen
  * Grundmetatypen sowie deren Varianten bleiben bei der Basisspanne 1-6.
  */
 class MetatypeDataLoaderEdgeTest {

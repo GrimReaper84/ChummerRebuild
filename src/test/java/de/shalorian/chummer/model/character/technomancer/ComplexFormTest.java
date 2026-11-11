@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * SR4-Grundregelwerk (Karma-Kosten-Kapitel): "Eine neue Komplexe Form zu erlernen oder eine
- * bestehende zu steigern, kostet das gleiche, wie eine Wissensfertigkeit zu erlernen bzw. zu
- * steigern: 2 Karmapunkte für eine neue Komplexe Form, Karmapunkte in Höhe der neuen Stufe für eine
- * gesteigerte Komplexe Form." — deckungsgleich mit
+ * SR4-Grundregelwerk (Karma-Kosten-Kapitel): Komplexe Formen kosten Karma wie Wissensfertigkeiten,
+ * also 2 für eine neue und die neue Stufe für jede Steigerung — deckungsgleich mit
  * {@link de.shalorian.chummer.model.character.Character#getKnowledgeSkillKarmaCost}.
  */
 class ComplexFormTest {

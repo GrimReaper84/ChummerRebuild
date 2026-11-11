@@ -8,8 +8,8 @@ import org.jspecify.annotations.Nullable;
  * vom Kommlink-Modell, Firewall und System vom Betriebssystem (Tabellen GRW S. 374). Ohne
  * Betriebssystem sind Firewall und System {@code 0}.
  *
- * <p>SR4-Grundregelwerk S. 260: "Wenn die Prozessorstufe des Gerätes kleiner ist als die Systemstufe,
- * dann wird die Systemstufe auf die Prozessorstufe reduziert." {@link #system()} ist der wirksame
+ * <p>SR4-Grundregelwerk S. 260: Das System kann nicht höher sein als der Prozessor des Geräts.
+ * {@link #system()} ist der wirksame
  * Wert, {@link #nominalSystem()} der Wert laut Betriebssystem-Tabelle.
  *
  * @param processor     Prozessor des Kommlinks

@@ -4,9 +4,8 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Unterscheidet Cyberware von Bioware. Fachlich einzig relevant für die Essenz-Kombinationsregel des
- * SR4-Grundregelwerks: "Essenzverlust durch Cyberware und Bioware wird getrennt berechnet und notiert.
- * Der höhere der beiden Werte wird vollständig von der Essenz abgezogen, der andere Wert nur zur
- * Hälfte" (siehe {@code Character#getEssence()}). Das übrige Domänenverhalten (Grade, Essenz-/
+ * SR4-Grundregelwerks (S. 111): Cyberware- und Bioware-Verlust werden getrennt summiert, der größere zählt
+ * voll, der kleinere halb (siehe {@code Character#getEssence()}). Das übrige Domänenverhalten (Grade, Essenz-/
  * Kostenformel) ist für beide Arten identisch, daher bewusst keine getrennten Klassen.
  */
 public enum EquipmentKind {

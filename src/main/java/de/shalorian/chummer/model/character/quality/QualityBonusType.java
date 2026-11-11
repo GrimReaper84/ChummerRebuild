@@ -8,9 +8,8 @@ public enum QualityBonusType {
   GRANTS_RESONANCE,      // schaltet das Resonance-Sonderattribut frei (Technomant)
   GRANTS_SPELLCASTING,   // schaltet magische Aktionsfertigkeiten + Zauber frei (nur Magier, nicht Adept)
   /**
-   * Handicap "Immunabstoßung" (SR4-Grundregelwerk S. 120): "Alle Essenzverluste durch
-   * Cyberware-Implantate werden verdoppelt. Dieses Handicap wirkt sich nicht auf den Essenzverlust
-   * durch Bioware aus." Angewendet in {@code Character#getEssence()} auf die Cyberware-Summe, bevor
+   * Handicap "Immunabstoßung" (SR4-Grundregelwerk S. 120): doppelter Essenzverlust durch Cyberware,
+   * Bioware bleibt unverändert. Angewendet in {@code Character#getEssence()} auf die Cyberware-Summe, bevor
    * die Kombinationsregel (höhere Summe voll, niedrigere halb) greift.
    */
   DOUBLES_CYBERWARE_ESSENCE

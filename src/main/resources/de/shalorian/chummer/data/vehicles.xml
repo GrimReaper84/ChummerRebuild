@@ -144,7 +144,7 @@
         <sensor>1</sensor>
         <cost>120000</cost>
         <gear>Sensorpaket (Fahrzeug)</gear>
-        <note>Versteckte Panzerung, chemische Versiegelung.</note>
+        <note>Panzerung unauffällig verbaut; dicht gegen chemische Kampfstoffe.</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -214,7 +214,7 @@
         <legality>E</legality>
         <cost>22700</cost>
         <gear>Sensorpaket (Fahrzeug)</gear>
-        <note>Leicht gepanzert; kann mit einem ausfahrbaren Geschützturm versehen werden.</note>
+        <note>Mit leichter Panzerung; ein ausfahrbarer Geschützturm lässt sich nachrüsten.</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -250,7 +250,7 @@
         <cost>51200</cost>
         <mounts note="kleiner Geschützturm">1</mounts>
         <gear>Sensorpaket (Fahrzeug)</gear>
-        <note>Mobile Einsatzzentrale mit chemischer Versiegelung, Lebenserhaltungssystem (20 Mannstunden) und kleinem Geschützturm.</note>
+        <note>Fahrende Kommandozentrale: dicht gegen Kampfstoffe, Lebenserhaltung für 20 Mannstunden, kleiner Geschützturm.</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -271,7 +271,7 @@
         <cost>90000</cost>
         <mounts note="Drehringlafetten">2</mounts>
         <gear>Sensorpaket (Fahrzeug)</gear>
-        <note>Leicht gepanzert, zwei Drehringlafetten (für LMGs oder leichtere Waffen) und hochentwickeltes Sensorpaket.</note>
+        <note>Mit leichter Panzerung, gutem Sensorpaket und zwei Drehringlafetten (Waffen bis LMG).</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -388,7 +388,7 @@
         <cost>106000</cost>
         <mounts>1</mounts>
         <gear>Sensorpaket (Fahrzeug)</gear>
-        <note>Leicht gepanzert; Waffenhalterung für ein LMG oder eine leichtere Waffe.</note>
+        <note>Mit leichter Panzerung; eine Waffe bis LMG montierbar.</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -443,7 +443,7 @@
         <avail>8</avail>
         <cost>1000</cost>
         <gear>Sensorpaket (Mikro)</gear>
-        <note>Vierbeinige Kriechdrohne, kann an Wänden und Decken entlangkrabbeln.</note>
+        <note>Läuft auf vier Beinen, auch an Wänden und Decken.</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -476,7 +476,7 @@
         <avail>6</avail>
         <cost>1500</cost>
         <gear>Sensorpaket (Hand/Minidrohne)</gear>
-        <note>Eine offensive Version mit eingebautem Flash-Pak und Rauchgranate ist für zusätzliche 500 ¥ erhältlich (nicht als Variante abgebildet).</note>
+        <note>Gegen 500 ¥ Aufpreis auch als Angriffsvariante mit Flash-Pak und Rauchgranate (hier nicht als eigener Eintrag).</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -545,7 +545,7 @@
         <gear>Sensorpaket (Mittlere Drohne)</gear>
         <gear rating="3" extra="Clearsight">Autosoft</gear>
         <gear rating="3" extra="Zielerfassung">Autosoft</gear>
-        <note>Kriechdrohne; Waffenhalterung für LMGs oder leichtere Waffen.</note>
+        <note>Laufdrohne; eine Waffe bis LMG montierbar.</note>
         <source>SR4</source>
         <page>397</page>
     </item>
@@ -635,7 +635,7 @@
         <gear>Sensorpaket (Große Drohne)</gear>
         <gear rating="3" extra="Abwehr">Autosoft</gear>
         <gear rating="3" extra="Zielerfassung">Autosoft</gear>
-        <note>Gepanzerte Bodenkampfdrohne mit vier Beinauslegern auf Rädern; Geschützturm für ein LMG oder eine leichtere Waffe.</note>
+        <note>Gepanzerte Kampfdrohne für den Boden, vier Beine mit Rädern; Geschützturm für eine Waffe bis LMG.</note>
         <source>SR4</source>
         <page>397</page>
     </item>

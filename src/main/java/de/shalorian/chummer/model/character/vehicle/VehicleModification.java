@@ -11,12 +11,10 @@ import org.jspecify.annotations.NonNull;
  * (dort 1.500 ¥).
  *
  * <ul>
- *   <li>Riggeradapter (S. 395): "Wenn diese 'Black Box' in einem Fahrzeug installiert ist, kann ein
- *       Charakter mit einer Riggerkontrolle (siehe S. 385) das Fahrzeug mittels eines direkten
- *       Glasfaserkabels oder einer WiFi-Verbindung riggen."</li>
- *   <li>Waffenhalterung (S. 395): "Ein Fahrzeug kann mit so vielen Waffenhalterungen ausgestattet
- *       werden, wie seinem Rumpf ÷ 3 (abgerundet) entspricht. Eine Waffenhalterung kann ein LMG oder
- *       eine kleinere Waffe sowie 250 Schuss Munition aufnehmen."</li>
+ *   <li>Riggeradapter (S. 395): Mit ihm kann ein Charakter mit Riggerkontrolle (S. 385) das Fahrzeug
+ *       per Kabel oder Funk riggen.</li>
+ *   <li>Waffenhalterung (S. 395): höchstens Rumpf ÷ 3 (abgerundet) Stück, je eine Waffe bis LMG mit
+ *       250 Schuss.</li>
  * </ul>
  */
 public enum VehicleModification {
