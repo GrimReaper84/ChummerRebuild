@@ -99,6 +99,16 @@
         </ScrollPane>
       </Tab>
 
+      <Tab text="Zustand">
+        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
+          <VBox styleClass="attr-container" fx:id="conditionContainer">
+            <padding>
+              <Insets bottom="20" left="36" right="36" top="20"/>
+            </padding>
+          </VBox>
+        </ScrollPane>
+      </Tab>
+
       <Tab text="Magie" fx:id="magicTab">
         <ScrollPane fitToWidth="true" styleClass="attr-scroll">
           <VBox styleClass="attr-container" fx:id="magicContainer">

@@ -163,7 +163,7 @@ public final class AttributeTabBuilder {
     int displayMax = reducedByEssence ? character.getEffectiveMagicOrResonanceMax() : attr.getMax();
     addAttributeGridRow(grid, row, specialAttrRefreshers,
         new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
-            displayMax), null, new RowModel() {
+            displayMax, ""), null, new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
@@ -222,7 +222,8 @@ public final class AttributeTabBuilder {
       @NonNull CharacterAttribute attr, @NonNull Character character) {
     addAttributeGridRow(grid, row, attrRefreshers,
         new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
-            attr.getMax()), () -> augmentedAttributeText(character, type), new RowModel() {
+            attr.getMax(), String.valueOf(character.getAugmentedMaximum(type))),
+        () -> augmentedAttributeText(character, type), new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
@@ -281,8 +282,8 @@ public final class AttributeTabBuilder {
    * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am alten WinForms-{@code panAttributes}
    * (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den Text aus
    * {@code augmentedText} (bei jedem Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht), bzw.
-   * {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}, wenn {@code augmentedText} {@code null} ist; der Klammerzusatz im Bereichs-Label bleibt bis zur
-   * Modellierung von Attributboni ein Platzhalter.
+   * {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}, wenn {@code augmentedText} {@code null} ist; der Klammerzusatz im Bereichs-Label zeigt das
+   * augmentierte Maximum ({@link Character#getAugmentedMaximum(AttributeType)}, GRW S. 91), bei Sonderattributen keinen.
    */
   private void addAttributeGridRow(@NonNull MigPane grid, int row,
       @NonNull List<Runnable> refresherList, @NonNull AttributeRowLabel label,
@@ -294,8 +295,8 @@ public final class AttributeTabBuilder {
     Label valueLabel = new Label();
     Button plus = new Button("+");
     Label augLabel = new Label(ATTRIBUTE_AUGMENTED_PLACEHOLDER);
-    Label rangeLabel = new Label(
-        label.min() + " / " + label.max() + " (" + ATTRIBUTE_AUGMENTED_PLACEHOLDER + ")");
+    Label rangeLabel = new Label(label.min() + " / " + label.max()
+        + (label.augmentedMaxText().isEmpty() ? "" : " (" + label.augmentedMaxText() + ")"));
     Label bpLabel = new Label();
 
     attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);

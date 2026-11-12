@@ -92,8 +92,11 @@ public class QualityDataLoader {
         childTexts(el, "metatypes"),
         firstChild(el, "metatype") != null);
 
+    String levelText = childText(el, "level");
+    int level = levelText.isEmpty() ? 1 : Integer.parseInt(levelText);
+
     return new QualityData(name, bp, type, Collections.unmodifiableSet(parseBonuses(el)), page,
-        childText(el, "note"), selection, selectLabel, rules);
+        childText(el, "note"), selection, selectLabel, rules, level);
   }
 
   /** Texte aller Kind-Elemente des Listen-Elements {@code tag}, leer ohne Liste. */
@@ -124,7 +127,11 @@ public class QualityDataLoader {
       Map.entry("lucky", QualityBonusType.LUCKY),
       Map.entry("aptitude", QualityBonusType.APTITUDE),
       Map.entry("incompetent", QualityBonusType.INCOMPETENT),
-      Map.entry("burnoutessence", QualityBonusType.BURNOUT_ESSENCE));
+      Map.entry("burnoutessence", QualityBonusType.BURNOUT_ESSENCE),
+      Map.entry("highpaintolerance", QualityBonusType.HIGH_PAIN_TOLERANCE),
+      Map.entry("lowpaintolerance", QualityBonusType.LOW_PAIN_TOLERANCE),
+      Map.entry("willtolive", QualityBonusType.WILL_TO_LIVE),
+      Map.entry("astralaccess", QualityBonusType.ASTRAL_ACCESS));
 
   private static @NonNull Set<QualityBonusType> parseBonuses(@NonNull Element el) {
     Set<QualityBonusType> bonuses = EnumSet.noneOf(QualityBonusType.class);

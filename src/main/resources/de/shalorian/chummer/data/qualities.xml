@@ -57,6 +57,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>115</page>
+        <level>1</level>
         <note>+1 Würfel auf Entzugswiderstand.</note>
         <group>Erhöhte Konzentrationsfähigkeit</group>
         <requires><quality>Zauberer</quality><quality>Magieradept</quality></requires>
@@ -68,6 +69,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>115</page>
+        <level>2</level>
         <note>+2 Würfel auf Entzugswiderstand.</note>
         <group>Erhöhte Konzentrationsfähigkeit</group>
         <requires><quality>Zauberer</quality><quality>Magieradept</quality></requires>
@@ -136,9 +138,10 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>116</page>
+        <level>1</level>
         <note>Die ersten 1 Schadenskästchen je Zustandsmonitor ergeben keinen Verletzungsmodifikator.</note>
         <group>Hohe Schmerztoleranz</group>
-        <bonus/>
+        <bonus><highpaintolerance/></bonus>
     </quality>
     <quality>
         <name>Hohe Schmerztoleranz 2</name>
@@ -146,9 +149,10 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>116</page>
+        <level>2</level>
         <note>Die ersten 2 Schadenskästchen je Zustandsmonitor ergeben keinen Verletzungsmodifikator.</note>
         <group>Hohe Schmerztoleranz</group>
-        <bonus/>
+        <bonus><highpaintolerance/></bonus>
     </quality>
     <quality>
         <name>Hohe Schmerztoleranz 3</name>
@@ -156,9 +160,10 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>116</page>
+        <level>3</level>
         <note>Die ersten 3 Schadenskästchen je Zustandsmonitor ergeben keinen Verletzungsmodifikator.</note>
         <group>Hohe Schmerztoleranz</group>
-        <bonus/>
+        <bonus><highpaintolerance/></bonus>
     </quality>
     <quality>
         <name>Magieradept</name>
@@ -176,6 +181,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>116</page>
+        <level>1</level>
         <note>+1 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
         <group>Magieresistenz</group>
         <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
@@ -187,6 +193,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>116</page>
+        <level>2</level>
         <note>+2 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
         <group>Magieresistenz</group>
         <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
@@ -198,6 +205,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>116</page>
+        <level>3</level>
         <note>+3 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
         <group>Magieresistenz</group>
         <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
@@ -209,6 +217,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>116</page>
+        <level>4</level>
         <note>+4 Würfel gegen alle Zauber, auch hilfreiche; nie ein bereitwilliges Ziel.</note>
         <group>Magieresistenz</group>
         <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Magieradept</quality></excludes>
@@ -375,9 +384,10 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>117</page>
+        <level>1</level>
         <note>1 zusätzliche Kästchen für überzähligen Schaden; Verletzungsmodifikatoren unverändert.</note>
         <group>Überlebenswille</group>
-        <bonus/>
+        <bonus><willtolive/></bonus>
     </quality>
     <quality>
         <name>Überlebenswille 2</name>
@@ -385,9 +395,10 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>117</page>
+        <level>2</level>
         <note>2 zusätzliche Kästchen für überzähligen Schaden; Verletzungsmodifikatoren unverändert.</note>
         <group>Überlebenswille</group>
-        <bonus/>
+        <bonus><willtolive/></bonus>
     </quality>
     <quality>
         <name>Überlebenswille 3</name>
@@ -395,9 +406,10 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>117</page>
+        <level>3</level>
         <note>3 zusätzliche Kästchen für überzähligen Schaden; Verletzungsmodifikatoren unverändert.</note>
         <group>Überlebenswille</group>
-        <bonus/>
+        <bonus><willtolive/></bonus>
     </quality>
     <quality>
         <name>Unauffälligkeit</name>
@@ -435,7 +447,7 @@
         <page>118</page>
         <note>Erwacht mit Magie 1; wirkt Zauber, beschwört Geister, nimmt astral wahr und projiziert.</note>
         <excludes><quality>Adept</quality><quality>Magieradept</quality><quality>Technomancer</quality></excludes>
-        <bonus><grantsmagic/><grantsspellcasting/></bonus>
+        <bonus><grantsmagic/><grantsspellcasting/><astralaccess/></bonus>
     </quality>
 
     <!-- ── Handicaps (S. 118-122) ── -->
@@ -694,7 +706,7 @@
         <source>SR4</source>
         <page>120</page>
         <note>Verletzungsmodifikator −1 schon je 2 statt je 3 Schadenskästchen.</note>
-        <bonus/>
+        <bonus><lowpaintolerance/></bonus>
     </quality>
     <quality>
         <name>Orkposer</name>

@@ -1,92 +1,43 @@
 package de.shalorian.chummer.model.character;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
-import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
+import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * SR4-Grundregelwerk (Kapitel Komplexe Formen): Die Stufe einer Komplexen Form ist durch die Resonanz
- * begrenzt — anders als der reine Erstellungs-Cap
- * bei Fertigkeiten/Zaubern gilt dieser Cap laut Regeltext durchgehend, nicht nur bei der
- * Charaktererschaffung.
- */
+/** Obergrenze Komplexer Formen bei der Erschaffung (GRW S. 112). */
 class CharacterComplexFormCapTest {
 
-  private static Character mensch(String name) {
-    return new Character(name, MetatypeDataLoader.find("Mensch"));
+  private static Character of(String metatype) {
+    return new Character("Test", MetatypeDataLoader.find(metatype));
   }
 
-  private static Character technomancer(String name, int resonance) {
-    Character c = mensch(name);
-    QualityData technomant = QualityDataLoader.findByName("Technomancer");
-    assertNotNull(technomant);
-    c.addQuality(technomant, false);
-    var attr = c.getMagicOrResonance();
-    assertNotNull(attr);
-    attr.setValue(resonance);
-    return c;
-  }
-
-  private static ComplexFormData analyse() {
-    ComplexFormData data = ComplexFormDataLoader.findByName("Analyse");
-    assertNotNull(data);
-    return data;
+  private static QualityData q(String name) {
+    return Objects.requireNonNull(QualityDataLoader.findByName(name), name);
   }
 
   @Test
-  void cannotRaiseComplexFormWithoutResonance() {
-    Character c = mensch("Test");
-    ComplexForm cf = new ComplexForm(analyse());
-    assertFalse(c.canRaiseComplexForm(cf));
-  }
-
-  @Test
-  void canAddComplexFormRequiresAtLeastResonanceOne() {
-    Character c = technomancer("Test", 1);
-    assertTrue(c.canAddComplexForm());
-  }
-
-  @Test
-  void ratingCapEqualsResonanceValueAtCreation() {
-    Character c = technomancer("Test", 2);
-    c.addComplexForm(analyse());
-    ComplexForm cf = c.getComplexForms().getFirst();
-
-    assertTrue(c.canRaiseComplexForm(cf)); // 1 -> 2 erlaubt (Cap = 2)
-    cf.setRating(2);
-    assertFalse(c.canRaiseComplexForm(cf)); // 2 -> 3 nicht erlaubt (Cap = 2)
-  }
-
-  @Test
-  void ratingCapAppliesInCareerModeToo() {
-    Character c = technomancer("Test", 2);
+  void complexFormsAtCreationLimitedToTwiceLogic() {
+    // GRW S. 112
+    Character c = of("Mensch");
+    c.addQuality(q("Technomancer"), false);
+    c.getAttribute(AttributeType.LOG).setValue(3);
+    List<ComplexFormData> forms = List.copyOf(ComplexFormDataLoader.getAllComplexForms().values());
+    for (int i = 0; i < 5; i++) {
+      c.addComplexForm(forms.get(i));
+    }
+    assertTrue(c.canAddComplexFormAtCreation());
+    c.addComplexForm(forms.get(5));
+    assertFalse(c.canAddComplexFormAtCreation());
     c.setCreated(true);
-    c.addComplexForm(analyse());
-    ComplexForm cf = c.getComplexForms().getFirst();
-    cf.setRating(2);
-
-    assertFalse(c.canRaiseComplexForm(cf));
-  }
-
-  @Test
-  void raisingResonanceRaisesTheCap() {
-    Character c = technomancer("Test", 2);
-    c.addComplexForm(analyse());
-    ComplexForm cf = c.getComplexForms().getFirst();
-    cf.setRating(2);
-    assertFalse(c.canRaiseComplexForm(cf));
-
-    var resonance = c.getMagicOrResonance();
-    assertNotNull(resonance);
-    resonance.setValue(3);
-
-    assertTrue(c.canRaiseComplexForm(cf));
+    assertTrue(c.canAddComplexFormAtCreation());
   }
 }

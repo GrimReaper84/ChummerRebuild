@@ -46,11 +46,11 @@
 | Karma-Steigerung Attribute: neue Stufe × 5 Karma                            | ✅      |                                                |
 | Max. 50% des Gesamtbudgets für Attribute (Erstellung)                       | ✅      | GRW S. 106 verifiziert, `Character.canRaiseAttributeAtCreation()`, 2026-08-04 |
 | Nur 1 Attribut auf Rassenmaximum steigerbar (Erstellung)                    | ✅      | GRW S. 106 verifiziert, s.o., 2026-08-04       |
-| Augmentiertes Maximum anzeigen (MetatypeMax + ⌊Max/2⌋)                      | ❌      | Weder berechnet noch angezeigt                 |
+| Augmentiertes Maximum anzeigen (⌊1,5 × Max⌋)                                | ✅      | GRW S. 91, `Character.getAugmentedMaximum()`, Klammerwert im Bereich, 2026-11-12 |
 | Sonderattribute: EDG (Edge)                                                 | ✅      | `SpecialAttribute`/`SpecialAttributeType`, BP/Karma-Kosten, UI-Sektion, Persistenz; immer sichtbar |
 | Sonderattribute: MAG (Magie)                                                | ✅      | Wie EDG, aber nur sichtbar/freigeschaltet wenn Quality mit `GRANTS_MAGIC` vorhanden (`Character.hasMagic()`) |
 | Sonderattribute: RES (Resonanz)                                             | ✅      | Analog MAG, über `GRANTS_RESONANCE` (`Character.hasResonance()`)                              |
-| Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ❌      | Nicht modelliert                               |
+| Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ✅      | Tab „Zustand“, siehe Abschnitt 16              |
 | Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ✅     | `Character.getEssence()` nach GRW-Kombinationsregel (S. 111), 2 Nachkommastellen, 2026-09-27 |
 
 ---
@@ -72,8 +72,8 @@
 | Erstellungs-Cap: Fertigkeitsgruppen max. 4                       | ✅      | GRW S. 109 verifiziert, `Character.canRaiseGroupAtCreation()`, 2026-08-04                    |
 | Karrieremodus: neue Fertigkeitsgruppe kostet pauschal 10 Karma   | ✅      | `Character.getGroupKarmaCost()`, 2026-08-04                                                  |
 | Spezialisierungen (+2 BP / +2 Karma)                             | ✅      | `Skill.specialization`, `Character.getActiveSkillSpecializationBP()`/`getSpecializationKarmaCost()`, Mindestrating 1, Gruppenauflösung im Karrieremodus, 2026-08-06 |
-| Default-Flag (erlaubt Würfeln ohne Rating: Attribut − 1)         | ❌      | Flag im Modell fehlt, keine Würfelpool-Anzeige                                               |
-| Würfelpool-Anzeige (Rating + Attribut + Modifikatoren)           | ❌      | Nicht vorhanden                                                                              |
+| Default-Flag (erlaubt Würfeln ohne Rating: Attribut − 1)         | ✅      | `default="false"` an den 27 kursiven Fertigkeiten (GRW S. 146, am Bild); Ahnungslos durch Ungebildet/Ungehobelt/Körperliche Schwäche/Inkompetenz (S. 120/122), 2026-11-12 |
+| Würfelpool-Anzeige (Rating + Attribut + Modifikatoren)           | ✅      | Spalte „Pool“ (GRW S. 146/147), Spezialisierung „8 (10)“, Verletzungsmodifikator eingerechnet, Tooltip mit Aufschlüsselung; auch Wissensfertigkeiten (ohne Wert Attribut − 1, nicht bei Sprachen, S. 146), 2026-11-12. Fertigkeits-Cap 1,5× (S. 91) zurückgestellt |
 | Exotische Fertigkeiten (Spez = Gegenstand, kein eigener Rating)  | ❌      |                                                                                              |
 | Kampf-Aktionsfertigkeiten nach GRW                               | ✅      | **Korrigiert 2026-09-28** (GRW S. 147/148, am Bild geprüft): Gruppen Nahkampf (Klingenwaffen, Knüppel, Waffenloser Kampf) und Feuerwaffen (Gewehre, Pistolen, Schnellfeuerwaffen), dazu Ausweichen (REA), Exotische Fern-/Nahkampfwaffe, Projektilwaffen, Schwere Waffen, Wurfwaffen. Entfernt: Klingen, Automatikwaffen, Langwaffen, Schrotflinten (keine GRW-Fertigkeit), Bogenschießen, Gruppe "Schusswaffen". "Sprengstoff" → technische Fertigkeit "Sprengstoffe" (GRW S. 154). Alte Speicherdateien: Werte umbenannter Fertigkeiten werden beim Laden übersprungen |
 | Übrige Fertigkeitsbereiche nach GRW (Körperlich, Sozial, Technisch, Fahrzeug, Resonanz) | ✅ | **Korrigiert 2026-10-09** (GRW S. 146–154, Tabellen und Kategorien am Bild geprüft): `skills.xml` enthält jetzt exakt die 73 Aktionsfertigkeiten der GRW-Tabelle "Fertigkeiten und damit verbundene Attribute" mit den 13 GRW-Gruppen (Athletik, Beschwören, Biotech, Cracken, Einfluss, Elektronik, Feuerwaffen, Heimlichkeit, Hexerei, Mechanik, Nahkampf, Natur, Tasken). Fahrzeugfertigkeiten ohne Gruppe (GRW: "Fertigkeitsgruppe: Keine"; alte Gruppe "Pilotieren" entfernt), Geschütze GES statt LOG. Neue Kategorie Resonanz (Gruppe Tasken, nur Technomancer, GRW S. 151). Abgesichert durch `SkillDataLoaderTest.matchesGrwSkillTableExactly`. Alte Speicherdateien: Werte umbenannter Fertigkeiten werden beim Laden übersprungen |
@@ -109,7 +109,7 @@
 | Karrieremodus: Karma-Kosten für Gabe-Erwerb / Handicap-Entfernung   | ✅      | GRW verifiziert (doppelte GP-Kosten), `Character.getQualityKarmaCost()`, 2026-08-04 |
 | Vollständiger GRW-Katalog (32 Gaben, 23 Handicaps mit Stufen/Varianten, Seite + Kurzwirkung) | ✅ | **2026-11-12**, `qualities.xml` nach Tabelle S. 106 (Bild geprüft), Namen wie im GRW; Nicht-GRW-Gaben entfernt; alte Namen in Speicherdateien werden übersetzt (`QualityNameMigration`) |
 | Auswahl je Quality (Fertigkeit, Attribut, Text), Voraussetzungen, Ausschlüsse, Metatyp-Bedingungen, eine Stufe je Gruppe | ✅ | `Character.getQualityBlockReason`/`getQualityChoiceProblem`, Dialog zeigt Grund und Kurzwirkung, Tab zeigt Auswahl in Klammern |
-| Effekte: Außergewöhnliches Attribut, Glück, Talentiert (bis 7, letzter Schritt doppelt), Inkompetenz, Gruppensperren Ungebildet/Ungehobelt/Körperliche Schwäche, Abhängigkeit (Ausgebrannt) Essenz −1 | ✅ | 2026-11-12; Würfelpool-, Zustandsmonitor- und Matrix-Wirkungen nur als Hinweis (kommen mit Feature Würfelpools) |
+| Effekte: Außergewöhnliches Attribut, Glück, Talentiert (bis 7, letzter Schritt doppelt), Inkompetenz, Gruppensperren Ungebildet/Ungehobelt/Körperliche Schwäche, Abhängigkeit (Ausgebrannt) Essenz −1 | ✅ | 2026-11-12; seit dem Würfelpool-Feature auch Hohe/Niedrige Schmerztoleranz, Überlebenswille, Astralzugang (Zauberer). Situative Würfelpool- und Matrix-Wirkungen nur als Hinweis |
 
 ---
 
@@ -157,7 +157,7 @@
 | RES-Attribut aktivieren (via Quality)      | ✅      | **Korrektur (2026-08-08):** bereits umgesetzt im Zuge des Sonderattribute-Features (analog zur EDG/MAG/RES-Korrektur vom 2026-08-06) — Quality "Technomant" (5 BP, `qualities.xml`), `QualityBonusType.GRANTS_RESONANCE`, `Character.hasResonance()`/`syncMagicOrResonance()`, Magie/Resonanz-Exklusivität, Persistenz. GRW S. 106 bestätigt. Checkliste war nicht mit dem Code synchron, siehe `docs/analysen/archiv/technomancer_java_analyse.md` |
 | Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/archiv/technomancer_plan.md`) |
 | Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (20 GRW-Einträge), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
-| Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ❌ | **Lücke gefunden 2026-09-27:** GRW S. 112: Zu Spielbeginn höchstens doppelt so viele Komplexe Formen wie Logik, egal welcher Stufe. Im Code nicht geprüft (nur der Stufen-Cap); kleiner Folgeauftrag analog `canAddSpellAtCreation()` |
+| Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ✅ | GRW S. 112, `Character.canAddComplexFormAtCreation()`, Hinweis im Technomancer-Tab, 2026-11-12 |
 | Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/archiv/technomancer_analyse.md`) |
 
 ---
@@ -277,10 +277,10 @@
 
 | Feature                                            | Status | Anmerkung |
 |----------------------------------------------------|--------|-----------|
-| Physische Initiative = INT + REA (+ Modifikatoren) | ❌      | GRW S. 172 bestätigt Basis (Initiativattribut), aber Initiativeergebnis = Attribut + Würfelprobe-Erfolge, keine reine Summe — bei Umsetzung präzisieren |
-| Astrale Initiative = INT × 2                       | ❌      | GRW S. ~229 exakt bestätigt |
-| Matrix-Initiative (mit Commlink oder Technomancer) | ❌      | GRW S. ~263 deutlich granularer als geplant: 2 Sim-Modi (Kalt/Heiß) mit unterschiedlicher Formel (Prozessor+INT bzw. +1) und unterschiedlicher Initiative-Passes-Zahl (2 bzw. 3) |
-| Initiative Passes anzeigen                         | ❌      | Normal = 1, Matrix Kalt Sim = 2, Heiß Sim = 3 (GRW bestätigt) |
+| Physische Initiative = INT + REA (+ Modifikatoren) | ✅      | Initiativeattribut (GRW S. 172) mit wirksamen Werten, gekappt auf ⌊1,5 × (REA-Max + INT-Max)⌋ (S. 91), Verletzungsmodifikator abgezogen; Tab „Zustand“, 2026-11-12 |
+| Astrale Initiative = INT × 2                       | ✅      | GRW S. 227, 3 Durchgänge, nur mit Astralzugang (Gabe Zauberer; Magieradept nicht, S. 116) |
+| Matrix-Initiative (mit Commlink oder Technomancer) | ❌      | Zurückgestellt (Nutzerentscheidung 2026-11-12). GRW S. 265/276/279: kaltes/heißes Sim mit Prozessor + INT, Technomancer INT × 2 + 1 |
+| Initiative Passes anzeigen                         | ✅      | Immer 1, solange Reflexbooster/Adeptenkräfte fehlen; astral 3 |
 
 ---
 
@@ -288,10 +288,10 @@
 
 | Feature                                    | Status | Anmerkung |
 |--------------------------------------------|--------|-----------|
-| Physischer CM = 8 + ⌈BOD/2⌉                | ❌      |           |
-| Stun CM = 8 + ⌈WIL/2⌉                      | ❌      |           |
-| CM-Boxen anklicken und füllen              | ❌      |           |
-| Wundmodifikator berechnen (−1 pro 3 Boxen) | ❌      |           |
+| Physischer CM = 8 + ⌈BOD/2⌉                | ✅      | GRW S. 94; Überzahl = KON + Überlebenswille (S. 192, 117) |
+| Stun CM = 8 + ⌈WIL/2⌉                      | ✅      | GRW S. 94 |
+| CM-Boxen anklicken und füllen              | ✅      | Nur im Karrieremodus, gespeichert; geistiger Überlauf wird nicht automatisch übertragen |
+| Wundmodifikator berechnen (−1 pro 3 Boxen) | ✅      | GRW S. 193, je Spalte, mit Hoher/Niedriger Schmerztoleranz (S. 116/120); wirkt auf alle angezeigten Pools und die Initiative |
 
 ---
 
@@ -332,13 +332,13 @@
 |------------------------|---|----|---|
 | Erstellungsgrundgerüst | 4 | 0  | 2 |
 | Metatypen              | 3 | 0  | 2 |
-| Attribute              | 5 | 0  | 6 |
-| Aktive Fertigkeiten    | 9 | 0  | 4 |
+| Attribute              | 7 | 0  | 4 |
+| Aktive Fertigkeiten    | 11 | 0  | 2 |
 | Wissensfertigkeiten    | 6 | 0  | 1 |
 | Qualities              | 9 | 0  | 0 |
 | Kontakte               | 4 | 0  | 0 |
 | Magie                  | 0 | 0  | 6 |
-| Technomancer           | 3 | 0  | 2 |
+| Technomancer           | 4 | 0  | 1 |
 | Cyberware/Bioware      | 6 | 0  | 2 |
 | Rüstung                | 3 | 0  | 4 |
 | Lebensstil             | 1 | 0  | 2 |
@@ -346,8 +346,8 @@
 | Gear                   | 6 | 0  | 4 |
 | Fahrzeuge              | 4 | 0  | 6 |
 | Karrieremodus          | 5 | 0  | 4 |
-| Initiative             | 0 | 0  | 4 |
-| Condition Monitor      | 0 | 0  | 4 |
+| Initiative             | 3 | 0  | 1 |
+| Condition Monitor      | 4 | 0  | 0 |
 | Persistenz             | 8 | 1  | 0 |
 | UI/Bedienbarkeit       | 4 | 0  | 2 |
 
@@ -391,8 +391,8 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
 4. ✅ **Qualities vervollständigt (2026-11-12, ADR-044)**; ursprünglich: mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
    siehe Abschnitt 6).
 5. **Adepten** (Adeptenkräfte, Mystischer Adept), bei Magie bewusst zurückgestellt.
-6. **Würfelpools**, Condition Monitor, Initiative (Stufe 3 unten; Analyse `docs/analysen/wuerfelpools_analyse.md`
-   liegt vor).
+6. ✅ **Würfelpools, Zustandsmonitor, Initiative (2026-11-12, ADR-045)**: Pool-Spalte, Tab „Zustand“, augmentiertes
+   Maximum, Attributproben, Obergrenze Komplexe Formen. Offen: Matrix-Initiative, situative Quality-Boni.
 7. **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035).
 8. **Kataloge vervollständigen**: Zauber (10 von 84 GRW-Kern), Komplexe Formen, Cyberware/Bioware.
 9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).

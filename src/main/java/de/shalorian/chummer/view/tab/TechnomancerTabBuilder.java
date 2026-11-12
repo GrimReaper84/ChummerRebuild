@@ -222,7 +222,8 @@ public final class TechnomancerTabBuilder {
 
   /**
    * Öffnet den Komplexe-Formen-Auswahl-Dialog und lernt die gewählte Form mit Stufe 1 (SR4- Grundregelwerk: "lernt die neue Komplexe Form mit Stufe
-   * 1"). Im Erstellungsmodus greift {@link Character#canAddComplexForm()}; im Karrieremodus kostet der Erwerb {@link ComplexForm#getKarmaCost(int)}
+   * 1"). Im Erstellungsmodus greifen {@link Character#canAddComplexForm()} und die Obergrenze {@link
+   * Character#canAddComplexFormAtCreation()}; im Karrieremodus kostet der Erwerb {@link ComplexForm#getKarmaCost(int)}
    * mit {@code currentRating=0}, analog anderen Karrieremodus-Käufen.
    */
   private void onAddComplexForm() {
@@ -232,6 +233,11 @@ public final class TechnomancerTabBuilder {
     }
     if (!ch.canAddComplexForm()) {
       host.services().warn("Keine Resonanz", "Ohne Resonanzwert kann keine Komplexe Form gelernt werden");
+      return;
+    }
+    if (!ch.canAddComplexFormAtCreation()) {
+      host.services().warn("Obergrenze erreicht",
+          "Zu Spielbeginn höchstens doppelt so viele Komplexe Formen wie Logik (GRW S. 112)");
       return;
     }
     try {

@@ -358,6 +358,20 @@
     -fx-alignment: CENTER;
 }
 
+/* Würfelpool in Fertigkeitszeilen; gedämpft bei Probe ohne Fertigkeitswert */
+.pool-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9cdcfe;
+    -fx-alignment: CENTER;
+    -fx-min-width: 44px;
+}
+
+.pool-default {
+    -fx-font-weight: normal;
+    -fx-text-fill: #6a8a9a;
+}
+
 .attr-bp {
     -fx-font-size: 12px;
     -fx-text-fill: #4ec9b0;
@@ -819,3 +833,35 @@
 .dialog-pane .button-bar .button:default:hover {
     -fx-background-color: #1177bb;
 }
+
+/* Zustandsmonitor-Kästchen (Tab "Zustand") */
+.cm-box {
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-max-width: 30px;
+    -fx-max-height: 30px;
+    -fx-padding: 0;
+    -fx-font-size: 10px;
+    -fx-text-fill: #888888;
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+    -fx-background-radius: 2px;
+    -fx-border-radius: 2px;
+    -fx-cursor: hand;
+}
+
+.cm-box:disabled {
+    -fx-opacity: 1;
+    -fx-cursor: default;
+}
+
+.cm-box-overflow {
+    -fx-border-style: dashed;
+}
+
+.cm-box-filled {
+    -fx-background-color: #8b2e2e;
+    -fx-text-fill: #f0d0d0;
+}
+

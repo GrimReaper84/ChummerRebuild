@@ -29,5 +29,13 @@ public enum QualityBonusType {
   /** Inkompetenz (GRW S. 120): gewählte Aktionsfertigkeit nicht erlernbar. */
   INCOMPETENT,
   /** Abhängigkeit (Ausgebrannt) (GRW S. 118): Essenz −1. */
-  BURNOUT_ESSENCE
+  BURNOUT_ESSENCE,
+  /** Hohe Schmerztoleranz (GRW S. 116): je Stufe ein Schadenskästchen je Spalte ohne Verletzungsmodifikator. */
+  HIGH_PAIN_TOLERANCE,
+  /** Niedrige Schmerztoleranz (GRW S. 120): Verletzungsmodifikator schon je 2 statt je 3 Kästchen. */
+  LOW_PAIN_TOLERANCE,
+  /** Überlebenswille (GRW S. 117): je Stufe ein Kästchen mehr für überzähligen körperlichen Schaden. */
+  WILL_TO_LIVE,
+  /** Zugang zum Astralraum (Zauberer; GRW S. 116: Magieradepten nur über eine Adeptenkraft): astrale Initiative. */
+  ASTRAL_ACCESS
 }

@@ -13,6 +13,9 @@ public class CharacterData {
   public @Nullable String metatype;
   public boolean created = false;
   public int nuyenBP = 0;
+  /** Eingetragener Schaden im Zustandsmonitor (Kästchen); fehlt in Dateien vor 2026-11-12. */
+  public int physicalDamage = 0;
+  public int stunDamage = 0;
   public @NonNull List<SelectedQualityEntry> selectedQualities = new ArrayList<>();
   public @NonNull Map<String, Integer> attributes = new HashMap<>();
   public int edge = 0;

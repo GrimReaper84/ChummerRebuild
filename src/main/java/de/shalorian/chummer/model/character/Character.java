@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
+import de.shalorian.chummer.model.character.condition.AttributeTest;
 import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
@@ -16,6 +17,7 @@ import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityRules;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.quality.QualityType;
+import de.shalorian.chummer.model.character.skill.DicePool;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
@@ -71,6 +73,13 @@ public class Character {
   private static final int ESSENCE_DECIMALS = 2;
   private static final BigDecimal TWO = BigDecimal.valueOf(2);
   private static final int MIN_ENCUMBERED_ATTRIBUTE_VALUE = 1;
+  private static final int COMPLEX_FORM_CAP_MULTIPLIER = 2;
+  private static final int SPECIALIZATION_DICE = 2;
+  private static final int CONDITION_MONITOR_BASE = 8;
+  private static final int BOXES_PER_WOUND_MODIFIER = 3;
+  private static final int BOXES_PER_WOUND_MODIFIER_LOW_PAIN_TOLERANCE = 2;
+  /** Astrale Initiativedurchgänge (SR4-Grundregelwerk S. 227). */
+  public static final int ASTRAL_INITIATIVE_PASSES = 3;
 
   private final Map<AttributeType, CharacterAttribute> attributes;
   private final Map<String, Skill> skills;
@@ -91,6 +100,9 @@ public class Character {
   private @NonNull Tradition tradition = Tradition.HERMETIC;
   private boolean created = false;
   private int nuyenBP = 0;
+  /** Eingetragener Schaden im Zustandsmonitor (Kästchen), siehe {@link #getPhysicalDamage()}. */
+  private int physicalDamage = 0;
+  private int stunDamage = 0;
 
   public Character(@NonNull String name, @NonNull MetatypeData metatype) {
     this.name = name;
@@ -1230,6 +1242,225 @@ public class Character {
     return isKnowledgeSkillCostDoubled(skill.getCategory()) ? cost * 2 : cost;
   }
 
+  // --- Würfelpools, Zustandsmonitor, Initiative ---
+
+  /**
+   * Würfelpool einer aktiven Fertigkeit (SR4-Grundregelwerk S. 146–148): Fertigkeitswert plus wirksamer Wert des
+   * verbundenen Attributs. Ohne Fertigkeitswert nur das Attribut mit −1, und das nur, wenn die Fertigkeit es erlaubt
+   * ({@link Skill#isDefaultable()}) und der Charakter in ihrer Kategorie nicht als ahnungslos gilt (Ungebildet,
+   * Ungehobelt, Körperliche Schwäche, S. 120/122). Der Verletzungsmodifikator ist eingerechnet, Spezialisierungen
+   * (+2 im Spezialgebiet, S. 147) nicht.
+   *
+   * @return leer, wenn keine Probe möglich ist (Fertigkeit nicht erlernbar, z.B. Inkompetenz oder Hexerei ohne Gabe,
+   *         oder Probe ohne Fertigkeitswert nicht erlaubt)
+   */
+  public @NonNull Optional<DicePool> getSkillDicePool(@NonNull Skill skill) {
+    if (!isSkillAccessible(skill)) {
+      return Optional.empty();
+    }
+    String attributeName = linkedAttributeName(skill.getLinkedAttribute());
+    int attribute = linkedAttributeValue(skill.getLinkedAttribute());
+    if (skill.getRating() > 0) {
+      return Optional.of(dicePool(skill.getRating() + attribute,
+          ratingBreakdown(skill.getName(), skill.getRating(), attributeName, attribute)));
+    }
+    if (!skill.isDefaultable() || isSkillCostDoubled(skill.getCategory())) {
+      return Optional.empty();
+    }
+    return Optional.of(defaultingPool(attributeName, attribute));
+  }
+
+  /**
+   * Würfelpool einer Wissensfertigkeit: Wert plus verbundenes Attribut, Verletzungsmodifikator eingerechnet. Ohne
+   * Wert wie bei aktiven Fertigkeiten Attribut − 1, außer bei Sprachen (in der Tabelle S. 146 als einzige
+   * Wissensfertigkeit kursiv) und bei Akademischem und Berufswissen mit Ungebildet (S. 121). Die Muttersprache hat
+   * keinen Wert und damit keinen Pool.
+   */
+  public @NonNull Optional<DicePool> getKnowledgeSkillDicePool(@NonNull KnowledgeSkill knowledgeSkill) {
+    if (knowledgeSkill.isNativeLanguage()) {
+      return Optional.empty();
+    }
+    KnowledgeSkillCategory category = knowledgeSkill.getCategory();
+    AttributeType type = category.getLinkedAttribute();
+    int attribute = getAugmentedAttributeValue(type);
+    if (knowledgeSkill.getRating() > 0) {
+      return Optional.of(dicePool(knowledgeSkill.getRating() + attribute,
+          ratingBreakdown(knowledgeSkill.getName(), knowledgeSkill.getRating(), type.getDisplayName(), attribute)));
+    }
+    if (category == KnowledgeSkillCategory.LANGUAGE || isKnowledgeSkillCostDoubled(category)) {
+      return Optional.empty();
+    }
+    return Optional.of(defaultingPool(type.getDisplayName(), attribute));
+  }
+
+  /** Würfel mit Spezialisierung: +{@value #SPECIALIZATION_DICE} im Spezialgebiet (S. 147). */
+  public static int withSpecialization(@NonNull DicePool pool) {
+    return pool.dice() + SPECIALIZATION_DICE;
+  }
+
+  private static @NonNull String ratingBreakdown(@NonNull String name, int rating, @NonNull String attributeName,
+      int attribute) {
+    return "%s %d + %s %d".formatted(name, rating, attributeName, attribute);
+  }
+
+  private @NonNull DicePool defaultingPool(@NonNull String attributeName, int attribute) {
+    return dicePool(attribute - 1, "%s %d − 1 ohne Fertigkeitswert".formatted(attributeName, attribute));
+  }
+
+  /** Würfelpool einer reinen Attributprobe (S. 166/167), Verletzungsmodifikator eingerechnet. */
+  public @NonNull DicePool getAttributeTestPool(@NonNull AttributeTest test) {
+    int first = getAugmentedAttributeValue(test.getFirst());
+    int second = getAugmentedAttributeValue(test.getSecond());
+    return dicePool(first + second,
+        ratingBreakdown(test.getFirst().getDisplayName(), first, test.getSecond().getDisplayName(), second));
+  }
+
+  private @NonNull DicePool dicePool(int dice, @NonNull String breakdown) {
+    int wound = getWoundModifier();
+    String text = wound == 0 ? breakdown : "%s − %d Verletzung".formatted(breakdown, -wound);
+    return new DicePool(Math.max(0, dice + wound), text);
+  }
+
+  /** Wirksamer Wert des verbundenen Attributs einer Fertigkeit; MAG/RES nach Essenzverlust. */
+  private int linkedAttributeValue(@NonNull String abbreviation) {
+    return switch (abbreviation) {
+      case "MAG", "RES" -> getEffectiveMagicOrResonanceValue();
+      default -> getAugmentedAttributeValue(AttributeType.valueOf(abbreviation));
+    };
+  }
+
+  private static @NonNull String linkedAttributeName(@NonNull String abbreviation) {
+    return Arrays.stream(SpecialAttributeType.values())
+        .filter(t -> t.getAbbreviation().equals(abbreviation))
+        .map(SpecialAttributeType::getDisplayName)
+        .findFirst()
+        .orElseGet(() -> AttributeType.valueOf(abbreviation).getDisplayName());
+  }
+
+  /**
+   * Augmentiertes Maximum eines körperlichen oder geistigen Attributs: das 1,5-fache des natürlichen Maximums,
+   * abgerundet (SR4-Grundregelwerk S. 91). Das natürliche Maximum schließt Außergewöhnliches Attribut ein.
+   */
+  public int getAugmentedMaximum(@NonNull AttributeType type) {
+    return getAttribute(type).getMax() * 3 / 2;
+  }
+
+  /**
+   * Initiativeattribut: Reaktion plus Intuition, je mit wirksamem Wert (S. 172), höchstens {@link
+   * #getInitiativeMaximum()}. Ohne Verletzungsmodifikator, siehe {@link #getInitiative()}.
+   */
+  public int getInitiativeAttribute() {
+    int sum = getAugmentedAttributeValue(AttributeType.REA) + getAugmentedAttributeValue(AttributeType.INT);
+    return Math.min(sum, getInitiativeMaximum());
+  }
+
+  /** Augmentiertes Maximum der Initiative: 1,5-fache Summe der Maxima von Reaktion und Intuition (S. 91). */
+  public int getInitiativeMaximum() {
+    return (getAttribute(AttributeType.REA).getMax() + getAttribute(AttributeType.INT).getMax()) * 3 / 2;
+  }
+
+  /** Initiative mit Verletzungsmodifikator (S. 174), nicht unter 0. */
+  public int getInitiative() {
+    return Math.max(0, getInitiativeAttribute() + getWoundModifier());
+  }
+
+  /**
+   * Initiativedurchgänge: einer; mehr gibt es nur durch Boni wie Reflexbooster oder Adeptenkräfte (S. 172), die noch
+   * nicht modelliert sind.
+   */
+  public int getInitiativePasses() {
+    return 1;
+  }
+
+  /** Zugang zum Astralraum und damit eine astrale Initiative: derzeit nur über die Gabe Zauberer (S. 116, 118). */
+  public boolean hasAstralAccess() {
+    return hasQualityBonus(QualityBonusType.ASTRAL_ACCESS);
+  }
+
+  /**
+   * Astrale Initiative: doppelte Intuition (S. 227), mit Verletzungsmodifikator, nicht unter 0; {@value
+   * #ASTRAL_INITIATIVE_PASSES} Durchgänge. Nur sinnvoll mit {@link #hasAstralAccess()}.
+   */
+  public int getAstralInitiative() {
+    return Math.max(0, getAugmentedAttributeValue(AttributeType.INT) * 2 + getWoundModifier());
+  }
+
+  /** Kästchen der Körperlichen Spalte: 8 plus halbe Konstitution, aufgerundet (S. 94). */
+  public int getPhysicalBoxes() {
+    return CONDITION_MONITOR_BASE + (getAttribute(AttributeType.BOD).getValue() + 1) / 2;
+  }
+
+  /** Kästchen der Geistigen Spalte: 8 plus halbe Willenskraft, aufgerundet (S. 94). */
+  public int getStunBoxes() {
+    return CONDITION_MONITOR_BASE + (getAttribute(AttributeType.WIL).getValue() + 1) / 2;
+  }
+
+  /**
+   * Kästchen für überzähligen körperlichen Schaden: so viele wie die Konstitution (darüber stirbt der Charakter,
+   * S. 192), plus die Stufe von Überlebenswille (S. 117).
+   */
+  public int getPhysicalOverflowBoxes() {
+    return getAttribute(AttributeType.BOD).getValue() + qualityLevel(QualityBonusType.WILL_TO_LIVE);
+  }
+
+  /**
+   * Körperlicher Schaden in Kästchen inklusive Überzahl. Schrumpft die Spalte nach dem Eintragen (z.B. niedrigere
+   * Konstitution), wird beim Lesen auf die neue Größe begrenzt; der eingetragene Wert bleibt bewusst erhalten und gilt
+   * wieder, wenn die Spalte wächst.
+   */
+  public int getPhysicalDamage() {
+    return Math.min(physicalDamage, getPhysicalBoxes() + getPhysicalOverflowBoxes());
+  }
+
+  /** Setzt den körperlichen Schaden, begrenzt auf 0 bis Spalte plus Überzahl (S. 192). */
+  public void setPhysicalDamage(int damage) {
+    physicalDamage = Math.clamp(damage, 0, getPhysicalBoxes() + getPhysicalOverflowBoxes());
+  }
+
+  /** Geistiger Schaden in Kästchen; Begrenzung beim Lesen wie bei {@link #getPhysicalDamage()}. */
+  public int getStunDamage() {
+    return Math.min(stunDamage, getStunBoxes());
+  }
+
+  /** Setzt den geistigen Schaden, begrenzt auf 0 bis Spaltengröße. */
+  public void setStunDamage(int damage) {
+    stunDamage = Math.clamp(damage, 0, getStunBoxes());
+  }
+
+  /**
+   * Verletzungsmodifikator (S. 193): je volle 3 Schadenskästchen −1, beide Spalten getrennt gezählt und addiert.
+   * Hohe Schmerztoleranz lässt je Stufe ein Kästchen pro Spalte unberücksichtigt (S. 116), Niedrige Schmerztoleranz
+   * zählt schon je 2 Kästchen (S. 120). Überzählige Kästchen zählen nicht mit.
+   *
+   * @return 0 oder negativ
+   */
+  public int getWoundModifier() {
+    return getColumnWoundModifier(Math.min(getPhysicalDamage(), getPhysicalBoxes()))
+        + getColumnWoundModifier(getStunDamage());
+  }
+
+  /**
+   * Verletzungsmodifikator einer einzelnen Spalte bei {@code damagedBoxes} gefüllten Kästchen, siehe {@link
+   * #getWoundModifier()}. Dient auch der Beschriftung der Kästchen im Zustand-Tab.
+   *
+   * @return 0 oder negativ
+   */
+  public int getColumnWoundModifier(int damagedBoxes) {
+    int ignored = qualityLevel(QualityBonusType.HIGH_PAIN_TOLERANCE);
+    int step = hasQualityBonus(QualityBonusType.LOW_PAIN_TOLERANCE)
+        ? BOXES_PER_WOUND_MODIFIER_LOW_PAIN_TOLERANCE : BOXES_PER_WOUND_MODIFIER;
+    return -(Math.max(0, damagedBoxes - ignored) / step);
+  }
+
+  /** Höchste Stufe einer gewählten Quality mit diesem Bonus, 0 ohne. */
+  private int qualityLevel(@NonNull QualityBonusType bonus) {
+    return qualities.stream()
+        .filter(q -> q.data().bonuses().contains(bonus))
+        .mapToInt(q -> q.data().level())
+        .max()
+        .orElse(0);
+  }
+
   // --- Kontakte ---
 
   public @NonNull List<Contact> getContacts() {
@@ -1367,6 +1598,15 @@ public class Character {
   public boolean canRaiseComplexForm(@NonNull ComplexForm complexForm) {
     return hasResonance()
         && complexForm.getRating() + 1 <= getEffectiveMagicOrResonanceValue();
+  }
+
+  /**
+   * Ob bei der Erschaffung noch eine Komplexe Form gelernt werden darf: zu Spielbeginn höchstens doppelt so viele wie
+   * der natürliche Logikwert, unabhängig von ihrer Stufe (SR4-Grundregelwerk S. 112). Im Karrieremodus ohne Grenze.
+   */
+  public boolean canAddComplexFormAtCreation() {
+    return created
+        || complexForms.size() < COMPLEX_FORM_CAP_MULTIPLIER * getAttribute(AttributeType.LOG).getValue();
   }
 
   /** Wie {@link #canRaiseComplexForm(ComplexForm)}, aber für den Erwerb einer noch nicht gelernten Form (Stufe 1). */

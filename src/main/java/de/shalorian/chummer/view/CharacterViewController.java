@@ -13,6 +13,7 @@ import de.shalorian.chummer.view.dialog.FinalizeDialogController;
 import de.shalorian.chummer.view.tab.AttributeTabBuilder;
 import de.shalorian.chummer.view.tab.BiographyTabBuilder;
 import de.shalorian.chummer.view.tab.CharacterTabHost;
+import de.shalorian.chummer.view.tab.ConditionTabBuilder;
 import de.shalorian.chummer.view.tab.ContactTabBuilder;
 import de.shalorian.chummer.view.tab.CyberwareTabBuilder;
 import de.shalorian.chummer.view.tab.IncrementWiring;
@@ -89,6 +90,8 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private VBox qualitiesContainer;
   @FXML
+  private VBox conditionContainer;
+  @FXML
   private VBox contactsContainer;
   @FXML
   private VBox biographyContainer;
@@ -141,6 +144,8 @@ public class CharacterViewController implements CharacterTabHost {
   @SuppressWarnings("NullAway.Init")
   private ContactTabBuilder contactTab;
   @SuppressWarnings("NullAway.Init")
+  private ConditionTabBuilder conditionTab;
+  @SuppressWarnings("NullAway.Init")
   private BiographyTabBuilder biographyTab;
   @SuppressWarnings("NullAway.Init")
   private MagicTabBuilder magicTabBuilder;
@@ -162,6 +167,7 @@ public class CharacterViewController implements CharacterTabHost {
         sortByAlphabetBtn, sortByCategoryBtn, this, wiring);
     qualityTab = new QualityTabBuilder(qualitiesContainer, this);
     contactTab = new ContactTabBuilder(contactsContainer, this, wiring);
+    conditionTab = new ConditionTabBuilder(conditionContainer, this);
     biographyTab = new BiographyTabBuilder(biographyContainer, this);
     magicTabBuilder = new MagicTabBuilder(magicContainer, this);
     technomancerTabBuilder = new TechnomancerTabBuilder(technomancerContainer, this, wiring);
@@ -244,6 +250,7 @@ public class CharacterViewController implements CharacterTabHost {
     skillTab.setCharacter(character);
     qualityTab.setCharacter(character);
     contactTab.setCharacter(character);
+    conditionTab.setCharacter(character);
     biographyTab.setCharacter(character);
     magicTabBuilder.setCharacter(character);
     technomancerTabBuilder.setCharacter(character);
@@ -345,6 +352,7 @@ public class CharacterViewController implements CharacterTabHost {
     skillTab.refresh();
     qualityTab.refresh();
     contactTab.refresh();
+    conditionTab.refresh();
     technomancerTabBuilder.refresh();
     streetGear.refresh();
   }
@@ -450,6 +458,7 @@ public class CharacterViewController implements CharacterTabHost {
     skillTab.build();
     buildQualitiesTab();
     contactTab.build();
+    conditionTab.build();
     biographyTab.build();
     magicTabBuilder.build();
     technomancerTabBuilder.build();

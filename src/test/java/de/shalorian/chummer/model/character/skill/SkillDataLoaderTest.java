@@ -109,4 +109,23 @@ class SkillDataLoaderTest {
 
         assertEquals(GRW_SKILLS.stream().sorted().toList(), actual);
     }
+
+    /** GRW S. 146: die kursiv gesetzten Fertigkeiten erlauben keine Probe ohne Fertigkeitswert (am Bild geprüft). */
+    private static final List<String> NOT_DEFAULTABLE = List.of(
+            "Arcana", "Chemie", "Elektronische Kriegsführung", "Fahrzeugmechanik", "Hardware", "Industriemechanik",
+            "Kybernetik", "Luftfahrtmechanik", "Medizin", "Seefahrtmechanik", "Software", "Astralkampf", "Antimagie",
+            "Binden", "Herbeirufen", "Ritualzauberei", "Spruchzauberei", "Verbannen", "Verzaubern", "Askennen",
+            "Dekompilieren", "Kompilieren", "Registrieren", "Exotisches Fahrzeug", "Flugzeuge", "Läufer",
+            "Raumfahrzeuge");
+
+    @Test
+    void notDefaultableSkillsMatchTheItalicEntries() {
+        List<String> actual = SkillDataLoader.createFreshSkills().stream()
+                .filter(s -> !s.isDefaultable())
+                .map(Skill::getName)
+                .sorted()
+                .toList();
+
+        assertEquals(NOT_DEFAULTABLE.stream().sorted().toList(), actual);
+    }
 }

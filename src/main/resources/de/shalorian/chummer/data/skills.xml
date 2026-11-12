@@ -3,7 +3,8 @@
      den Tabellen "Fertigkeiten und damit verbundene Attribute" / "Fertigkeitsgruppen" (S. 146), die
      Kategorie aus den Beschreibungsabschnitten S. 147–154 (alles gegen das PDF-Bild geprüft).
      Exotische Fern-/Nahkampfwaffe und Exotisches Fahrzeug müssen laut GRW je Waffe bzw. Fahrzeug
-     einzeln erlernt werden; hier vorerst als je ein Eintrag (siehe feature_checklist.md §4). -->
+     einzeln erlernt werden; hier vorerst als je ein Eintrag (siehe feature_checklist.md §4).
+     default="false": keine Probe ohne Fertigkeitswert (in der Tabelle S. 146 kursiv, am Bild geprüft). -->
 <skills>
 
     <!-- ── KAMPF (S. 147/148) ─────────────────────────────── -->
@@ -70,12 +71,12 @@
 
     <group name="Biotech" category="TECHNICAL">
         <skill name="Erste Hilfe" attribute="LOG"/>
-        <skill name="Kybernetik"  attribute="LOG"/>
-        <skill name="Medizin"     attribute="LOG"/>
+        <skill name="Kybernetik"  attribute="LOG" default="false"/>
+        <skill name="Medizin"     attribute="LOG" default="false"/>
     </group>
 
     <group name="Cracken" category="TECHNICAL">
-        <skill name="Elektronische Kriegsführung" attribute="LOG"/>
+        <skill name="Elektronische Kriegsführung" attribute="LOG" default="false"/>
         <skill name="Hacking"                     attribute="LOG"/>
         <skill name="Matrixkampf"                 attribute="LOG"/>
     </group>
@@ -83,18 +84,18 @@
     <group name="Elektronik" category="TECHNICAL">
         <skill name="Computer"   attribute="LOG"/>
         <skill name="Datensuche" attribute="LOG"/>
-        <skill name="Hardware"   attribute="LOG"/>
-        <skill name="Software"   attribute="LOG"/>
+        <skill name="Hardware"   attribute="LOG" default="false"/>
+        <skill name="Software"   attribute="LOG" default="false"/>
     </group>
 
     <group name="Mechanik" category="TECHNICAL">
-        <skill name="Fahrzeugmechanik"  attribute="LOG"/>
-        <skill name="Industriemechanik" attribute="LOG"/>
-        <skill name="Luftfahrtmechanik" attribute="LOG"/>
-        <skill name="Seefahrtmechanik"  attribute="LOG"/>
+        <skill name="Fahrzeugmechanik"  attribute="LOG" default="false"/>
+        <skill name="Industriemechanik" attribute="LOG" default="false"/>
+        <skill name="Luftfahrtmechanik" attribute="LOG" default="false"/>
+        <skill name="Seefahrtmechanik"  attribute="LOG" default="false"/>
     </group>
 
-    <skill name="Chemie"       attribute="LOG" category="TECHNICAL"/>
+    <skill name="Chemie"       attribute="LOG" category="TECHNICAL" default="false"/>
     <skill name="Fälschen"     attribute="AGI" category="TECHNICAL"/>
     <skill name="Handwerk"     attribute="INT" category="TECHNICAL"/>
     <skill name="Schlosser"    attribute="AGI" category="TECHNICAL"/>
@@ -105,11 +106,11 @@
     <!-- Das GRW kennt für Fahrzeugfertigkeiten keine Fertigkeitsgruppe ("Fertigkeitsgruppe: Keine"). -->
 
     <skill name="Bodenfahrzeuge"      attribute="REA" category="VEHICLE"/>
-    <skill name="Exotisches Fahrzeug" attribute="REA" category="VEHICLE"/>
-    <skill name="Flugzeuge"           attribute="REA" category="VEHICLE"/>
+    <skill name="Exotisches Fahrzeug" attribute="REA" category="VEHICLE" default="false"/>
+    <skill name="Flugzeuge"           attribute="REA" category="VEHICLE" default="false"/>
     <skill name="Geschütze"           attribute="AGI" category="VEHICLE"/>
-    <skill name="Läufer"              attribute="REA" category="VEHICLE"/>
-    <skill name="Raumfahrzeuge"       attribute="REA" category="VEHICLE"/>
+    <skill name="Läufer"              attribute="REA" category="VEHICLE" default="false"/>
+    <skill name="Raumfahrzeuge"       attribute="REA" category="VEHICLE" default="false"/>
     <skill name="Schiffe"             attribute="REA" category="VEHICLE"/>
 
     <!-- ── MAGIE (S. 148–150) ─────────────────────────────── -->
@@ -117,29 +118,29 @@
          offen; Arcana dürfen auch Mundane lernen (S. 150) — siehe Character#isSkillAccessible(Skill). -->
 
     <group name="Beschwören" category="MAGICAL">
-        <skill name="Binden"      attribute="MAG"/>
-        <skill name="Herbeirufen" attribute="MAG"/>
-        <skill name="Verbannen"   attribute="MAG"/>
+        <skill name="Binden"      attribute="MAG" default="false"/>
+        <skill name="Herbeirufen" attribute="MAG" default="false"/>
+        <skill name="Verbannen"   attribute="MAG" default="false"/>
     </group>
 
     <group name="Hexerei" category="MAGICAL">
-        <skill name="Antimagie"      attribute="MAG"/>
-        <skill name="Ritualzauberei" attribute="MAG"/>
-        <skill name="Spruchzauberei" attribute="MAG"/>
+        <skill name="Antimagie"      attribute="MAG" default="false"/>
+        <skill name="Ritualzauberei" attribute="MAG" default="false"/>
+        <skill name="Spruchzauberei" attribute="MAG" default="false"/>
     </group>
 
-    <skill name="Arcana"      attribute="LOG" category="MAGICAL"/>
-    <skill name="Askennen"    attribute="INT" category="MAGICAL"/>
-    <skill name="Astralkampf" attribute="WIL" category="MAGICAL"/>
-    <skill name="Verzaubern"  attribute="MAG" category="MAGICAL"/>
+    <skill name="Arcana"      attribute="LOG" category="MAGICAL" default="false"/>
+    <skill name="Askennen"    attribute="INT" category="MAGICAL" default="false"/>
+    <skill name="Astralkampf" attribute="WIL" category="MAGICAL" default="false"/>
+    <skill name="Verzaubern"  attribute="MAG" category="MAGICAL" default="false"/>
 
     <!-- ── RESONANZ (S. 151) ──────────────────────────────── -->
     <!-- Nur für Charaktere mit der Gabe Technomancer (S. 117). -->
 
     <group name="Tasken" category="RESONANCE">
-        <skill name="Dekompilieren" attribute="RES"/>
-        <skill name="Kompilieren"   attribute="RES"/>
-        <skill name="Registrieren"  attribute="RES"/>
+        <skill name="Dekompilieren" attribute="RES" default="false"/>
+        <skill name="Kompilieren"   attribute="RES" default="false"/>
+        <skill name="Registrieren"  attribute="RES" default="false"/>
     </group>
 
 </skills>

@@ -90,6 +90,8 @@ public class CharacterStore {
         .toList();
     data.created = character.isCreated();
     data.nuyenBP = character.getNuyenBP();
+    data.physicalDamage = character.getPhysicalDamage();
+    data.stunDamage = character.getStunDamage();
     data.selectedQualities = character.getQualities().stream()
         .filter(q -> q.source() == QualitySource.SELECTED)
         .map(q -> new SelectedQualityEntry(q.data().name(), q.gratis(), q.choice()))
@@ -193,6 +195,9 @@ public class CharacterStore {
     applySelectedQualities(character, data);
     applyAttributes(character, data);
     applySkills(character, data);
+    // Schaden nach Qualities und Attributen: die Spaltengröße hängt von KON, WIL und Überlebenswille ab.
+    character.setPhysicalDamage(data.physicalDamage);
+    character.setStunDamage(data.stunDamage);
     character.setCreated(data.created);
     character.setNuyenBP(data.nuyenBP);
     applyMagicOrResonance(character, data);

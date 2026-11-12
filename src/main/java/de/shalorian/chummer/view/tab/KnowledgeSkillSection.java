@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view.tab;
 
+import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
@@ -115,7 +116,7 @@ final class KnowledgeSkillSection {
     MigPane grid = buildKnowledgeSkillGrid();
     knowledgeSkillsContainer.getChildren().add(withRightFiller(grid));
 
-    int row = 0;
+    int row = 1;
     for (KnowledgeSkill skill : ch.getKnowledgeSkills()) {
       if (skill.isNativeLanguage()) {
         continue;
@@ -173,8 +174,9 @@ final class KnowledgeSkillSection {
     // Wert-Spalte durch KnowledgeSkill.MAX_RATING = 6 einstellig, keine feste Ausnahme nötig. Kein
     // eigenes Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[][][center][center][center][][][][]");
+        "[][][center][center][center][center][][][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
+    addHeaderRow(grid, "", "", "", "Wert", "", "Pool");
     return grid;
   }
 
@@ -189,6 +191,7 @@ final class KnowledgeSkillSection {
     Label specLabel = new Label();
     Button specBtn = new Button("Spez.");
     Button removeBtn = new Button("Entfernen");
+    Label poolLabel = DicePoolLabel.create();
 
     nameLabelDummy.getStyleClass().add(STYLE_ATTR_NAME);
     categoryLabel.getStyleClass().add(STYLE_ATTR_ABBR);
@@ -213,6 +216,11 @@ final class KnowledgeSkillSection {
     knowledgeSkillRefreshers.add(specRefresh);
     specRefresh.run();
     specBtn.setOnAction(_ -> onEditKnowledgeSkillSpecialization(skill, character));
+
+    Runnable poolRefresh = () -> DicePoolLabel.show(poolLabel, character.getKnowledgeSkillDicePool(skill),
+        skill.getRating(), skill.getSpecialization());
+    knowledgeSkillRefreshers.add(poolRefresh);
+    poolRefresh.run();
 
     wiring.wire(knowledgeSkillRefreshers, new RowControls(ratingLabel, costLabel, minus, plus),
         character.isCreated(), new RowModel() {
@@ -279,7 +287,7 @@ final class KnowledgeSkillSection {
       host.refreshRows();
     });
 
-    addRowCells(grid, row, nameLabelDummy, categoryLabel, minus, ratingLabel, plus, specLabel,
+    addRowCells(grid, row, nameLabelDummy, categoryLabel, minus, ratingLabel, plus, poolLabel, specLabel,
         specBtn, costLabel, removeBtn);
   }
 

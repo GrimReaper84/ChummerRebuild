@@ -25,7 +25,8 @@ public class SkillDataLoader {
       cache = Collections.unmodifiableList(loadFromXml());
     }
     return cache.stream()
-        .map(s -> new Skill(s.getName(), s.getLinkedAttribute(), s.getCategory(), s.getGroupName()))
+        .map(s -> new Skill(s.getName(), s.getLinkedAttribute(), s.getCategory(), s.getGroupName(),
+            s.isDefaultable()))
         .toList();
   }
 
@@ -68,6 +69,8 @@ public class SkillDataLoader {
   }
 
   private static @NonNull Skill parseSkill(@NonNull Element el, @NonNull SkillCategory category, @Nullable String groupName) {
-    return new Skill(el.getAttribute("name"), el.getAttribute("attribute"), category, groupName);
+    // Fehlt das Attribut "default", ist die Probe ohne Fertigkeitswert erlaubt.
+    return new Skill(el.getAttribute("name"), el.getAttribute("attribute"), category, groupName,
+        !"false".equals(el.getAttribute("default")));
   }
 }

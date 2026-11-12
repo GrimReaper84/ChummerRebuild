@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view.tab;
 
+import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.preventShrink;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
@@ -56,7 +57,10 @@ public final class SkillTabBuilder {
   private static final String CELL_COL_2 = "cell 2 ";
   private static final String CELL_COL_3 = "cell 3 ";
   private static final String CELL_COL_4 = "cell 4 ";
-  private static final String CELL_COL_5 = "cell 5 ";
+  /** Spalte der Gruppen-BP: im Fertigkeiten-Grid unter der Spezialisierung (hinter der Pool-Spalte). */
+  private static final int SKILL_GRID_GROUP_BP_COLUMN = 6;
+  /** Spalte der Gruppen-BP im schmalen Gruppen-Grid des Alphabet-Modus. */
+  private static final int GROUP_ONLY_BP_COLUMN = 5;
 
   private final @NonNull VBox skillsContainer;
   private final @NonNull ToggleGroup skillSortToggleGroup;
@@ -141,7 +145,7 @@ public final class SkillTabBuilder {
       MigPane grid = buildSkillGrid();
       skillsContainer.getChildren().add(withRightFiller(grid));
 
-      int row = 0;
+      int row = 1;
       for (Map.Entry<String, List<Skill>> groupEntry : catEntry.getValue().entrySet()) {
         row = addSkillGroupRows(grid, row, groupEntry.getKey(), groupEntry.getValue(), character);
       }
@@ -166,7 +170,7 @@ public final class SkillTabBuilder {
     leftColumn.getChildren().add(withRightFiller(groupGrid));
     int groupRow = 0;
     for (String groupName : character.getCoupledGroupNames()) {
-      groupRow = addGroupHeaderRow(groupGrid, groupRow, groupName, true, character);
+      groupRow = addGroupHeaderRow(groupGrid, groupRow, groupName, true, GROUP_ONLY_BP_COLUMN, character);
     }
 
     VBox rightColumn = new VBox();
@@ -176,7 +180,7 @@ public final class SkillTabBuilder {
     rightColumn.getChildren().add(individualTitle);
     MigPane skillGrid = buildSkillGrid();
     rightColumn.getChildren().add(withRightFiller(skillGrid));
-    int skillRow = 0;
+    int skillRow = 1;
     for (Skill skill : character.getIndividualSkills()) {
       addSkillRow(skillGrid, skillRow++, skill, false, character);
     }
@@ -187,7 +191,7 @@ public final class SkillTabBuilder {
 
   /**
    * Schmaleres Grid für die Gruppen-Liste im Alphabet-Modus — {@link #addGroupHeaderRow} befüllt die Spalten 0 (Name), 1 (Auskoppeln-Button, nur bei
-   * gekoppelten Gruppen im Karrieremodus) und 2/3/4/5 (−/Wert/+/BP), nie Spalte 6/7 (Attribut-Abkürzung/Spezialisierung). Die volle 8-Spalten-Spec
+   * gekoppelten Gruppen im Karrieremodus) und 2/3/4/5 (−/Wert/+/BP), nie Pool oder Spezialisierung. Die volle 9-Spalten-Spec
    * aus {@link #buildSkillGrid()} würde daher in einem Nebeneinander-Layout unnötig Platz verschenken. Der Auskoppeln-Button steht bewusst in einer
    * eigenen Spalte statt direkt am Namenstext dran, damit er über alle Zeilen hinweg untereinander ausgerichtet ist statt je nach Namenslänge zu
    * wandern.
@@ -233,7 +237,7 @@ public final class SkillTabBuilder {
       return row;
     }
     boolean coupled = character.isGroupCoupled(groupName);
-    row = addGroupHeaderRow(grid, row, groupName, coupled, character);
+    row = addGroupHeaderRow(grid, row, groupName, coupled, SKILL_GRID_GROUP_BP_COLUMN, character);
     for (Skill skill : skills) {
       addSkillRow(grid, row++, skill, coupled, character);
     }
@@ -253,8 +257,9 @@ public final class SkillTabBuilder {
     // Wert-Spalte durch Skill.MAX_RATING = 6 einstellig, keine feste Ausnahme nötig. Kein eigenes
     // Spaltenwachstum — ungenutzter Platz wird außen über withRightFiller verteilt.
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[][center][center][center][center][][][]");
+        "[][center][center][center][center][center][][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
+    addHeaderRow(grid, "", "", "", "Wert", "", "Pool");
     return grid;
   }
 
@@ -262,7 +267,7 @@ public final class SkillTabBuilder {
    * Fügt eine Gruppen-Kopfzeile mit +/−-Buttons und Auskoppeln-Button ein.
    */
   private int addGroupHeaderRow(@NonNull MigPane grid, int row, @NonNull String groupName,
-      boolean coupled, @NonNull Character character) {
+      boolean coupled, int bpColumn, @NonNull Character character) {
     Label groupLabel = new Label(groupName);
     groupLabel.getStyleClass().add(coupled ? "skill-group-header-coupled" : "skill-group-header");
     preventShrink(groupLabel);
@@ -349,7 +354,7 @@ public final class SkillTabBuilder {
       grid.add(minus, CELL_COL_2 + row);
       grid.add(ratingLabel, CELL_COL_3 + row);
       grid.add(plus, CELL_COL_4 + row);
-      grid.add(bpLabel, CELL_COL_5 + row);
+      grid.add(bpLabel, "cell " + bpColumn + " " + row);
     }
 
     return row + 1;
@@ -396,6 +401,7 @@ public final class SkillTabBuilder {
     Label bpLabel = new Label();
     Label specLabel = new Label();
     Button specBtn = new Button("Spez.");
+    Label poolLabel = DicePoolLabel.create();
 
     skillNameLabel.getStyleClass().add(coupled ? "attr-name-coupled" : STYLE_ATTR_NAME);
     attrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
@@ -420,6 +426,11 @@ public final class SkillTabBuilder {
     skillRefreshers.add(specRefresh);
     specRefresh.run();
     specBtn.setOnAction(_ -> onEditSkillSpecialization(skill, character));
+
+    Runnable poolRefresh = () -> DicePoolLabel.show(poolLabel, character.getSkillDicePool(skill),
+        skill.getRating(), skill.getSpecialization());
+    skillRefreshers.add(poolRefresh);
+    poolRefresh.run();
 
     if (coupled) {
       if (career) {
@@ -489,8 +500,8 @@ public final class SkillTabBuilder {
           }, character);
     }
 
-    addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, specLabel, specBtn,
-        bpLabel);
+    addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, poolLabel, specLabel,
+        specBtn, bpLabel);
   }
 
   @SuppressWarnings("ReferenceEquality") // Identität gewollt: welcher der beiden Buttons gewählt ist

@@ -66,4 +66,20 @@ class CharacterStoreQualityTest {
     assertEquals(7, loaded.getAttribute(AttributeType.STR).getValue());
     assertEquals(8, loaded.getEdge().getValue());
   }
+
+  @Test
+  void damageSurvivesSaveAndLoad() throws IOException {
+    Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    c.getAttribute(AttributeType.BOD).setValue(4);
+    c.addQuality(Objects.requireNonNull(QualityDataLoader.findByName("Überlebenswille 1")), false);
+    c.setCreated(true);
+    c.setPhysicalDamage(14); // 10 Kästchen + 4 von 5 Überzahlkästchen
+    c.setStunDamage(2);
+    File file = dir.resolve("schaden.json").toFile();
+    CharacterStore.save(c, file);
+
+    Character loaded = CharacterStore.load(file);
+    assertEquals(14, loaded.getPhysicalDamage());
+    assertEquals(2, loaded.getStunDamage());
+  }
 }

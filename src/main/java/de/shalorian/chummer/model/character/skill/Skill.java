@@ -12,6 +12,7 @@ public class Skill {
   private final @NonNull String linkedAttribute;
   private final @NonNull SkillCategory category;
   private final @Nullable String groupName; // null wenn keine Gruppe
+  private final boolean defaultable;
 
   private int maxRating = MAX_RATING;
   private int rating = 0;
@@ -25,10 +26,20 @@ public class Skill {
    */
   public Skill(@NonNull String name, @NonNull String linkedAttribute,
       @NonNull SkillCategory category, @Nullable String groupName) {
+    this(name, linkedAttribute, category, groupName, true);
+  }
+
+  /**
+   * @param defaultable ob ohne Fertigkeitswert gewürfelt werden darf (SR4-Grundregelwerk S. 146–148: bei den in der
+   *                    Fertigkeitstabelle kursiv gesetzten Fertigkeiten nicht)
+   */
+  public Skill(@NonNull String name, @NonNull String linkedAttribute,
+      @NonNull SkillCategory category, @Nullable String groupName, boolean defaultable) {
     this.name = name;
     this.linkedAttribute = linkedAttribute;
     this.category = category;
     this.groupName = groupName;
+    this.defaultable = defaultable;
   }
 
   public @NonNull String getName() {
@@ -45,6 +56,11 @@ public class Skill {
 
   public @Nullable String getGroupName() {
     return groupName;
+  }
+
+  /** Ob eine Probe ohne Fertigkeitswert (nur Attribut − 1) erlaubt ist, siehe GRW S. 147. */
+  public boolean isDefaultable() {
+    return defaultable;
   }
 
   public int getRating() {

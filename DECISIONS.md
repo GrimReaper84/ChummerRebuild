@@ -142,6 +142,18 @@ Kurzwirkung im Dialog und Tooltip.
 **Warum:** GRW als Wahrheitsquelle (ADR-002); Nutzerentscheidungen 2026-11-11 (übersetzen, entfernen, Metavarianten
 unverändert). Die Prüfung mit Begründung an einer Stelle (`getQualityBlockReason`) dient Dialog und Modell zugleich.
 
+### ADR-045: Würfelpools, Zustandsmonitor, Initiative (2026-11-12)
+Pools aus Fertigkeitswert und wirksamem Attribut (S. 146), ohne Wert Attribut − 1 nur bei den nicht kursiven
+Fertigkeiten der Tabelle S. 146 und nicht bei Ahnungslosigkeit durch Handicaps (S. 120/122). Der Verletzungsmodifikator
+(S. 193) ist in allen angezeigten Pools und Initiativen schon eingerechnet. Schaden wird nur im Karrieremodus
+eingetragen und gespeichert; geistiger Überlauf (S. 192) wird nicht automatisch in die körperliche Spalte gebucht.
+Spaltengröße aus den natürlichen Werten von KON und WIL. Astrale Initiative nur mit Astralzugang (Zauberer; S. 116
+schließt Magieradepten ohne Adeptenkraft aus). Wissensfertigkeiten ohne Wert erlauben Attribut − 1, außer Sprachen
+(S. 146 kursiv) und Akademisch/Beruf mit Ungebildet (S. 121). Stufen von
+Qualities stehen als `<level>` im Katalog. Matrix-Initiative ist zurückgestellt.
+**Warum:** Nutzerentscheidungen 2026-11-12 (Schaden nur Karriere, eigener Tab, Matrix zurückgestellt); Annahmen dort,
+wo das GRW schweigt, damit der Bogen ohne Improvement-System schon richtige Grundwerte zeigt.
+
 ## Fachregeln: Entscheidungen, wo das GRW schweigt oder unklar ist
 
 ### ADR-016: Weiche Warnungen statt harter Sperren (2026-08, 2026-09-27)
@@ -184,8 +196,9 @@ A Grundkatalog, B berechnete Werte, C Zubehör; Bogen als ein Eintrag mit Mindes
 Flechette-Varianten als Hinweistext; HK-XM30-Umbausätze zurückgestellt.
 **Warum:** Kleine Schritte; Bogenvarianten unterscheiden sich nur in der Stufe.
 
-### ADR-025: Kein Würfelpool vor dem Würfelpool-Feature (2026-09-28)
-Waffen und Fahrzeuge zeigen Fertigkeit und Wert, keinen Pool.
+### ADR-025: Kein Würfelpool vor dem Würfelpool-Feature (2026-09-28) — teilweise überholt durch ADR-045
+Waffen und Fahrzeuge zeigen Fertigkeit und Wert, keinen Pool. (Fertigkeiten haben seit ADR-045 einen Pool; Waffen-
+und Fahrzeugtabellen weiterhin nicht.)
 **Warum:** Würfelpools kommen geschlossen mit Roadmap Stufe 3.
 
 ### ADR-026: Waffenzubehör nach den Zubehörtexten (2026-09-30, 2026-10-04)
