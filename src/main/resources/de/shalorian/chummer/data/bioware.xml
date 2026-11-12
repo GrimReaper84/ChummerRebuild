@@ -1,42 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Bioware (Kapitel STRASSENAUSRÜSTUNG,
-  Tabellen "Standard-Bioware" und "Kultivierte Bioware" S. 394 — Essenz- und Preiswerte direkt gegen
-  das PDF-Bild verifiziert, nicht nur gegen den OCR-Text).
+  Bioware des SR4-Grundregelwerks (Kapitel STRASSENAUSRÜSTUNG, Tabellen Standard-Bioware und Kultivierte
+  Bioware S. 394): alle 25 Einträge, Werte am PDF-Bild geprüft. Die Grades gelten laut S. 359 auch für Bioware.
 
-  Alle Werte gelten für die Standardvariante; Grade-Multiplikatoren werden erst in der
-  Charakter-Instanz eingerechnet (siehe CyberwareGrade — die vier Kategorien gelten laut GRW S. 359
-  für Cyberware UND Bioware). Formelfelder verwenden die RatingFormula-Syntax.
-
-  Bewusst NICHT enthalten: Bioware mit Attributboni (z.B. Muskelverstärkung, Zerebralbooster,
-  Synapsenbeschleuniger), solange Attributboni durch Implantate nicht modelliert sind (siehe
-  docs/plaene/archiv/cyberware_plan.md Abschnitt 13). Verfügbarkeit (<avail>, <legality> E/V) gegen das
-  PDF-Bild verifiziert; fehlendes <avail> = "–".
+  Schema: Formelfelder in RatingFormula-Syntax ("Rating * 0.5", Dezimalpunkt; Wertliste "2; 3; 5" je Stufe).
+  Essenz "–" im GRW = 0. Alle Werte gelten für die Standardvariante; Grades rechnet CyberwareGrade ein.
+  Fehlendes <avail> = "–". <effect> = dauerhafte, rechnende Wirkung (ImplantEffectType); situative Wirkungen
+  stehen nur in <note>, immer in eigenen Worten. <excludes>/<excludescategory> sperren in beide Richtungen,
+  <multiple/> erlaubt Mehrfachkauf, <requires> nennt eine Voraussetzung (docs/plaene/implantate_plan.md).
 -->
 <bioware>
 
-    <!-- ── STANDARD-BIOWARE (S. 394) ────────────────────────── -->
-
+    <!-- ── STANDARD-BIOWARE (S. 392–394) ───────────────────── -->
+    <item>
+        <name>Adrenalinpumpe</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.75</essence>
+        <cost>Rating * 30000</cost>
+        <rating>3</rating>
+        <avail>Rating * 6</avail>
+        <legality>V</legality>
+        <note>Ausgelöst: Stufe auf STR, GES, REA und WIL und Verletzungen ignorieren für Stufe×1W6 Kampfrunden, danach Geistiger Schaden.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Extremverdauung</name>
+        <category>Standard-Bioware</category>
+        <essence>0.5</essence>
+        <cost>20000</cost>
+        <avail>4</avail>
+        <note>+2 Würfel gegen eingenommene Gifte; Lebensstil 20 % billiger.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
     <item>
         <name>Hauttasche</name>
         <category>Standard-Bioware</category>
         <essence>0.1</essence>
         <cost>5000</cost>
         <avail>4</avail>
+        <multiple/>
         <source>SR4</source>
         <page>394</page>
     </item>
-
+    <item>
+        <name>Hochleistungsgelenke</name>
+        <category>Standard-Bioware</category>
+        <essence>0.3</essence>
+        <cost>40000</cost>
+        <avail>12</avail>
+        <effect type="physicalskilldice">1</effect>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Hyperschilddrüse</name>
+        <category>Standard-Bioware</category>
+        <essence>0.7</essence>
+        <cost>45000</cost>
+        <avail>20</avail>
+        <legality>V</legality>
+        <effect type="attribute" target="BOD">1</effect>
+        <effect type="attribute" target="AGI">1</effect>
+        <effect type="attribute" target="REA">1</effect>
+        <effect type="attribute" target="STR">1</effect>
+        <note>Lebensstil 10 % teurer.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
     <item>
         <name>Katzenaugen</name>
         <category>Standard-Bioware</category>
         <essence>0.1</essence>
         <cost>7500</cost>
         <avail>4</avail>
+        <excludescategory>Augen-Cyberware</excludescategory>
+        <note>Natürliche Restlichtverstärkung; nicht mit Augen-Cyberware kombinierbar.</note>
         <source>SR4</source>
         <page>394</page>
     </item>
-
+    <item>
+        <name>Knochenverstärkung</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.3</essence>
+        <cost>Rating * 20000</cost>
+        <rating>4</rating>
+        <avail>12</avail>
+        <excludes>Kompositknochen (Plastik)</excludes>
+        <excludes>Kompositknochen (Aluminium)</excludes>
+        <excludes>Kompositknochen (Titan)</excludes>
+        <note>KON + Stufe bei Schadenswiderstand; waffenloser Schaden körperlich (Tabelle S. 394).</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Luftröhrenfilter</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 15000</cost>
+        <rating>6</rating>
+        <avail>Rating * 3</avail>
+        <note>Stufe als Zusatzwürfel gegen eingeatmete Gifte.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Maßgeschneiderte Pheromone</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 15000</cost>
+        <rating>3</rating>
+        <avail>Rating * 4</avail>
+        <legality>V</legality>
+        <effect type="socialskilldice">Rating</effect>
+        <note>Gilt auch für Charisma-Proben, aber nicht für Magie.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Muskelstraffung</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 8000</cost>
+        <rating>4</rating>
+        <avail>Rating * 5</avail>
+        <legality>E</legality>
+        <effect type="attribute" target="AGI">Rating</effect>
+        <excludes>Kunstmuskeln</excludes>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Muskelverstärkung</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 7000</cost>
+        <rating>4</rating>
+        <avail>Rating * 5</avail>
+        <legality>E</legality>
+        <effect type="attribute" target="STR">Rating</effect>
+        <excludes>Kunstmuskeln</excludes>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Orthoskin</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.25</essence>
+        <cost>Rating * 30000</cost>
+        <rating>3</rating>
+        <avail>Rating * 4</avail>
+        <legality>E</legality>
+        <effect type="armorballistic">Rating</effect>
+        <effect type="armorimpact">Rating</effect>
+        <excludes>Dermalpanzerung</excludes>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
     <item>
         <name>Pathogenabwehr</name>
         <category>Standard-Bioware</category>
@@ -44,20 +165,42 @@
         <cost>Rating * 10000</cost>
         <rating>6</rating>
         <avail>8</avail>
+        <note>Stufe als Zusatzwürfel gegen Krankheiten und biologische Gifte.</note>
         <source>SR4</source>
         <page>394</page>
     </item>
-
+    <item>
+        <name>Symbionten</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 10000</cost>
+        <rating>3</rating>
+        <avail>Rating * 5</avail>
+        <note>Stufe als Zusatzwürfel beim Heilen; Lebensstil 20 % teurer.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Synthacardium</name>
+        <category>Standard-Bioware</category>
+        <essence>Rating * 0.1</essence>
+        <cost>Rating * 10000</cost>
+        <rating>3</rating>
+        <avail>Rating * 4</avail>
+        <effect type="skillgroupdice" target="Athletik">Rating</effect>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
     <item>
         <name>Thrombozytenfabrik</name>
         <category>Standard-Bioware</category>
         <essence>0.2</essence>
         <cost>25000</cost>
         <avail>12</avail>
+        <note>Ab 2 Kästchen Körperlichem Schaden wird 1 Kästchen weniger eingetragen.</note>
         <source>SR4</source>
         <page>394</page>
     </item>
-
     <item>
         <name>Toxinextraktor</name>
         <category>Standard-Bioware</category>
@@ -65,12 +208,12 @@
         <cost>Rating * 20000</cost>
         <rating>6</rating>
         <avail>Rating * 3</avail>
+        <note>Stufe als Zusatzwürfel gegen Gifte.</note>
         <source>SR4</source>
         <page>394</page>
     </item>
 
-    <!-- ── KULTIVIERTE BIOWARE (S. 394) ─────────────────────── -->
-
+    <!-- ── KULTIVIERTE BIOWARE (S. 393/394) ────────────────── -->
     <item>
         <name>Mnemoverstärker</name>
         <category>Kultivierte Bioware</category>
@@ -78,20 +221,59 @@
         <cost>Rating * 7500</cost>
         <rating>3</rating>
         <avail>Rating * 5</avail>
+        <effect type="knowledgeskilldice">Rating</effect>
+        <note>Gilt auch für Lern- und andere Gedächtnisproben.</note>
         <source>SR4</source>
         <page>394</page>
     </item>
-
+    <item>
+        <name>Reflexrekorder (Fertigkeit)</name>
+        <category>Kultivierte Bioware</category>
+        <essence>0.1</essence>
+        <cost>10000</cost>
+        <avail>10</avail>
+        <effect type="selectedskilldice">1</effect>
+        <select>skill</select>
+        <multiple/>
+        <note>Nur Kampf- oder körperliche Fertigkeiten, je Fertigkeit einer.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Reflexrekorder (Fertigkeitsgruppe)</name>
+        <category>Kultivierte Bioware</category>
+        <essence>0.2</essence>
+        <cost>25000</cost>
+        <avail>12</avail>
+        <effect type="selectedskilldice">1</effect>
+        <select>skillgroup</select>
+        <multiple/>
+        <note>Nur Gruppen aus Kampf- oder körperlichen Fertigkeiten, je Gruppe einer.</note>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Schadenskompensator</name>
+        <category>Kultivierte Bioware</category>
+        <essence>Rating * 0.1</essence>
+        <cost>Rating * 15000</cost>
+        <rating>12</rating>
+        <avail>Rating * 3</avail>
+        <legality>V</legality>
+        <effect type="woundboxesignored">Rating</effect>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
     <item>
         <name>Schlafregulator</name>
         <category>Kultivierte Bioware</category>
         <essence>0.15</essence>
         <cost>10000</cost>
         <avail>8</avail>
+        <note>Kommt mit deutlich weniger Schlaf aus.</note>
         <source>SR4</source>
         <page>394</page>
     </item>
-
     <item>
         <name>Schmerzeditor</name>
         <category>Kultivierte Bioware</category>
@@ -99,8 +281,35 @@
         <cost>40000</cost>
         <avail>18</avail>
         <legality>V</legality>
+        <note>Aktiviert: Verletzungsmodifikatoren durch Schaden entfallen, WIL +1, INT −1, −4 auf Tastsinn-Wahrnehmung.</note>
         <source>SR4</source>
         <page>394</page>
     </item>
-
+    <item>
+        <name>Synapsenbeschleuniger</name>
+        <category>Kultivierte Bioware</category>
+        <essence>Rating * 0.5</essence>
+        <cost>Rating * 80000</cost>
+        <rating>3</rating>
+        <avail>Rating * 6</avail>
+        <legality>E</legality>
+        <effect type="attribute" target="REA">Rating</effect>
+        <effect type="initiativepasses">Rating</effect>
+        <excludes>Reflexbooster</excludes>
+        <excludes>Reaktionsverbesserung</excludes>
+        <initiativeboost/>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
+    <item>
+        <name>Zerebralbooster</name>
+        <category>Kultivierte Bioware</category>
+        <essence>Rating * 0.2</essence>
+        <cost>Rating * 10000</cost>
+        <rating>3</rating>
+        <avail>Rating * 6</avail>
+        <effect type="attribute" target="LOG">Rating</effect>
+        <source>SR4</source>
+        <page>394</page>
+    </item>
 </bioware>

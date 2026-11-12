@@ -1,12 +1,16 @@
 package de.shalorian.chummer.model.character.cyberware;
 
 import static de.shalorian.chummer.utils.XmlUtils.childText;
+import static de.shalorian.chummer.utils.XmlUtils.firstChild;
 
 import de.shalorian.chummer.model.character.DataPaths;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.gear.GearCategory;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.jspecify.annotations.NonNull;
@@ -72,16 +76,70 @@ public class CyberwareDataLoader {
   }
 
   private static @NonNull CyberwareData parseItem(@NonNull Element el, @NonNull EquipmentKind kind) {
-    String rating = childText(el, "rating");
+    String allowGear = childText(el, "allowgear");
     return new CyberwareData(
         childText(el, "name"),
         childText(el, "category"),
         kind,
         childText(el, "essence"),
         childText(el, "cost"),
-        rating.isEmpty() ? 0 : Integer.parseInt(rating),
+        intOrZero(childText(el, "rating")),
         Availability.parse(childText(el, "avail"), childText(el, "legality")),
         childText(el, "source"),
-        childText(el, "page"));
+        childText(el, "page"),
+        intOrZero(childText(el, "pricemin")),
+        intOrZero(childText(el, "pricemax")),
+        childText(el, "capacity"),
+        childText(el, "capacitycost"),
+        parseEffects(el),
+        parseSelection(childText(el, "select")),
+        new ImplantRestrictions(
+            firstChild(el, "multiple") != null,
+            allTexts(el, "excludes"),
+            allTexts(el, "excludescategory"),
+            childText(el, "requires"),
+            firstChild(el, "initiativeboost") != null,
+            firstChild(el, "installonly") != null),
+        allowGear.isEmpty() ? null : GearCategory.fromDisplayName(allowGear),
+        childText(el, "note"));
+  }
+
+  private static int intOrZero(@NonNull String text) {
+    return text.isEmpty() ? 0 : Integer.parseInt(text);
+  }
+
+  /** {@code <select>skill</select>} bzw. {@code skillgroup}; fehlt der Tag, gibt es keine Auswahl. */
+  private static @NonNull ImplantSelection parseSelection(@NonNull String code) {
+    return switch (code) {
+      case "" -> ImplantSelection.NONE;
+      case "skill" -> ImplantSelection.SKILL;
+      case "skillgroup" -> ImplantSelection.SKILL_GROUP;
+      default -> throw new IllegalArgumentException("Unbekannte Implantat-Auswahl: " + code);
+    };
+  }
+
+  private static @NonNull List<ImplantEffect> parseEffects(@NonNull Element el) {
+    List<ImplantEffect> effects = new ArrayList<>();
+    for (Element effect : directChildren(el, "effect")) {
+      effects.add(new ImplantEffect(ImplantEffectType.fromCode(effect.getAttribute("type")),
+          effect.getAttribute("target"), effect.getTextContent().trim()));
+    }
+    return effects;
+  }
+
+  /** Texte aller direkten Kind-Elemente {@code tag} (wiederholbare Tags wie {@code <excludes>}). */
+  private static @NonNull List<String> allTexts(@NonNull Element el, @NonNull String tag) {
+    return directChildren(el, tag).stream().map(e -> e.getTextContent().trim()).toList();
+  }
+
+  private static @NonNull List<Element> directChildren(@NonNull Element el, @NonNull String tag) {
+    List<Element> result = new ArrayList<>();
+    NodeList children = el.getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      if (children.item(i) instanceof Element child && tag.equals(child.getTagName())) {
+        result.add(child);
+      }
+    }
+    return result;
   }
 }

@@ -9,6 +9,8 @@ import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
 import de.shalorian.chummer.model.character.condition.AttributeTest;
+import de.shalorian.chummer.model.character.cyberware.ImplantEffectType;
+import de.shalorian.chummer.model.character.cyberware.Implants;
 import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
@@ -96,6 +98,7 @@ public class Character {
   private final List<SpellData> spells = new ArrayList<>();
   private final List<ComplexForm> complexForms = new ArrayList<>();
   private final @NonNull AdeptPowers adeptPowers = new AdeptPowers(this);
+  private final @NonNull Implants implants = new Implants(this);
   private final @NonNull Equipment equipment = new Equipment(this);
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
@@ -246,7 +249,8 @@ public class Character {
 
   /**
    * Wirksamer Attributwert inkl. aller modellierten Modifikatoren: Adeptenkräfte Gesteigertes körperliches Attribut
-   * und Gesteigerte Reflexe (Reaktion, GRW S. 230), höchstens bis zum augmentierten Maximum (S. 91), danach die
+   * und Gesteigerte Reflexe (Reaktion, GRW S. 230) sowie Attributboni von Implantaten (S. 389, 393, 394), zusammen
+   * höchstens bis zum augmentierten Maximum (S. 91), danach die
    * Panzerungsbehinderung auf Geschicklichkeit und Reaktion (siehe {@link Equipment#getArmorEncumbrancePenalty()}).
    * Der investierte Wert ({@link CharacterAttribute#getValue()}) bleibt unverändert, BP-Kosten richten sich weiter
    * nach ihm (analog {@link #getEffectiveMagicOrResonanceValue()}). Die Behinderung hängt selbst an der verstärkten
@@ -260,7 +264,8 @@ public class Character {
   public int getAugmentedAttributeValue(@NonNull AttributeType type) {
     int natural = getAttribute(type).getValue();
     int boost = adeptPowers.level(AdeptPowerEffect.IMPROVED_ATTRIBUTE, type.name())
-        + (type == AttributeType.REA ? adeptPowers.level(AdeptPowerEffect.IMPROVED_REFLEXES) : 0);
+        + (type == AttributeType.REA ? adeptPowers.level(AdeptPowerEffect.IMPROVED_REFLEXES) : 0)
+        + implants.level(ImplantEffectType.ATTRIBUTE, type.name());
     int value = boost == 0 ? natural : Math.min(natural + boost, getAugmentedMaximum(type));
     if (type != AttributeType.AGI && type != AttributeType.REA) {
       return value;
@@ -1327,15 +1332,40 @@ public class Character {
     String attributeName = linkedAttributeName(skill.getLinkedAttribute());
     int attribute = linkedAttributeValue(skill.getLinkedAttribute());
     int powers = adeptPowerDice(skill);
-    String powerText = powers == 0 ? "" : " + Adeptenkräfte " + powers;
+    int implantDice = implantDice(skill);
+    String bonusText = (powers == 0 ? "" : " + Adeptenkräfte " + powers)
+        + (implantDice == 0 ? "" : " + Implantate " + implantDice);
+    int bonus = powers + implantDice;
     if (skill.getRating() > 0) {
-      return Optional.of(dicePool(skill.getRating() + attribute + powers,
-          ratingBreakdown(skill.getName(), skill.getRating(), attributeName, attribute) + powerText));
+      return Optional.of(dicePool(skill.getRating() + attribute + bonus,
+          ratingBreakdown(skill.getName(), skill.getRating(), attributeName, attribute) + bonusText));
     }
     if (!skill.isDefaultable() || isSkillCostDoubled(skill.getCategory())) {
       return Optional.empty();
     }
-    return Optional.of(defaultingPool(attributeName, attribute, powers, powerText));
+    return Optional.of(defaultingPool(attributeName, attribute, bonus, bonusText));
+  }
+
+  /**
+   * Zusatzwürfel aus Implantaten für eine Fertigkeit: Synthacardium für ihre Gruppe (Athletik, S. 393), Pheromone für
+   * soziale Fertigkeiten (S. 393), Hochleistungsgelenke für Fertigkeiten mit körperlichem verbundenem Attribut (S. 393)
+   * und Reflexrekorder für die gewählte Fertigkeit oder Gruppe (S. 394).
+   */
+  private int implantDice(@NonNull Skill skill) {
+    String group = skill.getGroupName();
+    int dice = group == null ? 0 : implants.level(ImplantEffectType.SKILL_GROUP_DICE, group);
+    if (skill.getCategory() == SkillCategory.SOCIAL) {
+      dice += implants.level(ImplantEffectType.SOCIAL_SKILL_DICE);
+    }
+    if (isPhysicalAttribute(skill.getLinkedAttribute())) {
+      dice += implants.level(ImplantEffectType.PHYSICAL_SKILL_DICE);
+    }
+    return dice + implants.selectedSkillDice(skill);
+  }
+
+  private static boolean isPhysicalAttribute(@NonNull String abbreviation) {
+    return Arrays.stream(AttributeType.values())
+        .anyMatch(t -> t.isPhysical() && t.name().equals(abbreviation));
   }
 
   /**
@@ -1363,14 +1393,17 @@ public class Character {
     KnowledgeSkillCategory category = knowledgeSkill.getCategory();
     AttributeType type = category.getLinkedAttribute();
     int attribute = getAugmentedAttributeValue(type);
+    int implantDice = implants.level(ImplantEffectType.KNOWLEDGE_SKILL_DICE);
+    String bonusText = implantDice == 0 ? "" : " + Implantate " + implantDice;
     if (knowledgeSkill.getRating() > 0) {
-      return Optional.of(dicePool(knowledgeSkill.getRating() + attribute,
-          ratingBreakdown(knowledgeSkill.getName(), knowledgeSkill.getRating(), type.getDisplayName(), attribute)));
+      return Optional.of(dicePool(knowledgeSkill.getRating() + attribute + implantDice,
+          ratingBreakdown(knowledgeSkill.getName(), knowledgeSkill.getRating(), type.getDisplayName(), attribute)
+              + bonusText));
     }
     if (category == KnowledgeSkillCategory.LANGUAGE || isKnowledgeSkillCostDoubled(category)) {
       return Optional.empty();
     }
-    return Optional.of(defaultingPool(type.getDisplayName(), attribute, 0, ""));
+    return Optional.of(defaultingPool(type.getDisplayName(), attribute, implantDice, bonusText));
   }
 
   /** Würfel mit Spezialisierung: +{@value #SPECIALIZATION_DICE} im Spezialgebiet (S. 147). */
@@ -1452,11 +1485,12 @@ public class Character {
   }
 
   /**
-   * Initiativedurchgänge: einer, plus die Stufe von Gesteigerte Reflexe (S. 172, 230). Reflexbooster und andere
-   * Quellen sind noch nicht modelliert.
+   * Initiativedurchgänge: einer, plus die Stufe von Gesteigerte Reflexe (S. 172, 230) bzw. von Reflexbooster oder
+   * Synapsenbeschleuniger (S. 389, 394). Die Quellen schließen einander aus ({@link Implants#getBlockReason}).
    */
   public int getInitiativePasses() {
-    return 1 + adeptPowers.level(AdeptPowerEffect.IMPROVED_REFLEXES);
+    return 1 + adeptPowers.level(AdeptPowerEffect.IMPROVED_REFLEXES)
+        + implants.level(ImplantEffectType.INITIATIVE_PASSES);
   }
 
   /** Zugang zum Astralraum und damit eine astrale Initiative: derzeit nur über die Gabe Zauberer (S. 116, 118). */
@@ -1516,8 +1550,8 @@ public class Character {
 
   /**
    * Verletzungsmodifikator (S. 193): je volle 3 Schadenskästchen −1, beide Spalten getrennt gezählt und addiert.
-   * Hohe Schmerztoleranz und die Adeptenkraft Schmerzresistenz lassen je Stufe ein Kästchen pro Spalte
-   * unberücksichtigt (S. 116, 231), Niedrige Schmerztoleranz
+   * Hohe Schmerztoleranz, die Adeptenkraft Schmerzresistenz und der Schadenskompensator lassen je Stufe ein Kästchen
+   * pro Spalte unberücksichtigt (S. 116, 231, 394; Annahme: sie addieren sich), Niedrige Schmerztoleranz
    * zählt schon je 2 Kästchen (S. 120). Überzählige Kästchen zählen nicht mit.
    *
    * @return 0 oder negativ
@@ -1535,7 +1569,8 @@ public class Character {
    */
   public int getColumnWoundModifier(int damagedBoxes) {
     int ignored = qualityLevel(QualityBonusType.HIGH_PAIN_TOLERANCE)
-        + adeptPowers.level(AdeptPowerEffect.PAIN_RESISTANCE);
+        + adeptPowers.level(AdeptPowerEffect.PAIN_RESISTANCE)
+        + implants.level(ImplantEffectType.WOUND_BOXES_IGNORED);
     int step = hasQualityBonus(QualityBonusType.LOW_PAIN_TOLERANCE)
         ? BOXES_PER_WOUND_MODIFIER_LOW_PAIN_TOLERANCE : BOXES_PER_WOUND_MODIFIER;
     return -(Math.max(0, damagedBoxes - ignored) / step);
@@ -1724,6 +1759,14 @@ public class Character {
   }
 
   /**
+   * Kaufregeln und Wirkungen der Implantate (Unverträglichkeiten, Auswahl, Summen der Wirkungen); die Implantate selbst
+   * liegen in {@link Equipment#getCyberware()}.
+   */
+  public @NonNull Implants getImplants() {
+    return implants;
+  }
+
+  /**
    * Magie für magische Fertigkeiten (Zauberei, Beschwören): beim Magieradepten die wirksame Magie ohne den Kräfte-Anteil
    * (GRW S. 229, Beispiel Roxanne: Magie 4, ein Punkt in Kräften, Spruchzauberei mit 3), sonst die wirksame Magie.
    */
@@ -1755,17 +1798,22 @@ public class Character {
     return lockedSkills(isMagician(), astralPerception(hasAstralAccess(), hasAdeptPowers(), power), hasResonance());
   }
 
-  /** Ballistik-Schutz: angelegte Rüstung ({@link Equipment#getArmorBallistic()}) plus Mystischer Panzer (S. 231). */
+  /**
+   * Ballistik-Schutz: angelegte Rüstung ({@link Equipment#getArmorBallistic()}) plus Mystischer Panzer (S. 231) plus
+   * Implantatpanzerung (Dermalpanzerung, Titan-Kompositknochen S. 388; Orthoskin S. 393).
+   */
   public int getArmorBallistic() {
-    return equipment.getArmorBallistic() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR);
+    return equipment.getArmorBallistic() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR)
+        + implants.level(ImplantEffectType.ARMOR_BALLISTIC);
   }
 
   /**
-   * Stoß-Schutz: angelegte Rüstung plus Mystischer Panzer. Der Panzer ist magisch und zählt nicht zur
-   * Panzerungsbehinderung (Annahme, siehe ADR-046).
+   * Stoß-Schutz: angelegte Rüstung plus Mystischer Panzer plus Implantatpanzerung. Panzer und Implantate werden nicht
+   * getragen und zählen deshalb nicht zur Panzerungsbehinderung, die nur getragene Panzerung rechnet (S. 190).
    */
   public int getArmorImpact() {
-    return equipment.getArmorImpact() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR);
+    return equipment.getArmorImpact() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR)
+        + implants.level(ImplantEffectType.ARMOR_IMPACT);
   }
 
   // --- Ausrüstung & Nuyen-Budget ---

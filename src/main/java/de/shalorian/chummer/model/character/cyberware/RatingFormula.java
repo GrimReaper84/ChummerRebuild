@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.cyberware;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.NonNull;
@@ -19,6 +20,8 @@ import org.jspecify.annotations.NonNull;
  *   <li>{@code "Rating + X"} und {@code "Rating - X"}</li>
  *   <li>{@code "X + Rating * Y"} — Grundpreis plus Stufenaufschlag, z.B. Lenkrakete
  *       {@code "500 + Rating * 500"} (GRW S. 371: "+ (Sensorstufe x 500) ¥")</li>
+ *   <li>Wertliste {@code "A; B; C"} — ein Wert je Stufe ab Stufe 1, für Tabellen ohne lineares Muster, z.B.
+ *       Reflexbooster {@code "2; 3; 5"} Essenz (GRW S. 389; im C# {@code FixedValues(2,3,5)})</li>
  * </ul>
  * Jeder andere Ausdruck führt zu einer {@link IllegalArgumentException} statt eines stillen
  * Fallbacks — ein unbekanntes Muster ist ein Datenfehler im Katalog und soll früh auffallen. Komplexere
@@ -33,6 +36,8 @@ public final class RatingFormula {
   private static final Pattern RATING_OPERATION = Pattern.compile("Rating\\s*([*+-])\\s*" + NUMBER);
   private static final Pattern BASE_PLUS_RATING_TIMES = Pattern.compile(
       NUMBER + "\\s*\\+\\s*Rating\\s*\\*\\s*" + NUMBER);
+  private static final Pattern VALUE_LIST = Pattern.compile(NUMBER + "(\\s*;\\s*" + NUMBER + ")+");
+  private static final Pattern LIST_SEPARATOR = Pattern.compile("\\s*;\\s*");
 
   private RatingFormula() {
   }
@@ -67,6 +72,14 @@ public final class RatingFormula {
     if (basePlus.matches()) {
       return new BigDecimal(basePlus.group(1))
           .add(BigDecimal.valueOf(rating).multiply(new BigDecimal(basePlus.group(2))));
+    }
+    if (VALUE_LIST.matcher(expression).matches()) {
+      List<String> values = LIST_SEPARATOR.splitAsStream(expression).toList();
+      if (rating < 1 || rating > values.size()) {
+        throw new IllegalArgumentException(
+            "Stufe %d liegt außerhalb der Wertliste \"%s\"".formatted(rating, formula));
+      }
+      return new BigDecimal(values.get(rating - 1));
     }
     throw new IllegalArgumentException("Nicht unterstützter Formelausdruck: \"" + formula + "\"");
   }

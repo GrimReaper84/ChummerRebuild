@@ -1,26 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Cyberware (Kapitel STRASSENAUSRÜSTUNG,
-  Tabellen "Headware" S. 386, "Augen-Cyberware"/"Ohren-Cyberware" S. 388 und "Bodyware" S. 389 —
-  Essenz- und Preiswerte direkt gegen das PDF-Bild verifiziert, nicht nur gegen den OCR-Text).
+  Cyberware des SR4-Grundregelwerks (Kapitel STRASSENAUSRÜSTUNG, Tabellen Headware S. 386, Augen- und
+  Ohren-Cyberware S. 388, Bodyware S. 389): alle 51 Einträge ohne Cybergliedmaßen, Werte am PDF-Bild geprüft.
 
-  Alle Werte gelten für die Standardvariante; Grade-Multiplikatoren (Alpha/Beta/Delta) werden erst
-  in der Charakter-Instanz eingerechnet (siehe CyberwareGrade). Formelfelder verwenden die
-  RatingFormula-Syntax ("Rating * X", Dezimalpunkt statt Komma).
+  Schema: Formelfelder in RatingFormula-Syntax ("Rating * 0.5", Dezimalpunkt; Wertliste "2; 3; 5" je Stufe).
+  Essenz "–" im GRW = 0. Alle Werte gelten für die Standardvariante; Grades rechnet CyberwareGrade ein.
+  Fehlendes <avail> = "–". <effect> = dauerhafte, rechnende Wirkung (ImplantEffectType); situative Wirkungen
+  stehen nur in <note>, immer in eigenen Worten. <excludes>/<excludescategory> sperren in beide Richtungen,
+  <multiple/> erlaubt Mehrfachkauf, <requires> nennt eine Voraussetzung (docs/plaene/implantate_plan.md).
+  <capacity> = Kapazität eines Basissystems (Cyberaugen/-ohren); <capacitycost> = Bedarf beim Einbau in ein
+  Basissystem der gleichen Kategorie, "*" = dort schon enthalten. Die eckigen Kapazitäten von Headware und
+  Bodyware gelten nur für Cybergliedmaßen und sind deshalb noch nicht übernommen.
 
-  Bewusst NICHT enthalten (siehe docs/plaene/archiv/cyberware_plan.md Abschnitt 13):
-  - Cybergliedmaßen, Cyberglied-Verbesserungen/-Zubehör, Cyberimplantatwaffen (Kernmechanik
-    Attributersatz bzw. Kapazität/Waffen-Integration ist zurückgestellt)
-  - Einträge mit Kapazitäts-Basissystem (Cyberaugen/Cyberohren) und Einträge mit nicht-linearer
-    Stufen-Essenz (Reflexbooster 2/3/5)
-  - Implantate mit Attributboni (z.B. Kunstmuskeln, Reaktionsverbesserung), solange Attributboni
-    durch Cyberware nicht modelliert sind
-  Verfügbarkeit (<avail>, <legality> E/V) gegen das PDF-Bild verifiziert; fehlendes <avail> = "–".
+  Bewusst NICHT enthalten: Cybergliedmaßen, Cyberglied-Verbesserungen und -Zubehör, Cyberwaffen (S. 390–392;
+  Roadmap, eigenes Feature).
 -->
 <cyberware>
 
-    <!-- ── HEADWARE (S. 386) ────────────────────────────────── -->
-
+    <!-- ── HEADWARE (S. 386) ───────────────────────────────── -->
+    <item>
+        <name>Cortexbombe (Spleenbombe)</name>
+        <category>Headware</category>
+        <essence>0</essence>
+        <cost>2000</cost>
+        <avail>16</avail>
+        <legality>V</legality>
+        <multiple/>
+        <note>Sprengladung im Kopf, legt einzelne Implantate oder Hirnfunktionen lahm; Zünder frei wählbar.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Cortexbombe (Mikrobombe)</name>
+        <category>Headware</category>
+        <essence>0</essence>
+        <cost>5000</cost>
+        <avail>16</avail>
+        <legality>V</legality>
+        <multiple/>
+        <note>Sprengladung im Kopf, groß genug, um das Opfer zu töten.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Cortexbombe (Flächenbombe)</name>
+        <category>Headware</category>
+        <essence>0</essence>
+        <cost>10000</cost>
+        <avail>20</avail>
+        <legality>V</legality>
+        <multiple/>
+        <note>Sprengladung im Kopf mit Wirkung wie eine Granate (S. 370).</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
     <item>
         <name>Datenbuchse</name>
         <category>Headware</category>
@@ -29,7 +62,16 @@
         <source>SR4</source>
         <page>386</page>
     </item>
-
+    <item>
+        <name>Datenschloss</name>
+        <category>Headware</category>
+        <essence>0.1</essence>
+        <cost>1000</cost>
+        <avail>12</avail>
+        <note>Preis ohne Verschlüsselung, die extra bezahlt wird; kein Funk, der Träger selbst kommt nicht an die Daten.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
     <item>
         <name>Geruchsbooster</name>
         <category>Headware</category>
@@ -37,41 +79,218 @@
         <cost>Rating * 1000</cost>
         <rating>6</rating>
         <avail>Rating * 4</avail>
+        <note>Stufe als Zusatzwürfel bei Wahrnehmung über den Geruch.</note>
         <source>SR4</source>
         <page>386</page>
     </item>
-
+    <item>
+        <name>Geschmacksbooster</name>
+        <category>Headware</category>
+        <essence>0.2</essence>
+        <cost>Rating * 1500</cost>
+        <rating>6</rating>
+        <avail>Rating * 4</avail>
+        <note>Stufe als Zusatzwürfel bei Wahrnehmung über den Geschmack.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Kommlink</name>
+        <category>Headware</category>
+        <essence>0.2</essence>
+        <cost>2000</cost>
+        <allowgear>Kommlink-Modell</allowgear>
+        <note>Gehäuse für ein Kommlink; das Kommlink-Modell wird eingebaut und zusätzlich bezahlt.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
     <item>
         <name>Riggerkontrolle</name>
         <category>Headware</category>
         <essence>0.5</essence>
         <cost>10000</cost>
         <avail>8</avail>
+        <note>+2 Würfel auf Fahrzeugproben, solange der Rigger per VR in Fahrzeug oder Drohne steckt.</note>
         <source>SR4</source>
         <page>386</page>
     </item>
-
     <item>
         <name>Sim-Modul</name>
         <category>Headware</category>
         <essence>0.2</essence>
         <cost>2000</cost>
+        <excludes>Sim-Modul (modifiziert für heißes Sim)</excludes>
+        <note>Erlaubt VR über kaltes Sim.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Sim-Modul (modifiziert für heißes Sim)</name>
+        <category>Headware</category>
+        <essence>0.2</essence>
+        <cost>5000</cost>
+        <avail>12</avail>
+        <legality>V</legality>
+        <note>Erlaubt VR über kaltes und heißes Sim.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Stimmenmodulator</name>
+        <category>Headware</category>
+        <essence>0.2</essence>
+        <cost>7500</cost>
+        <avail>4</avail>
+        <note>Stimme frei veränderbar, auch Lautstärke und Geräusche.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Zweitmuster</name>
+        <category>Headware</category>
+        <essence>0</essence>
+        <cost>Rating * 5000</cost>
+        <rating>6</rating>
+        <avail>Rating * 3</avail>
+        <legality>V</legality>
+        <requires>Stimmenmodulator</requires>
+        <note>Erweiterung des Stimmenmodulators: ahmt eine aufgezeichnete fremde Stimme nach; Stufe gegen Stimmerkennung.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Ultraschallsensor</name>
+        <category>Headware</category>
+        <essence>0.3</essence>
+        <cost>6000</cost>
+        <avail>10</avail>
+        <note>Implantatversion des Ultraschallsensors (S. 379).</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Zahnbehälter (Lager)</name>
+        <category>Headware</category>
+        <essence>0</essence>
+        <cost>200</cost>
+        <avail>8</avail>
+        <multiple/>
+        <note>Hohler Zahn als Versteck für Kleinkram.</note>
+        <source>SR4</source>
+        <page>386</page>
+    </item>
+    <item>
+        <name>Zahnbehälter (zerbrechlich)</name>
+        <category>Headware</category>
+        <essence>0</essence>
+        <cost>500</cost>
+        <avail>12</avail>
+        <multiple/>
+        <note>Hohler Zahn, der beim festen Zubeißen seinen Inhalt freisetzt.</note>
         <source>SR4</source>
         <page>386</page>
     </item>
 
-    <!-- ── AUGEN-CYBERWARE (S. 388) ─────────────────────────── -->
-
+    <!-- ── AUGEN-CYBERWARE (S. 386/388) ────────────────────── -->
+    <item>
+        <name>Cyberaugen-Basissystem</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1 + Rating * 0.1</essence>
+        <cost>500; 750; 1000; 1500</cost>
+        <rating>4</rating>
+        <avail>0; 4; 6; 8</avail>
+        <capacity>Rating * 4</capacity>
+        <note>Ersetzt beide Augen; Bildverbindung und Augen-Rekorder sind enthalten, Zubehör kostet Kapazität statt Essenz.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Augen-Rekorder</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>2000</cost>
+        <avail>4</avail>
+        <capacitycost>*</capacitycost>
+        <note>Zeichnet alles Gesehene auf; im Cyberaugen-Basissystem enthalten.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Bildverbindung</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>500</cost>
+        <avail>4</avail>
+        <capacitycost>*</capacitycost>
+        <note>Blendet Bilder und Texte ins Sichtfeld ein; im Cyberaugen-Basissystem enthalten.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
     <item>
         <name>Blitzkompensation</name>
         <category>Augen-Cyberware</category>
         <essence>0.1</essence>
         <cost>750</cost>
         <avail>4</avail>
+        <capacitycost>1</capacitycost>
         <source>SR4</source>
         <page>388</page>
     </item>
-
+    <item>
+        <name>Infrarotsicht</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>1000</cost>
+        <avail>4</avail>
+        <capacitycost>2</capacitycost>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Okular-Drohne</name>
+        <category>Augen-Cyberware</category>
+        <essence>0</essence>
+        <cost>3000</cost>
+        <avail>6</avail>
+        <capacitycost>6</capacitycost>
+        <installonly/>
+        <note>Spyball-Drohne in der Augenhöhle, die als Auge dient und ausgesandt werden kann; nur in einem Cyberauge.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Restlichtverstärkung</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>1000</cost>
+        <avail>4</avail>
+        <capacitycost>2</capacitycost>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Retinaduplikat</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>Rating * 15000</cost>
+        <rating>6</rating>
+        <avail>16</avail>
+        <legality>V</legality>
+        <capacitycost>1</capacitycost>
+        <note>Kopiert ein fremdes Netzhautmuster; Stufe gegen die Stufe des Retinascanners.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Schutzgläser</name>
+        <category>Augen-Cyberware</category>
+        <essence>0</essence>
+        <cost>100</cost>
+        <avail>4</avail>
+        <note>Schützt natürliche oder Cyberaugen; zählt nicht als Augenmodifikation.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
     <item>
         <name>Sichtverbesserung</name>
         <category>Augen-Cyberware</category>
@@ -79,10 +298,21 @@
         <cost>Rating * 1500</cost>
         <rating>3</rating>
         <avail>Rating * 3</avail>
+        <capacitycost>Rating</capacitycost>
+        <note>Stufe als Zusatzwürfel bei Wahrnehmung über das Sehen (S. 379).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
-
+    <item>
+        <name>Sichtvergrößerung</name>
+        <category>Augen-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>1000</cost>
+        <avail>4</avail>
+        <capacitycost>2</capacitycost>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
     <item>
         <name>Smartlink</name>
         <category>Augen-Cyberware</category>
@@ -90,12 +320,25 @@
         <cost>1000</cost>
         <avail>8</avail>
         <legality>E</legality>
+        <capacitycost>3</capacitycost>
+        <note>Verbindung zu Smartgun-Waffen (S. 368).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
 
-    <!-- ── OHREN-CYBERWARE (S. 388) ─────────────────────────── -->
-
+    <!-- ── OHREN-CYBERWARE (S. 387/388) ────────────────────── -->
+    <item>
+        <name>Cyberohren</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1 + Rating * 0.1</essence>
+        <cost>500; 750; 1000; 1500</cost>
+        <rating>4</rating>
+        <avail>0; 4; 6; 8</avail>
+        <capacity>Rating * 4</capacity>
+        <note>Ersetzt das Innenohr; Audioverbindung und Ohr-Rekorder sind enthalten, Zubehör kostet Kapazität statt Essenz.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
     <item>
         <name>Audioverbesserung</name>
         <category>Ohren-Cyberware</category>
@@ -103,22 +346,79 @@
         <cost>Rating * 1500</cost>
         <rating>3</rating>
         <avail>Rating * 3</avail>
+        <capacitycost>Rating</capacitycost>
+        <note>Stufe als Zusatzwürfel bei Wahrnehmung über das Gehör (S. 379).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
-
+    <item>
+        <name>Audioverbindung</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>250</cost>
+        <capacitycost>*</capacitycost>
+        <note>Spielt Audiodaten direkt ins Ohr; in den Cyberohren enthalten.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Balanceverstärker</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>5000</cost>
+        <avail>10</avail>
+        <capacitycost>4</capacitycost>
+        <note>+1 Würfel auf Proben, bei denen das Gleichgewicht zählt.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
     <item>
         <name>Dämpfer</name>
         <category>Ohren-Cyberware</category>
         <essence>0.1</essence>
         <cost>750</cost>
         <avail>4</avail>
+        <capacitycost>1</capacitycost>
+        <note>+2 Würfel beim Widerstand gegen Schallangriffe.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Ohr-Rekorder</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>500</cost>
+        <avail>4</avail>
+        <capacitycost>*</capacitycost>
+        <note>Zeichnet alles Gehörte auf; in den Cyberohren enthalten.</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Richtungsdetektor</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>750</cost>
+        <avail>8</avail>
+        <capacitycost>2</capacitycost>
+        <note>Implantatversion des Richtungsdetektors (S. 380).</note>
+        <source>SR4</source>
+        <page>388</page>
+    </item>
+    <item>
+        <name>Selektiver Geräuschfilter</name>
+        <category>Ohren-Cyberware</category>
+        <essence>0.1</essence>
+        <cost>Rating * 1000</cost>
+        <rating>6</rating>
+        <avail>Rating * 3</avail>
+        <capacitycost>Rating</capacitycost>
+        <note>Implantatversion des selektiven Geräuschfilters (S. 380).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
 
-    <!-- ── BODYWARE (S. 389) ────────────────────────────────── -->
-
+    <!-- ── BODYWARE (S. 388/389) ───────────────────────────── -->
     <item>
         <name>Dermalpanzerung</name>
         <category>Bodyware</category>
@@ -127,30 +427,166 @@
         <rating>3</rating>
         <avail>Rating * 5</avail>
         <legality>E</legality>
+        <effect type="armorballistic">Rating</effect>
+        <effect type="armorimpact">Rating</effect>
+        <excludes>Orthoskin</excludes>
         <source>SR4</source>
         <page>389</page>
     </item>
-
+    <item>
+        <name>Enterhakenkanone</name>
+        <category>Bodyware</category>
+        <essence>0.5</essence>
+        <cost>1500</cost>
+        <avail>8</avail>
+        <note>Implantatversion der Enterhakenkanone (S. 383).</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+    <item>
+        <name>Fingerkuppenbehälter</name>
+        <category>Bodyware</category>
+        <essence>0.1</essence>
+        <cost>750</cost>
+        <avail>4</avail>
+        <multiple/>
+        <note>Versteck im vorderen Fingerglied, z.B. für eine Monofilamentpeitsche.</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
     <item>
         <name>Interner Lufttank</name>
         <category>Bodyware</category>
         <essence>0.25</essence>
         <cost>650</cost>
         <avail>4</avail>
+        <note>Erlaubt bis zu 2 Stunden ohne Atemluft.</note>
         <source>SR4</source>
         <page>389</page>
     </item>
-
+    <item>
+        <name>Kompositknochen (Plastik)</name>
+        <category>Bodyware</category>
+        <essence>0.5</essence>
+        <cost>5000</cost>
+        <avail>8</avail>
+        <legality>V</legality>
+        <excludes>Kompositknochen (Aluminium)</excludes>
+        <excludes>Kompositknochen (Titan)</excludes>
+        <excludes>Knochenverstärkung</excludes>
+        <note>KON +1 bei Schadenswiderstand; waffenloser Schaden (STR÷2+1)K.</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+    <item>
+        <name>Kompositknochen (Aluminium)</name>
+        <category>Bodyware</category>
+        <essence>1</essence>
+        <cost>15000</cost>
+        <avail>12</avail>
+        <legality>V</legality>
+        <effect type="armorimpact">1</effect>
+        <excludes>Kompositknochen (Plastik)</excludes>
+        <excludes>Kompositknochen (Titan)</excludes>
+        <excludes>Knochenverstärkung</excludes>
+        <note>KON +2 bei Schadenswiderstand; waffenloser Schaden (STR÷2+2)K.</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+    <item>
+        <name>Kompositknochen (Titan)</name>
+        <category>Bodyware</category>
+        <essence>1.5</essence>
+        <cost>40000</cost>
+        <avail>16</avail>
+        <legality>V</legality>
+        <effect type="armorballistic">1</effect>
+        <effect type="armorimpact">1</effect>
+        <excludes>Kompositknochen (Plastik)</excludes>
+        <excludes>Kompositknochen (Aluminium)</excludes>
+        <excludes>Knochenverstärkung</excludes>
+        <note>KON +3 bei Schadenswiderstand; waffenloser Schaden (STR÷2+3)K.</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+    <item>
+        <name>Kosmetische Modifikation</name>
+        <category>Bodyware</category>
+        <essence>0</essence>
+        <cost>0</cost>
+        <pricemin>200</pricemin>
+        <pricemax>10000</pricemax>
+        <avail>12</avail>
+        <multiple/>
+        <note>Preis je nach Umfang 200–10.000 ¥ (beim Kauf eingeben), Verfügbarkeit je nach Umfang 2–12.</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+    <item>
+        <name>Kunstmuskeln</name>
+        <category>Bodyware</category>
+        <essence>Rating</essence>
+        <cost>Rating * 5000</cost>
+        <rating>4</rating>
+        <avail>Rating * 5</avail>
+        <legality>E</legality>
+        <effect type="attribute" target="STR">Rating</effect>
+        <effect type="attribute" target="AGI">Rating</effect>
+        <excludes>Muskelverstärkung</excludes>
+        <excludes>Muskelstraffung</excludes>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+    <item>
+        <name>Reaktionsverbesserung</name>
+        <category>Bodyware</category>
+        <essence>Rating * 0.3</essence>
+        <cost>Rating * 10000</cost>
+        <rating>3</rating>
+        <avail>Rating * 5</avail>
+        <legality>E</legality>
+        <effect type="attribute" target="REA">Rating</effect>
+        <excludes>Synapsenbeschleuniger</excludes>
+        <initiativeboost/>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
+    <item>
+        <name>Reflexbooster</name>
+        <category>Bodyware</category>
+        <essence>2; 3; 5</essence>
+        <cost>11000; 32000; 100000</cost>
+        <rating>3</rating>
+        <avail>8; 12; 20</avail>
+        <legality>E</legality>
+        <effect type="attribute" target="REA">Rating</effect>
+        <effect type="initiativepasses">Rating</effect>
+        <excludes>Synapsenbeschleuniger</excludes>
+        <initiativeboost/>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
     <item>
         <name>Schmuggelbehälter</name>
         <category>Bodyware</category>
         <essence>0.2</essence>
         <cost>1500</cost>
         <avail>6</avail>
+        <multiple/>
+        <note>Versteck in einem leicht aushöhlbaren Körperteil.</note>
         <source>SR4</source>
         <page>389</page>
     </item>
-
+    <item>
+        <name>Simrig</name>
+        <category>Bodyware</category>
+        <essence>0.5</essence>
+        <cost>5000</cost>
+        <avail>8</avail>
+        <note>Implantatversion des Simrigs (S. 374).</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
     <item>
         <name>Talentleitungen</name>
         <category>Bodyware</category>
@@ -158,8 +594,18 @@
         <cost>Rating * 2000</cost>
         <rating>5</rating>
         <avail>Rating * 4</avail>
+        <note>Nutzt Aktionssofts bis zur eigenen Stufe (S. 376), zusammen höchstens bis zur doppelten Stufe.</note>
         <source>SR4</source>
         <page>389</page>
     </item>
-
+    <item>
+        <name>Tastverbindung</name>
+        <category>Bodyware</category>
+        <essence>0.1</essence>
+        <cost>1000</cost>
+        <avail>6</avail>
+        <note>Speist Tastinformationen direkt ins Nervensystem.</note>
+        <source>SR4</source>
+        <page>389</page>
+    </item>
 </cyberware>

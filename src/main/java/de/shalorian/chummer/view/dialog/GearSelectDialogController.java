@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.model.character.gear.Gear;
@@ -87,6 +88,8 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   private @Nullable Gear installTarget;
   /** Ob nur Pfeile für einen Bogen gekauft werden (Waffen-Tab). */
   private boolean arrowsOnly;
+  /** Kommlink-Headware, in die das gewählte Kommlink-Modell eingebaut wird (GRW S. 386), sonst {@code null}. */
+  private @Nullable Cyberware commlinkTarget;
   /** Eintrag, für den Stufe, Menge, Zusatztext und Preis zuletzt eingerichtet wurden. */
   private @Nullable GearData configuredFor;
 
@@ -132,6 +135,17 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     updateList();
   }
 
+  /**
+   * Kauf eines Kommlink-Modells für die Kommlink-Headware {@code headware}; nur die Geräte, die sie aufnimmt, erscheinen
+   * (GRW S. 386).
+   */
+  public void setCommlinkTarget(@NonNull Character character, @NonNull Cyberware headware) {
+    this.character = character;
+    this.commlinkTarget = headware;
+    refreshCategoryOptions();
+    updateList();
+  }
+
   /** Kauf von Pfeilen für einen Bogen; nur Pfeile erscheinen (GRW S. 361). */
   public void setArrowsOnly(@NonNull Character character) {
     this.character = character;
@@ -148,6 +162,9 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   private @Nullable String purchaseProblem(@NonNull GearData data, int rating) {
     if (installTarget != null) {
       return installTarget.installProblem(data, rating);
+    }
+    if (commlinkTarget != null) {
+      return commlinkTarget.commlinkProblem(data);
     }
     if (data.category() == GearCategory.ARROWS && !arrowsOnly) {
       return "Pfeile werden im Waffen-Tab an einem Bogen gekauft („Pfeile hinzufügen“).";
@@ -191,6 +208,9 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   protected boolean additionalFilter(@NonNull GearData data) {
     if (arrowsOnly) {
       return data.category() == GearCategory.ARROWS;
+    }
+    if (commlinkTarget != null) {
+      return data.category() == commlinkTarget.getData().acceptedGear();
     }
     return installTarget == null || data.category() == installTarget.getData().accepts();
   }

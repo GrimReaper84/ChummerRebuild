@@ -17,18 +17,24 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.cyberware.ImplantEffect;
+import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.dialog.CyberwareSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
+import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -39,13 +45,17 @@ import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.tbee.javafx.scene.layout.MigPane;
 
 /**
- * Cyberware-Tab: Essenz-Übersicht, eingebaute Cyber- und Bioware, Einbau über den Auswahldialog und Ausbau.
+ * Cyberware-Tab: Essenz-Übersicht, eingebaute Cyber- und Bioware samt Wirkung, Einbau über den Auswahldialog und
+ * Ausbau. Unter einem Basissystem (Cyberaugen, Cyberohren) steht sein Zubehör eingerückt, unter der Kommlink-Headware
+ * das eingebaute Kommlink.
  * Änderungen an Implantaten meldet er über {@link CharacterTabHost#onImplantsChanged()}, weil Essenz, MAG/RES und
  * Restgeld davon abhängen.
  */
 public final class CyberwareTabBuilder {
 
   private static final EssenceStringConverter ESSENCE_FORMAT = new EssenceStringConverter();
+  /** Einrückung für eingebautes Zubehör und Kommlink unter ihrem Implantat. */
+  private static final String CHILD_PREFIX = "   ↳ ";
 
   private final @NonNull VBox cyberwareContainer;
   private final @NonNull CharacterTabHost host;
@@ -135,6 +145,13 @@ public final class CyberwareTabBuilder {
     int row = 1;
     for (Cyberware implant : implants) {
       addCyberwareRow(grid, row++, implant, ch);
+      for (Cyberware accessory : implant.getInstalled()) {
+        addAccessoryRow(grid, row++, implant, accessory);
+      }
+      Gear commlink = implant.getCommlink();
+      if (commlink != null) {
+        addCommlinkRow(grid, row++, implant, commlink);
+      }
     }
     cyberwareContainer.getChildren().add(withRightFiller(grid));
   }
@@ -143,46 +160,148 @@ public final class CyberwareTabBuilder {
    * Implantat-Grid inkl. Kopfzeile (Zeile 0), inhaltsbasierte Spalten analog {@code MagicTabBuilder.buildSpellGrid()}.
    */
   private @NonNull MigPane buildCyberwareGrid() {
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
-    String[] headers = {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Quelle",
-        ""};
+    String[] headers = {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Wirkung", "Quelle", ""};
     addHeaderRow(grid, headers);
     return grid;
   }
 
   private void addCyberwareRow(@NonNull MigPane grid, int row, @NonNull Cyberware implant,
       @NonNull Character character) {
-    Label implantNameLabel = new Label(implant.getName());
-    Label categoryLabel = new Label(implant.getData().category());
-    Label gradeLabel = new Label(implant.getGrade().getDisplayName());
-    Label ratingLabel = new Label(implant.getData().hasRating()
+    Label implantNameLabel = styled(new Label(implant.getDisplayName()), STYLE_ATTR_NAME);
+    String note = implant.getData().note();
+    if (!note.isEmpty()) {
+      implantNameLabel.setTooltip(new Tooltip(note));
+    }
+    Label categoryLabel = styled(new Label(implant.getData().category()), STYLE_ATTR_RANGE);
+    Label gradeLabel = styled(new Label(implant.getGrade().getDisplayName()), STYLE_ATTR_ABBR);
+    Label ratingLabel = styled(new Label(implant.getData().hasRating()
         ? String.valueOf(implant.getRating())
-        : "–");
-    Label essenceLabel = new Label(ESSENCE_FORMAT.toString(implant.getEssenceCost().doubleValue()));
-    Label priceLabel = new Label(SpendCurrency.NUYEN.formatAmount(implant.getNuyenCost()));
-    Label sourceLabel = new Label(implant.getData().source() + " S. " + implant.getData().page());
-    Button removeBtn = new Button("Entfernen");
+        : "–"), STYLE_ATTR_VALUE);
+    Label essenceLabel = styled(new Label(ESSENCE_FORMAT.toString(implant.getEssenceCost().doubleValue())),
+        STYLE_ATTR_VALUE);
+    Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(implant.getOwnNuyenCost())),
+        STYLE_ATTR_BP);
+    Label effectLabel = styled(new Label(effectText(implant)), STYLE_ATTR_RANGE);
+    Label sourceLabel = styled(new Label(sourceText(implant)), STYLE_ATTR_RANGE);
 
-    implantNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
-    categoryLabel.getStyleClass().add(STYLE_ATTR_RANGE);
-    gradeLabel.getStyleClass().add(STYLE_ATTR_ABBR);
-    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    essenceLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    priceLabel.getStyleClass().add(STYLE_ATTR_BP);
-    sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
-    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(removeBtn, FontAwesomeSolid.TRASH);
-
+    HBox actions = new HBox(6);
+    actions.setAlignment(Pos.CENTER_LEFT);
+    if (implant.getData().hasCapacity()) {
+      Button installBtn = actionButton("Zubehör", FontAwesomeSolid.PLUS);
+      installBtn.setDisable(implant.getUsedCapacity() >= implant.getCapacity());
+      installBtn.setOnAction(_ -> onInstallAccessory(implant));
+      actions.getChildren().add(installBtn);
+    }
+    if (implant.getData().acceptedGear() != null && implant.getCommlink() == null) {
+      Button commlinkBtn = actionButton("Kommlink", FontAwesomeSolid.PLUS);
+      commlinkBtn.setOnAction(_ -> onInstallCommlink(implant));
+      actions.getChildren().add(commlinkBtn);
+    }
+    Button removeBtn = actionButton("Entfernen", FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(_ -> {
       character.getEquipment().removeCyberware(implant);
       onCyberwareChanged();
     });
+    actions.getChildren().add(removeBtn);
 
     addRowCells(grid, row, implantNameLabel, categoryLabel, gradeLabel, ratingLabel, essenceLabel,
-        priceLabel, sourceLabel, removeBtn);
+        priceLabel, effectLabel, sourceLabel, actions);
+  }
+
+  /** Eingebautes Zubehör eines Basissystems: eingerückt, Kapazität statt Essenz, Ausbau. */
+  private void addAccessoryRow(@NonNull MigPane grid, int row, @NonNull Cyberware base,
+      @NonNull Cyberware accessory) {
+    Label nameLabel = styled(new Label(CHILD_PREFIX + accessory.getDisplayName()), STYLE_ATTR_NAME);
+    String note = accessory.getData().note();
+    if (!note.isEmpty()) {
+      nameLabel.setTooltip(new Tooltip(note));
+    }
+    Label ratingLabel = styled(new Label(accessory.getData().hasRating()
+        ? String.valueOf(accessory.getRating())
+        : "–"), STYLE_ATTR_VALUE);
+    Label capacityLabel = styled(new Label("Kap. " + accessory.getData().capacityCostFor(accessory.getRating())),
+        STYLE_ATTR_VALUE);
+    Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(accessory.getNuyenCost())), STYLE_ATTR_BP);
+    Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
+    removeBtn.setOnAction(_ -> {
+      base.uninstall(accessory);
+      onCyberwareChanged();
+    });
+    addRowCells(grid, row, nameLabel, new Label(), new Label(), ratingLabel, capacityLabel, priceLabel,
+        new Label(), styled(new Label(sourceText(accessory)), STYLE_ATTR_RANGE), removeBtn);
+  }
+
+  /** Eingebautes Kommlink der Kommlink-Headware samt Betriebssystem. */
+  private void addCommlinkRow(@NonNull MigPane grid, int row, @NonNull Cyberware headware, @NonNull Gear commlink) {
+    String os = commlink.getInstalled().isEmpty() ? "ohne Betriebssystem"
+        : commlink.getInstalled().getFirst().getName();
+    Label nameLabel = styled(new Label(CHILD_PREFIX + commlink.getName() + " (" + os + ")"), STYLE_ATTR_NAME);
+    Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(commlink.getNuyenCost())), STYLE_ATTR_BP);
+    Label sourceLabel = styled(new Label(commlink.getData().source() + " S. " + commlink.getData().page()),
+        STYLE_ATTR_RANGE);
+
+    HBox actions = new HBox(6);
+    actions.setAlignment(Pos.CENTER_LEFT);
+    if (commlink.getInstalled().isEmpty()) {
+      Button osBtn = actionButton("Betriebssystem", FontAwesomeSolid.PLUS);
+      osBtn.setOnAction(_ -> onInstallOperatingSystem(commlink));
+      actions.getChildren().add(osBtn);
+    }
+    Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
+    removeBtn.setOnAction(_ -> {
+      headware.removeCommlink();
+      onCyberwareChanged();
+    });
+    actions.getChildren().add(removeBtn);
+    addRowCells(grid, row, nameLabel, new Label(), new Label(), new Label(), new Label(), priceLabel,
+        new Label(), sourceLabel, actions);
+  }
+
+  private static @NonNull Label styled(@NonNull Label label, @NonNull String styleClass) {
+    label.getStyleClass().add(styleClass);
+    return label;
+  }
+
+  private static @NonNull Button actionButton(@NonNull String text, @NonNull FontAwesomeSolid icon) {
+    Button button = new Button(text);
+    button.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(button, icon);
+    return button;
+  }
+
+  private static @NonNull String sourceText(@NonNull Cyberware implant) {
+    return implant.getData().source() + " S. " + implant.getData().page();
+  }
+
+  /**
+   * Kurzanzeige der rechnenden Wirkungen, z.B. {@code "STR +2, GES +2"} oder {@code "Durchgänge +1"}; bei
+   * Basissystemen die belegte Kapazität, bei Implantaten ohne Wirkung leer.
+   */
+  private static @NonNull String effectText(@NonNull Cyberware implant) {
+    List<String> parts = new ArrayList<>();
+    if (implant.getData().hasCapacity()) {
+      parts.add("Kapazität " + implant.getUsedCapacity() + "/" + implant.getCapacity());
+    }
+    for (ImplantEffect effect : implant.getData().effects()) {
+      int value = effect.value(implant.getRating());
+      parts.add(switch (effect.type()) {
+        case ATTRIBUTE -> AttributeType.valueOf(effect.target()).getAbbreviation() + " +" + value;
+        case INITIATIVE_PASSES -> "Durchgänge +" + value;
+        case ARMOR_BALLISTIC -> "Ballistik +" + value;
+        case ARMOR_IMPACT -> "Stoß +" + value;
+        case SKILL_GROUP_DICE -> effect.target() + " +" + value;
+        case SOCIAL_SKILL_DICE -> "soziale Fertigkeiten +" + value;
+        case PHYSICAL_SKILL_DICE -> "körperliche Fertigkeiten +" + value;
+        case KNOWLEDGE_SKILL_DICE -> "Wissensfertigkeiten +" + value;
+        case SELECTED_SKILL_DICE -> implant.getChoice() + " +" + value;
+        case WOUND_BOXES_IGNORED -> value + " Kästchen ignoriert";
+      });
+    }
+    return String.join(", ", parts);
   }
 
   /**
@@ -206,9 +325,7 @@ public final class CyberwareTabBuilder {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(implant -> {
-        if (ch.isCreated()
-            && host.services().nuyenChargeFailed(ch, "Kauf: " + cyberwareLabel(implant),
-                implant.getNuyenCost())) {
+        if (chargeFailed(ch, cyberwareLabel(implant), implant.getNuyenCost())) {
           return;
         }
         ch.getEquipment().addCyberware(implant);
@@ -221,6 +338,88 @@ public final class CyberwareTabBuilder {
     } catch (IOException _) {
       host.services().showDialogLoadError();
     }
+  }
+
+  /** Wählt Zubehör für ein Basissystem (Cyberaugen, Cyberohren) und baut es ein; kostet Kapazität, keine Essenz. */
+  private void onInstallAccessory(@NonNull Cyberware base) {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    try {
+      DialogHandle dialog = host.services().openDialog("CyberwareSelectDialog.fxml",
+          "Zubehör für " + base.getName());
+      CyberwareSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(ch);
+      ctrl.setInstallTarget(base);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(accessory -> {
+        if (chargeFailed(ch, cyberwareLabel(accessory) + " in " + base.getName(), accessory.getNuyenCost())) {
+          return;
+        }
+        base.install(accessory);
+        onCyberwareChanged();
+      });
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
+    }
+  }
+
+  /** Wählt ein Kommlink-Modell aus dem Ausrüstungskatalog und baut es in die Kommlink-Headware ein (GRW S. 386). */
+  private void onInstallCommlink(@NonNull Cyberware headware) {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    try {
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml", "Kommlink einbauen");
+      GearSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCommlinkTarget(ch, headware);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(commlink -> {
+        if (chargeFailed(ch, commlink.getName() + " in " + headware.getName(), commlink.getNuyenCost())) {
+          return;
+        }
+        headware.setCommlink(commlink);
+        onCyberwareChanged();
+      });
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
+    }
+  }
+
+  /** Baut ein Betriebssystem in das Kommlink der Kommlink-Headware ein, wie im Ausrüstungs-Tab. */
+  private void onInstallOperatingSystem(@NonNull Gear commlink) {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    try {
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml", "Betriebssystem einbauen");
+      GearSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setInstallTarget(ch, commlink);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(os -> {
+        if (chargeFailed(ch, os.getName() + " in " + commlink.getName(), os.getNuyenCost())) {
+          return;
+        }
+        commlink.install(os);
+        onCyberwareChanged();
+      });
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
+    }
+  }
+
+  /** Im Karrieremodus wird der Preis nach Bestätigung abgebucht; {@code true}, wenn der Kauf abgebrochen wurde. */
+  private boolean chargeFailed(@NonNull Character ch, @NonNull String label, int nuyenCost) {
+    return ch.isCreated() && host.services().nuyenChargeFailed(ch, "Kauf: " + label, nuyenCost);
   }
 
   /**
@@ -240,6 +439,6 @@ public final class CyberwareTabBuilder {
     if (implant.getData().hasRating()) {
       details = "Stufe " + implant.getRating() + ", " + details;
     }
-    return implant.getName() + " (" + details + ")";
+    return implant.getDisplayName() + " (" + details + ")";
   }
 }

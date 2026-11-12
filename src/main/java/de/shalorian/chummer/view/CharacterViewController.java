@@ -336,7 +336,12 @@ public class CharacterViewController implements CharacterTabHost {
 
   @Override
   public void onImplantsChanged() {
-    rebuildAttributesAndNuyen();
+    // Implantate wirken auf Essenz, Attribute, Würfelpools, Initiative, Zustandsmonitor und Panzerung.
+    attributeTab.build();
+    skillTab.build();
+    conditionTab.build();
+    updateNuyenBpDisplay();
+    refreshRows();
   }
 
   @Override
@@ -344,7 +349,7 @@ public class CharacterViewController implements CharacterTabHost {
     rebuildAttributesAndNuyen();
   }
 
-  /** Implantate und Rüstung wirken auf Attribute (Essenz, MAG/RES bzw. Aug-Spalte) und das Restgeld. */
+  /** Rüstung wirkt auf Attribute (Aug-Spalte durch Behinderung) und das Restgeld. */
   private void rebuildAttributesAndNuyen() {
     attributeTab.build();
     updateNuyenBpDisplay();

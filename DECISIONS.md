@@ -66,6 +66,23 @@ stehen vorerst als je ein Eintrag. Kleidung (S. 373) ist eine eigene Rüstungska
 Kleidungspreis aus 20–100.000 ¥, Feedback-Kleidung und Lederjacke kosten diesen Preis plus ihren Aufschlag.
 **Warum:** Nutzerentscheidungen 2026-11-12 (Metavarianten raus, Kleidung wie im GRW mit Preisspanne, GRW vor C#).
 
+### ADR-048: Implantate vollständig nach GRW (2026-11-12)
+Cyber- und Bioware-Katalog mit allen GRW-Einträgen ohne Cybergliedmaßen (51 + 25, S. 386–389, 394). Cyberaugen und
+Cyberohren sind Basissysteme mit Kapazität (Stufe × 4); Zubehör kostet darin Kapazität statt Essenz und hat die Grade
+des Basissystems (wie im C#), einzeln im natürlichen Organ kostet es Essenz; beides zugleich ist gesperrt (S. 386/387).
+Dauerhafte Wirkungen rechnen (`<effect>`, `ImplantEffectType`): Attributboni bis zum augmentierten Maximum zusammen mit
+Adeptenkräften, Initiativedurchgänge, Panzerung (zählt wie Mystischer Panzer nicht zur Behinderung, die nur getragene
+Panzerung rechnet, S. 190), Poolboni (Athletik, sozial, körperlich verbundene Fertigkeiten, Wissen, Reflexrekorder) und
+Schadenskompensator (addiert sich mit Hoher Schmerztoleranz, Annahme); situative Wirkungen stehen nur als Hinweis.
+Unverträglichkeiten (`<excludes>`, `<excludescategory>`, Gesteigerte Reflexe ↔ technische Initiativesteigerung, S. 230)
+sperren im Dialog in beide Richtungen; ohne `<multiple/>` ist ein Implantat nur einmal kaufbar. Kosmetische
+Modifikation mit Preiseingabe (200–10.000 ¥); in die Kommlink-Headware wird ein Kommlink-Modell aus dem
+Ausrüstungskatalog eingebaut, sein Preis kommt ohne Grade-Aufschlag dazu. Wertlisten je Stufe in `RatingFormula`
+(`"2; 3; 5"`, Semikolon, weil ein Komma als deutsches Dezimalzeichen weiter ein Fehler bleiben soll). Kaufregeln und
+Wirkungssummen liegen in `Implants` (Unterobjekt von `Character`), die Implantatliste bleibt in `Equipment`.
+**Warum:** Nutzerentscheidungen 2026-11-12 (Kapazität und Einzelkauf, dauerhafte Wirkungen, sperren statt warnen,
+Preise wie im C#, Kommlink mit Einbau); `docs/plaene/archiv/implantate_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)
@@ -213,7 +230,7 @@ Feste Schwund-Formel „Willenskraft + Resonanz“, keine Stream-Validierung.
 Das Resonanz-Cap gilt in Erschaffung und Karriere; sinkt RES nachträglich, bleiben höhere Stufen bestehen.
 **Warum:** GRW formuliert das Cap als durchgehende Regel; Nachkappen würde Karma vernichten (r).
 
-### ADR-022: Cyberware-Erstschnitt: 4 Grades, Essenz auf 2 Nachkommastellen (2026-09-27)
+### ADR-022: Cyberware-Erstschnitt: 4 Grades, Essenz auf 2 Nachkommastellen (2026-09-27) — teilweise überholt durch ADR-048
 Ohne Cybergliedmaßen, Essenzloch und Kapazität; Essenz mit `BigDecimal`, an einer Stelle gerundet. Immunabstoßung nach
 GRW-Funktion (nur Cyberware verdoppelt).
 **Warum:** Kleiner, geprüfter Schnitt; `double`-Summen erzeugen Rundungsartefakte.

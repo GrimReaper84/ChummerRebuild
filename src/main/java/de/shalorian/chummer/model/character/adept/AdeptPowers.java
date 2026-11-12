@@ -231,6 +231,9 @@ public class AdeptPowers {
         && owner.hasQualityBonus(QualityBonusType.HIGH_PAIN_TOLERANCE)) {
       return "Nicht zusammen mit Hohe Schmerztoleranz";
     }
+    if (data.effect() == AdeptPowerEffect.IMPROVED_REFLEXES && owner.getImplants().hasInitiativeBoost()) {
+      return "Nicht zusammen mit technischer Initiativesteigerung";
+    }
     BigDecimal firstLevel = data.costTable().isEmpty() ? data.cost() : data.costTable().getFirst();
     return missingPowerPoints(firstLevel);
   }

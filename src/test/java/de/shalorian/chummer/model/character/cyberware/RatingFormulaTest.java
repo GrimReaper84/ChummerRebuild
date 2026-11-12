@@ -58,4 +58,18 @@ class RatingFormulaTest {
     assertValue("2000", RatingFormula.evaluate("500 + Rating * 500", 3));
     assertValue("1500", RatingFormula.evaluate("1000+Rating*500", 1));
   }
+
+  @Test
+  void valueListPicksValueOfRating() {
+    // Reflexbooster: Essenz 2/3/5 für Stufe 1–3 (GRW S. 389)
+    assertValue("2", RatingFormula.evaluate("2; 3; 5", 1));
+    assertValue("5", RatingFormula.evaluate("2;3;5", 3));
+    assertValue("0.5", RatingFormula.evaluate("0.2; 0.5", 2));
+  }
+
+  @Test
+  void valueListRejectsRatingOutsideList() {
+    assertThrows(IllegalArgumentException.class, () -> RatingFormula.evaluate("2; 3; 5", 4));
+    assertThrows(IllegalArgumentException.class, () -> RatingFormula.evaluate("2; 3; 5", 0));
+  }
 }

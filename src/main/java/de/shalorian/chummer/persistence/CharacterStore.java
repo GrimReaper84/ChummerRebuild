@@ -123,9 +123,7 @@ public class CharacterStore {
         .map(p -> new AdeptPowerEntry(p.getData().name(), p.getChoice(), p.getLevel()))
         .toList();
     data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
-    data.cyberware = character.getEquipment().getCyberware().stream()
-        .map(c -> new CyberwareEntry(c.getName(), c.getGrade().name(), c.getRating()))
-        .toList();
+    data.cyberware = character.getEquipment().getCyberware().stream().map(CharacterStore::toCyberwareEntry).toList();
     data.armor = character.getEquipment().getArmor().stream()
         .map(a -> new ArmorEntry(a.getName(), a.isEquipped(), a.getChosenPrice()))
         .toList();
@@ -162,6 +160,16 @@ public class CharacterStore {
         .toList();
     entry.includedGear = vehicle.getIncludedGear().stream().map(CharacterStore::toGearEntry).toList();
     entry.gear = vehicle.getGear().stream().map(CharacterStore::toGearEntry).toList();
+    return entry;
+  }
+
+  private static @NonNull CyberwareEntry toCyberwareEntry(@NonNull Cyberware implant) {
+    CyberwareEntry entry = new CyberwareEntry(implant.getName(), implant.getGrade().name(), implant.getRating());
+    entry.choice = implant.getChoice();
+    entry.price = implant.getChosenPrice();
+    entry.installed = implant.getInstalled().stream().map(CharacterStore::toCyberwareEntry).toList();
+    Gear commlink = implant.getCommlink();
+    entry.commlink = commlink == null ? null : toGearEntry(commlink);
     return entry;
   }
 
@@ -205,10 +213,6 @@ public class CharacterStore {
     character.setNuyenBP(data.nuyenBP);
     applyMagicOrResonance(character, data);
     applyAdeptPowers(character, data);
-    // Schaden nach Qualities, Attributen und Adeptenkräften: die Spaltengröße hängt von verstärkter KON und WIL,
-    // Überlebenswille und Gesteigertem Attribut ab.
-    character.setPhysicalDamage(data.physicalDamage);
-    character.setStunDamage(data.stunDamage);
     applyKnowledgeSkills(character, data);
     applyContacts(character, data);
     data.decoupledGroups.forEach(character::decoupleGroup);
@@ -224,6 +228,10 @@ public class CharacterStore {
     applyGear(character, data);
     applyVehicles(character, data);
     applyLifestyle(character, data);
+    // Schaden zuletzt: die Spaltengröße hängt von verstärkter KON und WIL ab (Qualities, Attribute, Adeptenkräfte,
+    // Implantate) und von Überlebenswille.
+    character.setPhysicalDamage(data.physicalDamage);
+    character.setStunDamage(data.stunDamage);
 
     return character;
   }
@@ -281,19 +289,47 @@ public class CharacterStore {
   }
 
   /**
-   * Stellt die eingebauten Implantate wieder her. Unbekannte Katalognamen werden — analog {@link
-   * #applyComplexForms} — übersprungen; eine unbekannte Grade fällt auf {@link
-   * CyberwareGrade#STANDARD} zurück (analog zur Nachsicht bei {@link #applyTradition}).
+   * Stellt die eingebauten Implantate wieder her. Unbekannte Katalognamen und Werte, die nicht (mehr) zum Katalog
+   * passen, werden — analog {@link #applyComplexForms} — übersprungen; eine unbekannte Grade fällt auf {@link
+   * CyberwareGrade#STANDARD} zurück (analog zur Nachsicht bei {@link #applyTradition}). Zubehör und Kommlink, die
+   * nicht mehr passen, werden ebenfalls übersprungen.
    */
   private static void applyCyberware(@NonNull Character character, @NonNull CharacterData data) {
     for (CyberwareEntry entry : data.cyberware) {
-      CyberwareData cyberwareData = CyberwareDataLoader.findByName(entry.name);
-      if (cyberwareData == null) {
-        continue;
+      Cyberware implant = toCyberware(entry);
+      if (implant != null) {
+        character.getEquipment().addCyberware(implant);
       }
-      character.getEquipment().addCyberware(
-          new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating));
     }
+  }
+
+  private static @Nullable Cyberware toCyberware(@NonNull CyberwareEntry entry) {
+    CyberwareData cyberwareData = CyberwareDataLoader.findByName(entry.name);
+    if (cyberwareData == null) {
+      return null;
+    }
+    // Preisspanne ohne gültigen Preis (z.B. von Hand bearbeitet) fällt wie bei Kleidung auf die Untergrenze zurück.
+    Integer price = null;
+    if (cyberwareData.hasVariablePrice()) {
+      price = entry.price != null && cyberwareData.isValidPrice(entry.price) ? entry.price : cyberwareData.priceMin();
+    }
+    Cyberware implant;
+    try {
+      implant = new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating, entry.choice, price);
+    } catch (IllegalArgumentException _) {
+      return null;
+    }
+    for (CyberwareEntry childEntry : entry.installed) {
+      Cyberware child = toCyberware(childEntry);
+      if (child != null && implant.installProblem(child.getData(), child.getRating()) == null) {
+        implant.install(child);
+      }
+    }
+    Gear commlink = entry.commlink == null ? null : toGear(entry.commlink);
+    if (commlink != null && implant.commlinkProblem(commlink.getData()) == null) {
+      implant.setCommlink(commlink);
+    }
+    return implant;
   }
 
   /** Stellt die gekauften Rüstungsteile wieder her; unbekannte Katalognamen werden übersprungen. */

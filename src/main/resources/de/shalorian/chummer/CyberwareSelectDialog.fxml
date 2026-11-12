@@ -31,23 +31,34 @@
                GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <ComboBox fx:id="ratingBox" prefWidth="80"
                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-        <Label text="Verfügbarkeit:" styleClass="field-label"
+        <Label fx:id="choiceCaption" text="Auswahl:" styleClass="field-label" visible="false" managed="false"
                GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Label fx:id="availabilityLabel" styleClass="attr-abbr"
-               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-        <Label text="Essenz:" styleClass="field-label"
+        <ComboBox fx:id="choiceBox" prefWidth="200" promptText="bitte wählen…" visible="false" managed="false"
+                  GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label fx:id="priceCaption" text="Preis wählen:" styleClass="field-label" visible="false" managed="false"
                GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <Label fx:id="essenceLabel" styleClass="attr-value"
-               GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-        <Label text="Preis:" styleClass="field-label"
+        <TextField fx:id="priceField" prefWidth="140" visible="false" managed="false"
+                  GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Label text="Verfügbarkeit:" styleClass="field-label"
                GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <Label fx:id="costLabel" styleClass="attr-bp"
-               GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-        <Label text="Quelle:" styleClass="field-label"
+        <Label fx:id="availabilityLabel" styleClass="attr-abbr"
+                  GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Label fx:id="essenceCaption" text="Essenz:" styleClass="field-label"
                GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <Label fx:id="essenceLabel" styleClass="attr-value"
+                  GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        <Label text="Preis:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <Label fx:id="costLabel" styleClass="attr-bp"
+                  GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+        <Label text="Quelle:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="7"/>
         <Label fx:id="sourceLabel" styleClass="attr-range"
-               GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                  GridPane.columnIndex="1" GridPane.rowIndex="7"/>
     </GridPane>
+
+    <!-- Hinweis: Katalognotiz und Sperrgrund -->
+    <Label fx:id="noteLabel" wrapText="true" styleClass="attr-range" maxWidth="Infinity"/>
 
     <!-- Buttons -->
     <HBox spacing="10" alignment="CENTER_RIGHT">

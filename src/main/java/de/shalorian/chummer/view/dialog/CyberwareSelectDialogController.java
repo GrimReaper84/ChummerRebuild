@@ -6,18 +6,24 @@ import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.cyberware.ImplantSelection;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.view.converter.CyberwareGradeStringConverter;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -29,7 +35,13 @@ import org.jspecify.annotations.Nullable;
  * aktuell nicht gekauft werden dürfen (Beta-/Deltaware bei der Charaktererschaffung, siehe {@link
  * Equipment#isCyberwareGradeAvailable(CyberwareGrade)}), bleiben sichtbar, aber deaktiviert. Dasselbe
  * gilt für Implantate und einzelne Stufen, deren Verfügbarkeit bei der Charaktererschaffung über 12
- * liegt (GRW S. 111, siehe {@link Equipment#isAvailableForPurchase(Availability, int)}).
+ * liegt (GRW S. 111, siehe {@link Equipment#isAvailableForPurchase(Availability, int)}), und für Implantate, die
+ * {@code Implants#getBlockReason} sperrt (Unverträglichkeiten); der Grund steht im Hinweisfeld.
+ *
+ * <p>Je nach Eintrag erscheinen zusätzlich ein Auswahlfeld (Reflexrekorder: Fertigkeit bzw. Fertigkeitsgruppe) und
+ * ein Preisfeld (Preisspanne, Kosmetische Modifikation). Mit {@link #setInstallTarget(Cyberware)} wird Zubehör für
+ * ein Basissystem gewählt: Die Liste zeigt nur einbaubares Zubehör seiner Kategorie, die Grade ist die des
+ * Basissystems, statt der Essenz steht der Kapazitätsbedarf da (GRW S. 386, 387).
  */
 public class CyberwareSelectDialogController extends CatalogSelectDialogController<CyberwareData> {
 
@@ -41,7 +53,17 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   @FXML
   private ComboBox<Integer> ratingBox;
   @FXML
+  private Label choiceCaption;
+  @FXML
+  private ComboBox<String> choiceBox;
+  @FXML
+  private Label priceCaption;
+  @FXML
+  private TextField priceField;
+  @FXML
   private Label availabilityLabel;
+  @FXML
+  private Label essenceCaption;
   @FXML
   private Label essenceLabel;
   @FXML
@@ -49,13 +71,16 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   @FXML
   private Label sourceLabel;
   @FXML
+  private Label noteLabel;
+  @FXML
   private Button okButton;
 
   private @Nullable Stage stage;
   private @Nullable Character character;
   private @NonNull EquipmentKind kind = EquipmentKind.CYBERWARE;
+  private @Nullable Cyberware installTarget;
   private @Nullable Cyberware result;
-  /** Implantat, für das {@code ratingBox} zuletzt befüllt wurde. */
+  /** Implantat, für das {@code ratingBox} und {@code choiceBox} zuletzt befüllt wurden. */
   private @Nullable CyberwareData ratingSource;
 
   @FXML
@@ -82,6 +107,8 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       }
     });
     ratingBox.valueProperty().addListener((_, _, _) -> updatePreview());
+    choiceBox.valueProperty().addListener((_, _, _) -> updatePreview());
+    priceField.textProperty().addListener((_, _, _) -> updatePreview());
     super.initialize();
   }
 
@@ -101,8 +128,22 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
     updateList();
   }
 
+  /**
+   * Wählt Zubehör für das Basissystem {@code base} statt eines Implantats: nur einbaubares Zubehör seiner Kategorie,
+   * Grade fest auf die des Basissystems, Kapazität statt Essenz.
+   */
+  public void setInstallTarget(@NonNull Cyberware base) {
+    this.installTarget = base;
+    this.kind = base.getKind();
+    gradeBox.setValue(base.getGrade());
+    gradeBox.setDisable(true);
+    essenceCaption.setText("Kapazität:");
+    refreshCategoryOptions();
+    updateList();
+  }
+
   private boolean isGradeAvailable(@NonNull CyberwareGrade grade) {
-    return character == null || character.getEquipment().isCyberwareGradeAvailable(grade);
+    return installTarget != null || character == null || character.getEquipment().isCyberwareGradeAvailable(grade);
   }
 
   /** Ob die gewählte Stufe des markierten Implantats wegen ihrer Verfügbarkeit gekauft werden darf. */
@@ -116,10 +157,21 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
         || character.getEquipment().isAvailableForPurchase(data.availability(), rating);
   }
 
-  /** Ein Implantat ist wählbar, wenn wenigstens seine niedrigste Stufe verfügbar ist. */
+  /**
+   * Ein Implantat ist wählbar, wenn wenigstens seine niedrigste Stufe verfügbar ist und nichts den Kauf sperrt
+   * (Unverträglichkeit bzw. beim Einbau fehlende Kapazität).
+   */
   @Override
   protected boolean isSelectable(@NonNull CyberwareData data) {
-    return isAvailable(data, lowestRating(data));
+    return isAvailable(data, lowestRating(data)) && blockReason(data, lowestRating(data)) == null;
+  }
+
+  /** Grund, warum {@code data} nicht gewählt werden kann (ohne Verfügbarkeit und Auswahl), oder {@code null}. */
+  private @Nullable String blockReason(@NonNull CyberwareData data, int rating) {
+    if (installTarget != null) {
+      return installTarget.installProblem(data, rating);
+    }
+    return character == null ? null : character.getImplants().getBlockReason(data);
   }
 
   private static int lowestRating(@NonNull CyberwareData data) {
@@ -129,7 +181,7 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   @Override
   protected @NonNull List<String> categoryOptions() {
     return CyberwareDataLoader.getAllCyberware().values().stream()
-        .filter(d -> d.kind() == kind)
+        .filter(this::additionalFilter)
         .map(CyberwareData::category)
         .distinct()
         .toList();
@@ -147,10 +199,13 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
 
   @Override
   protected boolean additionalFilter(@NonNull CyberwareData data) {
+    if (installTarget != null) {
+      return data.category().equals(installTarget.getData().category()) && data.isInstallable();
+    }
     return data.kind() == kind;
   }
 
-  /** Passt die Stufen-Auswahl an den gewählten Eintrag an und aktualisiert die Kostenvorschau. */
+  /** Passt Stufen- und Auswahlfeld an den gewählten Eintrag an und aktualisiert die Kostenvorschau. */
   @Override
   protected void onListUpdated() {
     CyberwareData selected = itemListView.getSelectionModel().getSelectedItem();
@@ -165,31 +220,103 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       ratingBox.setValue(CyberwareData.MIN_RATING);
       ratingBox.setDisable(false);
     }
+    if (selected != null && !selected.equals(ratingSource)) {
+      choiceBox.getItems().setAll(choiceOptions(selected));
+      choiceBox.setValue(null);
+      priceField.setPromptText(selected.hasVariablePrice() ? priceRange(selected) : "");
+    }
+    showRow(choiceCaption, choiceBox, selected != null && selected.selection() != ImplantSelection.NONE);
+    showRow(priceCaption, priceField, selected != null && selected.hasVariablePrice());
     ratingSource = selected;
     updatePreview();
   }
 
+  private @NonNull List<String> choiceOptions(@NonNull CyberwareData data) {
+    if (character == null) {
+      return List.of();
+    }
+    return switch (data.selection()) {
+      case NONE -> List.of();
+      case SKILL -> character.getImplants().getReflexRecorderSkills();
+      case SKILL_GROUP -> character.getImplants().getReflexRecorderGroups();
+    };
+  }
+
+  private static void showRow(@NonNull Node caption, @NonNull Node field, boolean visible) {
+    caption.setVisible(visible);
+    caption.setManaged(visible);
+    field.setVisible(visible);
+    field.setManaged(visible);
+  }
+
+  private static @NonNull String priceRange(@NonNull CyberwareData data) {
+    NumberFormat format = NumberFormat.getIntegerInstance(Locale.GERMAN);
+    return format.format(data.priceMin()) + "–" + format.format(data.priceMax()) + " ¥";
+  }
+
+  /** Eingegebener Preis, oder {@code null}, solange er fehlt oder außerhalb der Spanne liegt. */
+  private @Nullable Integer enteredPrice(@NonNull CyberwareData data) {
+    try {
+      int price = Integer.parseInt(priceField.getText().trim().replace(".", ""));
+      return data.isValidPrice(price) ? price : null;
+    } catch (NumberFormatException _) {
+      return null;
+    }
+  }
+
   private void updatePreview() {
-    Cyberware preview = buildSelection();
     CyberwareData selected = itemListView.getSelectionModel().getSelectedItem();
     availabilityLabel.setText(selected == null ? NO_VALUE : availabilityText(selected));
+    sourceLabel.setText(selected == null ? NO_VALUE : sourceText(selected));
+    Cyberware preview = buildSelection();
+    noteLabel.setText(selected == null ? "" : noteText(selected));
     if (preview == null) {
       essenceLabel.setText(NO_VALUE);
       costLabel.setText(NO_VALUE);
-      sourceLabel.setText(selected == null ? NO_VALUE : sourceText(selected));
       okButton.setDisable(true);
       return;
     }
-    essenceLabel.setText(ESSENCE_FORMAT.toString(preview.getEssenceCost().doubleValue()));
+    essenceLabel.setText(installTarget != null
+        ? String.valueOf(preview.getData().capacityCostFor(preview.getRating()))
+        : ESSENCE_FORMAT.toString(preview.getEssenceCost().doubleValue()));
     costLabel.setText(preview.getNuyenCost() + " ¥");
-    sourceLabel.setText(sourceText(preview.getData()));
     okButton.setDisable(false);
+  }
+
+  /** Hinweis des Katalogs, ergänzt um den Grund, warum die aktuelle Auswahl nicht gekauft werden kann. */
+  private @NonNull String noteText(@NonNull CyberwareData data) {
+    List<String> parts = new ArrayList<>();
+    String problem = selectionProblem(data);
+    if (problem != null) {
+      parts.add("Nicht wählbar: " + problem + ".");
+    }
+    if (!data.note().isEmpty()) {
+      parts.add(data.note());
+    }
+    return String.join(" ", parts);
+  }
+
+  private @Nullable String selectionProblem(@NonNull CyberwareData data) {
+    if (installTarget != null) {
+      return installTarget.installProblem(data, currentRating(data));
+    }
+    if (character == null) {
+      return null;
+    }
+    String choice = choiceBox.getValue();
+    return data.selection() == ImplantSelection.NONE || choice != null
+        ? character.getImplants().getAddProblem(data, choice == null ? "" : choice)
+        : character.getImplants().getBlockReason(data);
+  }
+
+  private int currentRating(@NonNull CyberwareData data) {
+    Integer chosen = ratingBox.getValue();
+    return data.hasRating() && chosen != null ? chosen : lowestRating(data);
   }
 
   /** Verfügbarkeit der gewählten (bzw. niedrigsten) Stufe, mit Hinweis, falls sie gesperrt ist. */
   private @NonNull String availabilityText(@NonNull CyberwareData data) {
-    Integer chosen = ratingBox.getValue();
-    int rating = data.hasRating() && chosen != null ? chosen : lowestRating(data);
+    int rating = currentRating(data);
     String text = data.availability().displayText(rating);
     if (!isAvailable(data, rating)) {
       text += " (bei Erschaffung max. " + Availability.MAX_AVAILABILITY_AT_CREATION + ")";
@@ -202,9 +329,9 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   }
 
   /**
-   * Die aktuelle Auswahl als Implantat-Instanz, oder {@code null}, solange kein Eintrag, keine
-   * zulässige Grade oder (bei stufenbehafteten Einträgen) keine Stufe gewählt ist bzw. die Stufe
-   * wegen ihrer Verfügbarkeit nicht gekauft werden darf.
+   * Die aktuelle Auswahl als Implantat-Instanz, oder {@code null}, solange kein Eintrag, keine zulässige Grade, (bei
+   * stufenbehafteten Einträgen) keine Stufe, keine Auswahl oder kein gültiger Preis gewählt ist, die Stufe wegen ihrer
+   * Verfügbarkeit nicht gekauft werden darf oder etwas den Kauf bzw. Einbau sperrt.
    */
   private @Nullable Cyberware buildSelection() {
     CyberwareData selected = itemListView.getSelectionModel().getSelectedItem();
@@ -212,13 +339,19 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
     if (selected == null || grade == null || !isGradeAvailable(grade)) {
       return null;
     }
-    if (!selected.hasRating()) {
-      return isAvailable(selected, 0) ? new Cyberware(selected, grade, 0) : null;
+    Integer chosenRating = ratingBox.getValue();
+    if (selected.hasRating() && chosenRating == null) {
+      return null;
     }
-    Integer rating = ratingBox.getValue();
-    return rating == null || !isAvailable(selected, rating)
-        ? null
-        : new Cyberware(selected, grade, rating);
+    int rating = currentRating(selected);
+    String choice = choiceBox.getValue();
+    Integer price = selected.hasVariablePrice() ? enteredPrice(selected) : null;
+    boolean incomplete = (selected.selection() != ImplantSelection.NONE && choice == null)
+        || (selected.hasVariablePrice() && price == null);
+    if (incomplete || !isAvailable(selected, rating) || selectionProblem(selected) != null) {
+      return null;
+    }
+    return new Cyberware(selected, grade, rating, choice == null ? "" : choice, price);
   }
 
   @FXML

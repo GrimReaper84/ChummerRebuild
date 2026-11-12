@@ -166,14 +166,18 @@
 
 | Feature                                                       | Status | Anmerkung        |
 |---------------------------------------------------------------|--------|------------------|
-| Cyberware kaufen (Nuyen-Kosten)                               | ✅      | Katalog = verifizierte GRW-Teilmenge (13 Cyberware/8 Bioware). Preis zählt bei Erschaffung gegen das Ressourcengeld, im Karrieremodus Abbuchung über das Nuyen-Log mit Bestätigung (2026-09-27) |
+| Cyberware kaufen (Nuyen-Kosten)                               | ✅      | Katalog vollständig nach GRW ohne Cybergliedmaßen: 51 Cyberware, 25 Bioware (2026-11-12, ADR-048). Kosmetische Modifikation mit Preiseingabe, Wertlisten je Stufe (Reflexbooster, Basissysteme). Preis zählt bei Erschaffung gegen das Ressourcengeld, im Karrieremodus Abbuchung über das Nuyen-Log mit Bestätigung (2026-09-27) |
 | Verfügbarkeit ≤ 12 bei Erschaffung                            | ✅      | GRW S. 111; `Availability` je Katalogeintrag, gesperrte Implantate und einzelne Stufen sichtbar-deaktiviert; Grades ohne Verfügbarkeitsaufschlag (GRW S. 359) |
 | Essenz-Kosten berechnen (Cyberware vs. Bioware getrennt)      | ✅      | `Cyberware.getEssenceCost()` (`RatingFormula` × Grade), getrennte Summen am `Character` |
 | Essenz-Berechnung: höhere Kategorie voll, niedrigere halbiert | ✅      | GRW S. 111 inkl. Rechenbeispiel als Test; Handicap "Immunabstoßung" (S. 120) verdoppelt Cyberware-Summe |
 | Grades (Standard, Alphaware, Betaware, Deltaware)             | ✅      | GRW S. 359; bei Erschaffung nur Standard/Alpha wählbar |
 | MAG/RES-Reduktion durch Essenzverlust (Wert + Maximum)        | ✅      | GRW S. 208, abgeleitet (`getEffectiveMagicOrResonanceValue/Max()`), investierter Wert bleibt Kostenbasis |
-| Subsystem-Kapazität                                           | ❌      | Bewusst zurückgestellt (inkl. Cybergliedmaßen) |
-| Augmented Maximum durch Implantate (Augmented Modifier)       | ❌      | Bewusst zurückgestellt |
+| Subsystem-Kapazität                                           | ✅      | Cyberaugen/Cyberohren als Basissysteme (Stufe × 4), Zubehör ohne Essenz mit Grade des Basissystems, einzeln implantiert mit Essenz; beides zugleich gesperrt (S. 386/387), 2026-11-12. Kapazität in Cybergliedmaßen folgt mit diesen |
+| Implantat-Wirkungen                                           | ✅      | Attributboni bis zum augmentierten Maximum (mit Adeptenkräften), Initiativedurchgänge, Panzerung ohne Behinderung, Poolboni (Athletik, sozial, körperlich, Wissen, Reflexrekorder), Schadenskompensator; situative Wirkungen als Hinweis (2026-11-12, ADR-048) |
+| Unverträglichkeiten                                           | ✅      | Datengetrieben, im Dialog gesperrt mit Grund, in beide Richtungen; Gesteigerte Reflexe ↔ technische Initiativesteigerung (S. 230) |
+| Kommlink-Headware                                             | ✅      | Kommlink-Modell aus dem Ausrüstungskatalog wird eingebaut, samt Betriebssystem (S. 386) |
+| Cybergliedmaßen, Cyberwaffen                                  | ❌      | Roadmap-Punkt 8 (Attributersatz, ADR-005) |
+| Smartlink-Bonus, Matrix-Initiative (Sim-Modul), Talentleitungen mit Aktionssofts | ❌ | Nur Hinweis, bis Waffen-Pools, Matrix-Initiative bzw. Aktionssofts kommen |
 
 ---
 
@@ -339,7 +343,7 @@
 | Kontakte               | 4 | 0  | 0 |
 | Magie                  | 0 | 0  | 6 |
 | Technomancer           | 4 | 0  | 1 |
-| Cyberware/Bioware      | 6 | 0  | 2 |
+| Cyberware/Bioware      | 10 | 0  | 2 |
 | Rüstung                | 3 | 0  | 4 |
 | Lebensstil             | 1 | 0  | 2 |
 | Waffen                 | 4 | 0  | 1 |
@@ -398,7 +402,7 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
 8. **Kataloge vervollständigen** (Bestandsaufnahme `docs/analysen/katalog_vollstaendigkeit.md`; Quelle zuerst das GRW,
    dann das C#, Zusatzband-Inhalte bleiben draußen, ADR-047), einer nach dem anderen:
    - ✅ Zauber (84), Komplexe Formen (21), Kleidung (3), Metavarianten entfernt (2026-11-12)
-   - Cyberware (38 fehlen ohne Cybergliedmaßen) und Bioware (17) — zusammen mit den Implantat-Wirkungen als Feature
+   - ✅ Cyberware (51) und Bioware (25) samt Kapazität und Implantat-Wirkungen (2026-11-12, ADR-048)
    - Rüstung: Zubehör der Ganzkörperpanzerung/des Urban Explorer Overalls und Panzerungsmodifikationen (Einbau-Mechanik)
    - Cybergliedmaßen samt Verbesserungen, Zubehör und Cyberwaffen (Attributersatz, ADR-005)
    - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
@@ -428,7 +432,7 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 
 1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
 2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/archiv/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung (GRW-Kern S. 284, zurückgestellt)
-3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/archiv/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`). Offen: vollständiger Katalog, Cybergliedmaßen/Kapazität, Attributboni durch Implantate
+3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/archiv/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`). Vollständiger Katalog, Kapazität der Augen/Ohren und Implantat-Wirkungen ✅ (2026-11-12, ADR-048). Offen: Cybergliedmaßen
 4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
 5. **Waffen** ✅ Teil A (2026-09-28), Teil B (2026-09-30) und Teil C Zubehör (2026-10-04) umgesetzt (`docs/plaene/archiv/waffen_plan.md`)
 6. **Gear** ✅ Teile A–D umgesetzt (2026-10-04 bis 2026-10-08, `docs/plaene/archiv/gear_plan.md`): Grundgerüst, Kommlinks/Matrix, Kapazität/Einbauten, Munition/Pfeile/Granaten/Sprengstoffe. Offen: Kommlink-Aufrüstungen und Matrix-Upgrades, Lagerorte
