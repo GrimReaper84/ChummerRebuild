@@ -12,6 +12,7 @@ import de.shalorian.chummer.model.character.condition.AttributeTest;
 import de.shalorian.chummer.model.character.cyberware.ImplantEffectType;
 import de.shalorian.chummer.model.character.cyberware.Implants;
 import de.shalorian.chummer.model.character.equipment.Equipment;
+import de.shalorian.chummer.model.character.initiation.Initiation;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -98,6 +99,7 @@ public class Character {
   private final List<SpellData> spells = new ArrayList<>();
   private final List<ComplexForm> complexForms = new ArrayList<>();
   private final @NonNull AdeptPowers adeptPowers = new AdeptPowers(this);
+  private final @NonNull Initiation initiation = new Initiation(this);
   private final @NonNull Implants implants = new Implants(this);
   private final @NonNull Equipment equipment = new Equipment(this);
   private final List<LogEntry> karmaLog = new ArrayList<>();
@@ -471,7 +473,13 @@ public class Character {
       magicOrResonance = new SpecialAttribute(SpecialAttributeType.RESONANCE, 1, 6, true);
     } else if (!magic && !resonance) {
       magicOrResonance = null;
+      initiation.clear();
     }
+  }
+
+  /** Initiation bzw. Wandlung: Grad, Metamagien bzw. Echos und das dadurch höhere Maximum (GRW S. 232, 284). */
+  public @NonNull Initiation getInitiation() {
+    return initiation;
   }
 
   // --- Skills ---
@@ -1004,6 +1012,11 @@ public class Character {
     removed.stream().filter(q -> q != quality).forEach(q -> lines.add(q.displayName() + " wird mit entfernt"));
     if (!hasQualityBonus(remaining, QualityBonusType.ADEPT_POWERS)) {
       adeptPowers.getPowers().forEach(p -> lines.add("Adeptenkraft " + p.displayName() + " wird mit entfernt"));
+    }
+    String initiationLoss = initiation.getLossLine();
+    if (initiationLoss != null && !hasQualityBonus(remaining, QualityBonusType.GRANTS_MAGIC)
+        && !hasQualityBonus(remaining, QualityBonusType.GRANTS_RESONANCE)) {
+      lines.add(initiationLoss);
     }
     List<Skill> locked = getSkillsLockedWithout(removed);
     locked.forEach(s -> lines.add(lockedSkillLine(s)));

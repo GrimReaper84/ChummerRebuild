@@ -120,6 +120,14 @@
         </VBox>
       </ScrollPane>
 
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="initiationPage">
+        <VBox styleClass="attr-container" fx:id="initiationContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
 
       <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="technomancerPage">
         <VBox styleClass="attr-container" fx:id="technomancerContainer">

@@ -139,6 +139,18 @@ Klingenwaffen (S. 148), die Schockhand über Waffenlosen Kampf (S. 149). Cybergu
 Essenz, Kapazität und Preise nennt. Eingebaute Waffen aus Rüstung und Implantaten tragen `<builtin/>`.
 **Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/cybergliedmassen_plan.md`.
 
+### ADR-052: Initiation und Wandlung (2026-11-12)
+Ein Bereich in der Seitenleiste heißt bei Magie „Initiation“, bei Resonanz „Wandlung“ (`model.character.initiation`,
+Teilobjekt `Initiation` von `Character`). Nur im Karrieremodus (S. 112); jeder Grad kostet 10 + neuer Grad × 3 Karma
+und darf den wirksamen Magie- bzw. Resonanzwert (nach Essenzverlust) nicht übersteigen; das natürliche Maximum steigt
+auf 6 + Grad (über `SpecialAttribute#setMaxBonus`). Je Grad eine Technik, nachholbar (Anzahl ≤ Grad), kein
+Rückgängigmachen. Sechs Metamagien (S. 232/233; reine Adepten nur vier, Adeptenzentrierung nur mit Adeptenkräften) und
+fünf Echos (S. 284; drei davon bis zu dreimal) in `metamagic.xml`; ihre Wirkung steht als Hinweis mit Grad bzw.
+Anzahl, gerechnet wird nichts (keine Lebende Persona, keine Entzugspools). Sinkt der wirksame Wert unter den Grad,
+gibt es nur einen Hinweis im Bereich und im Status, Grade und Techniken bleiben. Gruppeninitiation und Prüfungen
+(Straßenmagie, nur im C#) bleiben draußen.
+**Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/initiation_wandlung_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

@@ -38,6 +38,8 @@ public class CharacterData {
   public @NonNull List<AdeptPowerEntry> adeptPowers = new ArrayList<>();
   /** Magieradept: Magiepunkte für Kräfte. */
   public int adeptMagic = 0;
+  /** Initiation bzw. Wandlung; fehlt in Dateien vor ADR-052 (dann Grad 0). */
+  public @NonNull InitiationEntry initiation = new InitiationEntry();
   public @NonNull List<CyberwareEntry> cyberware = new ArrayList<>();
   public @NonNull List<ArmorEntry> armor = new ArrayList<>();
   public @NonNull List<WeaponEntry> weapons = new ArrayList<>();

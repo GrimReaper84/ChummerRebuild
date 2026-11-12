@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Metamagische Techniken (Initiation, SR4-Grundregelwerk S. 232/233) und Echos (Wandlung, S. 284), am Seitenbild
+  gelesen (2026-11-12). Hinweise in eigenen Worten.
+
+  <kind>       metamagic oder echo
+  <noadept/>   reine Adepten können die Technik nicht lernen (S. 232: Adepten nur vier Techniken)
+  <adeptonly/> nur für Adepten und Magieradepten (Adeptenzentrierung)
+  <maxtimes>   wie oft die Technik gelernt werden darf; fehlt = einmal
+  <effect>     Hinweis zur Wirkung; {grade} = Initiations- bzw. Wandlungsgrad, {count} = wie oft gelernt
+-->
+<techniques>
+
+    <!-- ── METAMAGIE (S. 232/233) ───────────────────────────── -->
+
+    <technique>
+        <name>Abschirmung</name>
+        <kind>metamagic</kind>
+        <noadept/>
+        <effect>Spruchabwehr +{grade} Würfel, für sich und andere; nicht für andere Formen der Antimagie.</effect>
+        <source>SR4</source>
+        <page>232</page>
+    </technique>
+
+    <technique>
+        <name>Adeptenzentrierung</name>
+        <kind>metamagic</kind>
+        <adeptonly/>
+        <effect>Abzüge auf Würfelpools körperlicher und kämpferischer Fertigkeiten sinken um {grade}, solange die gewählte Zentrierung möglich ist.</effect>
+        <source>SR4</source>
+        <page>232</page>
+    </technique>
+
+    <technique>
+        <name>Flexible Signatur</name>
+        <kind>metamagic</kind>
+        <effect>Astrale Signatur tarnen oder nachahmen: Wer die Fälschung erkennen will, braucht {grade} Erfolge mehr; die eigene Signatur ist {grade} Stunden kürzer sichtbar.</effect>
+        <source>SR4</source>
+        <page>232</page>
+    </technique>
+
+    <technique>
+        <name>Intensivierung</name>
+        <kind>metamagic</kind>
+        <noadept/>
+        <effect>Aufrechterhaltene Zauber für 1 Karma je Kraftpunkt dauerhaft machen; sie erhalten so viele Extrawürfel wie Karma investiert wurde (höchstens bis zur Kraft).</effect>
+        <source>SR4</source>
+        <page>233</page>
+    </technique>
+
+    <technique>
+        <name>Maskierung</name>
+        <kind>metamagic</kind>
+        <effect>Aura verändern, z.B. als Weltlicher erscheinen oder Magie um bis zu {grade} höher oder niedriger zeigen; wer sie durchschauen will, legt Askennen + Intuition gegen Intuition + Magie + {grade} ab.</effect>
+        <source>SR4</source>
+        <page>233</page>
+    </technique>
+
+    <technique>
+        <name>Zentrierung</name>
+        <kind>metamagic</kind>
+        <effect>Entzugswiderstand +{grade} Würfel mit einer Zentrierungstechnik der eigenen Tradition (Freie Handlung).</effect>
+        <source>SR4</source>
+        <page>233</page>
+    </technique>
+
+    <!-- ── ECHOS (S. 284) ───────────────────────────────────── -->
+
+    <technique>
+        <name>Firewall-Upgrade</name>
+        <kind>echo</kind>
+        <maxtimes>3</maxtimes>
+        <effect>Firewall der Lebenden Persona +{count}.</effect>
+        <source>SR4</source>
+        <page>284</page>
+    </technique>
+
+    <technique>
+        <name>Neurofilter</name>
+        <kind>echo</kind>
+        <maxtimes>3</maxtimes>
+        <effect>Biofeedback-Filter der Lebenden Persona +{count}.</effect>
+        <source>SR4</source>
+        <page>284</page>
+    </technique>
+
+    <technique>
+        <name>Prozessbeschleunigung</name>
+        <kind>echo</kind>
+        <effect>Prozessor der Lebenden Persona +1 (damit auch die Matrixinitiative) und +1 Initiativedurchgang im VR-Modus.</effect>
+        <source>SR4</source>
+        <page>284</page>
+    </technique>
+
+    <technique>
+        <name>Resonanzverbindung</name>
+        <kind>echo</kind>
+        <effect>Empathische Verbindung zu einem anderen Technomancer: dessen Stimmung und Gefahr spüren, nur in eine Richtung (beidseitig, wenn beide das Echo haben).</effect>
+        <source>SR4</source>
+        <page>284</page>
+    </technique>
+
+    <technique>
+        <name>System-Upgrade</name>
+        <kind>echo</kind>
+        <maxtimes>3</maxtimes>
+        <effect>System der Lebenden Persona +{count}.</effect>
+        <source>SR4</source>
+        <page>284</page>
+    </technique>
+
+</techniques>

@@ -7,7 +7,8 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Hinweise der Status-Übersicht: was am Charakter gerade nicht stimmt. Bei der Erschaffung überzogene BP oder
- * überzogenes Ressourcengeld und Essenz auf 0 oder darunter (GRW S. 111), in beiden Modi überzogene Kraftpunkte.
+ * überzogenes Ressourcengeld und Essenz auf 0 oder darunter (GRW S. 111), in beiden Modi überzogene Kraftpunkte und ein
+ * Initiations- bzw. Wandlungsgrad über dem wirksamen Magie- bzw. Resonanzwert.
  */
 public final class StatusHints {
 
@@ -32,6 +33,10 @@ public final class StatusHints {
     String adeptProblem = character.getAdeptPowers().getProblem();
     if (adeptProblem != null) {
       hints.add(adeptProblem);
+    }
+    String initiationHint = character.getInitiation().getAboveAttributeHint();
+    if (initiationHint != null) {
+      hints.add(initiationHint);
     }
     return hints;
   }

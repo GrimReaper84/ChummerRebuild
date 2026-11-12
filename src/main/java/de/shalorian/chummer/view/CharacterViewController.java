@@ -4,6 +4,7 @@ import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogEntry;
+import de.shalorian.chummer.model.character.initiation.TechniqueKind;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
@@ -23,6 +24,7 @@ import de.shalorian.chummer.view.tab.ConditionTabBuilder;
 import de.shalorian.chummer.view.tab.ContactTabBuilder;
 import de.shalorian.chummer.view.tab.CyberwareTabBuilder;
 import de.shalorian.chummer.view.tab.IncrementWiring;
+import de.shalorian.chummer.view.tab.InitiationTabBuilder;
 import de.shalorian.chummer.view.tab.LogTabBuilder;
 import de.shalorian.chummer.view.tab.MagicTabBuilder;
 import de.shalorian.chummer.view.tab.QualityTabBuilder;
@@ -116,6 +118,10 @@ public class CharacterViewController implements CharacterTabHost {
   private VBox adeptContainer;
   @FXML
   private VBox technomancerContainer;
+  @FXML
+  private VBox initiationContainer;
+  @FXML
+  private Node initiationPage;
   // Seiten der Bereiche (FXML fx:define), angezeigt vom SectionNavigator
   @FXML
   private Node biographyPage;
@@ -186,6 +192,8 @@ public class CharacterViewController implements CharacterTabHost {
   @SuppressWarnings("NullAway.Init")
   private TechnomancerTabBuilder technomancerTabBuilder;
   @SuppressWarnings("NullAway.Init")
+  private InitiationTabBuilder initiationTab;
+  @SuppressWarnings("NullAway.Init")
   private CyberwareTabBuilder cyberwareTab;
   @SuppressWarnings("NullAway.Init")
   private StreetGearTabBuilder streetGear;
@@ -213,6 +221,7 @@ public class CharacterViewController implements CharacterTabHost {
     magicTabBuilder = new MagicTabBuilder(magicContainer, this);
     adeptTabBuilder = new AdeptTabBuilder(adeptContainer, this, wiring);
     technomancerTabBuilder = new TechnomancerTabBuilder(technomancerContainer, this, wiring);
+    initiationTab = new InitiationTabBuilder(initiationContainer, this);
     cyberwareTab = new CyberwareTabBuilder(cyberwareContainer, this);
     streetGear = new StreetGearTabBuilder(lifestyleContainer, armorContainer, weaponContainer,
         gearContainer, this);
@@ -306,6 +315,7 @@ public class CharacterViewController implements CharacterTabHost {
     pages.put(CharacterSection.MAGIC, magicPage);
     pages.put(CharacterSection.ADEPT, adeptPage);
     pages.put(CharacterSection.TECHNOMANCER, technomancerPage);
+    pages.put(CharacterSection.INITIATION, initiationPage);
     pages.put(CharacterSection.IMPLANTS, implantsPage);
     pages.put(CharacterSection.LIFESTYLE, lifestylePage);
     pages.put(CharacterSection.ARMOR, armorContainer);
@@ -329,6 +339,10 @@ public class CharacterViewController implements CharacterTabHost {
     navigator.setEnabled(CharacterSection.MAGIC, character.isMagician(), "Nur mit der Gabe Zauberer oder Magieradept");
     navigator.setEnabled(CharacterSection.ADEPT, character.hasAdeptPowers(), "Nur mit der Gabe Adept oder Magieradept");
     navigator.setEnabled(CharacterSection.TECHNOMANCER, character.hasResonance(), "Nur mit der Gabe Technomancer");
+    TechniqueKind initiationKind = character.getInitiation().getKind();
+    navigator.setEnabled(CharacterSection.INITIATION, initiationKind != null, "Nur mit Magie oder Resonanz");
+    navigator.setTitle(CharacterSection.INITIATION,
+        initiationKind == null ? CharacterSection.INITIATION.getTitle() : initiationKind.getProcessName());
   }
 
   public void setCharacter(@NonNull Character character) {
@@ -342,6 +356,7 @@ public class CharacterViewController implements CharacterTabHost {
     magicTabBuilder.setCharacter(character);
     adeptTabBuilder.setCharacter(character);
     technomancerTabBuilder.setCharacter(character);
+    initiationTab.setCharacter(character);
     cyberwareTab.setCharacter(character);
     logTab.setCharacter(character);
     nameLabel.setText(character.getName());
@@ -354,6 +369,7 @@ public class CharacterViewController implements CharacterTabHost {
     magicTabBuilder.build();
     adeptTabBuilder.build();
     technomancerTabBuilder.build();
+    initiationTab.build();
     cyberwareTab.build();
     buildStreetGearTabs();
   }
@@ -432,6 +448,13 @@ public class CharacterViewController implements CharacterTabHost {
     refreshRows();
   }
 
+  /** Der Grad hebt das Maximum von Magie bzw. Resonanz (Attribute); Karma und Status ziehen nach. */
+  @Override
+  public void onInitiationChanged() {
+    attributeTab.build();
+    refreshRows();
+  }
+
   @Override
   public void onImplantsChanged() {
     // Implantate wirken auf Essenz, Attribute, Würfelpools, Initiative, Zustandsmonitor, Panzerung und Waffen
@@ -470,6 +493,7 @@ public class CharacterViewController implements CharacterTabHost {
     conditionTab.refresh();
     adeptTabBuilder.refresh();
     technomancerTabBuilder.refresh();
+    initiationTab.build(); // klein; zieht die Warnung „Grad über Magie“ nach, wenn sich Magie/Resonanz ändert
     streetGear.refresh();
   }
 
@@ -564,6 +588,7 @@ public class CharacterViewController implements CharacterTabHost {
     magicTabBuilder.build();
     adeptTabBuilder.build();
     technomancerTabBuilder.build();
+    initiationTab.build();
     cyberwareTab.build();
     buildStreetGearTabs();
   }

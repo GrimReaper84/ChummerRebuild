@@ -18,6 +18,8 @@ public enum CharacterSection {
   MAGIC("Magie", SectionGroup.MAGIC_RESONANCE),
   ADEPT("Adeptenkräfte", SectionGroup.MAGIC_RESONANCE),
   TECHNOMANCER("Technomancer", SectionGroup.MAGIC_RESONANCE),
+  /** Initiation bei Magie, Wandlung bei Resonanz; der Titel folgt dem Charakter ({@code SectionNavigator#setTitle}). */
+  INITIATION("Initiation", SectionGroup.MAGIC_RESONANCE),
   IMPLANTS("Cyber- & Bioware", SectionGroup.EQUIPMENT),
   LIFESTYLE("Lebensstil", SectionGroup.EQUIPMENT),
   ARMOR("Rüstung", SectionGroup.EQUIPMENT),

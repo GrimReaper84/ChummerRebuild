@@ -21,7 +21,7 @@ class CharacterSectionTest {
 
   @Test
   void otherGroupsInOrder() {
-    assertEquals(List.of("Magie", "Adeptenkräfte", "Technomancer"), titles(SectionGroup.MAGIC_RESONANCE));
+    assertEquals(List.of("Magie", "Adeptenkräfte", "Technomancer", "Initiation"), titles(SectionGroup.MAGIC_RESONANCE));
     assertEquals(List.of("Cyber- & Bioware", "Lebensstil", "Rüstung", "Waffen", "Ausrüstung", "Fahrzeuge & Drohnen"),
         titles(SectionGroup.EQUIPMENT));
     assertEquals(List.of("Kontakte", "Protokoll"), titles(SectionGroup.NETWORK));

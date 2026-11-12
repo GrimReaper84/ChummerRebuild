@@ -143,9 +143,9 @@
 | Magier/Adept/Mystischer-Adept-Exklusivität             | ✅      | `Character.addQuality()` verhindert gleichzeitige Wahl mehrerer `GRANTS_MAGIC`-Qualities                                                                                                                                                                            |
 | Magier-Quality-Kosten (Bug-Fix)                        | ✅      | `qualities.xml` von 5 auf 15 BP korrigiert (GRW S. 118)                                                                                                                                                                                                              |
 | Adept-Tab (Adeptenkräfte, Power Points = MAG)          | ✅      | 2026-11-12 (ADR-046): Tab „Adeptenkräfte“ nur für Adept/Magieradept, Kraftpunkte = wirksame Magie mit Bruchteilen, Warnung bei überzogenen Punkten |
-| Adeptenkräfte mit PP-Kosten                            | ✅      | 19 GRW-Kräfte (S. 229–232), Auswahldialog; rechnend: Gesteigerte Reflexe, Gesteigertes körperliches Attribut, Verbesserte Fertigkeit, Verbesserte Wahrnehmung, Schmerzresistenz, Mystischer Panzer, Astrale Wahrnehmung. Offen: Adrenalinkick als Rechnung, Kritischer Schlag/Todeskralle im waffenlosen Schaden, Geschärfte Sinne als Liste, Initiation/Metamagie (S. 232/233) |
+| Adeptenkräfte mit PP-Kosten                            | ✅      | 19 GRW-Kräfte (S. 229–232), Auswahldialog; rechnend: Gesteigerte Reflexe, Gesteigertes körperliches Attribut, Verbesserte Fertigkeit, Verbesserte Wahrnehmung, Schmerzresistenz, Mystischer Panzer, Astrale Wahrnehmung. Offen: Adrenalinkick als Rechnung, Kritischer Schlag/Todeskralle im waffenlosen Schaden, Geschärfte Sinne als Liste. Initiation/Metamagie ✅ (ADR-052) |
 | Mystic-Adept-MAG-Split                                 | ✅      | Im Tab Adeptenkräfte (S. 229); Zauberpools mit Rest-Magie, Höchststufe nach voller Magie |
-| Initiationsgrade                                       | ❌      | Kein GRW-Kern-Beleg im Grundregelwerk gefunden (vermutlich Sourcebook *Street Magic*), niedrige Priorität                                                                                                                                                            |
+| Initiationsgrade                                       | ✅      | 2026-11-12 (ADR-052): Bereich „Initiation“, nur Karrieremodus (S. 112), 10 + Grad × 3 Karma, Grad ≤ wirksame Magie, Maximum 6 + Grad, sechs Metamagien (S. 232/233) mit Adepten-Beschränkung, Wirkung als Hinweis. Offen: Gruppeninitiation/Prüfungen (Zusatzband), Intensivierung als Karma-Verwaltung |
 | Restliche magische Aktionsfertigkeiten (Antimagie, Beschwören-Gruppe, Arcana, Verzaubern, Askennen, Astralkampf) | ✅ | **Umgesetzt 2026-10-09** (GRW S. 148–150): Gruppen Hexerei (Antimagie, Ritualzauberei, Spruchzauberei) und Beschwören (Binden, Herbeirufen, Verbannen), dazu Arcana, Askennen, Astralkampf, Verzaubern. Zugang über `Character.isSkillAccessible()`/`canRaiseGroup()`: nur Magier, Ausnahme Arcana (auch Mundane, GRW S. 148). Beim Entfernen der Gabe Magier/Technomant: Ja/Nein-Abfrage, bestätigt werden die gesperrten Fertigkeiten samt Spezialisierung auf 0 gesetzt (`Character.getSkillsLockedByRemovingQuality()`). Seit 2026-11-12: Askennen/Astralkampf nur mit astraler Wahrnehmung (Zauberer oder Kraft Astrale Wahrnehmung, S. 108/149). Hexerei/Beschwören als Wissensfertigkeit für Nicht-Magier (GRW S. 109) nicht gesondert abgebildet |
 
 ---
@@ -158,7 +158,7 @@
 | Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/archiv/technomancer_plan.md`) |
 | Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (alle 21 GRW-Programme S. 271–273 inkl. Panzerung, Seiten am Bild geprüft 2026-11-12), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
 | Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ✅ | GRW S. 112, `Character.canAddComplexFormAtCreation()`, Hinweis im Technomancer-Tab, 2026-11-12 |
-| Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/archiv/technomancer_analyse.md`) |
+| Wandlung (Submersion)                      | ✅      | 2026-11-12 (ADR-052): gleicher Bereich, Titel „Wandlung“, fünf Echos (S. 284), Firewall-/System-Upgrade und Neurofilter bis 3×, Wirkung als Hinweis. Offen: Lebende Persona als Rechnung |
 
 ---
 
@@ -399,7 +399,7 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
 4. ✅ **Qualities vervollständigt (2026-11-12, ADR-044)**; ursprünglich: mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
    siehe Abschnitt 6).
 5. ✅ **Adepten (2026-11-12, ADR-046)**: Tab Adeptenkräfte, 19 GRW-Kräfte, Magieradept-Aufteilung, sieben Kräfte
-   rechnen. Offen: Initiation/Metamagie, situative Kräfte als Rechnung.
+   rechnen. Initiation/Metamagie ✅ (ADR-052). Offen: situative Kräfte als Rechnung.
 6. ✅ **Würfelpools, Zustandsmonitor, Initiative (2026-11-12, ADR-045)**: Pool-Spalte, Tab „Zustand“, augmentiertes
    Maximum, Attributproben, Obergrenze Komplexe Formen. Offen: Matrix-Initiative, situative Quality-Boni.
 7. ✅ **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035), umgesetzt 2026-11-12 (ADR-050).
@@ -411,7 +411,8 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    - ✅ Cybergliedmaßen samt Verbesserungen, Zubehör und Cyber-Nahkampfwaffen (2026-11-12, ADR-051); Cyberguns
      zurückgestellt (GRW ohne Essenz, Kapazität und Preis)
    - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
-   - Noch ohne Katalog: Schutzpatrone, Metamagie, Echos, Geister/Sprites (mit ihren Features)
+   - ✅ Metamagie (6) und Echos (5) mit Initiation/Wandlung (2026-11-12, ADR-052)
+   - Noch ohne Katalog: Schutzpatrone, Geister/Sprites (mit ihren Features)
 9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
 10. ✅ **Grundlegende Überarbeitung der UI** (umgesetzt 2026-11-12, ADR-049; Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
     gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,
@@ -436,7 +437,7 @@ Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett 
 **Stufe 2 – Erweiterte Features**
 
 1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
-2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/archiv/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung (GRW-Kern S. 284, zurückgestellt)
+2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/archiv/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung ✅ (2026-11-12, ADR-052)
 3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/archiv/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`). Vollständiger Katalog, Kapazität der Augen/Ohren und Implantat-Wirkungen ✅ (2026-11-12, ADR-048). Cybergliedmaßen ✅ (2026-11-12, ADR-051)
 4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
 5. **Waffen** ✅ Teil A (2026-09-28), Teil B (2026-09-30) und Teil C Zubehör (2026-10-04) umgesetzt (`docs/plaene/archiv/waffen_plan.md`)

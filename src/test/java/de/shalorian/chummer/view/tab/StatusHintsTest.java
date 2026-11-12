@@ -82,4 +82,20 @@ class StatusHintsTest {
     c.setCreated(true);
     assertEquals(List.of(problem), StatusHints.of(c));
   }
+
+  @Test
+  void initiationGradeAboveMagicIsReported() {
+    Character c = mensch();
+    c.addQuality(Objects.requireNonNull(QualityDataLoader.findByName("Zauberer")), false);
+    Objects.requireNonNull(c.getMagicOrResonance()).setValue(2);
+    c.setCreated(true);
+    c.getInitiation().raiseGrade();
+    c.getInitiation().raiseGrade();
+    implant(c, "Datenbuchse", 0);
+    implant(c, "Datenschloss", 0);
+    implant(c, "Sim-Modul", 0);
+    implant(c, "Ultraschallsensor", 0);
+    assertTrue(StatusHints.of(c).stream().anyMatch(h -> h.startsWith("Initiationsgrad 2 liegt über Magie 1")),
+        StatusHints.of(c).toString());
+  }
 }

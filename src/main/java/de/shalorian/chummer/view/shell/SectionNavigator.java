@@ -30,6 +30,7 @@ public final class SectionNavigator {
   private final @NonNull Map<CharacterSection, Node> pages;
   private final @NonNull Map<CharacterSection, Button> buttons = new EnumMap<>(CharacterSection.class);
   private final @NonNull Map<CharacterSection, StackPane> holders = new EnumMap<>(CharacterSection.class);
+  private final @NonNull Map<CharacterSection, Label> pageTitles = new EnumMap<>(CharacterSection.class);
   private final @NonNull Map<CharacterSection, Tooltip> tooltips = new EnumMap<>(CharacterSection.class);
   private final @NonNull ScrollPane scroll = new ScrollPane();
   private @NonNull CharacterSection selected = CharacterSection.DEFAULT;
@@ -69,8 +70,9 @@ public final class SectionNavigator {
   }
 
   /** Die Seite unter dem Bereichsnamen als Seitentitel; die Seite füllt den Rest der Höhe. */
-  private static @NonNull Node withTitle(@NonNull CharacterSection section, @NonNull Node page) {
+  private @NonNull Node withTitle(@NonNull CharacterSection section, @NonNull Node page) {
     Label title = new Label(section.getTitle());
+    pageTitles.put(section, title);
     title.getStyleClass().add("page-title");
     title.setPadding(new Insets(20, 36, 4, 36));
     VBox.setVgrow(page, Priority.ALWAYS);
@@ -136,6 +138,18 @@ public final class SectionNavigator {
       tooltips.put(section, tooltip);
     }
     fallBackIfUnavailable();
+  }
+
+  /** Benennt einen Bereich in Seitenleiste und Seitentitel um (Initiation bzw. Wandlung). */
+  public void setTitle(@NonNull CharacterSection section, @NonNull String title) {
+    Button button = buttons.get(section);
+    if (button != null) {
+      button.setText(title);
+    }
+    Label pageTitle = pageTitles.get(section);
+    if (pageTitle != null) {
+      pageTitle.setText(title);
+    }
   }
 
   /** Blendet den Knopf eines Bereichs ein oder aus (Status nur bei statischer Anzeige). */

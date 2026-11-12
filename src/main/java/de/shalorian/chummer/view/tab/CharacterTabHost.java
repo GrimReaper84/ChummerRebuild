@@ -51,4 +51,10 @@ public interface CharacterTabHost {
    * nachziehen.
    */
   void onAdeptPowersChanged();
+
+  /**
+   * Initiations- bzw. Wandlungsgrad oder Techniken haben sich geändert: Maximum von Magie bzw. Resonanz (Attribute),
+   * Karma und Status nachziehen.
+   */
+  void onInitiationChanged();
 }

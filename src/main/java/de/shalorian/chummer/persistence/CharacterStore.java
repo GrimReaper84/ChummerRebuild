@@ -2,6 +2,10 @@ package de.shalorian.chummer.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.CharacterBiography;
+import de.shalorian.chummer.model.character.Contact;
+import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.adept.AdeptPowerData;
 import de.shalorian.chummer.model.character.adept.AdeptPowerDataLoader;
 import de.shalorian.chummer.model.character.armor.Armor;
@@ -11,11 +15,6 @@ import de.shalorian.chummer.model.character.armor.ArmorMod;
 import de.shalorian.chummer.model.character.armor.ArmorModData;
 import de.shalorian.chummer.model.character.armor.ArmorModDataLoader;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
-import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.CharacterBiography;
-import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
-import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
-import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.cyberware.BodyLocation;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
@@ -27,16 +26,22 @@ import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
+import de.shalorian.chummer.model.character.initiation.TechniqueData;
+import de.shalorian.chummer.model.character.initiation.TechniqueDataLoader;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
-import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
-import de.shalorian.chummer.model.character.LogEntry;
+import de.shalorian.chummer.model.character.magic.SpellData;
+import de.shalorian.chummer.model.character.magic.SpellDataLoader;
+import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySource;
+import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
+import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.vehicle.VehicleData;
 import de.shalorian.chummer.model.character.vehicle.VehicleDataLoader;
@@ -48,9 +53,6 @@ import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
-import de.shalorian.chummer.model.character.magic.SpellData;
-import de.shalorian.chummer.model.character.magic.SpellDataLoader;
-import de.shalorian.chummer.model.character.magic.Tradition;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -131,6 +133,8 @@ public class CharacterStore {
         .map(p -> new AdeptPowerEntry(p.getData().name(), p.getChoice(), p.getLevel()))
         .toList();
     data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
+    data.initiation = new InitiationEntry(character.getInitiation().getGrade(),
+        character.getInitiation().getTechniques().stream().map(TechniqueData::name).toList());
     IdentityHashMap<Cyberware, Integer> pairIds = pairIds(character);
     data.cyberware = character.getEquipment().getCyberware().stream()
         .map(implant -> toCyberwareEntry(implant, pairIds))
@@ -256,6 +260,8 @@ public class CharacterStore {
     applySkills(character, data);
     character.setCreated(data.created);
     character.setNuyenBP(data.nuyenBP);
+    // Initiation vor dem Magiewert: sie hebt das Maximum über 6.
+    applyInitiation(character, data);
     applyMagicOrResonance(character, data);
     applyAdeptPowers(character, data);
     applyKnowledgeSkills(character, data);
@@ -694,6 +700,15 @@ public class CharacterStore {
         character.loadSelectedQuality(qualityData, entry.gratis, entry.choice);
       }
     }
+  }
+
+  /** Stellt Grad und Techniken wieder her; unbekannte Techniken werden übersprungen. */
+  private static void applyInitiation(@NonNull Character character, @NonNull CharacterData data) {
+    List<TechniqueData> techniques = data.initiation.techniques.stream()
+        .map(TechniqueDataLoader::findByName)
+        .filter(Objects::nonNull)
+        .toList();
+    character.getInitiation().restore(data.initiation.grade, techniques);
   }
 
   private static void applyMagicOrResonance(@NonNull Character character,
