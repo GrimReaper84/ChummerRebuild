@@ -7,6 +7,9 @@ import de.shalorian.chummer.model.character.adept.AdeptPowerDataLoader;
 import de.shalorian.chummer.model.character.armor.Armor;
 import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.armor.ArmorDataLoader;
+import de.shalorian.chummer.model.character.armor.ArmorMod;
+import de.shalorian.chummer.model.character.armor.ArmorModData;
+import de.shalorian.chummer.model.character.armor.ArmorModDataLoader;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterBiography;
@@ -124,9 +127,7 @@ public class CharacterStore {
         .toList();
     data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
     data.cyberware = character.getEquipment().getCyberware().stream().map(CharacterStore::toCyberwareEntry).toList();
-    data.armor = character.getEquipment().getArmor().stream()
-        .map(a -> new ArmorEntry(a.getName(), a.isEquipped(), a.getChosenPrice()))
-        .toList();
+    data.armor = character.getEquipment().getArmor().stream().map(CharacterStore::toArmorEntry).toList();
     data.weapons = character.getEquipment().getWeapons().stream().map(CharacterStore::toWeaponEntry)
         .toList();
     data.gear = character.getEquipment().getGear().stream().map(CharacterStore::toGearEntry)
@@ -160,6 +161,12 @@ public class CharacterStore {
         .toList();
     entry.includedGear = vehicle.getIncludedGear().stream().map(CharacterStore::toGearEntry).toList();
     entry.gear = vehicle.getGear().stream().map(CharacterStore::toGearEntry).toList();
+    return entry;
+  }
+
+  private static @NonNull ArmorEntry toArmorEntry(@NonNull Armor armor) {
+    ArmorEntry entry = new ArmorEntry(armor.getName(), armor.isEquipped(), armor.getChosenPrice());
+    entry.mods = armor.getMods().stream().map(m -> new ArmorModEntry(m.getName(), m.getRating())).toList();
     return entry;
   }
 
@@ -344,7 +351,19 @@ public class CharacterStore {
       if (armorData.hasVariablePrice()) {
         price = entry.price != null && armorData.isValidPrice(entry.price) ? entry.price : armorData.priceMin();
       }
-      character.getEquipment().addArmor(new Armor(armorData, entry.equipped, price));
+      Armor armor = new Armor(armorData, entry.equipped, price);
+      installArmorMods(armor, entry.mods);
+      character.getEquipment().addArmor(armor);
+    }
+  }
+
+  /** Baut die gespeicherten Einbauten ein; unbekannte oder nicht (mehr) passende werden übersprungen. */
+  private static void installArmorMods(@NonNull Armor armor, @NonNull List<ArmorModEntry> entries) {
+    for (ArmorModEntry modEntry : entries) {
+      ArmorModData modData = ArmorModDataLoader.findByName(modEntry.name);
+      if (modData != null && armor.installProblem(modData, modEntry.rating) == null) {
+        armor.install(new ArmorMod(modData, modEntry.rating));
+      }
     }
   }
 

@@ -4,6 +4,9 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.armor.Armor;
 import de.shalorian.chummer.model.character.armor.ArmorData;
+import de.shalorian.chummer.model.character.armor.ArmorModData;
+import de.shalorian.chummer.model.character.armor.ArmorProtection;
+import de.shalorian.chummer.model.character.armor.SpecialProtection;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
@@ -16,9 +19,11 @@ import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
+import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.ToIntFunction;
@@ -147,6 +152,15 @@ public class Equipment {
     return owner.isCreated() || armorData.isAllowedAtCreation();
   }
 
+  /**
+   * Ob {@code mod} in Stufe {@code rating} in {@code piece} eingebaut (und damit gekauft) werden darf: bei der
+   * Erschaffung Verfügbarkeit höchstens {@value Availability#MAX_AVAILABILITY_AT_CREATION}, ein Zuschlag ("+6") zählt
+   * mit der Verfügbarkeit des Teils (GRW S. 111, 373).
+   */
+  public boolean isAvailableForInstall(@NonNull Armor piece, @NonNull ArmorModData mod, int rating) {
+    return owner.isCreated() || piece.availabilityWith(mod, rating) <= Availability.MAX_AVAILABILITY_AT_CREATION;
+  }
+
   // --- Rüstung ---
 
   /** Alle gekauften Rüstungsteile, angelegt oder nicht. */
@@ -175,24 +189,76 @@ public class Equipment {
    * S. 372 ihrer Stufe entspricht. Also höchstes angelegtes Panzerungsteil + Summe aller angelegten Helm-/Schild-Boni.
    */
   public int getArmorBallistic() {
-    return protectionValue(ArmorData::ballistic);
+    return protectionValue(Armor::getBallistic);
   }
 
   /** Stoß-Schutzwert der angelegten Rüstung, Regel wie {@link #getArmorBallistic()}. */
   public int getArmorImpact() {
-    return protectionValue(ArmorData::impact);
+    return protectionValue(Armor::getImpact);
   }
 
-  private int protectionValue(@NonNull ToIntFunction<ArmorData> value) {
+  private int protectionValue(@NonNull ToIntFunction<Armor> value) {
     int highest = equippedArmor()
         .filter(a -> !a.getData().category().isBonus())
-        .mapToInt(a -> value.applyAsInt(a.getData()))
+        .mapToInt(value)
         .max().orElse(0);
     int bonus = equippedArmor()
         .filter(a -> a.getData().category().isBonus())
-        .mapToInt(a -> value.applyAsInt(a.getData()))
+        .mapToInt(value)
         .sum();
     return highest + bonus;
+  }
+
+  /**
+   * Zusatzschutz der angelegten Rüstung durch Modifikationen (GRW S. 372): die höchste Stufe dieser Art unter allen
+   * angelegten Teilen. Sind Panzerung und Schild modifiziert, zählt nur eine (Annahme: die höhere). Bei Elektrizität,
+   * Feuer, Kälte und Chemikalien kommt sie zur Panzerung hinzu, bei Wärmedämpfung ist sie ein Würfelbonus.
+   */
+  public int getSpecialProtection(@NonNull ArmorProtection protection) {
+    return equippedArmor().mapToInt(a -> a.getProtection(protection)).max().orElse(0);
+  }
+
+  /**
+   * Sonderschutz der angelegten Rüstung als Anzeigezeilen (GRW S. 372): je Schutzart die höchste Stufe eines angelegten
+   * Teils, Panzerungswerte mit dem Gesamtschutz des Charakters (S. 190).
+   */
+  public @NonNull List<SpecialProtection> getSpecialProtections() {
+    List<SpecialProtection> lines = new ArrayList<>();
+    for (ArmorProtection protection : ArmorProtection.values()) {
+      if (protection == ArmorProtection.NONE) {
+        continue;
+      }
+      equippedArmor()
+          .filter(a -> a.getProtection(protection) > 0)
+          .max(Comparator.comparingInt(a -> a.getProtection(protection)))
+          .ifPresent(best -> lines.add(protection.describe(best.getProtection(protection), owner.getArmorBallistic(),
+              owner.getArmorImpact(), "", best.isFullBody())));
+    }
+    return lines;
+  }
+
+  /** Ob ein Schild angelegt ist (−1 auf körperliche Proben, GRW S. 372). */
+  public boolean hasShieldEquipped() {
+    return equippedArmor().anyMatch(a -> a.getData().shield());
+  }
+
+  /**
+   * Waffen, die angelegte Rüstung stellt (GRW S. 373): Schutz- und Taserschild als exotische Nahkampfwaffe,
+   * Schockstreifen als waffenloser Angriff. Sie werden nicht gekauft und erscheinen nur, solange das Teil angelegt ist;
+   * jeder Aufruf liefert neue Instanzen.
+   */
+  public @NonNull List<Weapon> getArmorWeapons() {
+    List<String> names = new ArrayList<>();
+    equippedArmor().forEach(a -> {
+      names.add(a.getData().weapon());
+      a.getMods().forEach(m -> names.add(m.getData().weapon()));
+    });
+    return names.stream()
+        .filter(name -> !name.isEmpty())
+        .map(WeaponDataLoader::findByName)
+        .filter(Objects::nonNull)
+        .map(Weapon::new)
+        .toList();
   }
 
   /**
@@ -209,12 +275,12 @@ public class Equipment {
    */
   public int getArmorEncumbrancePenalty() {
     int limit = owner.getAugmentedAttributeValue(AttributeType.BOD) * ARMOR_ENCUMBRANCE_BOD_MULTIPLIER;
-    return -(encumbranceSteps(ArmorData::ballistic, limit)
-        + encumbranceSteps(ArmorData::impact, limit));
+    return -(encumbranceSteps(Armor::getBallistic, limit)
+        + encumbranceSteps(Armor::getImpact, limit));
   }
 
-  private int encumbranceSteps(@NonNull ToIntFunction<ArmorData> value, int limit) {
-    int total = equippedArmor().mapToInt(a -> value.applyAsInt(a.getData())).sum();
+  private int encumbranceSteps(@NonNull ToIntFunction<Armor> value, int limit) {
+    int total = equippedArmor().mapToInt(value).sum();
     int excess = Math.max(0, total - limit);
     return (excess + ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY - 1) / ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY;
   }

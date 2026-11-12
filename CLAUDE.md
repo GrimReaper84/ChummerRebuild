@@ -38,7 +38,8 @@ Package überschaubar bleibt:
   Oberfläche in den Java-Preferences)
 - `view.shell`: Rahmen des Charakterbogens: Seitenleiste (`CharacterSection`, `SectionGroup`, `SectionNavigator`),
   Status-Panel (`SlidePanel`, `FloatingButtonPosition`), Fußzeile (`FooterText`)
-- `view.tab`: ein Builder je Bereich des Charakterbogens, dazu `StatusOverviewBuilder`/`StatusHints` (`AttributeTabBuilder`, `SkillTabBuilder` mit
+- `view.tab`: ein Builder je Bereich des Charakterbogens (Rüstung: `ArmorTabBuilder`), dazu
+  `StatusOverviewBuilder`/`StatusHints` (`AttributeTabBuilder`, `SkillTabBuilder` mit
   `KnowledgeSkillSection`, `QualityTabBuilder`, `ContactTabBuilder`, `BiographyTabBuilder`, `MagicTabBuilder`,
   `TechnomancerTabBuilder`, `CyberwareTabBuilder`, `StreetGearTabBuilder`, `WeaponTabBuilder`, `GearTabBuilder`,
   `VehicleTabBuilder`, `LogTabBuilder`), ihre Anzeigewerte (`WeaponDetails`, `GearDetails`, `VehicleDetails`) und die

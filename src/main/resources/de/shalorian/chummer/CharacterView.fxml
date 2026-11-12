@@ -148,13 +148,11 @@
       </ScrollPane>
 
 
-      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="armorPage">
-        <VBox styleClass="attr-container" fx:id="armorContainer">
-          <padding>
-            <Insets bottom="20" left="36" right="36" top="8"/>
-          </padding>
-        </VBox>
-      </ScrollPane>
+      <VBox styleClass="attr-container" fx:id="armorContainer">
+        <padding>
+          <Insets bottom="20" left="36" right="36" top="8"/>
+        </padding>
+      </VBox>
 
 
       <VBox styleClass="attr-container" fx:id="weaponContainer">

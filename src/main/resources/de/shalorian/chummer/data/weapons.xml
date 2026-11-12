@@ -204,6 +204,32 @@
         <page>361</page>
     </item>
 
+    <item>
+        <name>Schutzschild</name>
+        <category>Exotische Nahkampfwaffen</category>
+        <reach>–</reach>
+        <damage>(STR÷2)G</damage>
+        <ap>+2</ap>
+        <cost>0</cost>
+        <fromarmor/>
+        <note>Der angelegte Schutzschild als Nahkampfwaffe.</note>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Taserschild</name>
+        <category>Exotische Nahkampfwaffen</category>
+        <reach>–</reach>
+        <damage>6G(e)</damage>
+        <ap>–Hälfte</ap>
+        <cost>0</cost>
+        <fromarmor/>
+        <note>Der angelegte Taserschild als Nahkampfwaffe; Elektroschock, 20 Ladungen.</note>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
     <!-- ── WAFFENLOS (S. 361) ──────────────────────────────────── -->
 
     <item>
@@ -217,6 +243,21 @@
         <cost>200</cost>
         <source>SR4</source>
         <page>361</page>
+    </item>
+
+    <!-- Waffen aus Rüstung (S. 373): nicht kaufbar, erscheinen solange das Teil angelegt ist (<fromarmor/>) -->
+
+    <item>
+        <name>Schockstreifen</name>
+        <category>Waffenlos</category>
+        <reach>–</reach>
+        <damage>6G(e)</damage>
+        <ap>–Hälfte</ap>
+        <cost>0</cost>
+        <fromarmor/>
+        <note>Aus der Panzerungsmodifikation Schockstreifen; Angriff mit Waffenlosem Kampf, 10 Ladungen.</note>
+        <source>SR4</source>
+        <page>373</page>
     </item>
 
     <!-- ── BÖGEN (S. 361) ──────────────────────────────────────── -->

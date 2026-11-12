@@ -29,7 +29,8 @@ record WeaponTreeEntry(@NonNull String label, @Nullable Weapon weapon,
   }
 
   static @NonNull WeaponTreeEntry ofWeapon(@NonNull Weapon weapon) {
-    return new WeaponTreeEntry(weapon.getDisplayName(), weapon, null, null, null);
+    String label = weapon.getData().fromArmor() ? weapon.getDisplayName() + " (aus Rüstung)" : weapon.getDisplayName();
+    return new WeaponTreeEntry(label, weapon, null, null, null);
   }
 
   static @NonNull WeaponTreeEntry ofAccessory(@NonNull Weapon weapon,

@@ -34,7 +34,7 @@ class WeaponTest {
   @Test
   void weaponWithoutRatingRejectsRating() {
     WeaponData knife = new WeaponData("Test", WeaponCategory.BLADES, "–", "(STR÷2+1)K", "–", "",
-        Recoil.NONE, "", null, Availability.NONE, "20", 0, "", List.of(), "SR4", "0");
+        Recoil.NONE, "", null, Availability.NONE, "20", 0, "", List.of(), "SR4", "0", false);
 
     assertEquals("Test", new Weapon(knife).getDisplayName());
     assertEquals(20, new Weapon(knife).getNuyenCost());

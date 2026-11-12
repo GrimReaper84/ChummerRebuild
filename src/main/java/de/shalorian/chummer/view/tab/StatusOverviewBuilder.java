@@ -1,9 +1,11 @@
 package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.armor.SpecialProtection;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 import javafx.scene.Node;
@@ -131,8 +133,10 @@ public final class StatusOverviewBuilder {
   private static @NonNull Node protectionAndEssence(@NonNull Character c) {
     int penalty = c.getEquipment().getArmorEncumbrancePenalty();
     String armorCaption = "Ballistik / Stoß · " + (penalty == 0 ? "keine Behinderung" : "Behinderung " + penalty);
-    Node armor = card(titled("PANZERUNG",
-        figure(c.getArmorBallistic() + " / " + c.getArmorImpact(), armorCaption, false)));
+    VBox armorBox = titled("PANZERUNG",
+        figure(c.getArmorBallistic() + " / " + c.getArmorImpact(), armorCaption, false));
+    armorBox.getChildren().addAll(armorExtras(c));
+    Node armor = card(armorBox);
     String essenceCaption = "Cyberware %s · Bioware %s".formatted(ESSENCE_FORMAT.toString(c.getCyberwareEssenceLoss()),
         ESSENCE_FORMAT.toString(c.getBiowareEssenceLoss()));
     Node essence = card(titled("ESSENZ", figure(ESSENCE_FORMAT.toString(c.getEssence()), essenceCaption, false)));
@@ -141,6 +145,22 @@ public final class StatusOverviewBuilder {
     grid.add(armor, 0, 0);
     grid.add(essence, 1, 0);
     return grid;
+  }
+
+  /**
+   * Sonderschutz der angelegten Rüstung (GRW S. 372) und Schild-Malus als kurze Zeilen unter der Panzerung, z.B.
+   * „gegen Elektrizität 11/9“, „Infiltration gegen IR +2 Würfel“, „Schild: −1 auf körperliche Proben“.
+   */
+  private static @NonNull List<Label> armorExtras(@NonNull Character c) {
+    List<Label> lines = new ArrayList<>();
+    for (SpecialProtection protection : c.getEquipment().getSpecialProtections()) {
+      lines.add(styled(new Label(protection.toString()), "effect-text"));
+    }
+    if (c.getEquipment().hasShieldEquipped()) {
+      lines.add(styled(new Label("Schild: −1 auf körperliche Proben"), "warn-text"));
+    }
+    lines.forEach(line -> line.setWrapText(true));
+    return lines;
   }
 
   private static @NonNull Node specialAttributes(@NonNull Character c) {

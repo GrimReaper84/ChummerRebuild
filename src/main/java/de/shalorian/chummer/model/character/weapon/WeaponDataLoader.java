@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.weapon;
 
 import static de.shalorian.chummer.utils.XmlUtils.childText;
+import static de.shalorian.chummer.utils.XmlUtils.firstChild;
 
 import de.shalorian.chummer.model.character.DataPaths;
 import de.shalorian.chummer.model.character.equipment.Availability;
@@ -85,7 +86,8 @@ public class WeaponDataLoader {
         childText(el, "note"),
         parseIncluded(el),
         childText(el, "source"),
-        childText(el, "page"));
+        childText(el, "page"),
+        firstChild(el, "fromarmor") != null);
   }
 
   /** {@code <included rule="…">Name</included>}: eingebautes Zubehör, Regel optional. */

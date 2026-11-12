@@ -105,6 +105,21 @@ Fußzeile und Status werden an einer Stelle aktualisiert (`CharacterViewControll
 bleiben.
 **Warum:** Nutzerentscheidungen 2026-11-12 nach klickbarem Entwurf; `docs/plaene/archiv/ui_rework_plan.md`.
 
+### ADR-050: Rüstung mit Zubehör, Modifikationen und Schild-Regeln (2026-11-12)
+Zubehör der Ganzkörperpanzerung und des Urban Explorer Overalls sowie die sechs Panzerungsmodifikationen (S. 373) stehen
+in `armor_mods.xml` und werden in ein Teil eingebaut (`Armor#install`): Zubehör nur an seinem Teil, Modifikationen an
+Panzerung und Lederjacke, an Schilden nur Chemische und Elektrische Isolierung sowie Feuerresistenz (S. 372), jede
+einmal, keine Kapazität (das GRW kennt keine). Zubehör-Boni erhöhen den Wert ihres Teils und zählen zur Behinderung.
+Sonderschutz gegen Elektrizität, Feuer und Kälte = normaler Schutz + höchste Modifikationsstufe dieser Art unter den
+angelegten Teilen (Annahme zu „nur eine zählt“); Chemische Isolierung als Würfelbonus auf den Toxinwiderstand (Kontakt,
+an der Ganzkörperpanzerung auch Inhalation; Tabelle „Schutz vor Chemikalien“) und gegen Säure zur Panzerung (S. 194),
+Wärmedämpfung als Würfelbonus. Die Anzeigezeilen liefert das Modell (`Equipment#getSpecialProtections`). Ein angelegter Schild gibt −1 auf Fertigkeiten mit körperlichem Attribut
+und körperliche Attributproben. Schutz- und Taserschild sowie Schockstreifen stehen als Waffen in `weapons.xml`
+(`<fromarmor/>`, nicht kaufbar) und erscheinen im Waffenbereich, solange ihr Teil angelegt ist. Die Rüstung ist ein
+Master-Detail-Bereich wie die Waffen (`ArmorTabBuilder`). Rüstungskapazität und eingebaute Waffen (Arsenal) bleiben
+draußen.
+**Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/ruestung_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

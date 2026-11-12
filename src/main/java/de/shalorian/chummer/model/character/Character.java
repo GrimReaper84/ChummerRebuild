@@ -1337,9 +1337,11 @@ public class Character {
     int attribute = linkedAttributeValue(skill.getLinkedAttribute());
     int powers = adeptPowerDice(skill);
     int implantDice = implantDice(skill);
+    int shield = shieldPenalty(isPhysicalAttribute(skill.getLinkedAttribute()));
     String bonusText = (powers == 0 ? "" : " + Adeptenkräfte " + powers)
-        + (implantDice == 0 ? "" : " + Implantate " + implantDice);
-    int bonus = powers + implantDice;
+        + (implantDice == 0 ? "" : " + Implantate " + implantDice)
+        + shieldText(shield);
+    int bonus = powers + implantDice + shield;
     if (skill.getRating() > 0) {
       return Optional.of(dicePool(skill.getRating() + attribute + bonus,
           ratingBreakdown(skill.getName(), skill.getRating(), attributeName, attribute) + bonusText));
@@ -1431,8 +1433,23 @@ public class Character {
   public @NonNull DicePool getAttributeTestPool(@NonNull AttributeTest test) {
     int first = getAugmentedAttributeValue(test.getFirst());
     int second = getAugmentedAttributeValue(test.getSecond());
-    return dicePool(first + second,
-        ratingBreakdown(test.getFirst().getDisplayName(), first, test.getSecond().getDisplayName(), second));
+    int shield = shieldPenalty(test.getFirst().isPhysical() || test.getSecond().isPhysical());
+    return dicePool(first + second + shield,
+        ratingBreakdown(test.getFirst().getDisplayName(), first, test.getSecond().getDisplayName(), second)
+            + shieldText(shield));
+  }
+
+  /**
+   * Malus eines angelegten Schilds: −1 auf alle körperlichen Proben einschließlich Angriffen (GRW S. 372). Als
+   * körperlich gilt eine Probe mit körperlichem Attribut (Fertigkeit mit körperlichem verbundenem Attribut bzw.
+   * Attributprobe mit einem körperlichen Attribut).
+   */
+  private int shieldPenalty(boolean physical) {
+    return physical && equipment.hasShieldEquipped() ? -1 : 0;
+  }
+
+  private static @NonNull String shieldText(int shield) {
+    return shield == 0 ? "" : " − Schild " + -shield;
   }
 
   private @NonNull DicePool dicePool(int dice, @NonNull String breakdown) {

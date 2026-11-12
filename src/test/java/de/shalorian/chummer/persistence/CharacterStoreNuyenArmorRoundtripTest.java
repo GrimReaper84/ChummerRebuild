@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.armor.Armor;
 import de.shalorian.chummer.model.character.armor.ArmorDataLoader;
+import de.shalorian.chummer.model.character.armor.ArmorMod;
+import de.shalorian.chummer.model.character.armor.ArmorModDataLoader;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import java.io.File;
@@ -89,5 +91,37 @@ class CharacterStoreNuyenArmorRoundtripTest {
     assertEquals(1, loaded.getEquipment().getArmor().size());
     assertEquals(LifestyleLevel.STREET, loaded.getEquipment().getLifestyle().getLevel());
     assertEquals(1, loaded.getEquipment().getLifestyle().getMonths());
+  }
+
+  @Test
+  void roundtripPreservesArmorModsWithRating() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    Armor fullBody = new Armor(Objects.requireNonNull(ArmorDataLoader.findByName("Ganzkörperpanzerung")));
+    fullBody.install(new ArmorMod(Objects.requireNonNull(ArmorModDataLoader.findByName("Helm (Ganzkörperpanzerung)")), 0));
+    fullBody.install(new ArmorMod(Objects.requireNonNull(ArmorModDataLoader.findByName("Elektrische Isolierung")), 4));
+    fullBody.install(new ArmorMod(Objects.requireNonNull(ArmorModDataLoader.findByName("Schockstreifen")), 0));
+    original.getEquipment().addArmor(fullBody);
+
+    CharacterStore.save(original, tempFile());
+    Armor loaded = CharacterStore.load(tempFile()).getEquipment().getArmor().getFirst();
+
+    assertEquals(List.of("Helm (Ganzkörperpanzerung)", "Elektrische Isolierung", "Schockstreifen"),
+        loaded.getMods().stream().map(ArmorMod::getName).toList());
+    assertEquals(4, loaded.getMods().get(1).getRating());
+    assertEquals(fullBody.getNuyenCost(), loaded.getNuyenCost());
+    assertEquals(12, loaded.getBallistic());
+  }
+
+  @Test
+  void unfittingSavedModIsSkipped() throws IOException {
+    Files.writeString(tempFile().toPath(), """
+        {"name":"Alt","metatype":"Mensch",
+         "armor":[{"name":"Panzerjacke","equipped":true,
+                   "mods":[{"name":"Chemische Versiegelung","rating":0},{"name":"Feuerresistenz","rating":2}]}]}
+        """, StandardCharsets.UTF_8);
+
+    Armor loaded = CharacterStore.load(tempFile()).getEquipment().getArmor().getFirst();
+
+    assertEquals(List.of("Feuerresistenz"), loaded.getMods().stream().map(ArmorMod::getName).toList());
   }
 }

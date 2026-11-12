@@ -27,7 +27,9 @@ import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import de.shalorian.chummer.view.dialog.WeaponSelectDialogController;
 import de.shalorian.chummer.view.grid.GridSupport;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -127,7 +129,8 @@ final class WeaponTabBuilder {
   /**
    * Füllt den Baum: je belegter Kategorie ein aufgeklappter Knoten in GRW-Tabellenreihenfolge
    * ({@link WeaponCategory}), darunter die Waffen in Kaufreihenfolge und unter jeder Waffe ihr
-   * mitgeliefertes und gekauftes Zubehör sowie beim Bogen seine Pfeile.
+   * mitgeliefertes und gekauftes Zubehör sowie beim Bogen seine Pfeile. Waffen aus angelegter Rüstung (Schilde,
+   * Schockstreifen, GRW S. 373) stehen mit dem Zusatz „(aus Rüstung)“ dabei und sind nur lesbar.
    *
    * @return der Knoten der gewünschten Auswahl, oder {@code null}
    */
@@ -137,7 +140,9 @@ final class WeaponTabBuilder {
       @Nullable Object selectedChild) {
     Map<WeaponCategory, TreeItem<WeaponTreeEntry>> groups = new EnumMap<>(WeaponCategory.class);
     TreeItem<WeaponTreeEntry> selectedItem = null;
-    for (Weapon weapon : character.getEquipment().getWeapons()) {
+    List<Weapon> weapons = new ArrayList<>(character.getEquipment().getWeapons());
+    weapons.addAll(character.getEquipment().getArmorWeapons());
+    for (Weapon weapon : weapons) {
       TreeItem<WeaponTreeEntry> group = groups.computeIfAbsent(weapon.getData().category(),
           category -> {
             TreeItem<WeaponTreeEntry> item = new TreeItem<>(WeaponTreeEntry.ofCategory(category));
@@ -212,7 +217,7 @@ final class WeaponTabBuilder {
     // Bindungen an die Baumauswahl (UI-Zustand); die Kategorie einer Waffe ändert sich nie.
     addAccessoryBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       Weapon weapon = selectedWeapon(tree);
-      return weapon == null || !weapon.getData().category().acceptsAccessories();
+      return weapon == null || weapon.getData().fromArmor() || !weapon.getData().category().acceptsAccessories();
     }, tree.getSelectionModel().selectedItemProperty()));
     addAccessoryBtn.setOnAction(_ -> onAddAccessory(character, tree));
 
@@ -239,6 +244,10 @@ final class WeaponTabBuilder {
       if (accessory != null) {
         return accessory.data().isPermanent();
       }
+      Weapon weapon = entry.weapon();
+      if (entry.isWeapon() && weapon != null && weapon.getData().fromArmor()) {
+        return true; // kommt mit dem Rüstungsteil und geht mit ihm
+      }
       return !entry.isWeapon() && entry.arrows() == null;
     }, tree.getSelectionModel().selectedItemProperty()));
     removeBtn.setOnAction(_ -> onRemoveSelected(character, tree));
@@ -264,6 +273,7 @@ final class WeaponTabBuilder {
     Weapon weapon = entry == null ? null : entry.weapon();
     if (entry == null || weapon == null) {
       details.getChildren().add(detailHint(character.getEquipment().getWeapons().isEmpty()
+          && character.getEquipment().getArmorWeapons().isEmpty()
           ? "Keine Waffen gekauft"
           : "Waffe auswählen, um ihre Werte zu sehen"));
     } else if (entry.accessory() != null) {

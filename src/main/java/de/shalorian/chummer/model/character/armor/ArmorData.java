@@ -16,6 +16,9 @@ import org.jspecify.annotations.NonNull;
  * @param cost      fester Preis in Nuyen; bei Kleidung der Aufschlag auf den frei gewählten Kleidungspreis
  * @param priceMin  Untergrenze des vom Spieler gewählten Preisanteils (Kleidung 20 ¥), {@code 0} ohne
  * @param priceMax  Obergrenze dieses Preisanteils (Kleidung 100.000 ¥), {@code 0} ohne
+ * @param shield     ob das Teil ein Schild ist: −1 auf körperliche Proben, nur bestimmte Modifikationen (S. 372)
+ * @param acceptsMods ob das Teil Panzerungsmodifikationen aufnimmt (Panzerung, Lederjacke, Schilde)
+ * @param weapon     Name der Waffe aus {@code weapons.xml}, die das angelegte Teil stellt (Schutz-, Taserschild), sonst leer
  */
 public record ArmorData(
     @NonNull String name,
@@ -27,13 +30,16 @@ public record ArmorData(
     int priceMin,
     int priceMax,
     @NonNull String source,
-    @NonNull String page
+    @NonNull String page,
+    boolean shield,
+    boolean acceptsMods,
+    @NonNull String weapon
 ) implements CatalogEntry {
 
   /** Rüstung mit festem Preis (alles außer Kleidung). */
   public ArmorData(@NonNull String name, @NonNull ArmorCategory category, int ballistic, int impact,
       @NonNull Availability availability, int cost, @NonNull String source, @NonNull String page) {
-    this(name, category, ballistic, impact, availability, cost, 0, 0, source, page);
+    this(name, category, ballistic, impact, availability, cost, 0, 0, source, page, false, false, "");
   }
 
   /**

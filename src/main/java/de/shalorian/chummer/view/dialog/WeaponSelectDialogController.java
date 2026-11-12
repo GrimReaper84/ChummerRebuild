@@ -128,7 +128,8 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
 
   @Override
   protected @NonNull List<WeaponData> allEntries() {
-    return List.copyOf(WeaponDataLoader.getAllWeapons().values());
+    // Waffen aus Rüstung (Schilde, Schockstreifen) kommen mit ihrem Teil und werden nicht gekauft.
+    return WeaponDataLoader.getAllWeapons().values().stream().filter(w -> !w.fromArmor()).toList();
   }
 
   @Override

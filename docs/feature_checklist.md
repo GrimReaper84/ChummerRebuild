@@ -189,9 +189,9 @@
 | Ballistik/Impact-Berechnung (Stacking-Regeln) | ✅      | GRW S. 190/372: höchstes angelegtes Teil + Helm-/Schild-Boni |
 | Tragebelastung (Armor Encumbrance)            | ✅      | GRW S. 190 inkl. Rechenbeispiel; reduziert GES/REA in der "(Aug)"-Spalte. Helme/Schilde zählen mit; Untergrenze 1 **vorläufig** (kein GRW-Beleg, Nutzerentscheidung) |
 | Kleidung, Feedback-Kleidung, Lederjacke/-mantel | ✅      | 2026-11-12 (ADR-047): Kategorie „Kleidung“ (GRW S. 373), Kleidungspreis 20–100.000 ¥ beim Kauf eingegeben, Feedback-Kleidung/Lederjacke mit Aufschlag +500/+200 ¥ |
-| Rüstungsmodifikationen, GKP-/UEO-Zubehör      | ❌      | Zurückgestellt |
-| Schild-Malus −1 auf körperliche Proben        | ❌      | Zurückgestellt (keine Würfelpools im Modell) |
-| Darstellung als Baum + Detailbereich          | ❌      | Nutzerentscheidung 2026-09-30: Waffen-Muster (`docs/plaene/archiv/waffen_detailansicht_plan.md`) gefällt, Umstellung der Rüstung aber auf später verschoben. Die CSS-Klassen `detail-*` sind dafür schon allgemein angelegt |
+| Rüstungsmodifikationen, GKP-/UEO-Zubehör      | ✅      | 2026-11-12 (ADR-050): `armor_mods.xml` mit 4 Zubehörteilen und 6 Modifikationen (S. 373), Einbau-Dialog, Zuschläge zur Verfügbarkeit, Sonderschutz gegen Elektrizität/Feuer/Kälte, Toxinwiderstand durch Chemische Isolierung und Wärmedämpfung im Detail und Status |
+| Schild-Malus −1 auf körperliche Proben        | ✅      | 2026-11-12: Fertigkeiten mit körperlichem Attribut und körperliche Attributproben (S. 372); Schilde und Schockstreifen als Waffe im Waffenbereich |
+| Darstellung als Baum + Detailbereich          | ✅      | 2026-11-12: `ArmorTabBuilder` (Kategorie → Teil → Einbauten) wie Waffen (ADR-035) |
 
 ---
 
@@ -401,12 +401,12 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    rechnen. Offen: Initiation/Metamagie, situative Kräfte als Rechnung.
 6. ✅ **Würfelpools, Zustandsmonitor, Initiative (2026-11-12, ADR-045)**: Pool-Spalte, Tab „Zustand“, augmentiertes
    Maximum, Attributproben, Obergrenze Komplexe Formen. Offen: Matrix-Initiative, situative Quality-Boni.
-7. **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035).
+7. ✅ **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035), umgesetzt 2026-11-12 (ADR-050).
 8. **Kataloge vervollständigen** (Bestandsaufnahme `docs/analysen/katalog_vollstaendigkeit.md`; Quelle zuerst das GRW,
    dann das C#, Zusatzband-Inhalte bleiben draußen, ADR-047), einer nach dem anderen:
    - ✅ Zauber (84), Komplexe Formen (21), Kleidung (3), Metavarianten entfernt (2026-11-12)
    - ✅ Cyberware (51) und Bioware (25) samt Kapazität und Implantat-Wirkungen (2026-11-12, ADR-048)
-   - Rüstung: Zubehör der Ganzkörperpanzerung/des Urban Explorer Overalls und Panzerungsmodifikationen (Einbau-Mechanik)
+   - ✅ Rüstung: Zubehör der Ganzkörperpanzerung/des Urban Explorer Overalls und Panzerungsmodifikationen (2026-11-12, ADR-050)
    - Cybergliedmaßen samt Verbesserungen, Zubehör und Cyberwaffen (Attributersatz, ADR-005)
    - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
    - Noch ohne Katalog: Schutzpatrone, Metamagie, Echos, Geister/Sprites (mit ihren Features)

@@ -138,8 +138,6 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private Node lifestylePage;
   @FXML
-  private Node armorPage;
-  @FXML
   private Node contactsPage;
   @FXML
   private Node logPage;
@@ -310,7 +308,7 @@ public class CharacterViewController implements CharacterTabHost {
     pages.put(CharacterSection.TECHNOMANCER, technomancerPage);
     pages.put(CharacterSection.IMPLANTS, implantsPage);
     pages.put(CharacterSection.LIFESTYLE, lifestylePage);
-    pages.put(CharacterSection.ARMOR, armorPage);
+    pages.put(CharacterSection.ARMOR, armorContainer);
     pages.put(CharacterSection.WEAPONS, weaponContainer);
     pages.put(CharacterSection.GEAR, gearContainer);
     pages.put(CharacterSection.VEHICLES, vehicleContainer);
@@ -444,14 +442,16 @@ public class CharacterViewController implements CharacterTabHost {
     refreshRows();
   }
 
+  /**
+   * Rüstung wirkt auf Attribute (Aug-Spalte durch Behinderung), die Waffen aus Rüstung (Schilde, Schockstreifen),
+   * Status und Restgeld; die Fertigkeitspools (Schild-Malus) zieht {@link #refreshRows()} nach.
+   */
   @Override
   public void onArmorChanged() {
-    rebuildAttributesAndNuyen();
-  }
-
-  /** Rüstung wirkt auf Attribute (Aug-Spalte durch Behinderung) und das Restgeld. */
-  private void rebuildAttributesAndNuyen() {
     attributeTab.build();
+    if (character != null) {
+      streetGear.rebuildWeapons(character);
+    }
     updateNuyenBpDisplay();
     refreshRows();
   }

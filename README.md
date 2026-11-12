@@ -32,7 +32,7 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 
 1. ✅ **Cyberware und Bioware vollständig**: alle Implantate des Grundregelwerks, mit ihren Wirkungen auf Attribute,
    Initiative und Würfelpools.
-2. **Rüstung überarbeiten**: Darstellung als Baum mit Detailbereich wie bei Waffen, dazu Zubehör und
+2. ✅ **Rüstung überarbeiten**: Darstellung als Baum mit Detailbereich wie bei Waffen, dazu Zubehör und
    Panzerungsmodifikationen.
 3. **Cybergliedmaßen**: Arme, Beine und Torso mit eigenen Attributen, Verbesserungen, Zubehör und Cyberwaffen.
 4. **Magie und Resonanz ausbauen**: Geister und Sprites, Initiation mit Metamagie, Wandlung mit Echos.

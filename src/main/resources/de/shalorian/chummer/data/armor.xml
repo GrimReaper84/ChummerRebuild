@@ -9,8 +9,9 @@
   <pricemin>/<pricemax>: Preisspanne, aus der der Spieler beim Kauf den Kleidungspreis wählt; <cost> ist dann
   der feste Aufschlag darauf (Tabelle Kleidung: Feedback-Kleidung "+500 ¥", Lederjacke/-mantel "+200 ¥").
 
-  Noch nicht enthalten: Zubehör der Ganzkörperpanzerung bzw. des Urban Explorer Overalls und die
-  Panzerungsmodifikationen (brauchen eine Einbau-Mechanik, siehe docs/analysen/katalog_vollstaendigkeit.md).
+  <mods/>: nimmt Panzerungsmodifikationen auf (armor_mods.xml); <shield/>: Schild (−1 auf körperliche Proben,
+  nur bestimmte Modifikationen, S. 372); <weapon>: Waffe aus weapons.xml, die das angelegte Teil stellt.
+  Zubehör und Modifikationen stehen in armor_mods.xml.
 -->
 <armor>
 
@@ -51,6 +52,7 @@
         <cost>200</cost>
         <pricemin>20</pricemin>
         <pricemax>100000</pricemax>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -64,6 +66,7 @@
         <impact>3</impact>
         <avail>8</avail>
         <cost>1500</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -76,6 +79,7 @@
         <avail>10</avail>
         <legality>E</legality>
         <cost>8000</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -88,6 +92,7 @@
         <avail>14</avail>
         <legality>E</legality>
         <cost>6000</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -99,6 +104,7 @@
         <impact>4</impact>
         <avail>2</avail>
         <cost>700</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -110,6 +116,7 @@
         <impact>6</impact>
         <avail>2</avail>
         <cost>900</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -121,6 +128,7 @@
         <impact>0</impact>
         <avail>2</avail>
         <cost>500</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -132,6 +140,7 @@
         <impact>4</impact>
         <avail>4</avail>
         <cost>600</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -143,6 +152,7 @@
         <impact>6</impact>
         <avail>4</avail>
         <cost>1200</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -154,6 +164,7 @@
         <impact>6</impact>
         <avail>8</avail>
         <cost>500</cost>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -179,6 +190,8 @@
         <avail>12</avail>
         <legality>E</legality>
         <cost>1500</cost>
+        <shield/>
+        <mods/>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -191,6 +204,9 @@
         <avail>6</avail>
         <legality>E</legality>
         <cost>200</cost>
+        <shield/>
+        <mods/>
+        <weapon>Schutzschild</weapon>
         <source>SR4</source>
         <page>373</page>
     </item>
@@ -203,6 +219,9 @@
         <avail>10</avail>
         <legality>E</legality>
         <cost>750</cost>
+        <shield/>
+        <mods/>
+        <weapon>Taserschild</weapon>
         <source>SR4</source>
         <page>373</page>
     </item>

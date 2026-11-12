@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Einbauten an Rüstungsteilen aus dem SR4-Grundregelwerk (Kapitel STRASSENAUSRÜSTUNG, Tabellen "Panzerung"
+  und "Panzerungsmodifikationen" S. 373, Beschreibungen S. 372 — Werte gegen das PDF-Bild verifiziert).
+
+  <for>        Zubehör: Name des Teils aus armor.xml, an das es gehört; fehlt bei Modifikationen
+  <rating>     höchste Stufe; fehlt ohne Stufe (Zubehör, Schockstreifen)
+  <ballistic>/<impact>  Bonus auf den Wert des Teils (Helm-Zubehör)
+  <avail>      Verfügbarkeit; "+n" = Zuschlag auf die Verfügbarkeit des Teils; fehlt = "–"
+  <cost>       Preisformel (RatingFormula), bei Zubehör der Aufpreis
+  <protection> zusätzlicher Schutz in Höhe der Stufe: electricity, fire, cold, chemical, irdamping
+  <requires>   Einbau, der am selben Teil vorhanden sein muss
+  <shield/>    auch an Schilde einbaubar (S. 372: nur Chemische und Elektrische Isolierung, Feuerresistenz)
+  <weapon>     Waffe aus weapons.xml, die der Einbau stellt, solange das Teil angelegt ist
+  Hinweise in eigenen Worten. Nicht enthalten: Rüstungskapazität und eingebaute Waffen (Zusatzband Arsenal).
+-->
+<armormods>
+
+    <!-- ── ZUBEHÖR (Tabelle Panzerung, S. 373) ─────────────────── -->
+
+    <item>
+        <name>Helm (Ganzkörperpanzerung)</name>
+        <for>Ganzkörperpanzerung</for>
+        <ballistic>2</ballistic>
+        <impact>2</impact>
+        <cost>1000</cost>
+        <note>Geschlossener Helm der Ganzkörperpanzerung mit Funkverbindung; nimmt Sichtverstärkungen auf.</note>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Chemische Versiegelung</name>
+        <for>Ganzkörperpanzerung</for>
+        <avail>+6</avail>
+        <cost>5000</cost>
+        <note>Luftdichtes System mit eigenem Luftvorrat gegen Kontakt- und Atemgifte; Aktivieren ist eine Komplexe Handlung.</note>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+    <item>
+        <name>Umweltanpassung</name>
+        <for>Ganzkörperpanzerung</for>
+        <avail>+3</avail>
+        <cost>2000</cost>
+        <note>Anpassung für sehr kalte oder heiße Gebiete.</note>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+    <item>
+        <name>Helm (Urban Explorer Overall)</name>
+        <for>Urban Explorer Overall</for>
+        <ballistic>0</ballistic>
+        <impact>2</impact>
+        <cost>50</cost>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <!-- ── PANZERUNGSMODIFIKATIONEN (S. 372/373) ──────────────── -->
+
+    <item>
+        <name>Chemische Isolierung</name>
+        <rating>6</rating>
+        <avail>8</avail>
+        <cost>Rating * 250</cost>
+        <protection>chemical</protection>
+        <shield/>
+        <note>Schützt gegen Chemikalien mit Kontakt-Vektor, an der Ganzkörperpanzerung auch gegen eingeatmete.</note>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+    <item>
+        <name>Elektrische Isolierung</name>
+        <rating>6</rating>
+        <avail>6</avail>
+        <cost>Rating * 200</cost>
+        <protection>electricity</protection>
+        <shield/>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+    <item>
+        <name>Feuerresistenz</name>
+        <rating>6</rating>
+        <avail>4</avail>
+        <cost>Rating * 100</cost>
+        <protection>fire</protection>
+        <shield/>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+    <item>
+        <name>Schockstreifen</name>
+        <avail>6</avail>
+        <legality>E</legality>
+        <cost>200</cost>
+        <requires>Elektrische Isolierung</requires>
+        <weapon>Schockstreifen</weapon>
+        <note>Aufgeladene Streifen, die bei Berührung einen Elektroschock geben; 10 Ladungen, an der Steckdose wieder aufladbar.</note>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+    <item>
+        <name>Thermische Isolierung</name>
+        <rating>6</rating>
+        <avail>4</avail>
+        <cost>Rating * 150</cost>
+        <protection>cold</protection>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+    <item>
+        <name>Wärmedämpfung</name>
+        <rating>6</rating>
+        <avail>10</avail>
+        <legality>V</legality>
+        <cost>Rating * 500</cost>
+        <protection>irdamping</protection>
+        <note>Verringert die Wärmesignatur gegen Infrarotsicht und IR-Sensoren.</note>
+        <source>SR4</source>
+        <page>372</page>
+    </item>
+
+</armormods>
