@@ -21,6 +21,7 @@ import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.cyberware.ImplantEffect;
+import de.shalorian.chummer.model.character.gear.CommlinkStats;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.dialog.CyberwareSelectDialogController;
@@ -241,6 +242,7 @@ public final class CyberwareTabBuilder {
         : commlink.getInstalled().getFirst().getName();
     Label nameLabel = styled(new Label(CHILD_PREFIX + commlink.getName() + " (" + os + ")"), STYLE_ATTR_NAME);
     Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(commlink.getNuyenCost())), STYLE_ATTR_BP);
+    Label statsLabel = styled(new Label(commlinkStatsText(commlink)), STYLE_ATTR_RANGE);
     Label sourceLabel = styled(new Label(commlink.getData().source() + " S. " + commlink.getData().page()),
         STYLE_ATTR_RANGE);
 
@@ -258,7 +260,21 @@ public final class CyberwareTabBuilder {
     });
     actions.getChildren().add(removeBtn);
     addRowCells(grid, row, nameLabel, new Label(), new Label(), new Label(), new Label(), priceLabel,
-        new Label(), sourceLabel, actions);
+        statsLabel, sourceLabel, actions);
+  }
+
+  /** Matrixwerte des eingebauten Kommlinks wie im Ausrüstungs-Detail (GRW S. 260, 374); ohne Betriebssystem „–“. */
+  private static @NonNull String commlinkStatsText(@NonNull Gear commlink) {
+    CommlinkStats stats = commlink.getCommlinkStats();
+    if (stats == null) {
+      return "";
+    }
+    return "Prozessor %d, Signal %d, Firewall %s, System %s".formatted(stats.processor(), stats.signal(),
+        orNoValue(stats.firewall()), orNoValue(stats.system()));
+  }
+
+  private static @NonNull String orNoValue(int value) {
+    return value == 0 ? "–" : String.valueOf(value);
   }
 
   private static @NonNull Label styled(@NonNull Label label, @NonNull String styleClass) {
@@ -285,6 +301,9 @@ public final class CyberwareTabBuilder {
     List<String> parts = new ArrayList<>();
     if (implant.getData().hasCapacity()) {
       parts.add("Kapazität " + implant.getUsedCapacity() + "/" + implant.getCapacity());
+    }
+    if (implant.getData().acceptedGear() != null && implant.getCommlink() == null) {
+      parts.add("kein Kommlink eingebaut");
     }
     for (ImplantEffect effect : implant.getData().effects()) {
       int value = effect.value(implant.getRating());
@@ -328,7 +347,7 @@ public final class CyberwareTabBuilder {
         if (chargeFailed(ch, cyberwareLabel(implant), implant.getNuyenCost())) {
           return;
         }
-        ch.getEquipment().addCyberware(implant);
+        ch.getImplants().add(implant);
         onCyberwareChanged();
         if (ch.isEssenceBelowCreationMinimum()) {
           host.services().warn("Essenz zu niedrig",

@@ -3,16 +3,14 @@ package de.shalorian.chummer.model.character;
 import static de.shalorian.chummer.model.character.AdeptTestSupport.buy;
 import static de.shalorian.chummer.model.character.AdeptTestSupport.power;
 import static de.shalorian.chummer.model.character.AdeptTestSupport.withGift;
+import static de.shalorian.chummer.model.character.cyberware.ImplantTestSupport.add;
+import static de.shalorian.chummer.model.character.cyberware.ImplantTestSupport.data;
+import static de.shalorian.chummer.model.character.cyberware.ImplantTestSupport.mensch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import de.shalorian.chummer.model.character.attribute.AttributeType;
-import de.shalorian.chummer.model.character.cyberware.Cyberware;
-import de.shalorian.chummer.model.character.cyberware.CyberwareData;
-import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
-import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
-import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
@@ -21,22 +19,6 @@ import org.junit.jupiter.api.Test;
 
 /** Rechnende Wirkungen von Implantaten (GRW S. 388, 389, 393, 394) und ihr Zusammenspiel mit Adeptenkräften. */
 class CharacterImplantEffectsTest {
-
-  private static Character mensch() {
-    return new Character("Test", MetatypeDataLoader.find("Mensch"));
-  }
-
-  private static CyberwareData data(String name) {
-    return Objects.requireNonNull(CyberwareDataLoader.findByName(name), name);
-  }
-
-  private static void add(Character c, String name, int rating) {
-    c.getEquipment().addCyberware(new Cyberware(data(name), CyberwareGrade.STANDARD, rating));
-  }
-
-  private static void add(Character c, String name, String choice) {
-    c.getEquipment().addCyberware(new Cyberware(data(name), CyberwareGrade.STANDARD, 0, choice, null));
-  }
 
   private static int dice(Character c, String skillName) {
     Skill skill = Objects.requireNonNull(c.getSkill(skillName), skillName);
@@ -195,5 +177,38 @@ class CharacterImplantEffectsTest {
     add(wired, "Reflexbooster", 1);
     assertNotNull(wired.getAdeptPowers().getBlockReason(power("Gesteigerte Reflexe")));
     assertNull(wired.getImplants().getBlockReason(data("Hyperschilddrüse")));
+  }
+
+  @Test
+  void reflexRecordersDoNotStackOnOneSkill() {
+    // je Fertigkeit nur ein Reflexrekorder (S. 394), auch nicht Fertigkeit plus Gruppe
+    Character c = mensch();
+    add(c, "Reflexrekorder (Fertigkeitsgruppe)", "Feuerwaffen");
+    assertEquals("Gruppe Feuerwaffen hat bereits einen Reflexrekorder",
+        c.getImplants().getAddProblem(data("Reflexrekorder (Fertigkeit)"), "Pistolen"));
+    assertNull(c.getImplants().getAddProblem(data("Reflexrekorder (Fertigkeit)"), "Laufen"));
+
+    Character d = mensch();
+    add(d, "Reflexrekorder (Fertigkeit)", "Pistolen");
+    assertEquals("Eine Fertigkeit der Gruppe hat bereits einen Reflexrekorder",
+        d.getImplants().getAddProblem(data("Reflexrekorder (Fertigkeitsgruppe)"), "Feuerwaffen"));
+    // aus einer Speicherdatei mit beiden zählt nur einer
+    add(d, "Reflexrekorder (Fertigkeitsgruppe)", "Feuerwaffen");
+    assertEquals(1 + 1 + 1, dice(d, "Pistolen"));
+  }
+
+  @Test
+  void highPainToleranceExcludesPainEditorAndDamageCompensator() {
+    // S. 116: Hohe Schmerztoleranz nicht mit Schmerzeditor oder Schadenskompensator
+    Character tolerant = mensch();
+    tolerant.addQuality(AdeptTestSupport.quality("Hohe Schmerztoleranz 1"), false);
+    assertEquals("Nicht zusammen mit Hohe Schmerztoleranz",
+        tolerant.getImplants().getBlockReason(data("Schadenskompensator")));
+    assertNotNull(tolerant.getImplants().getBlockReason(data("Schmerzeditor")));
+
+    Character implanted = mensch();
+    add(implanted, "Schmerzeditor", 0);
+    assertEquals("Nicht zusammen mit Schmerzeditor",
+        implanted.getQualityBlockReason(AdeptTestSupport.quality("Hohe Schmerztoleranz 1"), false));
   }
 }

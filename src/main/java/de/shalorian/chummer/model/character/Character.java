@@ -820,6 +820,10 @@ public class Character {
         && adeptPowers.level(AdeptPowerEffect.PAIN_RESISTANCE) > 0) {
       return "Nicht zusammen mit der Adeptenkraft Schmerzresistenz";
     }
+    String painImplant = implants.getPainToleranceConflict();
+    if (data.bonuses().contains(QualityBonusType.HIGH_PAIN_TOLERANCE) && painImplant != null) {
+      return "Nicht zusammen mit " + painImplant;
+    }
     SkillCategory doubled = doubledCategory(data);
     if (doubled != null) {
       for (Skill s : skills.values()) {
@@ -1551,7 +1555,8 @@ public class Character {
   /**
    * Verletzungsmodifikator (S. 193): je volle 3 Schadenskästchen −1, beide Spalten getrennt gezählt und addiert.
    * Hohe Schmerztoleranz, die Adeptenkraft Schmerzresistenz und der Schadenskompensator lassen je Stufe ein Kästchen
-   * pro Spalte unberücksichtigt (S. 116, 231, 394; Annahme: sie addieren sich), Niedrige Schmerztoleranz
+   * pro Spalte unberücksichtigt (S. 116, 231, 394; Hohe Schmerztoleranz schließt die beiden anderen aus, ob
+   * Schmerzresistenz und Schadenskompensator sich addieren, sagt das GRW nicht: Annahme ja), Niedrige Schmerztoleranz
    * zählt schon je 2 Kästchen (S. 120). Überzählige Kästchen zählen nicht mit.
    *
    * @return 0 oder negativ

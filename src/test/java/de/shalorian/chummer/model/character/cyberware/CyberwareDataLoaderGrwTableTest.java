@@ -151,4 +151,19 @@ class CyberwareDataLoaderGrwTableTest {
     assertTrue(find("Schmuggelbehälter").restrictions().multiple());
     assertFalse(find("Dermalpanzerung").restrictions().multiple());
   }
+
+  @Test
+  void crossReferencesPointToExistingEntries() {
+    Map<String, CyberwareData> all = CyberwareDataLoader.getAllCyberware();
+    List<String> categories = all.values().stream().map(CyberwareData::category).distinct().toList();
+    for (CyberwareData data : all.values()) {
+      ImplantRestrictions restrictions = data.restrictions();
+      restrictions.excludes().forEach(name -> assertTrue(all.containsKey(name), data.name() + " → " + name));
+      restrictions.excludedCategories()
+          .forEach(category -> assertTrue(categories.contains(category), data.name() + " → " + category));
+      if (!restrictions.requires().isEmpty()) {
+        assertTrue(all.containsKey(restrictions.requires()), data.name() + " → " + restrictions.requires());
+      }
+    }
+  }
 }

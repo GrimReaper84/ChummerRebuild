@@ -2,13 +2,14 @@ package de.shalorian.chummer.model.character.cyberware;
 
 import static de.shalorian.chummer.model.character.cyberware.ImplantTestSupport.add;
 import static de.shalorian.chummer.model.character.cyberware.ImplantTestSupport.data;
+import static de.shalorian.chummer.model.character.cyberware.ImplantTestSupport.implant;
 import static de.shalorian.chummer.model.character.cyberware.ImplantTestSupport.mensch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.shalorian.chummer.model.character.Character;
-import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -100,14 +101,20 @@ class ImplantsBlockReasonTest {
     assertNull(implants.getAddProblem(skill, "Gewehre"));
   }
 
+
   @Test
-  void grwExampleEssence() {
-    // Brian: Smartlink (0,1), Reflexbooster 1 (2) und Blitzkompensation (0,1) → Essenz 6 − 2,2 = 3,8 (GRW S. 111)
+  void catsEyesAllowProtectiveCovers() {
+    // Schutzgläser sind keine Augenmodifikation (S. 388) und bleiben neben Katzenaugen erlaubt (S. 393)
     Character c = mensch();
-    add(c, "Smartlink", 0);
-    add(c, "Reflexbooster", 1);
-    add(c, "Blitzkompensation", 0);
-    assertEquals(0, new BigDecimal("2.2").compareTo(c.getEquipment().getCyberwareEssenceCost()));
-    assertEquals(3.8, c.getEssence(), 1e-9);
+    add(c, "Katzenaugen", 0);
+    assertNull(reason(c, "Schutzgläser"));
+  }
+
+  @Test
+  void addEnforcesPurchaseRules() {
+    Character c = mensch();
+    c.getImplants().add(implant("Dermalpanzerung", 1));
+    assertThrows(IllegalArgumentException.class, () -> c.getImplants().add(implant("Orthoskin", 1)));
+    assertEquals(1, c.getEquipment().getCyberware().size());
   }
 }

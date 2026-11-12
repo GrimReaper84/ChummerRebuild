@@ -7,7 +7,8 @@
   Essenz "–" im GRW = 0. Alle Werte gelten für die Standardvariante; Grades rechnet CyberwareGrade ein.
   Fehlendes <avail> = "–". <effect> = dauerhafte, rechnende Wirkung (ImplantEffectType); situative Wirkungen
   stehen nur in <note>, immer in eigenen Worten. <excludes>/<excludescategory> sperren in beide Richtungen,
-  <multiple/> erlaubt Mehrfachkauf, <requires> nennt eine Voraussetzung (docs/plaene/implantate_plan.md).
+  <multiple/> erlaubt Mehrfachkauf, <requires> nennt eine Voraussetzung, <excludespaintolerance/> sperrt die Gabe
+  Hohe Schmerztoleranz in beide Richtungen (S. 116). Siehe docs/plaene/archiv/implantate_plan.md.
   <capacity> = Kapazität eines Basissystems (Cyberaugen/-ohren); <capacitycost> = Bedarf beim Einbau in ein
   Basissystem der gleichen Kategorie, "*" = dort schon enthalten. Die eckigen Kapazitäten von Headware und
   Bodyware gelten nur für Cybergliedmaßen und sind deshalb noch nicht übernommen.

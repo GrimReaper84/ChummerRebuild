@@ -6,8 +6,10 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.cyberware.ImplantTestSupport;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -95,5 +97,16 @@ class CharacterEssenceCombinationTest {
     c.getEquipment().addCyberware(implant);
 
     assertEquals(5.2, c.getEssence());
+  }
+
+  @Test
+  void grwExampleWithCatalogImplants() {
+    // Brian: Smartlink (0,1), Reflexbooster 1 (2) und Blitzkompensation (0,1) → Essenz 6 − 2,2 = 3,8 (GRW S. 111)
+    Character c = mensch();
+    ImplantTestSupport.add(c, "Smartlink", 0);
+    ImplantTestSupport.add(c, "Reflexbooster", 1);
+    ImplantTestSupport.add(c, "Blitzkompensation", 0);
+    assertEquals(0, new BigDecimal("2.2").compareTo(c.getEquipment().getCyberwareEssenceCost()));
+    assertEquals(3.8, c.getEssence(), 1e-9);
   }
 }

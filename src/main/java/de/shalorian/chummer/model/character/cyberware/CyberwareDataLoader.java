@@ -99,7 +99,8 @@ public class CyberwareDataLoader {
             allTexts(el, "excludescategory"),
             childText(el, "requires"),
             firstChild(el, "initiativeboost") != null,
-            firstChild(el, "installonly") != null),
+            firstChild(el, "installonly") != null,
+            firstChild(el, "excludespaintolerance") != null),
         allowGear.isEmpty() ? null : GearCategory.fromDisplayName(allowGear),
         childText(el, "note"));
   }

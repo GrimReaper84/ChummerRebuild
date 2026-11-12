@@ -163,15 +163,28 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
    */
   @Override
   protected boolean isSelectable(@NonNull CyberwareData data) {
-    return isAvailable(data, lowestRating(data)) && blockReason(data, lowestRating(data)) == null;
+    return isAvailable(data, lowestRating(data)) && problem(data, lowestRating(data), null) == null;
   }
 
-  /** Grund, warum {@code data} nicht gewählt werden kann (ohne Verfügbarkeit und Auswahl), oder {@code null}. */
-  private @Nullable String blockReason(@NonNull CyberwareData data, int rating) {
+  /**
+   * Grund, warum {@code data} in dieser Stufe nicht gekauft bzw. eingebaut werden kann (ohne Verfügbarkeit), oder
+   * {@code null}. Ohne {@code choice} (noch nichts gewählt bzw. Listenansicht) wird die Auswahl nicht geprüft.
+   */
+  private @Nullable String problem(@NonNull CyberwareData data, int rating, @Nullable String choice) {
     if (installTarget != null) {
       return installTarget.installProblem(data, rating);
     }
-    return character == null ? null : character.getImplants().getBlockReason(data);
+    if (character == null) {
+      return null;
+    }
+    return choice == null
+        ? character.getImplants().getBlockReason(data)
+        : character.getImplants().getAddProblem(data, choice);
+  }
+
+  /** Auswahl für die Prüfung: leer ohne Auswahlfeld, sonst der gewählte Wert oder {@code null}. */
+  private @Nullable String currentChoice(@NonNull CyberwareData data) {
+    return data.selection() == ImplantSelection.NONE ? "" : choiceBox.getValue();
   }
 
   private static int lowestRating(@NonNull CyberwareData data) {
@@ -286,7 +299,7 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   /** Hinweis des Katalogs, ergänzt um den Grund, warum die aktuelle Auswahl nicht gekauft werden kann. */
   private @NonNull String noteText(@NonNull CyberwareData data) {
     List<String> parts = new ArrayList<>();
-    String problem = selectionProblem(data);
+    String problem = problem(data, currentRating(data), currentChoice(data));
     if (problem != null) {
       parts.add("Nicht wählbar: " + problem + ".");
     }
@@ -294,19 +307,6 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       parts.add(data.note());
     }
     return String.join(" ", parts);
-  }
-
-  private @Nullable String selectionProblem(@NonNull CyberwareData data) {
-    if (installTarget != null) {
-      return installTarget.installProblem(data, currentRating(data));
-    }
-    if (character == null) {
-      return null;
-    }
-    String choice = choiceBox.getValue();
-    return data.selection() == ImplantSelection.NONE || choice != null
-        ? character.getImplants().getAddProblem(data, choice == null ? "" : choice)
-        : character.getImplants().getBlockReason(data);
   }
 
   private int currentRating(@NonNull CyberwareData data) {
@@ -344,14 +344,13 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       return null;
     }
     int rating = currentRating(selected);
-    String choice = choiceBox.getValue();
+    String choice = currentChoice(selected);
     Integer price = selected.hasVariablePrice() ? enteredPrice(selected) : null;
-    boolean incomplete = (selected.selection() != ImplantSelection.NONE && choice == null)
-        || (selected.hasVariablePrice() && price == null);
-    if (incomplete || !isAvailable(selected, rating) || selectionProblem(selected) != null) {
+    if (choice == null || (selected.hasVariablePrice() && price == null)
+        || !isAvailable(selected, rating) || problem(selected, rating, choice) != null) {
       return null;
     }
-    return new Cyberware(selected, grade, rating, choice == null ? "" : choice, price);
+    return new Cyberware(selected, grade, rating, choice, price);
   }
 
   @FXML

@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character.cyberware;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.adept.AdeptPowerEffect;
+import de.shalorian.chummer.model.character.quality.QualityBonusType;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
 import java.util.List;
@@ -46,6 +47,7 @@ public class Implants {
    *   <li>Basissystem und einzeln implantiertes Zubehör derselben Kategorie schließen sich aus: Zubehör kostet im
    *       Cyberauge/-ohr Kapazität oder im natürlichen Organ Essenz, nicht beides (S. 386, 387)</li>
    *   <li>technische Initiativesteigerung neben der Adeptenkraft Gesteigerte Reflexe (S. 230)</li>
+   *   <li>Schmerzeditor oder Schadenskompensator neben der Gabe Hohe Schmerztoleranz (S. 116)</li>
    * </ul>
    */
   public @Nullable String getBlockReason(@NonNull CyberwareData data) {
@@ -72,13 +74,42 @@ public class Implants {
     if (data.restrictions().initiativeBoost() && owner.getAdeptPowers().level(AdeptPowerEffect.IMPROVED_REFLEXES) > 0) {
       return "Nicht zusammen mit Gesteigerte Reflexe";
     }
+    if (data.restrictions().excludesPainTolerance() && owner.hasQualityBonus(QualityBonusType.HIGH_PAIN_TOLERANCE)) {
+      return "Nicht zusammen mit Hohe Schmerztoleranz";
+    }
     return null;
   }
 
   /**
+   * Implantat, das die Gabe Hohe Schmerztoleranz ausschließt (Schmerzeditor, Schadenskompensator, S. 116), oder
+   * {@code null}; Gegenrichtung zu {@link #getBlockReason}.
+   */
+  public @Nullable String getPainToleranceConflict() {
+    return implants().stream()
+        .filter(c -> c.getData().restrictions().excludesPainTolerance())
+        .map(Cyberware::getName)
+        .findFirst()
+        .orElse(null);
+  }
+
+  /**
+   * Implantiert {@code implant} nach den Kaufregeln.
+   *
+   * @throws IllegalArgumentException wenn {@link #getAddProblem} einen Grund liefert
+   */
+  public void add(@NonNull Cyberware implant) {
+    String problem = getAddProblem(implant.getData(), implant.getChoice());
+    if (problem != null) {
+      throw new IllegalArgumentException(implant.getName() + ": " + problem);
+    }
+    owner.getEquipment().addCyberware(implant);
+  }
+
+  /**
    * Warum {@code data} mit dieser Auswahl nicht implantiert werden kann, oder {@code null}: erst {@link
-   * #getBlockReason}, dann die Auswahl beim Reflexrekorder (Kampf- oder körperliche Fertigkeit bzw. -gruppe, je
-   * Fertigkeit oder Gruppe nur einer, S. 394).
+   * #getBlockReason}, dann die Auswahl beim Reflexrekorder (Kampf- oder körperliche Fertigkeit bzw. -gruppe). Je
+   * Fertigkeit ist nur ein Reflexrekorder möglich (S. 394), auch nicht einer für die Fertigkeit und einer für ihre
+   * Gruppe.
    */
   public @Nullable String getAddProblem(@NonNull CyberwareData data, @NonNull String choice) {
     String reason = getBlockReason(data);
@@ -98,7 +129,34 @@ public class Implants {
         && implants().stream().anyMatch(c -> c.getData().equals(data) && c.getChoice().equals(trimmed))) {
       return "Mit dieser Auswahl bereits eingebaut";
     }
-    return null;
+    return switch (data.selection()) {
+      case NONE -> null;
+      case SKILL -> recorderForGroupOf(trimmed);
+      case SKILL_GROUP -> recorderForSkillIn(trimmed);
+    };
+  }
+
+  /** Grund, falls die Gruppe der Fertigkeit {@code skillName} schon einen Reflexrekorder hat, sonst {@code null}. */
+  private @Nullable String recorderForGroupOf(@NonNull String skillName) {
+    Skill skill = owner.getSkill(skillName);
+    String group = skill == null ? null : skill.getGroupName();
+    return group != null && hasRecorderChoice(ImplantSelection.SKILL_GROUP, List.of(group))
+        ? "Gruppe " + group + " hat bereits einen Reflexrekorder" : null;
+  }
+
+  /** Grund, falls eine Fertigkeit der Gruppe {@code group} schon einen Reflexrekorder hat, sonst {@code null}. */
+  private @Nullable String recorderForSkillIn(@NonNull String group) {
+    List<String> members = owner.getSkills().stream()
+        .filter(s -> group.equals(s.getGroupName()))
+        .map(Skill::getName)
+        .toList();
+    return hasRecorderChoice(ImplantSelection.SKILL, members)
+        ? "Eine Fertigkeit der Gruppe hat bereits einen Reflexrekorder" : null;
+  }
+
+  private boolean hasRecorderChoice(@NonNull ImplantSelection selection, @NonNull List<String> choices) {
+    return implants().stream()
+        .anyMatch(c -> c.getData().selection() == selection && choices.contains(c.getChoice()));
   }
 
   /** Fertigkeiten, die ein Reflexrekorder verbessern kann: Kampf- und körperliche Fertigkeiten (S. 394). */
@@ -125,9 +183,15 @@ public class Implants {
     return getReflexRecorderSkills().contains(name);
   }
 
+  /**
+   * Ob {@code data} das andere Implantat ausschließt: namentlich oder über seine Kategorie. Eine Kategorie schließt nur
+   * Organmodifikationen aus, also Basissysteme und ihr Zubehör; Schutzgläser etwa sind keine Augenmodifikation und
+   * bleiben neben Katzenaugen erlaubt (S. 388, 393).
+   */
   private static boolean excludes(@NonNull CyberwareData data, @NonNull CyberwareData other) {
     return data.restrictions().excludes().contains(other.name())
-        || data.restrictions().excludedCategories().contains(other.category());
+        || (data.restrictions().excludedCategories().contains(other.category())
+            && (other.hasCapacity() || isAccessory(other)));
   }
 
   /** Basissystem gegen einzeln implantiertes Zubehör derselben Kategorie (Augen bzw. Ohren). */
@@ -161,12 +225,14 @@ public class Implants {
   }
 
   /**
-   * Würfel aus Reflexrekordern für eine Fertigkeit: gewählt als Fertigkeit selbst oder als ihre Gruppe (S. 394).
+   * Würfel aus Reflexrekordern für eine Fertigkeit: gewählt als Fertigkeit selbst oder als ihre Gruppe (S. 394). Je
+   * Fertigkeit zählt nur einer; der höchste Wert gilt, falls eine Speicherdatei doch zwei enthält.
    */
   public int selectedSkillDice(@NonNull Skill skill) {
     return implants().stream()
         .filter(c -> c.getChoice().equals(skill.getName()) || c.getChoice().equals(skill.getGroupName()))
         .mapToInt(c -> c.getData().effectValue(ImplantEffectType.SELECTED_SKILL_DICE, null, c.getRating()))
-        .sum();
+        .max()
+        .orElse(0);
   }
 }

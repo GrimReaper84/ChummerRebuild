@@ -15,6 +15,8 @@ import org.jspecify.annotations.NonNull;
  *                           Gesteigerte Reflexe kombiniert werden darf (S. 230)
  * @param installOnly        ob es nur in ein Basissystem eingebaut, nicht einzeln implantiert werden kann
  *                           (Okular-Drohne, S. 386: ersetzt ein Auge innerhalb eines Cyberauges)
+ * @param excludesPainTolerance ob es nicht mit der Gabe Hohe Schmerztoleranz kombiniert werden darf (Schmerzeditor,
+ *                           Schadenskompensator, S. 116)
  */
 public record ImplantRestrictions(
     boolean multiple,
@@ -22,11 +24,12 @@ public record ImplantRestrictions(
     @NonNull List<String> excludedCategories,
     @NonNull String requires,
     boolean initiativeBoost,
-    boolean installOnly
+    boolean installOnly,
+    boolean excludesPainTolerance
 ) {
 
   /** Keine Beschränkung außer „nur einmal“. */
-  public static final ImplantRestrictions NONE = new ImplantRestrictions(false, List.of(), List.of(), "", false, false);
+  public static final ImplantRestrictions NONE = new ImplantRestrictions(false, List.of(), List.of(), "", false, false, false);
 
   public ImplantRestrictions {
     excludes = List.copyOf(excludes);

@@ -73,9 +73,14 @@ des Basissystems (wie im C#), einzeln im natürlichen Organ kostet es Essenz; be
 Dauerhafte Wirkungen rechnen (`<effect>`, `ImplantEffectType`): Attributboni bis zum augmentierten Maximum zusammen mit
 Adeptenkräften, Initiativedurchgänge, Panzerung (zählt wie Mystischer Panzer nicht zur Behinderung, die nur getragene
 Panzerung rechnet, S. 190), Poolboni (Athletik, sozial, körperlich verbundene Fertigkeiten, Wissen, Reflexrekorder) und
-Schadenskompensator (addiert sich mit Hoher Schmerztoleranz, Annahme); situative Wirkungen stehen nur als Hinweis.
+Schadenskompensator (addiert sich mit Schmerzresistenz, Annahme); situative Wirkungen stehen nur als Hinweis.
 Unverträglichkeiten (`<excludes>`, `<excludescategory>`, Gesteigerte Reflexe ↔ technische Initiativesteigerung, S. 230)
-sperren im Dialog in beide Richtungen; ohne `<multiple/>` ist ein Implantat nur einmal kaufbar. Kosmetische
+sperren in beide Richtungen, ebenso Hohe Schmerztoleranz gegen Schmerzeditor und Schadenskompensator (S. 116);
+eine Kategorie sperrt nur Organmodifikationen (Basissystem, Zubehör), Schutzgläser bleiben neben Katzenaugen erlaubt.
+Je Fertigkeit nur ein Reflexrekorder, auch nicht einer für die Fertigkeit und einer für ihre Gruppe; er gibt einen
+Zusatzwürfel, keine Stufe. Die Hyperschilddrüse gilt nicht als technische Initiativesteigerung (Annahme). Gekauft wird
+über `Implants#add`, das die Regeln prüft; der Ladepfad bleibt nachsichtig. Ohne `<multiple/>` ist ein Implantat nur
+einmal kaufbar. Kosmetische
 Modifikation mit Preiseingabe (200–10.000 ¥); in die Kommlink-Headware wird ein Kommlink-Modell aus dem
 Ausrüstungskatalog eingebaut, sein Preis kommt ohne Grade-Aufschlag dazu. Wertlisten je Stufe in `RatingFormula`
 (`"2; 3; 5"`, Semikolon, weil ein Komma als deutsches Dezimalzeichen weiter ein Fehler bleiben soll). Kaufregeln und
