@@ -34,6 +34,10 @@ public class CharacterData {
   public @NonNull String tradition = "HERMETIC";
   public @NonNull List<String> spellNames = new ArrayList<>();
   public @NonNull List<ComplexFormEntry> complexForms = new ArrayList<>();
+  /** Gekaufte Adeptenkräfte; fehlt in Dateien vor 2026-11-12. */
+  public @NonNull List<AdeptPowerEntry> adeptPowers = new ArrayList<>();
+  /** Magieradept: Magiepunkte für Kräfte. */
+  public int adeptMagic = 0;
   public @NonNull List<CyberwareEntry> cyberware = new ArrayList<>();
   public @NonNull List<ArmorEntry> armor = new ArrayList<>();
   public @NonNull List<WeaponEntry> weapons = new ArrayList<>();

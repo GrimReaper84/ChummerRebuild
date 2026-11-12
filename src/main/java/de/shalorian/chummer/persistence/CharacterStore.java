@@ -2,6 +2,8 @@ package de.shalorian.chummer.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.shalorian.chummer.model.character.adept.AdeptPowerData;
+import de.shalorian.chummer.model.character.adept.AdeptPowerDataLoader;
 import de.shalorian.chummer.model.character.armor.Armor;
 import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.armor.ArmorDataLoader;
@@ -117,6 +119,10 @@ public class CharacterStore {
     data.complexForms = character.getComplexForms().stream()
         .map(cf -> new ComplexFormEntry(cf.getName(), cf.getRating()))
         .toList();
+    data.adeptPowers = character.getAdeptPowers().getPowers().stream()
+        .map(p -> new AdeptPowerEntry(p.getData().name(), p.getChoice(), p.getLevel()))
+        .toList();
+    data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
     data.cyberware = character.getEquipment().getCyberware().stream()
         .map(c -> new CyberwareEntry(c.getName(), c.getGrade().name(), c.getRating()))
         .toList();
@@ -195,12 +201,14 @@ public class CharacterStore {
     applySelectedQualities(character, data);
     applyAttributes(character, data);
     applySkills(character, data);
-    // Schaden nach Qualities und Attributen: die Spaltengröße hängt von KON, WIL und Überlebenswille ab.
-    character.setPhysicalDamage(data.physicalDamage);
-    character.setStunDamage(data.stunDamage);
     character.setCreated(data.created);
     character.setNuyenBP(data.nuyenBP);
     applyMagicOrResonance(character, data);
+    applyAdeptPowers(character, data);
+    // Schaden nach Qualities, Attributen und Adeptenkräften: die Spaltengröße hängt von verstärkter KON und WIL,
+    // Überlebenswille und Gesteigertem Attribut ab.
+    character.setPhysicalDamage(data.physicalDamage);
+    character.setStunDamage(data.stunDamage);
     applyKnowledgeSkills(character, data);
     applyContacts(character, data);
     data.decoupledGroups.forEach(character::decoupleGroup);
@@ -236,6 +244,23 @@ public class CharacterStore {
       SpellData spellData = SpellDataLoader.findByName(name);
       if (spellData != null) {
         character.addSpell(spellData);
+      }
+    }
+  }
+
+  /**
+   * Lädt Adeptenkräfte ohne Regelprüfung (wie Qualities): nach Qualities, Attributen, Fertigkeiten und Magie, weil
+   * Kosten und Höchststufen davon abhängen. Unbekannte Kräfte werden übersprungen; ohne Adeptengabe gibt es keine.
+   */
+  private static void applyAdeptPowers(@NonNull Character character, @NonNull CharacterData data) {
+    if (!character.hasAdeptPowers()) {
+      return;
+    }
+    character.getAdeptPowers().loadAdeptMagic(data.adeptMagic);
+    for (AdeptPowerEntry entry : data.adeptPowers) {
+      AdeptPowerData powerData = AdeptPowerDataLoader.findByName(entry.name);
+      if (powerData != null) {
+        character.getAdeptPowers().load(powerData, entry.choice, entry.level);
       }
     }
   }

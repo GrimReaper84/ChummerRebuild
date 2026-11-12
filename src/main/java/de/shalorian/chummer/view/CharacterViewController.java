@@ -10,6 +10,7 @@ import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.FinalizeDialogController;
+import de.shalorian.chummer.view.tab.AdeptTabBuilder;
 import de.shalorian.chummer.view.tab.AttributeTabBuilder;
 import de.shalorian.chummer.view.tab.BiographyTabBuilder;
 import de.shalorian.chummer.view.tab.CharacterTabHost;
@@ -45,7 +46,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Charakterbogen: hält die FXML-Knoten, den Kopfbereich (BP, Nuyen, Abschluss, Modus) und die Sichtbarkeit der
- * Magie-/Technomancer-Tabs. Den Inhalt der Tabs bauen die Builder in {@code view.tab}; ihre fachlichen
+ * Magie-, Adepten- und Technomancer-Tabs. Den Inhalt der Tabs bauen die Builder in {@code view.tab}; ihre fachlichen
  * Rückmeldungen ({@link CharacterTabHost}) laufen hier zusammen, und hier wird entschieden, was neu gebaut wird.
  */
 public class CharacterViewController implements CharacterTabHost {
@@ -102,6 +103,10 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private VBox magicContainer;
   @FXML
+  private Tab adeptTab;
+  @FXML
+  private VBox adeptContainer;
+  @FXML
   private Tab technomancerTab;
   @FXML
   private VBox technomancerContainer;
@@ -127,8 +132,8 @@ public class CharacterViewController implements CharacterTabHost {
   private ToggleButton sortByCategoryBtn;
   @FXML
   private ToggleButton sortByAlphabetBtn;
-  private int magicTabIndex;
-  private int technomancerTabIndex;
+  /** Alle Tabs in FXML-Reihenfolge, damit ein wieder eingeblendeter Tab an seinen Platz kommt. */
+  private @NonNull List<Tab> tabOrder = List.of();
   private @Nullable Character character;
   private final @NonNull TabServices services =
       new TabServices(() -> nameLabel.getScene().getWindow(), this::onLogChanged);
@@ -150,6 +155,8 @@ public class CharacterViewController implements CharacterTabHost {
   @SuppressWarnings("NullAway.Init")
   private MagicTabBuilder magicTabBuilder;
   @SuppressWarnings("NullAway.Init")
+  private AdeptTabBuilder adeptTabBuilder;
+  @SuppressWarnings("NullAway.Init")
   private TechnomancerTabBuilder technomancerTabBuilder;
   @SuppressWarnings("NullAway.Init")
   private CyberwareTabBuilder cyberwareTab;
@@ -170,6 +177,7 @@ public class CharacterViewController implements CharacterTabHost {
     conditionTab = new ConditionTabBuilder(conditionContainer, this);
     biographyTab = new BiographyTabBuilder(biographyContainer, this);
     magicTabBuilder = new MagicTabBuilder(magicContainer, this);
+    adeptTabBuilder = new AdeptTabBuilder(adeptContainer, this, wiring);
     technomancerTabBuilder = new TechnomancerTabBuilder(technomancerContainer, this, wiring);
     cyberwareTab = new CyberwareTabBuilder(cyberwareContainer, this);
     streetGear = new StreetGearTabBuilder(lifestyleContainer, armorContainer, weaponContainer,
@@ -196,51 +204,33 @@ public class CharacterViewController implements CharacterTabHost {
       refreshRows();
     });
 
-    magicTabIndex = mainTabPane.getTabs().indexOf(magicTab);
-    mainTabPane.getTabs().remove(magicTab);
-
-    technomancerTabIndex = mainTabPane.getTabs().indexOf(technomancerTab);
-    mainTabPane.getTabs().remove(technomancerTab);
+    tabOrder = List.copyOf(mainTabPane.getTabs());
+    mainTabPane.getTabs().removeAll(magicTab, adeptTab, technomancerTab);
   }
 
   /**
-   * Blendet den Magie-Tab ein bzw. aus, je nachdem ob {@link Character#isMagician()} aktuell wahr ist — funktioniert identisch im Erstellungs- und im
-   * Karrieremodus. Anders als das bestehende {@code setVisible()}/{@code setManaged()}-Muster für einzelne Controls wird der Tab tatsächlich aus
-   * {@link TabPane#getTabs()} entfernt bzw. an der ursprünglichen FXML-Position wieder eingefügt (analog zum C#-Original, siehe
-   * {@code docs/magie_analyse.md}).
+   * Blendet die Tabs für Magie ({@link Character#isMagician()}), Adeptenkräfte ({@link Character#hasAdeptPowers()})
+   * und Technomancer ({@link Character#hasResonance()}) passend ein oder aus, in beiden Modi. Die Tabs werden aus
+   * {@link TabPane#getTabs()} entfernt bzw. an ihrer FXML-Position wieder eingefügt (wie im C#-Original). Magieradepten
+   * sehen Magie- und Adepten-Tab zugleich.
    */
-  private void syncMagicTabVisibility() {
+  private void syncSpecialTabs() {
     Character ch = this.character;
     if (ch == null) {
       return;
     }
-    boolean shouldBeVisible = ch.isMagician();
-    boolean isVisible = mainTabPane.getTabs().contains(magicTab);
-    if (shouldBeVisible && !isVisible) {
-      int index = Math.min(magicTabIndex, mainTabPane.getTabs().size());
-      mainTabPane.getTabs().add(index, magicTab);
-    } else if (!shouldBeVisible && isVisible) {
-      mainTabPane.getTabs().remove(magicTab);
-    }
+    syncTabVisibility(magicTab, ch.isMagician());
+    syncTabVisibility(adeptTab, ch.hasAdeptPowers());
+    syncTabVisibility(technomancerTab, ch.hasResonance());
   }
 
-  /**
-   * Blendet den Technomancer-Tab ein bzw. aus, je nachdem ob {@link Character#hasResonance()} aktuell wahr ist — 1:1 dasselbe Muster wie
-   * {@link #syncMagicTabVisibility()}. Anders als bei Magie (Magier vs. Adept) gibt es bei Technomancer keine feinere Differenzierung nötig, da nur
-   * eine einzige Quality ("Technomancer") RES freischaltet.
-   */
-  private void syncTechnomancerTabVisibility() {
-    Character ch = this.character;
-    if (ch == null) {
-      return;
-    }
-    boolean shouldBeVisible = ch.hasResonance();
-    boolean isVisible = mainTabPane.getTabs().contains(technomancerTab);
-    if (shouldBeVisible && !isVisible) {
-      int index = Math.min(technomancerTabIndex, mainTabPane.getTabs().size());
-      mainTabPane.getTabs().add(index, technomancerTab);
-    } else if (!shouldBeVisible && isVisible) {
-      mainTabPane.getTabs().remove(technomancerTab);
+  private void syncTabVisibility(@NonNull Tab tab, boolean visible) {
+    List<Tab> tabs = mainTabPane.getTabs();
+    if (visible && !tabs.contains(tab)) {
+      int index = (int) tabOrder.subList(0, tabOrder.indexOf(tab)).stream().filter(tabs::contains).count();
+      tabs.add(index, tab);
+    } else if (!visible) {
+      tabs.remove(tab);
     }
   }
 
@@ -253,6 +243,7 @@ public class CharacterViewController implements CharacterTabHost {
     conditionTab.setCharacter(character);
     biographyTab.setCharacter(character);
     magicTabBuilder.setCharacter(character);
+    adeptTabBuilder.setCharacter(character);
     technomancerTabBuilder.setCharacter(character);
     cyberwareTab.setCharacter(character);
     logTab.setCharacter(character);
@@ -265,6 +256,7 @@ public class CharacterViewController implements CharacterTabHost {
     buildQualitiesTab();
     biographyTab.build();
     magicTabBuilder.build();
+    adeptTabBuilder.build();
     technomancerTabBuilder.build();
     cyberwareTab.build();
     buildStreetGearTabs();
@@ -318,15 +310,28 @@ public class CharacterViewController implements CharacterTabHost {
     attributeTab.build();
     skillTab.build();
     cyberwareTab.build();
+    adeptTabBuilder.build();
     updateBpDisplay();
     refreshRows();
   }
 
-  /** Baut den Tab Gaben &amp; Handicaps neu und blendet Magie-/Technomancer-Tab passend ein oder aus. */
+  /** Baut den Tab Gaben &amp; Handicaps neu und blendet Magie-, Adepten- und Technomancer-Tab passend ein oder aus. */
   private void buildQualitiesTab() {
     qualityTab.build();
-    syncMagicTabVisibility();
-    syncTechnomancerTabVisibility();
+    syncSpecialTabs();
+  }
+
+  /**
+   * Adeptenkräfte wirken auf Attribute (Aug-Spalte), Fertigkeitspools, Initiative, Zustandsmonitor und Schutz: diese
+   * Tabs und den Kräfte-Tab selbst neu bauen, dann alle Zeilen neu bewerten (Rüstungskopf, Fertigkeitssperren).
+   */
+  @Override
+  public void onAdeptPowersChanged() {
+    adeptTabBuilder.build();
+    attributeTab.build();
+    skillTab.build();
+    conditionTab.build();
+    refreshRows();
   }
 
   @Override
@@ -353,6 +358,7 @@ public class CharacterViewController implements CharacterTabHost {
     qualityTab.refresh();
     contactTab.refresh();
     conditionTab.refresh();
+    adeptTabBuilder.refresh();
     technomancerTabBuilder.refresh();
     streetGear.refresh();
   }
@@ -461,6 +467,7 @@ public class CharacterViewController implements CharacterTabHost {
     conditionTab.build();
     biographyTab.build();
     magicTabBuilder.build();
+    adeptTabBuilder.build();
     technomancerTabBuilder.build();
     cyberwareTab.build();
     buildStreetGearTabs();

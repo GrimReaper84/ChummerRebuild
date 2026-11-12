@@ -243,8 +243,7 @@ public final class StreetGearTabBuilder {
 
     Runnable refreshSummary = () -> {
       protectionLabel.setText(
-          "Schutz: " + character.getEquipment().getArmorBallistic() + "/"
-              + character.getEquipment().getArmorImpact());
+          "Schutz: " + character.getArmorBallistic() + "/" + character.getArmorImpact());
       int penalty = character.getEquipment().getArmorEncumbrancePenalty();
       encumbranceLabel.setText(penalty == 0
           ? "Keine Behinderung"

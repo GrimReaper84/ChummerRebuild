@@ -131,7 +131,8 @@ public class QualityDataLoader {
       Map.entry("highpaintolerance", QualityBonusType.HIGH_PAIN_TOLERANCE),
       Map.entry("lowpaintolerance", QualityBonusType.LOW_PAIN_TOLERANCE),
       Map.entry("willtolive", QualityBonusType.WILL_TO_LIVE),
-      Map.entry("astralaccess", QualityBonusType.ASTRAL_ACCESS));
+      Map.entry("astralaccess", QualityBonusType.ASTRAL_ACCESS),
+      Map.entry("adeptpowers", QualityBonusType.ADEPT_POWERS));
 
   private static @NonNull Set<QualityBonusType> parseBonuses(@NonNull Element el) {
     Set<QualityBonusType> bonuses = EnumSet.noneOf(QualityBonusType.class);

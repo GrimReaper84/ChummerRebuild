@@ -45,4 +45,10 @@ public interface CharacterTabHost {
    * Panzerungsbehinderung abhängen (Aug-Spalte GES/REA), nachziehen.
    */
   void onArmorChanged();
+
+  /**
+   * Adeptenkräfte oder ihre Stufen haben sich geändert: Attribute, Würfelpools, Initiative, Zustandsmonitor und Schutz
+   * nachziehen.
+   */
+  void onAdeptPowersChanged();
 }

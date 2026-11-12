@@ -204,12 +204,11 @@ public class Equipment {
    * −1), zusammen −4.
    *
    * <p>Helme und Schilde zählen in die Summe mit (Nutzerentscheidung, wie im C#-Original; GRW S. 372
-   * verweist bei ihnen ausdrücklich auf die Panzerungsbehinderung). Grundlage ist die investierte
-   * Konstitution — sobald Attributboni modelliert sind, muss hier der modifizierte Wert verwendet
-   * werden.
+   * verweist bei ihnen ausdrücklich auf die Panzerungsbehinderung). Grundlage ist die verstärkte
+   * Konstitution ({@link Character#getAugmentedAttributeValue}); Mystischer Panzer zählt nicht mit.
    */
   public int getArmorEncumbrancePenalty() {
-    int limit = owner.getAttribute(AttributeType.BOD).getValue() * ARMOR_ENCUMBRANCE_BOD_MULTIPLIER;
+    int limit = owner.getAugmentedAttributeValue(AttributeType.BOD) * ARMOR_ENCUMBRANCE_BOD_MULTIPLIER;
     return -(encumbranceSteps(ArmorData::ballistic, limit)
         + encumbranceSteps(ArmorData::impact, limit));
   }

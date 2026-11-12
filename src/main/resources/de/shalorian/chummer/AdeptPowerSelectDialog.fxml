@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.shalorian.chummer.view.dialog.AdeptPowerSelectDialogController"
+      spacing="14" styleClass="dialog-pane" prefWidth="520">
+    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+    <!-- Filter-Zeile -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <ComboBox fx:id="categoryBox" prefWidth="170"/>
+        <TextField fx:id="searchField" promptText="Suche…" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- Kräfteliste -->
+    <ListView fx:id="itemListView" prefHeight="260" VBox.vgrow="ALWAYS"/>
+
+    <!-- Info-Bereich -->
+    <GridPane hgap="14" vgap="4">
+        <columnConstraints>
+            <ColumnConstraints minWidth="80" prefWidth="90"/>
+            <ColumnConstraints minWidth="180" prefWidth="220" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label text="Kraftpunkte:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="costLabel" styleClass="attr-bp"
+               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label fx:id="choiceLabel" text="Auswahl:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <ComboBox fx:id="choiceBox" prefWidth="260"/>
+            <TextField fx:id="choiceField" prefWidth="260"/>
+        </HBox>
+    </GridPane>
+
+    <!-- Seite, Kurzwirkung und ggf. Grund, warum die Kraft nicht kaufbar ist -->
+    <Label fx:id="detailLabel" wrapText="true" minHeight="60"/>
+
+    <CheckBox fx:id="onlySelectableBox" text="Nur kaufbare anzeigen"/>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Abbrechen"       onAction="#onCancel"   styleClass="btn-secondary"/>
+        <Button fx:id="addAgainButton" text="OK &amp; Weiteres" onAction="#onOkAndAdd"
+                styleClass="btn-secondary"/>
+        <Button fx:id="okButton" text="OK" onAction="#onOk"
+                defaultButton="true" styleClass="btn-primary"/>
+    </HBox>
+</VBox>

@@ -127,7 +127,7 @@
 ## 8. Magie
 
 > Scope-Entscheidung (2026-08-08): Nur reine **Magier** umgesetzt (Tradition + Zauber-Erlernen).
-> Adept-Kräfte und Mystic-Adept-Split sind bewusst zurückgestellt (eigenes Folgefeature). Details:
+> Adeptenkräfte und Magieradept-Aufteilung folgten am 2026-11-12 (ADR-046, `docs/plaene/archiv/adepten_plan.md`). Details:
 > `docs/analysen/archiv/magie_analyse.md` (C#-Analyse), `docs/analysen/archiv/magie_java_analyse.md` (Java-Ist-Analyse),
 > `docs/plaene/archiv/magie_plan.md` (Umsetzungsplan inkl. aller Entscheidungen).
 
@@ -142,11 +142,11 @@
 | Magische Aktionsfertigkeiten (Spruchzauberei/Ritualzauberei) | ✅ | Neu in `skills.xml`, eigene `SkillCategory.MAGICAL`, immer im Skills-Tab sichtbar (für alle Charaktere), aber nur für Magier steigerbar — `+`-Button deaktiviert ohne Gabe "Magier" (`Character.canRaiseSkill()`, GRW S. 208), gilt in Erstellung **und** Karrieremodus |
 | Magier/Adept/Mystischer-Adept-Exklusivität             | ✅      | `Character.addQuality()` verhindert gleichzeitige Wahl mehrerer `GRANTS_MAGIC`-Qualities                                                                                                                                                                            |
 | Magier-Quality-Kosten (Bug-Fix)                        | ✅      | `qualities.xml` von 5 auf 15 BP korrigiert (GRW S. 118)                                                                                                                                                                                                              |
-| Adept-Tab (Adeptenkräfte, Power Points = MAG)          | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
-| Adeptenkräfte mit PP-Kosten                            | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
-| Mystic-Adept-MAG-Split                                 | ❌      | Zurückgestellt — eigenes Folgefeature                                                                                                                                                                                                                                |
+| Adept-Tab (Adeptenkräfte, Power Points = MAG)          | ✅      | 2026-11-12 (ADR-046): Tab „Adeptenkräfte“ nur für Adept/Magieradept, Kraftpunkte = wirksame Magie mit Bruchteilen, Warnung bei überzogenen Punkten |
+| Adeptenkräfte mit PP-Kosten                            | ✅      | 19 GRW-Kräfte (S. 229–232), Auswahldialog; rechnend: Gesteigerte Reflexe, Gesteigertes körperliches Attribut, Verbesserte Fertigkeit, Verbesserte Wahrnehmung, Schmerzresistenz, Mystischer Panzer, Astrale Wahrnehmung. Offen: Adrenalinkick als Rechnung, Kritischer Schlag/Todeskralle im waffenlosen Schaden, Geschärfte Sinne als Liste, Initiation/Metamagie (S. 232/233) |
+| Mystic-Adept-MAG-Split                                 | ✅      | Im Tab Adeptenkräfte (S. 229); Zauberpools mit Rest-Magie, Höchststufe nach voller Magie |
 | Initiationsgrade                                       | ❌      | Kein GRW-Kern-Beleg im Grundregelwerk gefunden (vermutlich Sourcebook *Street Magic*), niedrige Priorität                                                                                                                                                            |
-| Restliche magische Aktionsfertigkeiten (Antimagie, Beschwören-Gruppe, Arcana, Verzaubern, Askennen, Astralkampf) | ✅ | **Umgesetzt 2026-10-09** (GRW S. 148–150): Gruppen Hexerei (Antimagie, Ritualzauberei, Spruchzauberei) und Beschwören (Binden, Herbeirufen, Verbannen), dazu Arcana, Askennen, Astralkampf, Verzaubern. Zugang über `Character.isSkillAccessible()`/`canRaiseGroup()`: nur Magier, Ausnahme Arcana (auch Mundane, GRW S. 148). Beim Entfernen der Gabe Magier/Technomant: Ja/Nein-Abfrage, bestätigt werden die gesperrten Fertigkeiten samt Spezialisierung auf 0 gesetzt (`Character.getSkillsLockedByRemovingQuality()`). Offen: Adepten mit Astraler Wahrnehmung dürfen Askennen/Astralkampf (GRW S. 109), kommt mit den Adeptenkräften; Hexerei/Beschwören als Wissensfertigkeit für Nicht-Magier (GRW S. 109) nicht gesondert abgebildet |
+| Restliche magische Aktionsfertigkeiten (Antimagie, Beschwören-Gruppe, Arcana, Verzaubern, Askennen, Astralkampf) | ✅ | **Umgesetzt 2026-10-09** (GRW S. 148–150): Gruppen Hexerei (Antimagie, Ritualzauberei, Spruchzauberei) und Beschwören (Binden, Herbeirufen, Verbannen), dazu Arcana, Askennen, Astralkampf, Verzaubern. Zugang über `Character.isSkillAccessible()`/`canRaiseGroup()`: nur Magier, Ausnahme Arcana (auch Mundane, GRW S. 148). Beim Entfernen der Gabe Magier/Technomant: Ja/Nein-Abfrage, bestätigt werden die gesperrten Fertigkeiten samt Spezialisierung auf 0 gesetzt (`Character.getSkillsLockedByRemovingQuality()`). Seit 2026-11-12: Askennen/Astralkampf nur mit astraler Wahrnehmung (Zauberer oder Kraft Astrale Wahrnehmung, S. 108/149). Hexerei/Beschwören als Wissensfertigkeit für Nicht-Magier (GRW S. 109) nicht gesondert abgebildet |
 
 ---
 
@@ -280,7 +280,7 @@
 | Physische Initiative = INT + REA (+ Modifikatoren) | ✅      | Initiativeattribut (GRW S. 172) mit wirksamen Werten, gekappt auf ⌊1,5 × (REA-Max + INT-Max)⌋ (S. 91), Verletzungsmodifikator abgezogen; Tab „Zustand“, 2026-11-12 |
 | Astrale Initiative = INT × 2                       | ✅      | GRW S. 227, 3 Durchgänge, nur mit Astralzugang (Gabe Zauberer; Magieradept nicht, S. 116) |
 | Matrix-Initiative (mit Commlink oder Technomancer) | ❌      | Zurückgestellt (Nutzerentscheidung 2026-11-12). GRW S. 265/276/279: kaltes/heißes Sim mit Prozessor + INT, Technomancer INT × 2 + 1 |
-| Initiative Passes anzeigen                         | ✅      | Immer 1, solange Reflexbooster/Adeptenkräfte fehlen; astral 3 |
+| Initiative Passes anzeigen                         | ✅      | 1 + Gesteigerte Reflexe (S. 230); Reflexbooster noch nicht; astral 3 |
 
 ---
 
@@ -288,10 +288,10 @@
 
 | Feature                                    | Status | Anmerkung |
 |--------------------------------------------|--------|-----------|
-| Physischer CM = 8 + ⌈BOD/2⌉                | ✅      | GRW S. 94; Überzahl = KON + Überlebenswille (S. 192, 117) |
-| Stun CM = 8 + ⌈WIL/2⌉                      | ✅      | GRW S. 94 |
+| Physischer CM = 8 + ⌈BOD/2⌉                | ✅      | GRW S. 94, verstärkte KON (seit ADR-046); Überzahl = KON + Überlebenswille (S. 192, 117) |
+| Stun CM = 8 + ⌈WIL/2⌉                      | ✅      | GRW S. 94, verstärkte WIL |
 | CM-Boxen anklicken und füllen              | ✅      | Nur im Karrieremodus, gespeichert; geistiger Überlauf wird nicht automatisch übertragen |
-| Wundmodifikator berechnen (−1 pro 3 Boxen) | ✅      | GRW S. 193, je Spalte, mit Hoher/Niedriger Schmerztoleranz (S. 116/120); wirkt auf alle angezeigten Pools und die Initiative |
+| Wundmodifikator berechnen (−1 pro 3 Boxen) | ✅      | GRW S. 193, je Spalte, mit Hoher/Niedriger Schmerztoleranz (S. 116/120) und Schmerzresistenz (S. 231); wirkt auf alle angezeigten Pools und die Initiative |
 
 ---
 
@@ -390,12 +390,16 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
 
 4. ✅ **Qualities vervollständigt (2026-11-12, ADR-044)**; ursprünglich: mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
    siehe Abschnitt 6).
-5. **Adepten** (Adeptenkräfte, Mystischer Adept), bei Magie bewusst zurückgestellt.
+5. ✅ **Adepten (2026-11-12, ADR-046)**: Tab Adeptenkräfte, 19 GRW-Kräfte, Magieradept-Aufteilung, sieben Kräfte
+   rechnen. Offen: Initiation/Metamagie, situative Kräfte als Rechnung.
 6. ✅ **Würfelpools, Zustandsmonitor, Initiative (2026-11-12, ADR-045)**: Pool-Spalte, Tab „Zustand“, augmentiertes
    Maximum, Attributproben, Obergrenze Komplexe Formen. Offen: Matrix-Initiative, situative Quality-Boni.
 7. **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035).
 8. **Kataloge vervollständigen**: Zauber (10 von 84 GRW-Kern), Komplexe Formen, Cyberware/Bioware.
 9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
+10. **Grundlegende Überarbeitung der UI** (Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
+    gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,
+    Darstellung der Werte, einheitliche Bausteine) vor der Planung mit dem Nutzer klären.
 
 > **Regelwerk-Abgleich (2026-08-04):** Die komplette Roadmap wurde gegen das SR4-Grundregelwerk geprüft,
 > bevor weitere Features umgesetzt werden — siehe `docs/analysen/archiv/regelwerk_abgleich_stufe2_roadmap.md` und

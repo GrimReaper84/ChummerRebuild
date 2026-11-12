@@ -15,6 +15,7 @@ public final class DataPaths {
   public static final String WEAPON_ACCESSORIES_XML =
       "/de/shalorian/chummer/data/weapon_accessories.xml";
   public static final String GEAR_XML = "/de/shalorian/chummer/data/gear.xml";
+  public static final String ADEPT_POWERS_XML = "/de/shalorian/chummer/data/adept_powers.xml";
 
   private DataPaths() {}
 }

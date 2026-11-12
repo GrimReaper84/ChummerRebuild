@@ -20,7 +20,7 @@
         <page>115</page>
         <note>Erwacht mit Magie 1; nutzt Magie nur über Adeptenkräfte (Kraftpunkte = Magie), kein Zaubern.</note>
         <excludes><quality>Zauberer</quality><quality>Magieradept</quality><quality>Technomancer</quality></excludes>
-        <bonus><grantsmagic/></bonus>
+        <bonus><grantsmagic/><adeptpowers/></bonus>
     </quality>
     <quality>
         <name>Astrales Chamäleon</name>
@@ -173,7 +173,7 @@
         <page>116</page>
         <note>Erwacht mit Magie 1; verteilt Magie auf Adeptenkräfte oder magische Fertigkeiten, keine Projektion.</note>
         <excludes><quality>Adept</quality><quality>Zauberer</quality><quality>Technomancer</quality></excludes>
-        <bonus><grantsmagic/><grantsspellcasting/></bonus>
+        <bonus><grantsmagic/><grantsspellcasting/><adeptpowers/></bonus>
     </quality>
     <quality>
         <name>Magieresistenz 1</name>

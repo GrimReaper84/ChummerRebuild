@@ -37,5 +37,7 @@ public enum QualityBonusType {
   /** Überlebenswille (GRW S. 117): je Stufe ein Kästchen mehr für überzähligen körperlichen Schaden. */
   WILL_TO_LIVE,
   /** Zugang zum Astralraum (Zauberer; GRW S. 116: Magieradepten nur über eine Adeptenkraft): astrale Initiative. */
-  ASTRAL_ACCESS
+  ASTRAL_ACCESS,
+  /** Adeptenkräfte mit Kraftpunkten (Adept, Magieradept; GRW S. 115/116, 229). */
+  ADEPT_POWERS
 }

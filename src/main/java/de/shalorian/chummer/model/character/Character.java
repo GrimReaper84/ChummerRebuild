@@ -1,5 +1,8 @@
 package de.shalorian.chummer.model.character;
 
+import de.shalorian.chummer.model.character.adept.AdeptPower;
+import de.shalorian.chummer.model.character.adept.AdeptPowerEffect;
+import de.shalorian.chummer.model.character.adept.AdeptPowers;
 import de.shalorian.chummer.model.character.attribute.AttributeRange;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
@@ -68,6 +71,9 @@ public class Character {
   private static final String SPELLCASTING_SKILL = "Spruchzauberei";
   private static final String RITUAL_SPELLCASTING_SKILL = "Ritualzauberei";
   private static final String ARCANA_SKILL = "Arcana";
+  private static final String PERCEPTION_SKILL = "Wahrnehmung";
+  private static final String ASSENSING_SKILL = "Askennen";
+  private static final String ASTRAL_COMBAT_SKILL = "Astralkampf";
 
   private static final BigDecimal BASE_ESSENCE = BigDecimal.valueOf(6);
   private static final int ESSENCE_DECIMALS = 2;
@@ -89,6 +95,7 @@ public class Character {
   private final List<Contact> contacts = new ArrayList<>();
   private final List<SpellData> spells = new ArrayList<>();
   private final List<ComplexForm> complexForms = new ArrayList<>();
+  private final @NonNull AdeptPowers adeptPowers = new AdeptPowers(this);
   private final @NonNull Equipment equipment = new Equipment(this);
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
@@ -238,11 +245,12 @@ public class Character {
   }
 
   /**
-   * Wirksamer Attributwert inkl. aller modellierten Modifikatoren — derzeit ausschließlich die
-   * Panzerungsbehinderung auf Geschicklichkeit und Reaktion (siehe {@link
-   * Equipment#getArmorEncumbrancePenalty()}). Der investierte Wert ({@link CharacterAttribute#getValue()})
-   * bleibt unverändert, BP- und Karma-Kosten richten sich weiter nach ihm (analog {@link
-   * #getEffectiveMagicOrResonanceValue()}).
+   * Wirksamer Attributwert inkl. aller modellierten Modifikatoren: Adeptenkräfte Gesteigertes körperliches Attribut
+   * und Gesteigerte Reflexe (Reaktion, GRW S. 230), höchstens bis zum augmentierten Maximum (S. 91), danach die
+   * Panzerungsbehinderung auf Geschicklichkeit und Reaktion (siehe {@link Equipment#getArmorEncumbrancePenalty()}).
+   * Der investierte Wert ({@link CharacterAttribute#getValue()}) bleibt unverändert, BP-Kosten richten sich weiter
+   * nach ihm (analog {@link #getEffectiveMagicOrResonanceValue()}). Die Behinderung hängt selbst an der verstärkten
+   * Konstitution; Konstitution wird von ihr nicht beeinflusst, daher entsteht kein Zyklus.
    *
    * <p>Ein durch Behinderung reduzierter Wert fällt nicht unter {@value
    * #MIN_ENCUMBERED_ATTRIBUTE_VALUE}. Das GRW nennt dafür keine Untergrenze; die Grenze ist eine
@@ -250,12 +258,25 @@ public class Character {
    * docs/plaene/archiv/nuyen_ruestung_plan.md} Abschnitt 13).
    */
   public int getAugmentedAttributeValue(@NonNull AttributeType type) {
-    int base = getAttribute(type).getValue();
-    int penalty = equipment.getArmorEncumbrancePenalty();
-    if (penalty == 0 || (type != AttributeType.AGI && type != AttributeType.REA)) {
-      return base;
+    int natural = getAttribute(type).getValue();
+    int boost = adeptPowers.level(AdeptPowerEffect.IMPROVED_ATTRIBUTE, type.name())
+        + (type == AttributeType.REA ? adeptPowers.level(AdeptPowerEffect.IMPROVED_REFLEXES) : 0);
+    int value = boost == 0 ? natural : Math.min(natural + boost, getAugmentedMaximum(type));
+    if (type != AttributeType.AGI && type != AttributeType.REA) {
+      return value;
     }
-    return Math.max(MIN_ENCUMBERED_ATTRIBUTE_VALUE, base + penalty);
+    int penalty = equipment.getArmorEncumbrancePenalty();
+    return penalty == 0 ? value : Math.max(MIN_ENCUMBERED_ATTRIBUTE_VALUE, value + penalty);
+  }
+
+  /**
+   * Karma-Kosten im Karrieremodus, um ein Attribut um 1 zu steigern: neuer Wert × 5. Hat das Attribut Stufen von
+   * Gesteigertes körperliches Attribut, zählen sie mit (GRW S. 230: Kosten nach dem Gesamtwert einschließlich der
+   * magischen Steigerung).
+   */
+  public int getAttributeKarmaCost(@NonNull AttributeType type) {
+    return getAttribute(type).getKarmaCost()
+        + adeptPowers.level(AdeptPowerEffect.IMPROVED_ATTRIBUTE, type.name()) * 5;
   }
 
   // --- Sonderattribute (Edge/Magic/Resonance) & Essenz ---
@@ -491,10 +512,10 @@ public class Character {
   /**
    * Prüft, ob der Charakter diese aktive Fertigkeit überhaupt erwerben darf:
    * <ul>
-   *   <li>Magische Fertigkeiten nur mit der Gabe "Zauberer" (SR4-Grundregelwerk S. 148: grundsätzlich nur
-   *       für Zauberer und Magieradepten mit Magie ab 1). Ausnahme Arcana (S. 148), die auch Mundane
-   *       lernen dürfen. Dass Adepten mit der Kraft Astrale Wahrnehmung auch Askennen und
-   *       Astralkampf nutzen dürfen (S. 109), ist mangels Adeptenkräften noch nicht abgebildet.</li>
+   *   <li>Magische Fertigkeiten nur für Zauberer und Magieradepten (SR4-Grundregelwerk S. 148). Ausnahme Arcana
+   *       (S. 148), die auch Mundane lernen dürfen. Askennen und Astralkampf setzen astrale Wahrnehmung voraus
+   *       (S. 108, 149): Zauberer haben sie, Adepten und Magieradepten nur mit der Kraft Astrale Wahrnehmung
+   *       (siehe {@link #hasAstralPerception()}).</li>
    *   <li>Resonanzfertigkeiten nur für Technomancer (S. 151, Gabe S. 117).</li>
    *   <li>Keine Fertigkeit, für die der Charakter Inkompetenz gewählt hat (S. 120).</li>
    * </ul>
@@ -503,15 +524,38 @@ public class Character {
    */
   private boolean isSkillAccessible(@NonNull Skill skill) {
     return !hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())
-        && isSkillAccessible(skill, isMagician(), hasResonance());
+        && isSkillAccessible(skill, isMagician(), hasAstralPerception(), hasResonance());
   }
 
-  private static boolean isSkillAccessible(@NonNull Skill skill, boolean magician, boolean resonance) {
+  private static boolean isSkillAccessible(@NonNull Skill skill, boolean magician, boolean astral,
+      boolean resonance) {
     return switch (skill.getCategory()) {
-      case MAGICAL -> magician || ARCANA_SKILL.equals(skill.getName());
+      case MAGICAL -> switch (skill.getName()) {
+        case ARCANA_SKILL -> true;
+        case ASSENSING_SKILL, ASTRAL_COMBAT_SKILL -> astral;
+        default -> magician;
+      };
       case RESONANCE -> resonance;
       default -> true;
     };
+  }
+
+  /**
+   * Ob der Charakter astral wahrnehmen kann: Zauberer immer (GRW S. 118), Adepten und Magieradepten nur mit der
+   * Kraft Astrale Wahrnehmung (S. 116, 229, 230). Schaltet Askennen und Astralkampf frei.
+   */
+  public boolean hasAstralPerception() {
+    return astralPerception(hasAstralAccess(), hasAdeptPowers(), null);
+  }
+
+  /**
+   * Gemeinsame Regel für {@link #hasAstralPerception()} und die Vorschau beim Entfernen: Astralzugang (Zauberer) oder
+   * Adeptengabe mit der Kraft Astrale Wahrnehmung, wobei {@code without} nicht mitzählt.
+   */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: alle außer genau dieser Kraft
+  private boolean astralPerception(boolean astralAccess, boolean adeptGift, @Nullable AdeptPower without) {
+    return astralAccess || (adeptGift && adeptPowers.getPowers().stream()
+        .anyMatch(p -> p != without && p.getData().effect() == AdeptPowerEffect.ASTRAL_PERCEPTION));
   }
 
   /**
@@ -767,6 +811,10 @@ public class Character {
     if (conflict.isPresent()) {
       return "Nicht zusammen mit " + conflict.get().data().name();
     }
+    if (data.bonuses().contains(QualityBonusType.HIGH_PAIN_TOLERANCE)
+        && adeptPowers.level(AdeptPowerEffect.PAIN_RESISTANCE) > 0) {
+      return "Nicht zusammen mit der Adeptenkraft Schmerzresistenz";
+    }
     SkillCategory doubled = doubledCategory(data);
     if (doubled != null) {
       for (Skill s : skills.values()) {
@@ -859,19 +907,28 @@ public class Character {
     List<Skill> locked = getSkillsLockedWithout(removed);
     qualities.removeIf(q -> containsSame(removed, q));
     applyQualityEffects();
-    locked.forEach(s -> {
-      s.setRating(0);
-      s.setSpecialization(null);
-    });
+    locked.forEach(Character::resetLockedSkill);
+  }
+
+  /** Setzt eine nicht mehr erlernbare Fertigkeit samt Spezialisierung auf 0. */
+  private static void resetLockedSkill(@NonNull Skill skill) {
+    skill.setRating(0);
+    skill.setSpecialization(null);
+  }
+
+  /** Zeile für die Rückfrage, wenn eine Fertigkeit dadurch auf 0 fällt. */
+  private static @NonNull String lockedSkillLine(@NonNull Skill skill) {
+    return "%s %d → 0 (nicht mehr erlernbar)".formatted(skill.getName(), skill.getRating());
   }
 
   /**
    * Wendet die rechnerischen Wirkungen aller Qualities an: Magie/Resonanz freischalten, Maximum-Boni
    * (Außergewöhnliches Attribut, Glück), Höchstwert 7 (Talentiert) und gesperrte Fertigkeiten (Inkompetenz, auf
-   * 0 gesetzt).
+   * 0 gesetzt). Ohne Gabe Adept bzw. Magieradept fallen alle Adeptenkräfte weg.
    */
   private void applyQualityEffects() {
     syncMagicOrResonance();
+    adeptPowers.syncWithGifts();
     for (CharacterAttribute attribute : attributes.values()) {
       attribute.setMaxBonus(
           hasQualityChoice(QualityBonusType.EXCEPTIONAL_ATTRIBUTE, attribute.getType().name()) ? 1 : 0);
@@ -881,13 +938,13 @@ public class Character {
       skill.setMaxRating(hasQualityChoice(QualityBonusType.APTITUDE, skill.getName())
           ? Skill.MAX_RATING + 1 : Skill.MAX_RATING);
       if (hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())) {
-        skill.setRating(0);
-        skill.setSpecialization(null);
+        resetLockedSkill(skill);
       }
     }
   }
 
-  private boolean hasQualityBonus(@NonNull QualityBonusType bonus) {
+  /** Ob eine Quality des Charakters diese Wirkung hat. */
+  public boolean hasQualityBonus(@NonNull QualityBonusType bonus) {
     return hasQualityBonus(qualities, bonus);
   }
 
@@ -936,8 +993,11 @@ public class Character {
     List<CharacterQuality> remaining = qualities.stream().filter(q -> !containsSame(removed, q)).toList();
     List<String> lines = new ArrayList<>();
     removed.stream().filter(q -> q != quality).forEach(q -> lines.add(q.displayName() + " wird mit entfernt"));
+    if (!hasQualityBonus(remaining, QualityBonusType.ADEPT_POWERS)) {
+      adeptPowers.getPowers().forEach(p -> lines.add("Adeptenkraft " + p.displayName() + " wird mit entfernt"));
+    }
     List<Skill> locked = getSkillsLockedWithout(removed);
-    locked.forEach(s -> lines.add("%s %d → 0 (nicht mehr erlernbar)".formatted(s.getName(), s.getRating())));
+    locked.forEach(s -> lines.add(lockedSkillLine(s)));
     for (Skill s : skills.values()) {
       if (!locked.contains(s) && s.getRating() > Skill.MAX_RATING
           && !hasQualityChoice(remaining, QualityBonusType.APTITUDE, s.getName())) {
@@ -975,8 +1035,14 @@ public class Character {
     List<CharacterQuality> remaining = qualities.stream().filter(q -> !containsSame(removed, q)).toList();
     boolean magician = hasQualityBonus(remaining, QualityBonusType.GRANTS_SPELLCASTING);
     boolean resonance = hasQualityBonus(remaining, QualityBonusType.GRANTS_RESONANCE);
+    boolean astral = astralPerception(hasQualityBonus(remaining, QualityBonusType.ASTRAL_ACCESS),
+        hasQualityBonus(remaining, QualityBonusType.ADEPT_POWERS), null);
+    return lockedSkills(magician, astral, resonance);
+  }
+
+  private @NonNull List<Skill> lockedSkills(boolean magician, boolean astral, boolean resonance) {
     return skills.values().stream()
-        .filter(s -> s.getRating() > 0 && !isSkillAccessible(s, magician, resonance))
+        .filter(s -> s.getRating() > 0 && !isSkillAccessible(s, magician, astral, resonance))
         .toList();
   }
 
@@ -1260,14 +1326,28 @@ public class Character {
     }
     String attributeName = linkedAttributeName(skill.getLinkedAttribute());
     int attribute = linkedAttributeValue(skill.getLinkedAttribute());
+    int powers = adeptPowerDice(skill);
+    String powerText = powers == 0 ? "" : " + Adeptenkräfte " + powers;
     if (skill.getRating() > 0) {
-      return Optional.of(dicePool(skill.getRating() + attribute,
-          ratingBreakdown(skill.getName(), skill.getRating(), attributeName, attribute)));
+      return Optional.of(dicePool(skill.getRating() + attribute + powers,
+          ratingBreakdown(skill.getName(), skill.getRating(), attributeName, attribute) + powerText));
     }
     if (!skill.isDefaultable() || isSkillCostDoubled(skill.getCategory())) {
       return Optional.empty();
     }
-    return Optional.of(defaultingPool(attributeName, attribute));
+    return Optional.of(defaultingPool(attributeName, attribute, powers, powerText));
+  }
+
+  /**
+   * Zusatzwürfel aus Adeptenkräften für eine Fertigkeit: Verbesserte Fertigkeit für genau diese Fertigkeit, Verbesserte
+   * Wahrnehmung für Wahrnehmung und Askennen (GRW S. 232).
+   */
+  private int adeptPowerDice(@NonNull Skill skill) {
+    int dice = adeptPowers.level(AdeptPowerEffect.IMPROVED_SKILL, skill.getName());
+    if (PERCEPTION_SKILL.equals(skill.getName()) || ASSENSING_SKILL.equals(skill.getName())) {
+      dice += adeptPowers.level(AdeptPowerEffect.IMPROVED_PERCEPTION);
+    }
+    return dice;
   }
 
   /**
@@ -1290,7 +1370,7 @@ public class Character {
     if (category == KnowledgeSkillCategory.LANGUAGE || isKnowledgeSkillCostDoubled(category)) {
       return Optional.empty();
     }
-    return Optional.of(defaultingPool(type.getDisplayName(), attribute));
+    return Optional.of(defaultingPool(type.getDisplayName(), attribute, 0, ""));
   }
 
   /** Würfel mit Spezialisierung: +{@value #SPECIALIZATION_DICE} im Spezialgebiet (S. 147). */
@@ -1303,8 +1383,11 @@ public class Character {
     return "%s %d + %s %d".formatted(name, rating, attributeName, attribute);
   }
 
-  private @NonNull DicePool defaultingPool(@NonNull String attributeName, int attribute) {
-    return dicePool(attribute - 1, "%s %d − 1 ohne Fertigkeitswert".formatted(attributeName, attribute));
+  /** Pool ohne Fertigkeitswert: Attribut − 1, plus {@code bonus} Würfel mit dem Zusatztext {@code bonusText}. */
+  private @NonNull DicePool defaultingPool(@NonNull String attributeName, int attribute, int bonus,
+      @NonNull String bonusText) {
+    return dicePool(attribute - 1 + bonus,
+        "%s %d − 1 ohne Fertigkeitswert%s".formatted(attributeName, attribute, bonusText));
   }
 
   /** Würfelpool einer reinen Attributprobe (S. 166/167), Verletzungsmodifikator eingerechnet. */
@@ -1321,10 +1404,14 @@ public class Character {
     return new DicePool(Math.max(0, dice + wound), text);
   }
 
-  /** Wirksamer Wert des verbundenen Attributs einer Fertigkeit; MAG/RES nach Essenzverlust. */
+  /**
+   * Wirksamer Wert des verbundenen Attributs einer Fertigkeit; MAG/RES nach Essenzverlust, beim Magieradepten nur die
+   * Magie für magische Fertigkeiten ({@link #getSpellcastingMagic()}).
+   */
   private int linkedAttributeValue(@NonNull String abbreviation) {
     return switch (abbreviation) {
-      case "MAG", "RES" -> getEffectiveMagicOrResonanceValue();
+      case "MAG" -> getSpellcastingMagic();
+      case "RES" -> getEffectiveMagicOrResonanceValue();
       default -> getAugmentedAttributeValue(AttributeType.valueOf(abbreviation));
     };
   }
@@ -1365,11 +1452,11 @@ public class Character {
   }
 
   /**
-   * Initiativedurchgänge: einer; mehr gibt es nur durch Boni wie Reflexbooster oder Adeptenkräfte (S. 172), die noch
-   * nicht modelliert sind.
+   * Initiativedurchgänge: einer, plus die Stufe von Gesteigerte Reflexe (S. 172, 230). Reflexbooster und andere
+   * Quellen sind noch nicht modelliert.
    */
   public int getInitiativePasses() {
-    return 1;
+    return 1 + adeptPowers.level(AdeptPowerEffect.IMPROVED_REFLEXES);
   }
 
   /** Zugang zum Astralraum und damit eine astrale Initiative: derzeit nur über die Gabe Zauberer (S. 116, 118). */
@@ -1385,22 +1472,22 @@ public class Character {
     return Math.max(0, getAugmentedAttributeValue(AttributeType.INT) * 2 + getWoundModifier());
   }
 
-  /** Kästchen der Körperlichen Spalte: 8 plus halbe Konstitution, aufgerundet (S. 94). */
+  /** Kästchen der Körperlichen Spalte: 8 plus halbe verstärkte Konstitution, aufgerundet (S. 94). */
   public int getPhysicalBoxes() {
-    return CONDITION_MONITOR_BASE + (getAttribute(AttributeType.BOD).getValue() + 1) / 2;
+    return CONDITION_MONITOR_BASE + (getAugmentedAttributeValue(AttributeType.BOD) + 1) / 2;
   }
 
-  /** Kästchen der Geistigen Spalte: 8 plus halbe Willenskraft, aufgerundet (S. 94). */
+  /** Kästchen der Geistigen Spalte: 8 plus halbe verstärkte Willenskraft, aufgerundet (S. 94). */
   public int getStunBoxes() {
-    return CONDITION_MONITOR_BASE + (getAttribute(AttributeType.WIL).getValue() + 1) / 2;
+    return CONDITION_MONITOR_BASE + (getAugmentedAttributeValue(AttributeType.WIL) + 1) / 2;
   }
 
   /**
-   * Kästchen für überzähligen körperlichen Schaden: so viele wie die Konstitution (darüber stirbt der Charakter,
-   * S. 192), plus die Stufe von Überlebenswille (S. 117).
+   * Kästchen für überzähligen körperlichen Schaden: so viele wie die verstärkte Konstitution (darüber stirbt der
+   * Charakter, S. 192), plus die Stufe von Überlebenswille (S. 117).
    */
   public int getPhysicalOverflowBoxes() {
-    return getAttribute(AttributeType.BOD).getValue() + qualityLevel(QualityBonusType.WILL_TO_LIVE);
+    return getAugmentedAttributeValue(AttributeType.BOD) + qualityLevel(QualityBonusType.WILL_TO_LIVE);
   }
 
   /**
@@ -1429,7 +1516,8 @@ public class Character {
 
   /**
    * Verletzungsmodifikator (S. 193): je volle 3 Schadenskästchen −1, beide Spalten getrennt gezählt und addiert.
-   * Hohe Schmerztoleranz lässt je Stufe ein Kästchen pro Spalte unberücksichtigt (S. 116), Niedrige Schmerztoleranz
+   * Hohe Schmerztoleranz und die Adeptenkraft Schmerzresistenz lassen je Stufe ein Kästchen pro Spalte
+   * unberücksichtigt (S. 116, 231), Niedrige Schmerztoleranz
    * zählt schon je 2 Kästchen (S. 120). Überzählige Kästchen zählen nicht mit.
    *
    * @return 0 oder negativ
@@ -1446,7 +1534,8 @@ public class Character {
    * @return 0 oder negativ
    */
   public int getColumnWoundModifier(int damagedBoxes) {
-    int ignored = qualityLevel(QualityBonusType.HIGH_PAIN_TOLERANCE);
+    int ignored = qualityLevel(QualityBonusType.HIGH_PAIN_TOLERANCE)
+        + adeptPowers.level(AdeptPowerEffect.PAIN_RESISTANCE);
     int step = hasQualityBonus(QualityBonusType.LOW_PAIN_TOLERANCE)
         ? BOXES_PER_WOUND_MODIFIER_LOW_PAIN_TOLERANCE : BOXES_PER_WOUND_MODIFIER;
     return -(Math.max(0, damagedBoxes - ignored) / step);
@@ -1612,6 +1701,71 @@ public class Character {
   /** Wie {@link #canRaiseComplexForm(ComplexForm)}, aber für den Erwerb einer noch nicht gelernten Form (Stufe 1). */
   public boolean canAddComplexForm() {
     return hasResonance() && getEffectiveMagicOrResonanceValue() >= ComplexForm.MIN_RATING;
+  }
+
+  // --- Adeptenkräfte ---
+
+  /** Ob der Charakter Adeptenkräfte kaufen kann: Gabe Adept oder Magieradept (GRW S. 115/116). */
+  public boolean hasAdeptPowers() {
+    return hasQualityBonus(QualityBonusType.ADEPT_POWERS);
+  }
+
+  /** Magieradept: Adeptenkräfte und Zauberei zugleich, Magie wird aufgeteilt (GRW S. 116, 229). */
+  public boolean isMysticAdept() {
+    return hasAdeptPowers() && isMagician();
+  }
+
+  /**
+   * Die Adeptenkräfte des Charakters (Kauf, Stufen, Kraftpunkte, Magieradept-Aufteilung) — immer vorhanden, leer ohne
+   * Adeptengabe (analog {@link #getEquipment()}). Entfernen läuft über {@link #removeAdeptPower}.
+   */
+  public @NonNull AdeptPowers getAdeptPowers() {
+    return adeptPowers;
+  }
+
+  /**
+   * Magie für magische Fertigkeiten (Zauberei, Beschwören): beim Magieradepten die wirksame Magie ohne den Kräfte-Anteil
+   * (GRW S. 229, Beispiel Roxanne: Magie 4, ein Punkt in Kräften, Spruchzauberei mit 3), sonst die wirksame Magie.
+   */
+  public int getSpellcastingMagic() {
+    return getEffectiveMagicOrResonanceValue() - adeptPowers.getAdeptMagic();
+  }
+
+  /**
+   * Entfernt eine Kraft. Fällt damit die astrale Wahrnehmung weg, werden Askennen und Astralkampf auf 0 gesetzt (wie
+   * beim Entfernen einer Gabe); {@link #getAdeptPowerRemovalConsequences} listet das vorher auf.
+   */
+  public void removeAdeptPower(@NonNull AdeptPower power) {
+    List<Skill> locked = getSkillsLockedByRemovingPower(power);
+    adeptPowers.remove(power);
+    locked.forEach(Character::resetLockedSkill);
+  }
+
+  /** Folgen des Entfernens einer Kraft als Zeilen für die Rückfrage; leer, wenn nur die Kraft wegfällt. */
+  public @NonNull List<String> getAdeptPowerRemovalConsequences(@NonNull AdeptPower power) {
+    return getSkillsLockedByRemovingPower(power).stream()
+        .map(Character::lockedSkillLine)
+        .toList();
+  }
+
+  private @NonNull List<Skill> getSkillsLockedByRemovingPower(@NonNull AdeptPower power) {
+    if (power.getData().effect() != AdeptPowerEffect.ASTRAL_PERCEPTION) {
+      return List.of();
+    }
+    return lockedSkills(isMagician(), astralPerception(hasAstralAccess(), hasAdeptPowers(), power), hasResonance());
+  }
+
+  /** Ballistik-Schutz: angelegte Rüstung ({@link Equipment#getArmorBallistic()}) plus Mystischer Panzer (S. 231). */
+  public int getArmorBallistic() {
+    return equipment.getArmorBallistic() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR);
+  }
+
+  /**
+   * Stoß-Schutz: angelegte Rüstung plus Mystischer Panzer. Der Panzer ist magisch und zählt nicht zur
+   * Panzerungsbehinderung (Annahme, siehe ADR-046).
+   */
+  public int getArmorImpact() {
+    return equipment.getArmorImpact() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR);
   }
 
   // --- Ausrüstung & Nuyen-Budget ---

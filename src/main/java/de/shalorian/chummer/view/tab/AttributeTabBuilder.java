@@ -256,7 +256,7 @@ public final class AttributeTabBuilder {
 
           @Override
           public int karmaStepCost() {
-            return attr.getKarmaCost();
+            return character.getAttributeKarmaCost(type);
           }
 
           @Override

@@ -27,4 +27,12 @@ public enum AttributeType {
   public @NonNull String getAbbreviation() {
     return abbreviation;
   }
+
+  /** Körperliches Attribut: Konstitution, Geschicklichkeit, Reaktion oder Stärke. */
+  public boolean isPhysical() {
+    return switch (this) {
+      case BOD, AGI, REA, STR -> true;
+      case CHA, INT, LOG, WIL -> false;
+    };
+  }
 }

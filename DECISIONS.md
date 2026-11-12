@@ -142,17 +142,40 @@ Kurzwirkung im Dialog und Tooltip.
 **Warum:** GRW als Wahrheitsquelle (ADR-002); Nutzerentscheidungen 2026-11-11 (übersetzen, entfernen, Metavarianten
 unverändert). Die Prüfung mit Begründung an einer Stelle (`getQualityBlockReason`) dient Dialog und Modell zugleich.
 
-### ADR-045: Würfelpools, Zustandsmonitor, Initiative (2026-11-12)
+### ADR-045: Würfelpools, Zustandsmonitor, Initiative (2026-11-12) — teilweise überholt durch ADR-046
 Pools aus Fertigkeitswert und wirksamem Attribut (S. 146), ohne Wert Attribut − 1 nur bei den nicht kursiven
 Fertigkeiten der Tabelle S. 146 und nicht bei Ahnungslosigkeit durch Handicaps (S. 120/122). Der Verletzungsmodifikator
 (S. 193) ist in allen angezeigten Pools und Initiativen schon eingerechnet. Schaden wird nur im Karrieremodus
 eingetragen und gespeichert; geistiger Überlauf (S. 192) wird nicht automatisch in die körperliche Spalte gebucht.
-Spaltengröße aus den natürlichen Werten von KON und WIL. Astrale Initiative nur mit Astralzugang (Zauberer; S. 116
+Spaltengröße aus den natürlichen Werten von KON und WIL (überholt: seit ADR-046 verstärkte Werte). Astrale Initiative nur mit Astralzugang (Zauberer; S. 116
 schließt Magieradepten ohne Adeptenkraft aus). Wissensfertigkeiten ohne Wert erlauben Attribut − 1, außer Sprachen
 (S. 146 kursiv) und Akademisch/Beruf mit Ungebildet (S. 121). Stufen von
 Qualities stehen als `<level>` im Katalog. Matrix-Initiative ist zurückgestellt.
 **Warum:** Nutzerentscheidungen 2026-11-12 (Schaden nur Karriere, eigener Tab, Matrix zurückgestellt); Annahmen dort,
 wo das GRW schweigt, damit der Bogen ohne Improvement-System schon richtige Grundwerte zeigt.
+
+### ADR-046: Adeptenkräfte (2026-11-12)
+Katalog `adept_powers.xml` mit den 19 Kräften S. 229–232; sieben rechnen (Gesteigerte Reflexe, Gesteigertes
+körperliches Attribut, Verbesserte Fertigkeit, Verbesserte Wahrnehmung inkl. Askennen, Schmerzresistenz, Mystischer
+Panzer, Astrale Wahrnehmung), die übrigen tragen ihre Wirkung als Hinweis. Kraftpunkte = wirksame Magie (nach
+Essenzverlust); der Magieradept legt im Tab Adeptenkräfte fest, wie viel Magie in Kräfte geht (S. 229), der Rest gilt
+für alle MAG-Fertigkeitspools, die Höchststufe richtet sich nach der vollen Magie. Essenzverlust nimmt zuerst der
+Zauberei Punkte (Annahme). Kauf und Steigerung nur mit genug Kraftpunkten (harte Sperre); sinkt die Magie später,
+bleiben die Kräfte und der Tab warnt. Gesteigertes körperliches Attribut: Stufen über dem natürlichen Maximum kosten
+doppelt, Grenze ist das augmentierte Maximum, Karma-Steigerung nach Gesamtwert (S. 230). Zustandsmonitor und
+Panzerungsbehinderung nutzen ab jetzt verstärkte KON/WIL (überholt ADR-045); Mystischer Panzer zählt nicht zur
+Behinderung (Annahme). Askennen und Astralkampf nur mit astraler Wahrnehmung (S. 108, 149; auch für den
+Magieradepten). Verbesserte Fertigkeit nur für Fertigkeiten, für die S. 232 Kosten nennt (keine Magie/Resonanz).
+Schmerzresistenz und Hohe Schmerztoleranz schließen sich gegenseitig aus (S. 116). Gesteigerte Reflexe und
+Gesteigerte Reaktion teilen sich den Raum bis zum augmentierten Maximum der Reaktion. Stufen über der Höchststufe (z.B.
+nach gesenktem Fertigkeitswert) bleiben mit Warnung stehen. Die Magie-Aufteilung des Magieradepten lässt sich bei der
+Erschaffung nicht unter die ausgegebenen Kraftpunkte senken und im Karrieremodus nur noch steigern (S. 116, 229:
+Entscheidung je Magiepunkt, kein Umverteilen beschrieben). Kauf, Stufen, Kosten und Kraftpunkte liegen im Teilobjekt
+`AdeptPowers` (`character.getAdeptPowers()`, wie `Equipment`); `Character` behält die Wirkungen und das Entfernen
+einer Kraft, weil es Fertigkeiten sperren kann.
+**Warum:** Nutzerentscheidungen 2026-11-12 (feste Wirkungen rechnen, Aufteilung im Kräfte-Tab, kein Umverteilen im
+Karrieremodus); verstärkte Werte, weil
+SR4 sie allgemein für abgeleitete Werte nutzt; GRW-Wortlaut „aufwenden“ für die harte Sperre.
 
 ## Fachregeln: Entscheidungen, wo das GRW schweigt oder unklar ist
 

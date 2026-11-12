@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Adeptenkräfte des SR4-Grundregelwerks (S. 229–232), Kosten und Seiten am Seitenbild geprüft (2026-11-12).
+  Hinweise in eigenen Worten.
+
+  <cost>       Kraftpunkte je Stufe (Stufenkräfte) bzw. fest (Kräfte ohne Stufe)
+  <costtable>  Kosten je Stufe aus einer Tabelle (Gesteigerte Reflexe); ersetzt <cost>
+  <levels/>    Kraft mit Stufen; Attribut max = feste Höchststufe, sonst begrenzt nur die Magie
+  <select>     Auswahl beim Kauf: attribute (nur körperliche), skill, text; label = Feldbezeichnung
+  <multiple/>  mehrfach mit verschiedener Auswahl
+  <effect>     rechnerische Wirkung im Charakter (fehlt = nur Hinweis)
+-->
+<powers>
+
+    <power>
+        <name>Adrenalinkick</name>
+        <page>229</page>
+        <cost>0.25</cost>
+        <levels/>
+        <select label="Attribut">attribute</select>
+        <multiple/>
+        <note>Probe auf Stufe + Magie hebt das gewählte körperliche Attribut kurzzeitig an; danach geistiger Entzug in Höhe der Stufe.</note>
+    </power>
+    <power>
+        <name>Astrale Wahrnehmung</name>
+        <page>230</page>
+        <cost>1</cost>
+        <effect>astralperception</effect>
+        <note>Erlaubt astrale Wahrnehmung; damit sind Askennen und Astralkampf erlernbar.</note>
+    </power>
+    <power>
+        <name>Beschleunigte Heilung</name>
+        <page>230</page>
+        <cost>0.25</cost>
+        <levels/>
+        <note>Je Stufe ein Würfel mehr auf Heilungsproben.</note>
+    </power>
+    <power>
+        <name>Geschärfter Sinn</name>
+        <page>230</page>
+        <cost>0.25</cost>
+        <select label="Sinn">text</select>
+        <multiple/>
+        <note>Ein zusätzlicher Sinn, etwa Restlichtverstärkung, Infrarotsicht oder Richtungssinn; je Sinn einzeln gekauft.</note>
+    </power>
+    <power>
+        <name>Geschossparade</name>
+        <page>230</page>
+        <cost>0.25</cost>
+        <levels/>
+        <note>Langsame Wurfgeschosse aus der Luft fangen: Probe auf Stufe + Reaktion gegen den Angriff.</note>
+    </power>
+    <power>
+        <name>Gesteigerte Reflexe</name>
+        <page>230</page>
+        <costtable><cost>1.5</cost><cost>2.5</cost><cost>4</cost></costtable>
+        <levels max="3"/>
+        <effect>improvedreflexes</effect>
+        <note>Je Stufe Reaktion +1 und ein weiterer Initiativedurchgang; nicht mit anderen Reflexverbesserungen kombinierbar.</note>
+    </power>
+    <power>
+        <name>Gesteigertes körperliches Attribut</name>
+        <page>230</page>
+        <cost>0.75</cost>
+        <levels/>
+        <select label="Attribut">attribute</select>
+        <multiple/>
+        <effect>improvedattribute</effect>
+        <note>Je Stufe das gewählte körperliche Attribut +1, bis zum verstärkten Maximum; Stufen über dem natürlichen Maximum kosten doppelt.</note>
+    </power>
+    <power>
+        <name>Großer Sprung</name>
+        <page>230</page>
+        <cost>0.25</cost>
+        <levels/>
+        <note>Je Stufe ein Würfel mehr auf Sprungproben und weitere Sprünge.</note>
+    </power>
+    <power>
+        <name>Kampfsinn</name>
+        <page>230</page>
+        <cost>0.5</cost>
+        <levels/>
+        <note>Je Stufe ein Würfel mehr auf Überraschungsproben und auf die Verteidigung gegen Nah- und Fernkampf.</note>
+    </power>
+    <power>
+        <name>Körpersprache</name>
+        <page>231</page>
+        <cost>0.5</cost>
+        <levels max="3"/>
+        <note>Je Stufe +1 auf soziale Proben und gegen das Durchschauen der eigenen Gefühle.</note>
+    </power>
+    <power>
+        <name>Kritischer Schlag</name>
+        <page>231</page>
+        <cost>0.25</cost>
+        <levels/>
+        <note>Je Stufe +1 Schaden im waffenlosen Kampf, auch astral.</note>
+    </power>
+    <power>
+        <name>Magieresistenz</name>
+        <page>231</page>
+        <cost>0.5</cost>
+        <levels/>
+        <note>Je Stufe ein Würfel mehr, um Zaubern zu widerstehen.</note>
+    </power>
+    <power>
+        <name>Mystischer Panzer</name>
+        <page>231</page>
+        <cost>0.5</cost>
+        <levels/>
+        <effect>mysticarmor</effect>
+        <note>Je Stufe +1 Ballistik und Stoß zusätzlich zur getragenen Panzerung; schützt auch im Astralkampf.</note>
+    </power>
+    <power>
+        <name>Natürliche Immunität</name>
+        <page>231</page>
+        <cost>0.25</cost>
+        <levels/>
+        <note>Je Stufe ein Würfel mehr gegen Gifte und Krankheiten.</note>
+    </power>
+    <power>
+        <name>Schmerzresistenz</name>
+        <page>231</page>
+        <cost>0.5</cost>
+        <levels/>
+        <effect>painresistance</effect>
+        <note>Je Stufe ein Schadenskästchen je Zustandsmonitor ohne Verletzungsmodifikator; nicht zusammen mit Hoher Schmerztoleranz.</note>
+    </power>
+    <power>
+        <name>Stimmkontrolle</name>
+        <page>232</page>
+        <cost>0.5</cost>
+        <note>Stimme verstellen, Stimmen nachahmen und Stimmerkennung täuschen.</note>
+    </power>
+    <power>
+        <name>Todeskralle</name>
+        <page>232</page>
+        <cost>0.5</cost>
+        <note>Waffenloser Schaden wahlweise als körperlicher Schaden, auch astral.</note>
+    </power>
+    <power>
+        <name>Verbesserte Fertigkeit</name>
+        <page>232</page>
+        <cost>0.25</cost>
+        <levels/>
+        <select label="Fertigkeit">skill</select>
+        <multiple/>
+        <effect>improvedskill</effect>
+        <note>Je Stufe +1 auf eine Aktionsfertigkeit (keine Gruppe), höchstens auf das Anderthalbfache des Grundwerts; Kampffertigkeiten kosten 0,5 je Stufe.</note>
+    </power>
+    <power>
+        <name>Verbesserte Wahrnehmung</name>
+        <page>232</page>
+        <cost>0.25</cost>
+        <levels/>
+        <effect>improvedperception</effect>
+        <note>Je Stufe ein Würfel mehr auf Wahrnehmung und Askennen, höchstens so viele wie Intuition.</note>
+    </power>
+</powers>
