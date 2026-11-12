@@ -29,6 +29,9 @@ import org.jspecify.annotations.Nullable;
  * @param acceptedGear Ausrüstungskategorie, deren Gerät eingebaut werden kann (Kommlink-Headware, S. 386), sonst
  *                     {@code null}
  * @param note         Kurzhinweis in eigenen Worten (situative Wirkung, Zusatzkosten), sonst leer
+ * @param limb         Gliedangaben: selbst eine Cybergliedmaße, Einbau in Glieder, Verbesserung (S. 385, 388–391)
+ * @param weapon       Name der Waffe in {@code weapons.xml}, die das Implantat stellt (Cyber-Nahkampfwaffen), sonst
+ *                     leer
  */
 public record CyberwareData(
     @NonNull String name,
@@ -48,7 +51,9 @@ public record CyberwareData(
     @NonNull ImplantSelection selection,
     @NonNull ImplantRestrictions restrictions,
     @Nullable GearCategory acceptedGear,
-    @NonNull String note
+    @NonNull String note,
+    @NonNull LimbSpec limb,
+    @NonNull String weapon
 ) implements CatalogEntry {
 
   /** Niedrigste Stufe eines stufenbehafteten Implantats (alle GRW-Tabellen beginnen bei Stufe 1). */
@@ -66,7 +71,7 @@ public record CyberwareData(
       @NonNull String essence, @NonNull String cost, int maxRating, @NonNull Availability availability,
       @NonNull String source, @NonNull String page) {
     this(name, category, kind, essence, cost, maxRating, availability, source, page, 0, 0, "", "", List.of(),
-        ImplantSelection.NONE, ImplantRestrictions.NONE, null, "");
+        ImplantSelection.NONE, ImplantRestrictions.NONE, null, "", LimbSpec.NONE, "");
   }
 
   /** Ob das Implantat in Stufen erhältlich ist (z.B. "Dermalpanzerung (Stufe 1-3)"). */
@@ -102,6 +107,14 @@ public record CyberwareData(
   /** Kapazitätsbedarf beim Einbau in dieser Stufe; nur sinnvoll bei {@link #isInstallable()}. */
   public int capacityCostFor(int rating) {
     return RatingFormula.evaluate(capacityCost, rating).intValueExact();
+  }
+
+  /**
+   * Kapazitätsbedarf beim Einbau in eine Cybergliedmaße in dieser Stufe; nur sinnvoll bei
+   * {@link LimbSpec#isInstallableInLimb()}.
+   */
+  public int limbCapacityCostFor(int rating) {
+    return RatingFormula.evaluate(limb.capacityCost(), rating).intValueExact();
   }
 
   /** Summe der Werte aller Wirkungen dieses Typs (und Ziels, falls angegeben) bei dieser Stufe. */

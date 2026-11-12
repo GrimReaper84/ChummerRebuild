@@ -30,8 +30,8 @@ import org.jspecify.annotations.Nullable;
  * @param maxRating     höchste Stufe; {@code 0} bei Waffen ohne Stufe
  * @param note          Tabellenhinweis ohne eigene Zeile (z.B. integrierte Unterlaufwaffe), sonst leer
  * @param included      mit der Waffe geliefertes Zubehör laut Waffentext (GRW S. 362–366)
- * @param fromArmor ob die Waffe nur aus einem angelegten Rüstungsteil kommt (Schild, Schockstreifen, S. 373) und
- *                  deshalb nicht gekauft wird
+ * @param builtIn       ob die Waffe nicht gekauft wird, sondern aus angelegter Rüstung (Schild, Schockstreifen, S. 373)
+ *                      oder einem Implantat kommt (Cyber-Nahkampfwaffen, S. 391)
  */
 public record WeaponData(
     @NonNull String name,
@@ -50,7 +50,7 @@ public record WeaponData(
     @NonNull List<IncludedAccessory> included,
     @NonNull String source,
     @NonNull String page,
-    boolean fromArmor
+    boolean builtIn
 ) implements CatalogEntry {
 
   /** Niedrigste Stufe einer Waffe mit Stufe (Bogen: Mindeststärke 1). */

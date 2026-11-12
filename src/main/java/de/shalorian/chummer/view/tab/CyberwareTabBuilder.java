@@ -18,9 +18,12 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.cyberware.BodyLocation;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.cyberware.ImplantEffect;
+import de.shalorian.chummer.model.character.cyberware.LimbAttributes;
+import de.shalorian.chummer.model.character.cyberware.LimbPart;
 import de.shalorian.chummer.model.character.gear.CommlinkStats;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
@@ -48,13 +51,18 @@ import org.tbee.javafx.scene.layout.MigPane;
 /**
  * Cyberware-Tab: Essenz-Übersicht, eingebaute Cyber- und Bioware samt Wirkung, Einbau über den Auswahldialog und
  * Ausbau. Unter einem Basissystem (Cyberaugen, Cyberohren) steht sein Zubehör eingerückt, unter der Kommlink-Headware
- * das eingebaute Kommlink.
+ * das eingebaute Kommlink. Ein eigener Abschnitt zeigt die Cybergliedmaßen (GRW S. 389–391) mit Stelle, Werten,
+ * Kapazität und Einbauten, dazu den Durchschnitt über die fünf Körperteile; Glieder lassen sich an- und abnehmen.
  * Änderungen an Implantaten meldet er über {@link CharacterTabHost#onImplantsChanged()}, weil Essenz, MAG/RES und
  * Restgeld davon abhängen.
  */
 public final class CyberwareTabBuilder {
 
   private static final EssenceStringConverter ESSENCE_FORMAT = new EssenceStringConverter();
+  private static final String[] IMPLANT_HEADERS =
+      {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Wirkung", "Quelle", ""};
+  private static final String[] LIMB_HEADERS =
+      {"Glied", "Werte", "Kategorie", "Stufe", "Essenz", "Preis", "Kapazität", "Quelle", ""};
   /** Einrückung für eingebautes Zubehör und Kommlink unter ihrem Implantat. */
   private static final String CHILD_PREFIX = "   ↳ ";
 
@@ -111,6 +119,12 @@ public final class CyberwareTabBuilder {
     cyberwareContainer.getChildren().add(sep);
 
     buildCyberwareSection(ch, EquipmentKind.BIOWARE);
+
+    Separator limbSep = new Separator();
+    VBox.setMargin(limbSep, new Insets(16, 0, 16, 0));
+    cyberwareContainer.getChildren().add(limbSep);
+
+    buildLimbSection(ch);
   }
 
   private void buildCyberwareSection(@NonNull Character ch, @NonNull EquipmentKind kind) {
@@ -130,7 +144,7 @@ public final class CyberwareTabBuilder {
     cyberwareContainer.getChildren().add(header);
 
     List<Cyberware> implants = ch.getEquipment().getCyberware().stream()
-        .filter(c -> c.getKind() == kind)
+        .filter(c -> c.getKind() == kind && c.getLocation() == null)
         .toList();
     if (implants.isEmpty()) {
       Label empty = new Label("Keine " + kind.getDisplayName() + " eingebaut");
@@ -140,17 +154,15 @@ public final class CyberwareTabBuilder {
       return;
     }
 
-    MigPane grid = buildCyberwareGrid();
+    MigPane grid = buildCyberwareGrid(IMPLANT_HEADERS);
     int row = 1;
     for (Cyberware implant : implants) {
       addCyberwareRow(grid, row++, implant, ch);
       for (Cyberware accessory : implant.getInstalled()) {
-        addAccessoryRow(grid, row++, implant, accessory);
+        addAccessoryRow(grid, row++, implant, accessory, () -> implant.uninstall(accessory));
+        row = addCommlinkRowIfPresent(grid, row, accessory);
       }
-      Gear commlink = implant.getCommlink();
-      if (commlink != null) {
-        addCommlinkRow(grid, row++, implant, commlink);
-      }
+      row = addCommlinkRowIfPresent(grid, row, implant);
     }
     cyberwareContainer.getChildren().add(withRightFiller(grid));
   }
@@ -158,14 +170,162 @@ public final class CyberwareTabBuilder {
   /**
    * Implantat-Grid inkl. Kopfzeile (Zeile 0), inhaltsbasierte Spalten analog {@code MagicTabBuilder.buildSpellGrid()}.
    */
-  private @NonNull MigPane buildCyberwareGrid() {
+  private static @NonNull MigPane buildCyberwareGrid(@NonNull String[] headers) {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
-
-    String[] headers = {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Wirkung", "Quelle", ""};
     addHeaderRow(grid, headers);
     return grid;
+  }
+
+  // ── Cybergliedmaßen ───────────────────────────────────────
+
+  /**
+   * Abschnitt Cybergliedmaßen: Kopf mit Durchschnitt über die fünf Körperteile (S. 389/390), je Glied eine Zeile mit
+   * Stelle, Werten, Kapazität und Knöpfen zum An-/Abnehmen, Einbauen und Entfernen, darunter die Einbauten.
+   */
+  private void buildLimbSection(@NonNull Character ch) {
+    Label title = new Label("Cybergliedmaßen");
+    title.getStyleClass().add(STYLE_SECTION_TITLE);
+    Button addBtn = new Button("Cyberglied hinzufügen");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    addBtn.setOnAction(_ -> onAddLimb());
+
+    HBox header = new HBox(8);
+    header.setAlignment(Pos.CENTER_LEFT);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    header.getChildren().add(title);
+    if (!ch.getImplants().getAttachedLimbs().isEmpty()) {
+      Label averages = styled(new Label(averagesText(ch.getImplants().getLimbAverages(),
+          ch.getImplants().getLimbArmor())), STYLE_ATTR_RANGE);
+      averages.setTooltip(new Tooltip("Abgerundeter Durchschnitt über beide Arme, beide Beine und den Torso, für "
+          + "Aktionen des ganzen Körpers (S. 389/390); Proben mit einem bestimmten Glied nutzen dessen Werte"));
+      header.getChildren().add(averages);
+    }
+    header.getChildren().addAll(spacer, addBtn);
+    cyberwareContainer.getChildren().add(header);
+
+    List<Cyberware> limbs = ch.getImplants().getLimbs();
+    if (limbs.isEmpty()) {
+      Label empty = new Label("Keine Cybergliedmaßen eingebaut");
+      empty.getStyleClass().add(STYLE_ATTR_RANGE);
+      VBox.setMargin(empty, new Insets(8, 0, 0, 0));
+      cyberwareContainer.getChildren().add(empty);
+      return;
+    }
+    MigPane grid = buildCyberwareGrid(LIMB_HEADERS);
+    int row = 1;
+    for (Cyberware limb : limbs) {
+      addLimbRow(grid, row++, limb, ch);
+      for (Cyberware part : limb.getInstalled()) {
+        addAccessoryRow(grid, row++, limb, part, () -> ch.getImplants().uninstallFromLimb(limb, part));
+        row = addCommlinkRowIfPresent(grid, row, part);
+      }
+    }
+    cyberwareContainer.getChildren().add(withRightFiller(grid));
+  }
+
+  /** „Durchschnitt BOD 4 · STR 4 · AGI 2“, mit der Summe der Gliedpanzerung, wenn vorhanden. */
+  private static @NonNull String averagesText(@NonNull LimbAttributes averages, int armor) {
+    String text = "Durchschnitt " + limbValuesText(averages);
+    return armor == 0 ? text : text + " · Gliedpanzerung +" + armor;
+  }
+
+  /** „BOD 8 · STR 9 · AGI 4“; auch für die Status-Übersicht. */
+  static @NonNull String limbValuesText(@NonNull LimbAttributes values) {
+    return "BOD %d · STR %d · AGI %d".formatted(values.body(), values.strength(), values.agility());
+  }
+
+  private void addLimbRow(@NonNull MigPane grid, int row, @NonNull Cyberware limb, @NonNull Character ch) {
+    String name = limb.getDisplayName() + (limb.isAttached() ? "" : " (abgenommen)");
+    Label nameLabel = styled(new Label(name), STYLE_ATTR_NAME);
+    if (!limb.getData().note().isEmpty()) {
+      nameLabel.setTooltip(new Tooltip(limb.getData().note()));
+    }
+    LimbPart part = limb.getData().limb().part();
+    boolean hasAttributes = part != null && part.hasAttributes();
+    Label valuesLabel = styled(new Label(hasAttributes ? limbValuesText(limb.getLimbAttributes())
+        : "keine eigenen Attribute"), STYLE_ATTR_RANGE);
+    String unarmed = limb.getUnarmedDamageText();
+    if (unarmed != null) {
+      valuesLabel.setTooltip(new Tooltip("Waffenlos mit diesem Glied: " + unarmed + " (S. 390)"));
+    }
+    Label gradeLabel = styled(new Label(limb.getGrade().getDisplayName()), STYLE_ATTR_ABBR);
+    Label essenceLabel = styled(new Label(ESSENCE_FORMAT.toString(limb.getEssenceCost().doubleValue())),
+        STYLE_ATTR_VALUE);
+    Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(limb.getOwnNuyenCost())), STYLE_ATTR_BP);
+    String capacity = "Kapazität " + limb.getUsedCapacity() + "/" + limb.getCapacity();
+    int armor = limb.getLimbArmor();
+    Label effectLabel = styled(new Label(armor == 0 ? capacity : capacity + ", Panzerung " + armor), "effect-text");
+    Label sourceLabel = styled(new Label(sourceText(limb)), STYLE_ATTR_RANGE);
+
+    Button attachBtn = actionButton(limb.isAttached() ? "Abnehmen" : "Anschließen",
+        limb.isAttached() ? FontAwesomeSolid.UNLINK : FontAwesomeSolid.LINK);
+    attachBtn.setOnAction(_ -> onToggleAttached(ch, limb));
+    Button installBtn = actionButton("Einbauen", FontAwesomeSolid.WRENCH);
+    installBtn.setOnAction(_ -> onInstallAccessory(limb));
+    Button removeBtn = actionButton("Entfernen", FontAwesomeSolid.TRASH);
+    removeBtn.setOnAction(_ -> {
+      ch.getImplants().remove(limb);
+      onCyberwareChanged();
+    });
+    HBox actions = new HBox(6, attachBtn, installBtn, removeBtn);
+    actions.setAlignment(Pos.CENTER_LEFT);
+    if (!limb.isAttached()) {
+      nameLabel.setOpacity(0.6);
+    }
+    addRowCells(grid, row, nameLabel, valuesLabel, gradeLabel, styled(new Label("–"), STYLE_ATTR_VALUE),
+        essenceLabel, priceLabel, effectLabel, sourceLabel, actions);
+  }
+
+  /** Schließt an bzw. nimmt ab; sind danach Stellen mehrfach belegt, nur ein Hinweis (spätere Regelwerke, Surge). */
+  private void onToggleAttached(@NonNull Character ch, @NonNull Cyberware limb) {
+    limb.setAttached(!limb.isAttached());
+    onCyberwareChanged();
+    warnIfOverOccupied(ch);
+  }
+
+  private void warnIfOverOccupied(@NonNull Character ch) {
+    List<BodyLocation> crowded = ch.getImplants().getOverOccupiedLocations();
+    if (!crowded.isEmpty()) {
+      host.services().warn("Stelle mehrfach belegt", "Mehr als ein Glied angeschlossen: "
+          + String.join(", ", crowded.stream().map(BodyLocation::getDisplayName).toList()));
+    }
+  }
+
+  /**
+   * Kauft ein Glied über den Dialog (Kauf wie bei Implantaten). An einer belegten Stelle kommt es abgenommen dazu; der
+   * Dialog weist vorher darauf hin.
+   */
+  private void onAddLimb() {
+    Character ch = this.character;
+    if (ch == null) {
+      return;
+    }
+    try {
+      DialogHandle dialog = host.services().openDialog("CyberwareSelectDialog.fxml", "Cyberglied hinzufügen");
+      CyberwareSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setCharacter(ch);
+      ctrl.setLimbMode();
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(limb -> {
+        if (chargeFailed(ch, cyberwareLabel(limb), limb.getNuyenCost())) {
+          return;
+        }
+        ch.getImplants().add(limb);
+        onCyberwareChanged();
+        if (ch.isEssenceBelowCreationMinimum()) {
+          host.services().warn("Essenz zu niedrig",
+              "Bei der Charaktererschaffung darf die Essenz nicht auf 0 oder darunter fallen");
+        }
+      });
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
+    }
   }
 
   private void addCyberwareRow(@NonNull MigPane grid, int row, @NonNull Cyberware implant,
@@ -202,7 +362,7 @@ public final class CyberwareTabBuilder {
     }
     Button removeBtn = actionButton("Entfernen", FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(_ -> {
-      character.getEquipment().removeCyberware(implant);
+      character.getImplants().remove(implant);
       onCyberwareChanged();
     });
     actions.getChildren().add(removeBtn);
@@ -211,10 +371,14 @@ public final class CyberwareTabBuilder {
         priceLabel, effectLabel, sourceLabel, actions);
   }
 
-  /** Eingebautes Zubehör eines Basissystems: eingerückt, Kapazität statt Essenz, Ausbau. */
+  /**
+   * Eingebautes Zubehör eines Basissystems bzw. Einbau eines Glieds: eingerückt, Kapazität statt Essenz, Ausbau über
+   * {@code uninstall}.
+   */
   private void addAccessoryRow(@NonNull MigPane grid, int row, @NonNull Cyberware base,
-      @NonNull Cyberware accessory) {
-    Label nameLabel = styled(new Label(CHILD_PREFIX + accessory.getDisplayName()), STYLE_ATTR_NAME);
+      @NonNull Cyberware accessory, @NonNull Runnable uninstall) {
+    String suffix = accessory.isPairedCopy() ? " (zweites Bein, Preis im ersten)" : "";
+    Label nameLabel = styled(new Label(CHILD_PREFIX + accessory.getDisplayName() + suffix), STYLE_ATTR_NAME);
     String note = accessory.getData().note();
     if (!note.isEmpty()) {
       nameLabel.setTooltip(new Tooltip(note));
@@ -222,16 +386,35 @@ public final class CyberwareTabBuilder {
     Label ratingLabel = styled(new Label(accessory.getData().hasRating()
         ? String.valueOf(accessory.getRating())
         : "–"), STYLE_ATTR_VALUE);
-    Label capacityLabel = styled(new Label("Kap. " + accessory.getData().capacityCostFor(accessory.getRating())),
+    Label capacityLabel = styled(new Label("Kap. " + base.capacityNeed(accessory.getData(), accessory.getRating())),
         STYLE_ATTR_VALUE);
     Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(accessory.getNuyenCost())), STYLE_ATTR_BP);
     Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(_ -> {
-      base.uninstall(accessory);
+      uninstall.run();
       onCyberwareChanged();
     });
+    HBox actions = new HBox(6);
+    actions.setAlignment(Pos.CENTER_LEFT);
+    if (accessory.getData().acceptedGear() != null && accessory.getCommlink() == null) {
+      // Kommlink-Headware in einem Glied (S. 385) nimmt wie implantiert ein Kommlink-Modell auf
+      Button commlinkBtn = actionButton("Kommlink", FontAwesomeSolid.PLUS);
+      commlinkBtn.setOnAction(_ -> onInstallCommlink(accessory));
+      actions.getChildren().add(commlinkBtn);
+    }
+    actions.getChildren().add(removeBtn);
     addRowCells(grid, row, nameLabel, new Label(), new Label(), ratingLabel, capacityLabel, priceLabel,
-        new Label(), styled(new Label(sourceText(accessory)), STYLE_ATTR_RANGE), removeBtn);
+        new Label(), styled(new Label(sourceText(accessory)), STYLE_ATTR_RANGE), actions);
+  }
+
+  /** Fügt die Zeile des eingebauten Kommlinks von {@code headware} an, falls vorhanden; liefert die nächste Zeile. */
+  private int addCommlinkRowIfPresent(@NonNull MigPane grid, int row, @NonNull Cyberware headware) {
+    Gear commlink = headware.getCommlink();
+    if (commlink == null) {
+      return row;
+    }
+    addCommlinkRow(grid, row, headware, commlink);
+    return row + 1;
   }
 
   /** Eingebautes Kommlink der Kommlink-Headware samt Betriebssystem. */
@@ -357,7 +540,10 @@ public final class CyberwareTabBuilder {
     }
   }
 
-  /** Wählt Zubehör für ein Basissystem (Cyberaugen, Cyberohren) und baut es ein; kostet Kapazität, keine Essenz. */
+  /**
+   * Wählt Zubehör für ein Basissystem (Cyberaugen, Cyberohren) bzw. einen Einbau für ein Glied und baut es ein; kostet
+   * Kapazität, keine Essenz. In Gliedern prüft {@code Implants#installInLimb} die Regeln mit Charakterbezug.
+   */
   private void onInstallAccessory(@NonNull Cyberware base) {
     Character ch = this.character;
     if (ch == null) {
@@ -376,7 +562,11 @@ public final class CyberwareTabBuilder {
         if (chargeFailed(ch, cyberwareLabel(accessory) + " in " + base.getName(), accessory.getNuyenCost())) {
           return;
         }
-        base.install(accessory);
+        if (base.getLocation() != null) {
+          ch.getImplants().installInLimb(base, accessory);
+        } else {
+          base.install(accessory);
+        }
         onCyberwareChanged();
       });
     } catch (IOException _) {

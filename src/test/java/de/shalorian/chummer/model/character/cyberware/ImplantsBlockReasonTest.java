@@ -81,7 +81,7 @@ class ImplantsBlockReasonTest {
 
   @Test
   void ocularDroneOnlyAsInstallation() {
-    assertEquals("Nur in ein Basissystem einbaubar", reason(mensch(), "Okular-Drohne"));
+    assertEquals("Nur als Einbau erhältlich", reason(mensch(), "Okular-Drohne"));
   }
 
   @Test

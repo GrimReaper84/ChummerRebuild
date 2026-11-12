@@ -142,6 +142,7 @@ final class WeaponTabBuilder {
     TreeItem<WeaponTreeEntry> selectedItem = null;
     List<Weapon> weapons = new ArrayList<>(character.getEquipment().getWeapons());
     weapons.addAll(character.getEquipment().getArmorWeapons());
+    weapons.addAll(character.getEquipment().getImplantWeapons());
     for (Weapon weapon : weapons) {
       TreeItem<WeaponTreeEntry> group = groups.computeIfAbsent(weapon.getData().category(),
           category -> {
@@ -217,7 +218,7 @@ final class WeaponTabBuilder {
     // Bindungen an die Baumauswahl (UI-Zustand); die Kategorie einer Waffe ändert sich nie.
     addAccessoryBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       Weapon weapon = selectedWeapon(tree);
-      return weapon == null || weapon.getData().fromArmor() || !weapon.getData().category().acceptsAccessories();
+      return weapon == null || weapon.getData().builtIn() || !weapon.getData().category().acceptsAccessories();
     }, tree.getSelectionModel().selectedItemProperty()));
     addAccessoryBtn.setOnAction(_ -> onAddAccessory(character, tree));
 
@@ -245,8 +246,8 @@ final class WeaponTabBuilder {
         return accessory.data().isPermanent();
       }
       Weapon weapon = entry.weapon();
-      if (entry.isWeapon() && weapon != null && weapon.getData().fromArmor()) {
-        return true; // kommt mit dem Rüstungsteil und geht mit ihm
+      if (entry.isWeapon() && weapon != null && weapon.getData().builtIn()) {
+        return true; // kommt mit dem Rüstungsteil bzw. Implantat und geht mit ihm
       }
       return !entry.isWeapon() && entry.arrows() == null;
     }, tree.getSelectionModel().selectedItemProperty()));
@@ -274,6 +275,7 @@ final class WeaponTabBuilder {
     if (entry == null || weapon == null) {
       details.getChildren().add(detailHint(character.getEquipment().getWeapons().isEmpty()
           && character.getEquipment().getArmorWeapons().isEmpty()
+          && character.getEquipment().getImplantWeapons().isEmpty()
           ? "Keine Waffen gekauft"
           : "Waffe auswählen, um ihre Werte zu sehen"));
     } else if (entry.accessory() != null) {

@@ -29,6 +29,8 @@ public class Weapon {
   private final int rating;
   private final List<WeaponAccessory> accessories = new ArrayList<>();
   private final List<Gear> arrows = new ArrayList<>();
+  private final @NonNull String builtInSource;
+  private final @Nullable Integer fixedStrength;
 
   /**
    * Waffe mit Stufe.
@@ -45,11 +47,32 @@ public class Weapon {
     }
     this.data = data;
     this.rating = rating;
+    this.builtInSource = "";
+    this.fixedStrength = null;
   }
 
   /** Waffe ohne Stufe. */
   public Weapon(@NonNull WeaponData data) {
     this(data, 0);
+  }
+
+  /**
+   * Eingebaute Waffe ohne Stufe ({@link WeaponData#builtIn()}), z.B. aus Rüstung oder einem Cyberglied.
+   *
+   * @param builtInSource woher sie kommt, für die Anzeige („aus Rüstung“, „Implantat, linker Arm“)
+   * @param fixedStrength Stärke, nach der sie rechnet (STR des Cyberglieds, S. 389/390), oder {@code null} für die des
+   *                      Charakters
+   */
+  public Weapon(@NonNull WeaponData data, @NonNull String builtInSource, @Nullable Integer fixedStrength) {
+    this.data = data;
+    this.rating = 0;
+    this.builtInSource = builtInSource;
+    this.fixedStrength = fixedStrength;
+  }
+
+  /** Herkunft einer eingebauten Waffe, sonst leer. */
+  public @NonNull String getBuiltInSource() {
+    return builtInSource;
   }
 
   public @NonNull WeaponData getData() {
@@ -275,12 +298,15 @@ public class Weapon {
   }
 
   /**
-   * Stärke, nach der Schaden und Reichweite berechnet werden: beim Bogen seine Mindeststärke (= Stufe),
-   * sonst die des Charakters. GRW S. 361: Beim Bogen bestimmt die Mindeststärke Schaden und
-   * Reichweite. Der Schaden mit bestimmten Pfeilen steht in {@link
-   * #getArrowDamageText(Gear)}.
+   * Stärke, nach der Schaden und Reichweite berechnet werden: beim Bogen seine Mindeststärke (= Stufe), bei einer
+   * Waffe in einem Cyberglied dessen Stärke (S. 389/390), sonst die des Charakters. GRW S. 361: Beim Bogen bestimmt
+   * die Mindeststärke Schaden und Reichweite. Der Schaden mit bestimmten Pfeilen steht in
+   * {@link #getArrowDamageText(Gear)}.
    */
   private int effectiveStrength(int strength) {
-    return data.hasRating() ? rating : strength;
+    if (data.hasRating()) {
+      return rating;
+    }
+    return fixedStrength == null ? strength : fixedStrength;
   }
 }

@@ -5,7 +5,7 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.shalorian.chummer.view.dialog.CyberwareSelectDialogController"
-      spacing="14" styleClass="dialog-pane" prefWidth="440">
+      spacing="14" styleClass="dialog-pane" prefWidth="480">
     <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
 
     <!-- Filter-Zeile -->
@@ -39,22 +39,37 @@
                GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <TextField fx:id="priceField" prefWidth="140" visible="false" managed="false"
                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-        <Label text="Verfügbarkeit:" styleClass="field-label"
+        <Label fx:id="locationCaption" text="Körperstelle:" styleClass="field-label" visible="false" managed="false"
                GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <Label fx:id="availabilityLabel" styleClass="attr-abbr"
+        <ComboBox fx:id="locationBox" prefWidth="150" visible="false" managed="false"
                   GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-        <Label fx:id="essenceCaption" text="Essenz:" styleClass="field-label"
+        <Label fx:id="customCaption" text="Maßanfertigung:" styleClass="field-label" visible="false" managed="false"
                GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-        <Label fx:id="essenceLabel" styleClass="attr-value"
-                  GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-        <Label text="Preis:" styleClass="field-label"
+        <HBox fx:id="customBox" spacing="8" alignment="CENTER_LEFT" visible="false" managed="false"
+              GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <Label text="BOD" styleClass="attr-abbr"/>
+            <Spinner fx:id="bodySpinner" prefWidth="70"/>
+            <Label text="STR" styleClass="attr-abbr"/>
+            <Spinner fx:id="strengthSpinner" prefWidth="70"/>
+            <Label text="AGI" styleClass="attr-abbr"/>
+            <Spinner fx:id="agilitySpinner" prefWidth="70"/>
+        </HBox>
+        <Label text="Verfügbarkeit:" styleClass="field-label"
                GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-        <Label fx:id="costLabel" styleClass="attr-bp"
+        <Label fx:id="availabilityLabel" styleClass="attr-abbr"
                   GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-        <Label text="Quelle:" styleClass="field-label"
+        <Label fx:id="essenceCaption" text="Essenz:" styleClass="field-label"
                GridPane.columnIndex="0" GridPane.rowIndex="7"/>
-        <Label fx:id="sourceLabel" styleClass="attr-range"
+        <Label fx:id="essenceLabel" styleClass="attr-value"
                   GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+        <Label text="Preis:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+        <Label fx:id="costLabel" styleClass="attr-bp"
+                  GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+        <Label text="Quelle:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+        <Label fx:id="sourceLabel" styleClass="attr-range"
+                  GridPane.columnIndex="1" GridPane.rowIndex="9"/>
     </GridPane>
 
     <!-- Hinweis: Katalognotiz und Sperrgrund -->

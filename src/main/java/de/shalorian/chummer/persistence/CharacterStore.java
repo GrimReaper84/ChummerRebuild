@@ -16,10 +16,13 @@ import de.shalorian.chummer.model.character.CharacterBiography;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
 import de.shalorian.chummer.model.character.Contact;
+import de.shalorian.chummer.model.character.cyberware.BodyLocation;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
+import de.shalorian.chummer.model.character.cyberware.LimbAttributes;
+import de.shalorian.chummer.model.character.cyberware.LimbPart;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
@@ -52,6 +55,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -126,7 +131,10 @@ public class CharacterStore {
         .map(p -> new AdeptPowerEntry(p.getData().name(), p.getChoice(), p.getLevel()))
         .toList();
     data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
-    data.cyberware = character.getEquipment().getCyberware().stream().map(CharacterStore::toCyberwareEntry).toList();
+    IdentityHashMap<Cyberware, Integer> pairIds = pairIds(character);
+    data.cyberware = character.getEquipment().getCyberware().stream()
+        .map(implant -> toCyberwareEntry(implant, pairIds))
+        .toList();
     data.armor = character.getEquipment().getArmor().stream().map(CharacterStore::toArmorEntry).toList();
     data.weapons = character.getEquipment().getWeapons().stream().map(CharacterStore::toWeaponEntry)
         .toList();
@@ -170,13 +178,43 @@ public class CharacterStore {
     return entry;
   }
 
-  private static @NonNull CyberwareEntry toCyberwareEntry(@NonNull Cyberware implant) {
+  /**
+   * Kennungen für die Paare einer Sprunghydraulik (Original und zweiter Teil bekommen dieselbe Zahl ab 1), nach
+   * Objektidentität, weil gleiche Einbauten in mehreren Beinen stecken können.
+   */
+  private static @NonNull IdentityHashMap<Cyberware, Integer> pairIds(@NonNull Character character) {
+    IdentityHashMap<Cyberware, Integer> ids = new IdentityHashMap<>();
+    for (Cyberware limb : character.getImplants().getLimbs()) {
+      for (Cyberware child : limb.getInstalled()) {
+        Cyberware counterpart = child.getPairedPart();
+        if (counterpart != null && !ids.containsKey(child)) {
+          int id = ids.size() / 2 + 1;
+          ids.put(child, id);
+          ids.put(counterpart, id);
+        }
+      }
+    }
+    return ids;
+  }
+
+  private static @NonNull CyberwareEntry toCyberwareEntry(@NonNull Cyberware implant,
+      @NonNull IdentityHashMap<Cyberware, Integer> pairIds) {
     CyberwareEntry entry = new CyberwareEntry(implant.getName(), implant.getGrade().name(), implant.getRating());
     entry.choice = implant.getChoice();
     entry.price = implant.getChosenPrice();
-    entry.installed = implant.getInstalled().stream().map(CharacterStore::toCyberwareEntry).toList();
+    entry.installed = implant.getInstalled().stream().map(child -> toCyberwareEntry(child, pairIds)).toList();
     Gear commlink = implant.getCommlink();
     entry.commlink = commlink == null ? null : toGearEntry(commlink);
+    BodyLocation location = implant.getLocation();
+    if (location != null) {
+      entry.location = location.name();
+      entry.attached = implant.isAttached();
+      entry.body = implant.getBaseAttributes().body();
+      entry.strength = implant.getBaseAttributes().strength();
+      entry.agility = implant.getBaseAttributes().agility();
+    }
+    entry.pairedCopy = implant.isPairedCopy();
+    entry.pair = pairIds.getOrDefault(implant, 0);
     return entry;
   }
 
@@ -302,15 +340,35 @@ public class CharacterStore {
    * nicht mehr passen, werden ebenfalls übersprungen.
    */
   private static void applyCyberware(@NonNull Character character, @NonNull CharacterData data) {
+    Map<Integer, List<Cyberware>> pairs = new HashMap<>();
     for (CyberwareEntry entry : data.cyberware) {
-      Cyberware implant = toCyberware(entry);
+      Cyberware implant = toCyberware(entry, pairs);
       if (implant != null) {
         character.getEquipment().addCyberware(implant);
       }
     }
+    linkPairs(character, pairs);
   }
 
-  private static @Nullable Cyberware toCyberware(@NonNull CyberwareEntry entry) {
+  /**
+   * Verknüpft Original und zweiten Teil jeder Sprunghydraulik wieder; ein zweiter Teil ohne Original (z.B. weil das
+   * Original nicht mehr passte) wird ausgebaut, damit er nicht kostenlos Kapazität belegt.
+   */
+  private static void linkPairs(@NonNull Character character, @NonNull Map<Integer, List<Cyberware>> pairs) {
+    for (List<Cyberware> parts : pairs.values()) {
+      Cyberware original = parts.stream().filter(c -> !c.isPairedCopy()).findFirst().orElse(null);
+      Cyberware copy = parts.stream().filter(Cyberware::isPairedCopy).findFirst().orElse(null);
+      if (original != null && copy != null) {
+        original.linkPair(copy);
+      } else if (copy != null) {
+        character.getImplants().getLimbs().forEach(limb -> limb.uninstall(copy));
+      }
+    }
+  }
+
+  /** Implantat aus {@code entry}; Teile einer Sprunghydraulik sammelt {@code pairs} nach ihrer Kennung. */
+  private static @Nullable Cyberware toCyberware(@NonNull CyberwareEntry entry,
+      @NonNull Map<Integer, List<Cyberware>> pairs) {
     CyberwareData cyberwareData = CyberwareDataLoader.findByName(entry.name);
     if (cyberwareData == null) {
       return null;
@@ -322,14 +380,30 @@ public class CharacterStore {
     }
     Cyberware implant;
     try {
-      implant = new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating, entry.choice, price);
+      LimbPart part = cyberwareData.limb().part();
+      if (part != null) {
+        implant = new Cyberware(cyberwareData, parseGrade(entry.grade), parseLocation(entry.location, part),
+            new LimbAttributes(baseValue(entry.body), baseValue(entry.strength), baseValue(entry.agility)));
+        implant.setAttached(entry.attached);
+      } else {
+        implant = new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating, entry.choice, price);
+        if (entry.pairedCopy && cyberwareData.limb().pairedLegs()) {
+          implant = implant.pairedCopy();
+        }
+      }
     } catch (IllegalArgumentException _) {
       return null;
     }
     for (CyberwareEntry childEntry : entry.installed) {
-      Cyberware child = toCyberware(childEntry);
+      if (childEntry.pairedCopy && childEntry.pair == 0) {
+        continue; // zweiter Teil ohne Kennung: sein Original ist nicht zuzuordnen
+      }
+      Cyberware child = toCyberware(childEntry, pairs);
       if (child != null && implant.installProblem(child.getData(), child.getRating()) == null) {
         implant.install(child);
+        if (childEntry.pair > 0) {
+          pairs.computeIfAbsent(childEntry.pair, _ -> new ArrayList<>()).add(child);
+        }
       }
     }
     Gear commlink = entry.commlink == null ? null : toGear(entry.commlink);
@@ -548,6 +622,21 @@ public class CharacterStore {
       }
     }
     lifestyle.setMonths(Math.max(Lifestyle.MIN_MONTHS, data.lifestyle.months));
+  }
+
+  /** Gespeicherte Körperstelle; fehlt sie oder passt sie nicht, die erste Stelle der Gliedart. */
+  private static @NonNull BodyLocation parseLocation(@Nullable String name, @NonNull LimbPart part) {
+    for (BodyLocation location : part.locations()) {
+      if (location.name().equals(name)) {
+        return location;
+      }
+    }
+    return part.locations().getFirst();
+  }
+
+  /** Gespeicherter Grundwert eines Glieds; {@code 0} (Feld fehlt) steht für den Standardwert. */
+  private static int baseValue(int stored) {
+    return stored == 0 ? LimbAttributes.STANDARD_VALUE : stored;
   }
 
   private static @NonNull CyberwareGrade parseGrade(@NonNull String name) {

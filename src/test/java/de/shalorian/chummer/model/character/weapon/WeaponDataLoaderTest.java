@@ -28,10 +28,11 @@ class WeaponDataLoaderTest {
 
   @Test
   void loadsSixtyThreeWeaponsInAllCategories() {
-    // 63 kaufbare GRW-Waffen; dazu 3 Waffen aus Rüstung (Schilde, Schockstreifen, S. 373), die nicht gekauft werden
-    assertEquals(63, all().stream().filter(w -> !w.fromArmor()).count());
-    assertEquals(List.of("Schutzschild", "Taserschild", "Schockstreifen"),
-        all().stream().filter(WeaponData::fromArmor).map(WeaponData::name).toList());
+    // 63 kaufbare GRW-Waffen; dazu eingebaute aus Rüstung (S. 373) und Implantaten (S. 391), die nicht gekauft werden
+    assertEquals(63, all().stream().filter(w -> !w.builtIn()).count());
+    assertEquals(List.of("Schutzschild", "Taserschild", "Handklinge", "Nagelmesser", "Schockhand", "Sporn",
+        "Schockstreifen"),
+        all().stream().filter(WeaponData::builtIn).map(WeaponData::name).toList());
     Set<WeaponCategory> used = all().stream().map(WeaponData::category).collect(Collectors.toSet());
     assertEquals(Set.of(WeaponCategory.values()), used);
   }
@@ -110,7 +111,7 @@ class WeaponDataLoaderTest {
       for (int rating = data.lowestRating(); rating <= Math.max(0, data.maxRating()); rating++) {
         data.availability().evaluate(rating);
         // Waffen aus Rüstung kosten nichts extra, ihr Preis steckt im Rüstungsteil
-        assertTrue(data.costFor(rating) > 0 || data.fromArmor(), data.name());
+        assertTrue(data.costFor(rating) > 0 || data.builtIn(), data.name());
       }
     }
   }

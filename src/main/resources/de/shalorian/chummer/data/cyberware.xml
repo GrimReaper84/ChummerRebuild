@@ -10,11 +10,15 @@
   <multiple/> erlaubt Mehrfachkauf, <requires> nennt eine Voraussetzung, <excludespaintolerance/> sperrt die Gabe
   Hohe Schmerztoleranz in beide Richtungen (S. 116). Siehe docs/plaene/archiv/implantate_plan.md.
   <capacity> = Kapazität eines Basissystems (Cyberaugen/-ohren); <capacitycost> = Bedarf beim Einbau in ein
-  Basissystem der gleichen Kategorie, "*" = dort schon enthalten. Die eckigen Kapazitäten von Headware und
-  Bodyware gelten nur für Cybergliedmaßen und sind deshalb noch nicht übernommen.
+  Basissystem der gleichen Kategorie, "*" = dort schon enthalten.
 
-  Bewusst NICHT enthalten: Cybergliedmaßen, Cyberglied-Verbesserungen und -Zubehör, Cyberwaffen (S. 390–392;
-  Roadmap, eigenes Feature).
+  Cybergliedmaßen (S. 389–392, Tabellen S. 391 am Bild geprüft, ADR-051): <limb part="…"/> macht einen Eintrag zum
+  Glied (arm, leg, handfoot, lowerarm, lowerleg, torso, skull); <capacity> ist dann seine Kapazität.
+  <limbcapacity> = Bedarf beim Einbau in ein Glied (eckige Werte der Tabellen; Head- und Bodyware mit solchem Wert
+  dürfen in Glieder, S. 385/388), <fitsin> = Gliedarten, in die es passt (leer = alle), <enhances> = Cyberglied-
+  Verbesserung (body, strength, agility, armor), <pairedlegs/> = braucht zwei Cyberbeine und wird mit einem Kauf in
+  beide eingebaut, <weapon> = Waffe aus weapons.xml. Nicht enthalten: Cyberguns (GRW ohne Essenz, Kapazität und
+  Preis).
 -->
 <cyberware>
 
@@ -28,6 +32,7 @@
         <legality>V</legality>
         <multiple/>
         <note>Sprengladung im Kopf, legt einzelne Implantate oder Hirnfunktionen lahm; Zünder frei wählbar.</note>
+        <limbcapacity>1</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -40,6 +45,7 @@
         <legality>V</legality>
         <multiple/>
         <note>Sprengladung im Kopf, groß genug, um das Opfer zu töten.</note>
+        <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -52,6 +58,7 @@
         <legality>V</legality>
         <multiple/>
         <note>Sprengladung im Kopf mit Wirkung wie eine Granate (S. 370).</note>
+        <limbcapacity>3</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -60,6 +67,7 @@
         <category>Headware</category>
         <essence>0.1</essence>
         <cost>500</cost>
+        <limbcapacity>1</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -70,6 +78,7 @@
         <cost>1000</cost>
         <avail>12</avail>
         <note>Preis ohne Verschlüsselung, die extra bezahlt wird; kein Funk, der Träger selbst kommt nicht an die Daten.</note>
+        <limbcapacity>1</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -81,6 +90,7 @@
         <rating>6</rating>
         <avail>Rating * 4</avail>
         <note>Stufe als Zusatzwürfel bei Wahrnehmung über den Geruch.</note>
+        <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -102,6 +112,7 @@
         <cost>2000</cost>
         <allowgear>Kommlink-Modell</allowgear>
         <note>Gehäuse für ein Kommlink; das Kommlink-Modell wird eingebaut und zusätzlich bezahlt.</note>
+        <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -122,6 +133,7 @@
         <cost>2000</cost>
         <excludes>Sim-Modul (modifiziert für heißes Sim)</excludes>
         <note>Erlaubt VR über kaltes Sim.</note>
+        <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -133,6 +145,7 @@
         <avail>12</avail>
         <legality>V</legality>
         <note>Erlaubt VR über kaltes und heißes Sim.</note>
+        <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -166,6 +179,7 @@
         <cost>6000</cost>
         <avail>10</avail>
         <note>Implantatversion des Ultraschallsensors (S. 379).</note>
+        <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -441,6 +455,7 @@
         <cost>1500</cost>
         <avail>8</avail>
         <note>Implantatversion der Enterhakenkanone (S. 383).</note>
+        <limbcapacity>5</limbcapacity>
         <source>SR4</source>
         <page>389</page>
     </item>
@@ -452,6 +467,7 @@
         <avail>4</avail>
         <multiple/>
         <note>Versteck im vorderen Fingerglied, z.B. für eine Monofilamentpeitsche.</note>
+        <limbcapacity>1</limbcapacity>
         <source>SR4</source>
         <page>389</page>
     </item>
@@ -462,6 +478,7 @@
         <cost>650</cost>
         <avail>4</avail>
         <note>Erlaubt bis zu 2 Stunden ohne Atemluft.</note>
+        <limbcapacity>3</limbcapacity>
         <source>SR4</source>
         <page>389</page>
     </item>
@@ -575,6 +592,7 @@
         <avail>6</avail>
         <multiple/>
         <note>Versteck in einem leicht aushöhlbaren Körperteil.</note>
+        <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>389</page>
     </item>
@@ -608,5 +626,377 @@
         <note>Speist Tastinformationen direkt ins Nervensystem.</note>
         <source>SR4</source>
         <page>389</page>
+    </item>
+
+    <!-- ── CYBERGLIEDMASSEN (Tabelle Standard-Cybergliedmaßen, S. 391) ── -->
+    <item>
+        <name>Ganzer Arm (offensichtlich)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="arm"/>
+        <essence>1</essence>
+        <capacity>15</capacity>
+        <cost>15000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Ganzes Bein (offensichtlich)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="leg"/>
+        <essence>1</essence>
+        <capacity>20</capacity>
+        <cost>15000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Hand/Fuß (offensichtlich)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="handfoot"/>
+        <essence>0.25</essence>
+        <capacity>4</capacity>
+        <cost>5000</cost>
+        <avail>2</avail>
+        <multiple/>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Schädel (offensichtlich)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="skull"/>
+        <essence>0.75</essence>
+        <capacity>4</capacity>
+        <cost>10000</cost>
+        <avail>16</avail>
+        <multiple/>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Torso (offensichtlich)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="torso"/>
+        <essence>1.5</essence>
+        <capacity>10</capacity>
+        <cost>20000</cost>
+        <avail>12</avail>
+        <multiple/>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Unterarm (offensichtlich)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="lowerarm"/>
+        <essence>0.45</essence>
+        <capacity>10</capacity>
+        <cost>10000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Unterschenkel (offensichtlich)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="lowerleg"/>
+        <essence>0.45</essence>
+        <capacity>12</capacity>
+        <cost>10000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Ganzer Arm (synthetisch)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="arm"/>
+        <essence>1</essence>
+        <capacity>8</capacity>
+        <cost>20000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <note>Als Naturglied getarnt; erkennbar mit Wahrnehmung + Intuition (3), bei Berührung eindeutig.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Ganzes Bein (synthetisch)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="leg"/>
+        <essence>1</essence>
+        <capacity>10</capacity>
+        <cost>20000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <note>Als Naturglied getarnt; erkennbar mit Wahrnehmung + Intuition (3), bei Berührung eindeutig.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Hand/Fuß (synthetisch)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="handfoot"/>
+        <essence>0.25</essence>
+        <capacity>2</capacity>
+        <cost>6000</cost>
+        <avail>2</avail>
+        <multiple/>
+        <note>Als Naturglied getarnt; erkennbar mit Wahrnehmung + Intuition (3), bei Berührung eindeutig.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Schädel (synthetisch)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="skull"/>
+        <essence>0.75</essence>
+        <capacity>2</capacity>
+        <cost>15000</cost>
+        <avail>16</avail>
+        <multiple/>
+        <note>Als Naturglied getarnt; erkennbar mit Wahrnehmung + Intuition (3), bei Berührung eindeutig.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Torso (synthetisch)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="torso"/>
+        <essence>1.5</essence>
+        <capacity>5</capacity>
+        <cost>25000</cost>
+        <avail>12</avail>
+        <multiple/>
+        <note>Als Naturglied getarnt; erkennbar mit Wahrnehmung + Intuition (3), bei Berührung eindeutig.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Unterarm (synthetisch)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="lowerarm"/>
+        <essence>0.45</essence>
+        <capacity>5</capacity>
+        <cost>12000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <note>Als Naturglied getarnt; erkennbar mit Wahrnehmung + Intuition (3), bei Berührung eindeutig.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Unterschenkel (synthetisch)</name>
+        <category>Cybergliedmaßen</category>
+        <limb part="lowerleg"/>
+        <essence>0.45</essence>
+        <capacity>6</capacity>
+        <cost>12000</cost>
+        <avail>4</avail>
+        <multiple/>
+        <note>Als Naturglied getarnt; erkennbar mit Wahrnehmung + Intuition (3), bei Berührung eindeutig.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+
+    <!-- ── CYBERGLIED-VERBESSERUNGEN (S. 390/391) ── -->
+    <item>
+        <name>Konstitutionsverbesserung</name>
+        <category>Cyberglied-Verbesserungen</category>
+        <essence>0</essence>
+        <cost>Rating * 200</cost>
+        <rating>7</rating>
+        <avail>Rating * 3</avail>
+        <legality>E</legality>
+        <limbcapacity>Rating</limbcapacity>
+        <enhances>body</enhances>
+        <installonly/>
+        <note>Erhöht das Attribut des Glieds um die Stufe; über Stufe 3 nur mit Cybertorso.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Geschicklichkeitsverbesserung</name>
+        <category>Cyberglied-Verbesserungen</category>
+        <essence>0</essence>
+        <cost>Rating * 250</cost>
+        <rating>7</rating>
+        <avail>Rating * 3</avail>
+        <legality>E</legality>
+        <limbcapacity>Rating</limbcapacity>
+        <enhances>agility</enhances>
+        <installonly/>
+        <note>Erhöht das Attribut des Glieds um die Stufe; über Stufe 3 nur mit Cybertorso.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Stärkeverbesserung</name>
+        <category>Cyberglied-Verbesserungen</category>
+        <essence>0</essence>
+        <cost>Rating * 250</cost>
+        <rating>7</rating>
+        <avail>Rating * 3</avail>
+        <legality>E</legality>
+        <limbcapacity>Rating</limbcapacity>
+        <enhances>strength</enhances>
+        <installonly/>
+        <note>Erhöht das Attribut des Glieds um die Stufe; über Stufe 3 nur mit Cybertorso.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Panzerungsverbesserung</name>
+        <category>Cyberglied-Verbesserungen</category>
+        <essence>0</essence>
+        <cost>Rating * 300</cost>
+        <rating>4</rating>
+        <avail>Rating * 5</avail>
+        <limbcapacity>Rating * 2</limbcapacity>
+        <enhances>armor</enhances>
+        <installonly/>
+        <note>Ballistische und Stoßpanzerung in Höhe der Stufe, zusätzlich zur getragenen; die Glieder zählen zusammen. Über Stufe 3 nur mit Cybertorso.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+
+    <!-- ── ZUBEHÖR FÜR CYBERGLIEDMASSEN (S. 390/391) ── -->
+    <item>
+        <name>Cyberarm-Gyrostabilisator</name>
+        <category>Zubehör für Cybergliedmaßen</category>
+        <essence>0</essence>
+        <cost>6000</cost>
+        <avail>12</avail>
+        <legality>V</legality>
+        <limbcapacity>4</limbcapacity>
+        <fitsin>arm, lowerarm</fitsin>
+        <installonly/>
+        <note>Wirkt wie ein Gyrostabilisator der Stufe 3 (S. 367), nicht zusätzlich zu einem solchen.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Cyber-Holster</name>
+        <category>Zubehör für Cybergliedmaßen</category>
+        <essence>0</essence>
+        <cost>2000</cost>
+        <avail>8</avail>
+        <legality>E</legality>
+        <limbcapacity>7</limbcapacity>
+        <fitsin>arm, lowerarm, leg, lowerleg, torso</fitsin>
+        <installonly/>
+        <note>Verbirgt eine Pistole oder kleinere Waffe; Aus- und Einfahren ist eine Einfache Handlung.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Cyber-Springarm</name>
+        <category>Zubehör für Cybergliedmaßen</category>
+        <essence>0</essence>
+        <cost>3000</cost>
+        <avail>12</avail>
+        <legality>E</legality>
+        <limbcapacity>8</limbcapacity>
+        <fitsin>arm, lowerarm</fitsin>
+        <installonly/>
+        <note>Wie die Versteckte Armhalterung (S. 368), aber vollständig verborgen.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Großer Schmuggelbehälter</name>
+        <category>Zubehör für Cybergliedmaßen</category>
+        <essence>0</essence>
+        <cost>2000</cost>
+        <avail>6</avail>
+        <limbcapacity>5</limbcapacity>
+        <installonly/>
+        <multiple/>
+        <note>Versteck für Gegenstände bis Pistolengröße.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Sprunghydraulik</name>
+        <category>Zubehör für Cybergliedmaßen</category>
+        <essence>0</essence>
+        <cost>Rating * 2000</cost>
+        <rating>6</rating>
+        <avail>9</avail>
+        <limbcapacity>Rating</limbcapacity>
+        <fitsin>leg, lowerleg</fitsin>
+        <pairedlegs/>
+        <installonly/>
+        <note>Braucht zwei Cyberbeine und belegt in jedem Kapazität; je Stufe +1 Würfel auf Sprungproben, 20 % mehr Sprungweite und 2 m weniger Sturzhöhe.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+
+    <!-- ── CYBER-NAHKAMPFWAFFEN (S. 391/392): im Glied gegen Kapazität oder in der natürlichen Hand gegen Essenz ── -->
+    <item>
+        <name>Handklinge (einziehbar)</name>
+        <category>Cyber-Nahkampfwaffen</category>
+        <essence>0.25</essence>
+        <cost>1500</cost>
+        <avail>10</avail>
+        <legality>V</legality>
+        <limbcapacity>3</limbcapacity>
+        <fitsin>arm, lowerarm, handfoot</fitsin>
+        <weapon>Handklinge</weapon>
+        <multiple/>
+        <note>Klinge an der Handkante.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Nagelmesser (einziehbar)</name>
+        <category>Cyber-Nahkampfwaffen</category>
+        <essence>0.2</essence>
+        <cost>900</cost>
+        <avail>10</avail>
+        <legality>V</legality>
+        <limbcapacity>2</limbcapacity>
+        <fitsin>arm, lowerarm, handfoot</fitsin>
+        <weapon>Nagelmesser</weapon>
+        <multiple/>
+        <note>Klingen unter den Fingernägeln.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Schockhand</name>
+        <category>Cyber-Nahkampfwaffen</category>
+        <essence>0.25</essence>
+        <cost>1000</cost>
+        <avail>8</avail>
+        <legality>E</legality>
+        <limbcapacity>3</limbcapacity>
+        <fitsin>arm, lowerarm, handfoot</fitsin>
+        <weapon>Schockhand</weapon>
+        <multiple/>
+        <note>Elektroschock aus Polstern in Knöcheln oder Handfläche; 10 Ladungen.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+    <item>
+        <name>Sporn (einziehbar)</name>
+        <category>Cyber-Nahkampfwaffen</category>
+        <essence>0.3</essence>
+        <cost>1800</cost>
+        <avail>12</avail>
+        <legality>V</legality>
+        <limbcapacity>3</limbcapacity>
+        <fitsin>arm, lowerarm, handfoot</fitsin>
+        <weapon>Sporn</weapon>
+        <multiple/>
+        <note>Klingen aus Handgelenk oder Knöcheln.</note>
+        <source>SR4</source>
+        <page>391</page>
     </item>
 </cyberware>

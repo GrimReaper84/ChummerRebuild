@@ -8,6 +8,7 @@ import de.shalorian.chummer.model.character.armor.ArmorModData;
 import de.shalorian.chummer.model.character.armor.ArmorProtection;
 import de.shalorian.chummer.model.character.armor.SpecialProtection;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.cyberware.BodyLocation;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
@@ -19,12 +20,15 @@ import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
+import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
@@ -48,8 +52,13 @@ public class Equipment {
 
   private static final int ARMOR_ENCUMBRANCE_BOD_MULTIPLIER = 2;
   private static final int ARMOR_ENCUMBRANCE_POINTS_PER_PENALTY = 2;
+  /** Herkunft der Waffen aus Rüstung im Waffenbereich. */
+  private static final String ARMOR_WEAPON_SOURCE = "aus Rüstung";
+  /** Herkunft der Waffen aus Implantaten im Waffenbereich. */
+  private static final String IMPLANT_WEAPON_SOURCE = "Implantat";
 
   private final @NonNull Character owner;
+
   private final List<Cyberware> cyberware = new ArrayList<>();
   private final List<Armor> armor = new ArrayList<>();
   private final List<Weapon> weapons = new ArrayList<>();
@@ -112,11 +121,21 @@ public class Equipment {
     return sumEssenceCost(EquipmentKind.BIOWARE);
   }
 
+  /**
+   * Essenz einer Art: alle Implantate außer Gliedern, dazu je Körperstelle das Glied mit den höchsten Essenzkosten,
+   * egal ob angeschlossen (Nutzerentscheidung: Ersatzglieder kosten keine zusätzliche Essenz, Wechseln spart aber auch
+   * keine).
+   */
   private @NonNull BigDecimal sumEssenceCost(@NonNull EquipmentKind kind) {
-    return cyberware.stream()
-        .filter(c -> c.getKind() == kind)
+    BigDecimal implants = cyberware.stream()
+        .filter(c -> c.getKind() == kind && c.getLocation() == null)
         .map(Cyberware::getEssenceCost)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
+    Map<BodyLocation, BigDecimal> limbs = new EnumMap<>(BodyLocation.class);
+    cyberware.stream()
+        .filter(c -> c.getKind() == kind && c.getLocation() != null)
+        .forEach(c -> limbs.merge(Objects.requireNonNull(c.getLocation()), c.getEssenceCost(), BigDecimal::max));
+    return limbs.values().stream().reduce(implants, BigDecimal::add);
   }
 
   /**
@@ -257,8 +276,36 @@ public class Equipment {
         .filter(name -> !name.isEmpty())
         .map(WeaponDataLoader::findByName)
         .filter(Objects::nonNull)
-        .map(Weapon::new)
+        .map(data -> new Weapon(data, ARMOR_WEAPON_SOURCE, null))
         .toList();
+  }
+
+  /**
+   * Waffen aus Implantaten (Cyber-Nahkampfwaffen, S. 391/392): natürlich implantierte mit der Stärke des Charakters,
+   * eingebaute in angeschlossenen Gliedern mit der Stärke des Glieds (S. 389/390). Jeder Aufruf liefert neue Instanzen.
+   */
+  public @NonNull List<Weapon> getImplantWeapons() {
+    List<Weapon> weapons = new ArrayList<>();
+    for (Cyberware implant : cyberware) {
+      BodyLocation location = implant.getLocation();
+      if (location == null) {
+        addImplantWeapon(weapons, implant, IMPLANT_WEAPON_SOURCE, null);
+      } else if (implant.isAttached()) {
+        int strength = implant.getLimbAttribute(AttributeType.STR);
+        implant.getInstalled().forEach(child -> addImplantWeapon(weapons, child,
+            IMPLANT_WEAPON_SOURCE + ", " + location.getDisplayName(), strength));
+      }
+    }
+    return weapons;
+  }
+
+  private static void addImplantWeapon(@NonNull List<Weapon> weapons, @NonNull Cyberware implant,
+      @NonNull String source, @Nullable Integer strength) {
+    String name = implant.getData().weapon();
+    WeaponData data = name.isEmpty() ? null : WeaponDataLoader.findByName(name);
+    if (data != null) {
+      weapons.add(new Weapon(data, source, strength));
+    }
   }
 
   /**

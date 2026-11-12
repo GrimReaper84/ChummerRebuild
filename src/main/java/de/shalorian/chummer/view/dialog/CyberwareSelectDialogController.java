@@ -1,14 +1,19 @@
 package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.cyberware.BodyLocation;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.cyberware.ImplantSelection;
+import de.shalorian.chummer.model.character.cyberware.LimbAttributes;
+import de.shalorian.chummer.model.character.cyberware.LimbPart;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.equipment.Equipment;
+import de.shalorian.chummer.view.converter.BodyLocationStringConverter;
 import de.shalorian.chummer.view.converter.CyberwareGradeStringConverter;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import java.text.NumberFormat;
@@ -23,7 +28,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -42,6 +50,12 @@ import org.jspecify.annotations.Nullable;
  * ein Preisfeld (Preisspanne, Kosmetische Modifikation). Mit {@link #setInstallTarget(Cyberware)} wird Zubehör für
  * ein Basissystem gewählt: Die Liste zeigt nur einbaubares Zubehör seiner Kategorie, die Grade ist die des
  * Basissystems, statt der Essenz steht der Kapazitätsbedarf da (GRW S. 386, 387).
+ *
+ * <p>Mit {@link #setLimbMode()} werden Cybergliedmaßen gekauft: Körperstelle und Maßanfertigung (KON/STR/GES von 3 bis
+ * zum natürlichen Maximum, Preis und Verfügbarkeit laufen mit, S. 390). Ist ein Glied das Einbauziel, zeigt die Liste
+ * alles mit Gliedkapazität; die Regeln mit Charakterbezug (Torso, Maxima, zweites Bein) prüft
+ * {@code Implants#getLimbInstallProblem}. Verbesserungen und Zubehör für Glieder erscheinen nur dort, nicht beim
+ * normalen Kauf.
  */
 public class CyberwareSelectDialogController extends CatalogSelectDialogController<CyberwareData> {
 
@@ -61,6 +75,20 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   @FXML
   private TextField priceField;
   @FXML
+  private Label locationCaption;
+  @FXML
+  private ComboBox<BodyLocation> locationBox;
+  @FXML
+  private Label customCaption;
+  @FXML
+  private HBox customBox;
+  @FXML
+  private Spinner<Integer> bodySpinner;
+  @FXML
+  private Spinner<Integer> strengthSpinner;
+  @FXML
+  private Spinner<Integer> agilitySpinner;
+  @FXML
   private Label availabilityLabel;
   @FXML
   private Label essenceCaption;
@@ -79,6 +107,7 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   private @Nullable Character character;
   private @NonNull EquipmentKind kind = EquipmentKind.CYBERWARE;
   private @Nullable Cyberware installTarget;
+  private boolean limbMode;
   private @Nullable Cyberware result;
   /** Implantat, für das {@code ratingBox} und {@code choiceBox} zuletzt befüllt wurden. */
   private @Nullable CyberwareData ratingSource;
@@ -109,6 +138,11 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
     ratingBox.valueProperty().addListener((_, _, _) -> updatePreview());
     choiceBox.valueProperty().addListener((_, _, _) -> updatePreview());
     priceField.textProperty().addListener((_, _, _) -> updatePreview());
+    locationBox.setConverter(new BodyLocationStringConverter());
+    locationBox.valueProperty().addListener((_, _, _) -> updatePreview());
+    for (Spinner<Integer> spinner : List.of(bodySpinner, strengthSpinner, agilitySpinner)) {
+      spinner.valueProperty().addListener((_, _, _) -> updatePreview());
+    }
     super.initialize();
   }
 
@@ -124,6 +158,14 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   /** Legt fest, ob Cyberware- oder Bioware-Einträge angeboten werden (Default: Cyberware). */
   public void setKind(@NonNull EquipmentKind kind) {
     this.kind = kind;
+    refreshCategoryOptions();
+    updateList();
+  }
+
+  /** Bietet Cybergliedmaßen statt Implantaten an, mit Körperstelle und Maßanfertigung. */
+  public void setLimbMode() {
+    this.limbMode = true;
+    this.kind = EquipmentKind.CYBERWARE;
     refreshCategoryOptions();
     updateList();
   }
@@ -172,7 +214,9 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
    */
   private @Nullable String problem(@NonNull CyberwareData data, int rating, @Nullable String choice) {
     if (installTarget != null) {
-      return installTarget.installProblem(data, rating);
+      return character != null && installTarget.getData().limb().isLimb()
+          ? character.getImplants().getLimbInstallProblem(installTarget, data, rating)
+          : installTarget.installProblem(data, rating);
     }
     if (character == null) {
       return null;
@@ -213,9 +257,15 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   @Override
   protected boolean additionalFilter(@NonNull CyberwareData data) {
     if (installTarget != null) {
-      return data.category().equals(installTarget.getData().category()) && data.isInstallable();
+      return installTarget.getData().limb().isLimb()
+          ? data.limb().isInstallableInLimb()
+          : data.category().equals(installTarget.getData().category()) && data.isInstallable();
     }
-    return data.kind() == kind;
+    if (limbMode) {
+      return data.limb().isLimb();
+    }
+    boolean limbOnly = data.restrictions().installOnly() && data.limb().isInstallableInLimb();
+    return data.kind() == kind && !data.limb().isLimb() && !limbOnly;
   }
 
   /** Passt Stufen- und Auswahlfeld an den gewählten Eintrag an und aktualisiert die Kostenvorschau. */
@@ -238,10 +288,50 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       choiceBox.setValue(null);
       priceField.setPromptText(selected.hasVariablePrice() ? priceRange(selected) : "");
     }
+    if (selected != null && !selected.equals(ratingSource)) {
+      prepareLimbFields(selected);
+    }
     showRow(choiceCaption, choiceBox, selected != null && selected.selection() != ImplantSelection.NONE);
     showRow(priceCaption, priceField, selected != null && selected.hasVariablePrice());
     ratingSource = selected;
     updatePreview();
+  }
+
+  /**
+   * Füllt Körperstelle und Maßanfertigung für ein Glied: Vorschlag ist die erste Stelle ohne angeschlossenes Glied,
+   * die Spinner reichen von 3 bis zum natürlichen Maximum; Felder, die das Glied nicht hat, verschwinden.
+   */
+  private void prepareLimbFields(@NonNull CyberwareData data) {
+    LimbPart part = data.limb().part();
+    List<BodyLocation> locations = part == null ? List.of() : part.locations();
+    locationBox.getItems().setAll(locations);
+    locationBox.setValue(locations.stream()
+        .filter(location -> character == null || !character.getImplants().isOccupied(location))
+        .findFirst()
+        .orElse(locations.isEmpty() ? null : locations.getFirst()));
+    boolean custom = part != null && part.hasAttributes();
+    if (custom) {
+      bodySpinner.setValueFactory(customFactory(AttributeType.BOD));
+      strengthSpinner.setValueFactory(customFactory(AttributeType.STR));
+      agilitySpinner.setValueFactory(customFactory(AttributeType.AGI));
+    }
+    showRow(locationCaption, locationBox, locations.size() > 1);
+    showRow(customCaption, customBox, custom);
+  }
+
+  private @NonNull SpinnerValueFactory<Integer> customFactory(@NonNull AttributeType type) {
+    int max = character == null ? LimbAttributes.STANDARD_VALUE : character.getAttribute(type).getMax();
+    return new SpinnerValueFactory.IntegerSpinnerValueFactory(LimbAttributes.STANDARD_VALUE,
+        Math.max(LimbAttributes.STANDARD_VALUE, max), LimbAttributes.STANDARD_VALUE);
+  }
+
+  /** Grundwerte aus den Spinnern; Standard, solange das Glied keine eigenen Attribute hat. */
+  private @NonNull LimbAttributes currentBase(@NonNull LimbPart part) {
+    if (!part.hasAttributes() || bodySpinner.getValue() == null || strengthSpinner.getValue() == null
+        || agilitySpinner.getValue() == null) {
+      return LimbAttributes.STANDARD;
+    }
+    return new LimbAttributes(bodySpinner.getValue(), strengthSpinner.getValue(), agilitySpinner.getValue());
   }
 
   private @NonNull List<String> choiceOptions(@NonNull CyberwareData data) {
@@ -290,8 +380,9 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       return;
     }
     essenceLabel.setText(installTarget != null
-        ? String.valueOf(preview.getData().capacityCostFor(preview.getRating()))
+        ? String.valueOf(installTarget.capacityNeed(preview.getData(), preview.getRating()))
         : ESSENCE_FORMAT.toString(preview.getEssenceCost().doubleValue()));
+
     costLabel.setText(preview.getNuyenCost() + " ¥");
     okButton.setDisable(false);
   }
@@ -302,6 +393,12 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
     String problem = problem(data, currentRating(data), currentChoice(data));
     if (problem != null) {
       parts.add("Nicht wählbar: " + problem + ".");
+    }
+    BodyLocation location = locationBox.getValue();
+    if (data.limb().isLimb() && location != null && character != null
+        && character.getImplants().isOccupied(location)) {
+      parts.add("Am " + location.getDisplayName() + " ist schon ein Glied angeschlossen; das neue kommt abgenommen "
+          + "dazu.");
     }
     if (!data.note().isEmpty()) {
       parts.add(data.note());
@@ -317,8 +414,10 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   /** Verfügbarkeit der gewählten (bzw. niedrigsten) Stufe, mit Hinweis, falls sie gesperrt ist. */
   private @NonNull String availabilityText(@NonNull CyberwareData data) {
     int rating = currentRating(data);
-    String text = data.availability().displayText(rating);
-    if (!isAvailable(data, rating)) {
+    LimbPart part = data.limb().part();
+    Availability availability = part == null ? data.availability() : limbPreview(data, part).getAvailability();
+    String text = availability.displayText(rating);
+    if (character != null && !character.getEquipment().isAvailableForPurchase(availability, rating)) {
       text += " (bei Erschaffung max. " + Availability.MAX_AVAILABILITY_AT_CREATION + ")";
     }
     return text;
@@ -343,6 +442,10 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
     if (selected.hasRating() && chosenRating == null) {
       return null;
     }
+    LimbPart part = selected.limb().part();
+    if (part != null) {
+      return buildLimb(selected, part, grade);
+    }
     int rating = currentRating(selected);
     String choice = currentChoice(selected);
     Integer price = selected.hasVariablePrice() ? enteredPrice(selected) : null;
@@ -351,6 +454,28 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
       return null;
     }
     return new Cyberware(selected, grade, rating, choice, price);
+  }
+
+  /** Das gewählte Glied, oder {@code null}, solange Stelle, Maßanfertigung oder Verfügbarkeit den Kauf sperren. */
+  private @Nullable Cyberware buildLimb(@NonNull CyberwareData data, @NonNull LimbPart part,
+      @NonNull CyberwareGrade grade) {
+    BodyLocation location = locationBox.getValue();
+    if (location == null || problem(data, 0, "") != null) {
+      return null;
+    }
+    Cyberware limb = new Cyberware(data, grade, location, currentBase(part));
+    if (character != null && !character.getEquipment().isAvailableForPurchase(limb.getAvailability(), 0)) {
+      return null;
+    }
+    return limb;
+  }
+
+  /** Glied mit der eingestellten Stelle und Maßanfertigung, für die Anzeige (Verfügbarkeit). */
+  private @NonNull Cyberware limbPreview(@NonNull CyberwareData data, @NonNull LimbPart part) {
+    BodyLocation location = locationBox.getValue();
+    return new Cyberware(data, CyberwareGrade.STANDARD,
+        location == null || !part.locations().contains(location) ? part.locations().getFirst() : location,
+        currentBase(part));
   }
 
   @FXML

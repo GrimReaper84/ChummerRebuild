@@ -1527,9 +1527,13 @@ public class Character {
     return Math.max(0, getAugmentedAttributeValue(AttributeType.INT) * 2 + getWoundModifier());
   }
 
-  /** Kästchen der Körperlichen Spalte: 8 plus halbe verstärkte Konstitution, aufgerundet (S. 94). */
+  /**
+   * Kästchen der Körperlichen Spalte: 8 plus halbe verstärkte Konstitution, aufgerundet (S. 94), plus 1 je
+   * angeschlossener Cybergliedmaße (S. 390).
+   */
   public int getPhysicalBoxes() {
-    return CONDITION_MONITOR_BASE + (getAugmentedAttributeValue(AttributeType.BOD) + 1) / 2;
+    return CONDITION_MONITOR_BASE + (getAugmentedAttributeValue(AttributeType.BOD) + 1) / 2
+        + implants.getAttachedLimbs().size();
   }
 
   /** Kästchen der Geistigen Spalte: 8 plus halbe verstärkte Willenskraft, aufgerundet (S. 94). */
@@ -1822,20 +1826,22 @@ public class Character {
 
   /**
    * Ballistik-Schutz: angelegte Rüstung ({@link Equipment#getArmorBallistic()}) plus Mystischer Panzer (S. 231) plus
-   * Implantatpanzerung (Dermalpanzerung, Titan-Kompositknochen S. 388; Orthoskin S. 393).
+   * Implantatpanzerung (Dermalpanzerung, Titan-Kompositknochen S. 388; Orthoskin S. 393) plus Gliedpanzerung
+   * ({@link Implants#getLimbArmor()}, S. 390).
    */
   public int getArmorBallistic() {
     return equipment.getArmorBallistic() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR)
-        + implants.level(ImplantEffectType.ARMOR_BALLISTIC);
+        + implants.level(ImplantEffectType.ARMOR_BALLISTIC) + implants.getLimbArmor();
   }
 
   /**
-   * Stoß-Schutz: angelegte Rüstung plus Mystischer Panzer plus Implantatpanzerung. Panzer und Implantate werden nicht
-   * getragen und zählen deshalb nicht zur Panzerungsbehinderung, die nur getragene Panzerung rechnet (S. 190).
+   * Stoß-Schutz: angelegte Rüstung plus Mystischer Panzer plus Implantat- und Gliedpanzerung. Panzer und Implantate
+   * werden nicht getragen und zählen deshalb nicht zur Panzerungsbehinderung, die nur getragene Panzerung rechnet
+   * (S. 190).
    */
   public int getArmorImpact() {
     return equipment.getArmorImpact() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR)
-        + implants.level(ImplantEffectType.ARMOR_IMPACT);
+        + implants.level(ImplantEffectType.ARMOR_IMPACT) + implants.getLimbArmor();
   }
 
   // --- Ausrüstung & Nuyen-Budget ---

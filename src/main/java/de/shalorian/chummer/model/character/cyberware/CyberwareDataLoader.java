@@ -12,6 +12,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -26,6 +29,8 @@ import org.w3c.dom.NodeList;
  * ergibt sich ausschließlich aus seiner Quelldatei. Namen sind über beide Kataloge hinweg eindeutig.
  */
 public class CyberwareDataLoader {
+
+  private static final Pattern LIST_SEPARATOR = Pattern.compile(",");
 
   private CyberwareDataLoader() {
   }
@@ -102,7 +107,28 @@ public class CyberwareDataLoader {
             firstChild(el, "installonly") != null,
             firstChild(el, "excludespaintolerance") != null),
         allowGear.isEmpty() ? null : GearCategory.fromDisplayName(allowGear),
-        childText(el, "note"));
+        childText(el, "note"),
+        parseLimb(el),
+        childText(el, "weapon"));
+  }
+
+  /**
+   * {@code <limb part="arm"/>} (selbst ein Glied), {@code <limbcapacity>}, {@code <fitsin>} (Gliedarten, durch Komma
+   * getrennt), {@code <enhances>} und {@code <pairedlegs/>}.
+   */
+  private static @NonNull LimbSpec parseLimb(@NonNull Element el) {
+    Element limb = firstChild(el, "limb");
+    String fitsIn = childText(el, "fitsin");
+    String enhances = childText(el, "enhances");
+    return new LimbSpec(
+        limb == null ? null : LimbPart.fromCode(limb.getAttribute("part")),
+        childText(el, "limbcapacity"),
+        fitsIn.isEmpty() ? Set.of() : LIST_SEPARATOR.splitAsStream(fitsIn)
+            .map(String::trim)
+            .map(LimbPart::fromCode)
+            .collect(Collectors.toSet()),
+        enhances.isEmpty() ? null : LimbEnhancement.fromCode(enhances),
+        firstChild(el, "pairedlegs") != null);
   }
 
   private static int intOrZero(@NonNull String text) {

@@ -69,7 +69,13 @@ class CyberwareDataLoaderTest {
       int rating = data.hasRating() ? data.maxRating() : 0;
       String choice = data.selection() == ImplantSelection.NONE ? "" : "Auswahl";
       Integer price = data.hasVariablePrice() ? data.priceMin() : null;
-      Cyberware implant = new Cyberware(data, CyberwareGrade.STANDARD, rating, choice, price);
+      LimbPart part = data.limb().part();
+      Cyberware implant = part == null
+          ? new Cyberware(data, CyberwareGrade.STANDARD, rating, choice, price)
+          : new Cyberware(data, CyberwareGrade.STANDARD, part.locations().getFirst(), LimbAttributes.STANDARD);
+      if (data.limb().isInstallableInLimb()) {
+        assertTrue(data.limbCapacityCostFor(rating) > 0, data.name());
+      }
       // Essenz "–" im GRW (Cortexbomben, Zahnbehälter, Okular-Drohne, …) ist 0
       assertTrue(implant.getEssenceCost().signum() >= 0, data.name());
       assertTrue(implant.getNuyenCost() > 0, data.name());

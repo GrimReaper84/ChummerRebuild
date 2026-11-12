@@ -23,8 +23,9 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Status-Übersicht des Charakters als Karten: Kopf (Name, Metatyp, Modus), Initiative, Zustandsmonitor, Panzerung,
- * Essenz, Sonderattribute und Hinweise ({@link StatusHints}). Sie wird bei jeder Änderung neu gebaut und im Slide-Panel
- * oder als statischer Bereich gezeigt (Plan UI-Rework, Abschnitt 6). Im Karrieremodus trägt ein Klick auf ein Kästchen
+ * Essenz, Sonderattribute (mit dem Durchschnitt angeschlossener Cybergliedmaßen) und Hinweise ({@link StatusHints}).
+ * Sie wird bei jeder Änderung neu gebaut und im Slide-Panel oder als statischer Bereich gezeigt (Plan UI-Rework,
+ * Abschnitt 6). Im Karrieremodus trägt ein Klick auf ein Kästchen
  * des Zustandsmonitors Schaden ein wie im Bereich „Zustand“; bei der Erschaffung sind die Kästchen gesperrt.
  */
 public final class StatusOverviewBuilder {
@@ -173,7 +174,14 @@ public final class StatusOverviewBuilder {
       grid.add(figure(String.valueOf(c.getEffectiveMagicOrResonanceValue()),
           magicOrResonance.getType().getDisplayName(), false), 1, 0);
     }
-    return card(titled("SONDERATTRIBUTE", grid));
+    VBox box = titled("SONDERATTRIBUTE", grid);
+    if (!c.getImplants().getAttachedLimbs().isEmpty()) {
+      Label limbs = styled(new Label("Cybergliedmaßen, Durchschnitt: "
+          + CyberwareTabBuilder.limbValuesText(c.getImplants().getLimbAverages())), "effect-text");
+      limbs.setWrapText(true);
+      box.getChildren().add(limbs);
+    }
+    return card(box);
   }
 
   private static @NonNull Node hintCard(@NonNull List<String> hints) {

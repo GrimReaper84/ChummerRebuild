@@ -434,10 +434,14 @@ public class CharacterViewController implements CharacterTabHost {
 
   @Override
   public void onImplantsChanged() {
-    // Implantate wirken auf Essenz, Attribute, Würfelpools, Initiative, Zustandsmonitor und Panzerung.
+    // Implantate wirken auf Essenz, Attribute, Würfelpools, Initiative, Zustandsmonitor, Panzerung und Waffen
+    // (Cyber-Nahkampfwaffen, auch in Cybergliedmaßen).
     attributeTab.build();
     skillTab.build();
     conditionTab.build();
+    if (character != null) {
+      streetGear.rebuildWeapons(character);
+    }
     updateNuyenBpDisplay();
     refreshRows();
   }

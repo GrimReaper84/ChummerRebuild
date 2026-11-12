@@ -211,7 +211,7 @@
         <damage>(STR÷2)G</damage>
         <ap>+2</ap>
         <cost>0</cost>
-        <fromarmor/>
+        <builtin/>
         <note>Der angelegte Schutzschild als Nahkampfwaffe.</note>
         <source>SR4</source>
         <page>373</page>
@@ -224,7 +224,7 @@
         <damage>6G(e)</damage>
         <ap>–Hälfte</ap>
         <cost>0</cost>
-        <fromarmor/>
+        <builtin/>
         <note>Der angelegte Taserschild als Nahkampfwaffe; Elektroschock, 20 Ladungen.</note>
         <source>SR4</source>
         <page>373</page>
@@ -245,7 +245,60 @@
         <page>361</page>
     </item>
 
-    <!-- Waffen aus Rüstung (S. 373): nicht kaufbar, erscheinen solange das Teil angelegt ist (<fromarmor/>) -->
+    <!-- Waffen aus Rüstung (S. 373) und Implantaten (S. 391): nicht kaufbar, erscheinen solange das Teil angelegt
+         bzw. das Implantat vorhanden ist (<builtin/>) -->
+
+    <item>
+        <name>Handklinge</name>
+        <category>Klingenwaffen</category>
+        <reach>–</reach>
+        <damage>(STR÷2+2)K</damage>
+        <ap>–</ap>
+        <cost>0</cost>
+        <builtin/>
+        <note>Einziehbare Klinge an der Handkante aus dem Implantat Handklinge; mit Klingenwaffen geführt (S. 148).</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+
+    <item>
+        <name>Nagelmesser</name>
+        <category>Klingenwaffen</category>
+        <reach>–</reach>
+        <damage>(STR÷2+1)K</damage>
+        <ap>–</ap>
+        <cost>0</cost>
+        <builtin/>
+        <note>Einziehbare Klingen unter den Fingernägeln aus dem Implantat Nagelmesser; mit Klingenwaffen geführt (S. 148).</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+
+    <item>
+        <name>Schockhand</name>
+        <category>Waffenlos</category>
+        <reach>–</reach>
+        <damage>6G(e)</damage>
+        <ap>–Hälfte</ap>
+        <cost>0</cost>
+        <builtin/>
+        <note>Elektroschock aus Polstern in Knöcheln oder Handfläche; Waffenloser Kampf (S. 149), 10 Ladungen.</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
+
+    <item>
+        <name>Sporn</name>
+        <category>Klingenwaffen</category>
+        <reach>–</reach>
+        <damage>(STR÷2+3)K</damage>
+        <ap>–</ap>
+        <cost>0</cost>
+        <builtin/>
+        <note>Einziehbare Klingen aus Handgelenk oder Knöcheln aus dem Implantat Sporn; mit Klingenwaffen geführt (S. 148).</note>
+        <source>SR4</source>
+        <page>391</page>
+    </item>
 
     <item>
         <name>Schockstreifen</name>
@@ -254,7 +307,7 @@
         <damage>6G(e)</damage>
         <ap>–Hälfte</ap>
         <cost>0</cost>
-        <fromarmor/>
+        <builtin/>
         <note>Aus der Panzerungsmodifikation Schockstreifen; Angriff mit Waffenlosem Kampf, 10 Ladungen.</note>
         <source>SR4</source>
         <page>373</page>

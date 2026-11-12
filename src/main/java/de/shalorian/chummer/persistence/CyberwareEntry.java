@@ -20,6 +20,18 @@ class CyberwareEntry {
   public @NonNull List<CyberwareEntry> installed = new ArrayList<>();
   /** In die Kommlink-Headware eingebautes Kommlink samt Betriebssystem, sonst {@code null}. */
   public @Nullable GearEntry commlink;
+  /** Körperstelle einer Cybergliedmaße ({@code BodyLocation}-Enum-Name), sonst {@code null}. */
+  public @Nullable String location;
+  /** Ob die Cybergliedmaße angeschlossen ist; fehlt das Feld (ältere Dateien), gilt sie als angeschlossen. */
+  public boolean attached = true;
+  /** Grundwerte einer maßgefertigten Cybergliedmaße; {@code 0} (oder fehlend) = Standardwert 3. */
+  public int body;
+  public int strength;
+  public int agility;
+  /** Zweiter Teil einer Sprunghydraulik im anderen Bein (ohne eigenen Preis). */
+  public boolean pairedCopy;
+  /** Kennung, die Original und zweiten Teil einer Sprunghydraulik verbindet; {@code 0} ohne Paar. */
+  public int pair;
 
   public CyberwareEntry() {
   }

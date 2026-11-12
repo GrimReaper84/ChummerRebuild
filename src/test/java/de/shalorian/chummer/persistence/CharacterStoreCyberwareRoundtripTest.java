@@ -1,16 +1,19 @@
 package de.shalorian.chummer.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.cyberware.BodyLocation;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareDataLoader;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
+import de.shalorian.chummer.model.character.cyberware.LimbAttributes;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
@@ -149,5 +152,82 @@ class CharacterStoreCyberwareRoundtripTest {
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals(damage, loaded.getPhysicalDamage());
+  }
+
+  @Test
+  void roundtripPreservesCyberlimbs() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    Cyberware left = new Cyberware(catalog("Ganzes Bein (offensichtlich)"), CyberwareGrade.ALPHAWARE,
+        BodyLocation.LEG_LEFT, new LimbAttributes(5, 4, 3));
+    Cyberware right = new Cyberware(catalog("Ganzes Bein (synthetisch)"), CyberwareGrade.STANDARD,
+        BodyLocation.LEG_RIGHT, LimbAttributes.STANDARD);
+    Cyberware spare = new Cyberware(catalog("Hand/Fuß (offensichtlich)"), CyberwareGrade.STANDARD,
+        BodyLocation.ARM_LEFT, LimbAttributes.STANDARD);
+    spare.setAttached(false);
+    original.getImplants().add(left);
+    original.getImplants().add(right);
+    original.getImplants().add(spare);
+    original.getImplants().installInLimb(left, new Cyberware(catalog("Stärkeverbesserung"), CyberwareGrade.STANDARD, 2));
+    original.getImplants().installInLimb(left, new Cyberware(catalog("Sprunghydraulik"), CyberwareGrade.STANDARD, 2));
+    original.getImplants().installInLimb(right, new Cyberware(catalog("Großer Schmuggelbehälter"),
+        CyberwareGrade.STANDARD, 0));
+    int cost = original.getEquipment().getCyberwareNuyenCost();
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    List<Cyberware> limbs = loaded.getImplants().getLimbs();
+    assertEquals(3, limbs.size());
+    Cyberware loadedLeft = limbs.getFirst();
+    assertEquals(BodyLocation.LEG_LEFT, loadedLeft.getLocation());
+    assertEquals(CyberwareGrade.ALPHAWARE, loadedLeft.getGrade());
+    assertEquals(new LimbAttributes(5, 4, 3), loadedLeft.getBaseAttributes());
+    assertEquals(6, loadedLeft.getLimbAttribute(AttributeType.STR));
+    assertEquals(7, limbs.get(1).getUsedCapacity());
+    assertEquals(cost, loaded.getEquipment().getCyberwareNuyenCost());
+    Cyberware copy = limbs.get(1).getInstalled().getFirst();
+    assertTrue(copy.isPairedCopy());
+    // die Verknüpfung übersteht das Speichern: Ausbau des Originals entfernt den zweiten Teil
+    loaded.getImplants().uninstallFromLimb(loadedLeft, Objects.requireNonNull(copy.getPairedPart()));
+    assertEquals(1, limbs.get(1).getInstalled().size());
+    assertFalse(limbs.get(2).isAttached());
+  }
+
+  @Test
+  void roundtripKeepsWeaponInLimbAndCommlinkInSkull() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    Cyberware hand = new Cyberware(catalog("Hand/Fuß (offensichtlich)"), CyberwareGrade.STANDARD,
+        BodyLocation.ARM_RIGHT, LimbAttributes.STANDARD);
+    Cyberware skull = new Cyberware(catalog("Schädel (offensichtlich)"), CyberwareGrade.STANDARD,
+        BodyLocation.SKULL, LimbAttributes.STANDARD);
+    original.getImplants().add(hand);
+    original.getImplants().add(skull);
+    original.getImplants().installInLimb(hand, new Cyberware(catalog("Sporn (einziehbar)"), CyberwareGrade.STANDARD, 0));
+    Cyberware commlinkHeadware = new Cyberware(catalog("Kommlink"), CyberwareGrade.STANDARD, 0);
+    original.getImplants().installInLimb(skull, commlinkHeadware);
+    commlinkHeadware.setCommlink(new Gear(Objects.requireNonNull(GearDataLoader.findByName("Meta Link")), 0));
+
+    CharacterStore.save(original, tempFile());
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(List.of("Sporn"),
+        loaded.getEquipment().getImplantWeapons().stream().map(w -> w.getName()).toList());
+    Cyberware loadedHeadware = loaded.getImplants().getLimbs().get(1).getInstalled().getFirst();
+    assertEquals("Meta Link", Objects.requireNonNull(loadedHeadware.getCommlink()).getName());
+  }
+
+  @Test
+  void oldLimbEntryWithoutNewFieldsLoadsAsStandardAttachedLimb() throws IOException {
+    Files.writeString(tempFile().toPath(), """
+        {"name":"Alt","metatype":"Mensch",
+         "cyberware":[{"name":"Ganzer Arm (offensichtlich)","grade":"STANDARD","rating":0}]}
+        """, StandardCharsets.UTF_8);
+
+    Character loaded = CharacterStore.load(tempFile());
+
+    Cyberware arm = loaded.getImplants().getLimbs().getFirst();
+    assertTrue(arm.isAttached());
+    assertEquals(BodyLocation.ARM_LEFT, arm.getLocation());
+    assertEquals(LimbAttributes.STANDARD, arm.getBaseAttributes());
   }
 }

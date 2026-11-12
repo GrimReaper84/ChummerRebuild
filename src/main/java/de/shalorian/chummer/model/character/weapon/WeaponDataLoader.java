@@ -87,7 +87,7 @@ public class WeaponDataLoader {
         parseIncluded(el),
         childText(el, "source"),
         childText(el, "page"),
-        firstChild(el, "fromarmor") != null);
+        firstChild(el, "builtin") != null);
   }
 
   /** {@code <included rule="…">Name</included>}: eingebautes Zubehör, Regel optional. */

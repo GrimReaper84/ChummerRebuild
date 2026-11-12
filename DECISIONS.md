@@ -115,10 +115,29 @@ angelegten Teilen (Annahme zu „nur eine zählt“); Chemische Isolierung als W
 an der Ganzkörperpanzerung auch Inhalation; Tabelle „Schutz vor Chemikalien“) und gegen Säure zur Panzerung (S. 194),
 Wärmedämpfung als Würfelbonus. Die Anzeigezeilen liefert das Modell (`Equipment#getSpecialProtections`). Ein angelegter Schild gibt −1 auf Fertigkeiten mit körperlichem Attribut
 und körperliche Attributproben. Schutz- und Taserschild sowie Schockstreifen stehen als Waffen in `weapons.xml`
-(`<fromarmor/>`, nicht kaufbar) und erscheinen im Waffenbereich, solange ihr Teil angelegt ist. Die Rüstung ist ein
+(`<fromarmor/>`, seit ADR-051 `<builtin/>`, nicht kaufbar) und erscheinen im Waffenbereich, solange ihr Teil angelegt ist. Die Rüstung ist ein
 Master-Detail-Bereich wie die Waffen (`ArmorTabBuilder`). Rüstungskapazität und eingebaute Waffen (Arsenal) bleiben
 draußen.
 **Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/ruestung_plan.md`.
+
+### ADR-051: Cybergliedmaßen (2026-11-12)
+Die 14 Glieder aus S. 391 sind Cyberware mit Kapazität, Körperstelle (`BodyLocation`) und Zustand angeschlossen/
+abgenommen wie Rüstung, damit Ersatzglieder möglich sind; eine harte Stellenbegrenzung gibt es nicht, weil Surge später
+zusätzliche Glieder erlaubt, nur eine Warnung bei mehrfach belegten Stellen. Ein neues Glied an einer belegten Stelle
+kommt abgenommen dazu. Essenz zählt je Stelle nur das teuerste Glied, egal ob angeschlossen. Grundwerte 3, beim Kauf
+maßgefertigt bis zum natürlichen Maximum (je Punkt Verfügbarkeit +1 und 1.500 ¥ als Endkosten ohne Grade-Aufschlag),
+darüber Verbesserungen bis zum augmentierten Maximum, über Stufe 3 nur mit angeschlossenem Cybertorso (S. 390).
+Werte je Glied; Waffen in einem Glied rechnen mit seiner STR. Der Durchschnitt über die fünf Körperteile (zwei Arme,
+zwei Beine, Torso; das Rechenbeispiel S. 390 geht nur so auf) wird angezeigt, Pools und Monitor rechnen weiter mit
+den Charakterattributen. Gliedpanzerung zählt als Summe aller angeschlossenen Glieder wie im C# (das GRW regelt
+mehrere gepanzerte Glieder nicht; später per Einstellung umschaltbar auf den Durchschnitt über die fünf Teile) und
+nicht zur Behinderung. Jedes angeschlossene Glied gibt ein Kästchen im Körperlichen Monitor (S. 390, Archetyp S. 135).
+Verbesserungen, Zubehör, Cyber-Nahkampfwaffen und Head-/Bodyware mit eckigem Kapazitätswert (S. 385, 388) werden
+gegen Kapazität eingebaut; Head- und Bodyware in Gliedern zählt bei Doppelkauf und Unverträglichkeiten mit; die Sprunghydraulik geht mit einem Kauf (Stufe × 2.000 ¥) in beide Cyberbeine, ohne
+zweites Bein ist sie gesperrt. Cyber-Nahkampfwaffen gibt es auch in der natürlichen Hand gegen Essenz; Klingen über
+Klingenwaffen (S. 148), die Schockhand über Waffenlosen Kampf (S. 149). Cyberguns bleiben draußen, weil das GRW keine
+Essenz, Kapazität und Preise nennt. Eingebaute Waffen aus Rüstung und Implantaten tragen `<builtin/>`.
+**Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/cybergliedmassen_plan.md`.
 
 ## Architektur und Code
 
