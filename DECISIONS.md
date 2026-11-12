@@ -151,6 +151,18 @@ gibt es nur einen Hinweis im Bereich und im Status, Grade und Techniken bleiben.
 (Straßenmagie, nur im C#) bleiben draußen.
 **Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/initiation_wandlung_plan.md`.
 
+### ADR-053: Geister und Sprites (2026-11-12)
+Geister stehen als Abschnitt im Bereich Magie (nur mit Zauberei, also Zauberer und Magieradepten), Sprites im Bereich
+Technomancer (`model.character.spirit`, Teilobjekt `Spirits`). Ein Eintrag hat Art, Kraft bzw. Stufe, Dienste und ist
+gebunden/registriert oder nur herbeigerufen/kompiliert; ungebundene sind Merkzettel ohne BP und zählen nicht gegen
+Charisma. Erschaffung (S. 112/113): 1 BP je Dienst, Kraft bzw. Stufe = wirksame Magie bzw. Resonanz, 1 bis Herbeirufen-
+bzw. Kompilieren-Stufe Dienste, gebundene bzw. registrierte ≤ Charisma. Im Spiel wird nur eingetragen (kein Material,
+kein Karma), Dienste lassen sich verbrauchen und erhöhen. Geisterarten nur die fünf der eigenen Tradition (S. 213).
+`spirits.xml` enthält sechs Geister (S. 347/348) und fünf Sprites (S. 282) mit Werteblock als Formeln, Fertigkeiten,
+Kräften und optionalen Kräften bzw. Komplexen Formen (je 3 volle Punkte eine); die Oberfläche zeigt sie, gerechnet
+wird damit sonst nichts. Watcher, Fessellose und Freie Geister bleiben draußen.
+**Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/geister_sprites_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

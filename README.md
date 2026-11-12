@@ -35,7 +35,7 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 2. ✅ **Rüstung überarbeiten**: Darstellung als Baum mit Detailbereich wie bei Waffen, dazu Zubehör und
    Panzerungsmodifikationen.
 3. ✅ **Cybergliedmaßen**: Arme, Beine und Torso mit eigenen Attributen, Verbesserungen, Zubehör und Cyberwaffen.
-4. **Magie und Resonanz ausbauen**: ✅ Initiation mit Metamagie und Wandlung mit Echos; offen: Geister und Sprites.
+4. ✅ **Magie und Resonanz ausbauen**: Geister und Sprites, Initiation mit Metamagie, Wandlung mit Echos.
 5. ✅ **Neue Oberfläche**: grundlegende Überarbeitung von Layout, Navigation und Darstellung der Werte.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in

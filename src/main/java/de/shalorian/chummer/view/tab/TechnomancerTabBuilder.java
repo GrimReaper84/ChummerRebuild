@@ -15,6 +15,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.view.dialog.ComplexFormSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
@@ -44,6 +45,7 @@ public final class TechnomancerTabBuilder {
 
   private final @NonNull VBox technomancerContainer;
   private final @NonNull CharacterTabHost host;
+  private final @NonNull SpiritSection spiritSection;
   private final @NonNull IncrementWiring wiring;
   private final @NonNull List<Runnable> complexFormRefreshers = new ArrayList<>();
   private @Nullable Character character;
@@ -52,6 +54,7 @@ public final class TechnomancerTabBuilder {
       @NonNull IncrementWiring wiring) {
     this.technomancerContainer = technomancerContainer;
     this.host = host;
+    this.spiritSection = new SpiritSection(SpiritKind.SPRITE, host);
     this.wiring = wiring;
   }
 
@@ -107,6 +110,7 @@ public final class TechnomancerTabBuilder {
     for (ComplexForm complexForm : ch.getComplexForms()) {
       addComplexFormRow(grid, row++, complexForm, ch);
     }
+    technomancerContainer.getChildren().add(spiritSection.build(ch));
   }
 
   /**

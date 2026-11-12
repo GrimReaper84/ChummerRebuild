@@ -139,6 +139,7 @@
 | Zauber-Katalog                                         | ✅      | Alle 84 GRW-Zauber (Strassengrimoire S. 238–249, am Bild geprüft 2026-11-12; Heilung 12, Illusion 15, Kampf 18, Manipulation 22, Wahrnehmung 17), Entzug als (K÷2)±x. Offen: Zauber mit Platzhalter ([Attribut], [Critter], [Lebensform], [Objekt]) brauchen eine Auswahl, damit mehrere Ausprägungen lernbar sind; Zusatzband-Zauber (Straßenmagie) bewusst nicht |
 | Zauber hinzufügen (3 BP / 5 Karma)                     | ✅      | Fixpreis pro Zauber in beiden Modi, Karrieremodus mit Karma-Bestätigungsdialog                                                                                                                                                                                       |
 | Zauber-Cap bei Erstellung (2×höchstes Spellcasting-Rating) | ✅  | `Character.canAddSpellAtCreation()`, kein Cap im Karrieremodus                                                                                                                                                                                                       |
+| Geister (gebunden/herbeigerufen)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Magie, 6 Geisterarten mit Werten (S. 347/348), fünf je Tradition (S. 213); Erschaffung 1 BP je Dienst, Kraft = Magie, Dienste ≤ Herbeirufen, gebundene ≤ Charisma (S. 112); Karriere nur eintragen |
 | Magische Aktionsfertigkeiten (Spruchzauberei/Ritualzauberei) | ✅ | Neu in `skills.xml`, eigene `SkillCategory.MAGICAL`, immer im Skills-Tab sichtbar (für alle Charaktere), aber nur für Magier steigerbar — `+`-Button deaktiviert ohne Gabe "Magier" (`Character.canRaiseSkill()`, GRW S. 208), gilt in Erstellung **und** Karrieremodus |
 | Magier/Adept/Mystischer-Adept-Exklusivität             | ✅      | `Character.addQuality()` verhindert gleichzeitige Wahl mehrerer `GRANTS_MAGIC`-Qualities                                                                                                                                                                            |
 | Magier-Quality-Kosten (Bug-Fix)                        | ✅      | `qualities.xml` von 5 auf 15 BP korrigiert (GRW S. 118)                                                                                                                                                                                                              |
@@ -158,6 +159,7 @@
 | Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/archiv/technomancer_plan.md`) |
 | Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (alle 21 GRW-Programme S. 271–273 inkl. Panzerung, Seiten am Bild geprüft 2026-11-12), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
 | Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ✅ | GRW S. 112, `Character.canAddComplexFormAtCreation()`, Hinweis im Technomancer-Tab, 2026-11-12 |
+| Sprites (registriert/kompiliert)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Technomancer, 5 Sprite-Arten mit Werten (S. 282); Erschaffung 1 BP je Dienst, Stufe = Resonanz, Dienste ≤ Kompilieren, registrierte ≤ Charisma (S. 113); Karriere nur eintragen |
 | Wandlung (Submersion)                      | ✅      | 2026-11-12 (ADR-052): gleicher Bereich, Titel „Wandlung“, fünf Echos (S. 284), Firewall-/System-Upgrade und Neurofilter bis 3×, Wirkung als Hinweis. Offen: Lebende Persona als Rechnung |
 
 ---
@@ -412,7 +414,8 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
      zurückgestellt (GRW ohne Essenz, Kapazität und Preis)
    - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
    - ✅ Metamagie (6) und Echos (5) mit Initiation/Wandlung (2026-11-12, ADR-052)
-   - Noch ohne Katalog: Schutzpatrone, Geister/Sprites (mit ihren Features)
+   - ✅ Geister (6) und Sprites (5) mit Werten (2026-11-12, ADR-053)
+   - Noch ohne Katalog: Schutzpatrone
 9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
 10. ✅ **Grundlegende Überarbeitung der UI** (umgesetzt 2026-11-12, ADR-049; Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
     gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,

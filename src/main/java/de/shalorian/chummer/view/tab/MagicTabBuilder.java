@@ -13,6 +13,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
+import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.view.converter.TraditionStringConverter;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.SpellSelectDialogController;
@@ -40,11 +41,13 @@ public final class MagicTabBuilder {
 
   private final @NonNull VBox magicContainer;
   private final @NonNull CharacterTabHost host;
+  private final @NonNull SpiritSection spiritSection;
   private @Nullable Character character;
 
   public MagicTabBuilder(@NonNull VBox magicContainer, @NonNull CharacterTabHost host) {
     this.magicContainer = magicContainer;
     this.host = host;
+    this.spiritSection = new SpiritSection(SpiritKind.SPIRIT, host);
   }
 
   /** Charakter, den dieser Tab anzeigt; vor dem ersten Aufbau zu setzen. */
@@ -91,6 +94,7 @@ public final class MagicTabBuilder {
     for (SpellData spell : ch.getSpells()) {
       addSpellRow(grid, row++, spell, ch);
     }
+    magicContainer.getChildren().add(spiritSection.build(ch));
   }
 
   /**

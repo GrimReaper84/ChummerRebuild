@@ -29,6 +29,8 @@ import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.model.character.skill.SkillDataLoader;
+import de.shalorian.chummer.model.character.spirit.SpiritKind;
+import de.shalorian.chummer.model.character.spirit.Spirits;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import java.math.BigDecimal;
@@ -100,6 +102,7 @@ public class Character {
   private final List<ComplexForm> complexForms = new ArrayList<>();
   private final @NonNull AdeptPowers adeptPowers = new AdeptPowers(this);
   private final @NonNull Initiation initiation = new Initiation(this);
+  private final @NonNull Spirits spirits = new Spirits(this);
   private final @NonNull Implants implants = new Implants(this);
   private final @NonNull Equipment equipment = new Equipment(this);
   private final List<LogEntry> karmaLog = new ArrayList<>();
@@ -475,6 +478,11 @@ public class Character {
       magicOrResonance = null;
       initiation.clear();
     }
+  }
+
+  /** Gebundene und herbeigerufene Geister, registrierte und kompilierte Sprites (GRW S. 112/113, 222, 281). */
+  public @NonNull Spirits getSpirits() {
+    return spirits;
   }
 
   /** Initiation bzw. Wandlung: Grad, Metamagien bzw. Echos und das dadurch höhere Maximum (GRW S. 232, 284). */
@@ -946,6 +954,7 @@ public class Character {
   private void applyQualityEffects() {
     syncMagicOrResonance();
     adeptPowers.syncWithGifts();
+    spirits.syncWithGifts();
     for (CharacterAttribute attribute : attributes.values()) {
       attribute.setMaxBonus(
           hasQualityChoice(QualityBonusType.EXCEPTIONAL_ATTRIBUTE, attribute.getType().name()) ? 1 : 0);
@@ -1012,6 +1021,12 @@ public class Character {
     removed.stream().filter(q -> q != quality).forEach(q -> lines.add(q.displayName() + " wird mit entfernt"));
     if (!hasQualityBonus(remaining, QualityBonusType.ADEPT_POWERS)) {
       adeptPowers.getPowers().forEach(p -> lines.add("Adeptenkraft " + p.displayName() + " wird mit entfernt"));
+    }
+    if (!hasQualityBonus(remaining, QualityBonusType.GRANTS_SPELLCASTING)) {
+      spirits.getEntries(SpiritKind.SPIRIT).forEach(s -> lines.add("Geist " + s.getName() + " wird mit entfernt"));
+    }
+    if (!hasQualityBonus(remaining, QualityBonusType.GRANTS_RESONANCE)) {
+      spirits.getEntries(SpiritKind.SPRITE).forEach(s -> lines.add("Sprite " + s.getName() + " wird mit entfernt"));
     }
     String initiationLoss = initiation.getLossLine();
     if (initiationLoss != null && !hasQualityBonus(remaining, QualityBonusType.GRANTS_MAGIC)
@@ -1960,7 +1975,8 @@ public class Character {
 
     return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
         + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP()
-        + getActiveSkillSpecializationBP() + getContactBP() + getSpellBP() + getComplexFormBP();
+        + getActiveSkillSpecializationBP() + getContactBP() + getSpellBP() + getComplexFormBP()
+        + spirits.getBpCost();
   }
 
   /**

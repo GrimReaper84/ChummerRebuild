@@ -40,6 +40,9 @@ import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.spirit.Spirit;
+import de.shalorian.chummer.model.character.spirit.SpiritData;
+import de.shalorian.chummer.model.character.spirit.SpiritDataLoader;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
@@ -133,6 +136,9 @@ public class CharacterStore {
         .map(p -> new AdeptPowerEntry(p.getData().name(), p.getChoice(), p.getLevel()))
         .toList();
     data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
+    data.spirits = character.getSpirits().getAll().stream()
+        .map(s -> new SpiritEntry(s.getName(), s.getForce(), s.getServices(), s.isBound()))
+        .toList();
     data.initiation = new InitiationEntry(character.getInitiation().getGrade(),
         character.getInitiation().getTechniques().stream().map(TechniqueData::name).toList());
     IdentityHashMap<Cyberware, Integer> pairIds = pairIds(character);
@@ -264,6 +270,7 @@ public class CharacterStore {
     applyInitiation(character, data);
     applyMagicOrResonance(character, data);
     applyAdeptPowers(character, data);
+    applySpirits(character, data);
     applyKnowledgeSkills(character, data);
     applyContacts(character, data);
     data.decoupledGroups.forEach(character::decoupleGroup);
@@ -709,6 +716,18 @@ public class CharacterStore {
         .filter(Objects::nonNull)
         .toList();
     character.getInitiation().restore(data.initiation.grade, techniques);
+  }
+
+  /** Stellt Geister und Sprites ohne Grenzprüfung wieder her; unbekannte Arten und ungültige Werte überspringen. */
+  private static void applySpirits(@NonNull Character character, @NonNull CharacterData data) {
+    List<Spirit> spirits = new ArrayList<>();
+    for (SpiritEntry entry : data.spirits) {
+      SpiritData spiritData = SpiritDataLoader.findByName(entry.name);
+      if (spiritData != null && entry.force >= 1 && entry.services >= 0) {
+        spirits.add(new Spirit(spiritData, entry.force, entry.services, entry.bound));
+      }
+    }
+    character.getSpirits().restore(spirits);
   }
 
   private static void applyMagicOrResonance(@NonNull Character character,

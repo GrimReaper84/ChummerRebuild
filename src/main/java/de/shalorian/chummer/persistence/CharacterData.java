@@ -40,6 +40,8 @@ public class CharacterData {
   public int adeptMagic = 0;
   /** Initiation bzw. Wandlung; fehlt in Dateien vor ADR-052 (dann Grad 0). */
   public @NonNull InitiationEntry initiation = new InitiationEntry();
+  /** Geister und Sprites; fehlt in Dateien vor ADR-053. */
+  public @NonNull List<SpiritEntry> spirits = new ArrayList<>();
   public @NonNull List<CyberwareEntry> cyberware = new ArrayList<>();
   public @NonNull List<ArmorEntry> armor = new ArrayList<>();
   public @NonNull List<WeaponEntry> weapons = new ArrayList<>();

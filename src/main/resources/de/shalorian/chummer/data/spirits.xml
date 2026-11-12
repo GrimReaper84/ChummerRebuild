@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Geister (SR4-Grundregelwerk S. 347/348, Geisterarten der Traditionen S. 213) und Sprites (S. 282), Werte am
+  Seitenbild (250 dpi) gelesen, 2026-11-12. Formeln in RatingFormula-Syntax, Rating = Kraft bzw. Stufe.
+
+  <kind>      spirit oder sprite
+  <hermetic>/<shamanic>  Magiekategorie, für die die Tradition diesen Geist ruft (fehlt = nicht in dieser Tradition)
+  <stat>      Wert mit Bezeichnung; min = Untergrenze (körperliche Attribute eines Geistes mindestens 1, S. 347)
+  <skill>     Fertigkeit mit Stufe = Kraft bzw. Stufe
+  <power>/<optional>  Kräfte und optionale Kräfte bzw. optionale Komplexe Formen (je 3 volle Kraft-/Stufenpunkte eine)
+  <form>      Komplexe Form eines Sprites (Stufe = Stufe des Sprites)
+-->
+<spirits>
+
+    <!-- ── GEISTER (S. 347/348) ───────────────────────────── -->
+
+    <spirit>
+        <name>Erdgeist</name>
+        <kind>spirit</kind>
+        <hermetic>Manipulation</hermetic>
+        <shamanic>Heilung</shamanic>
+        <stat label="K" min="1">Rating + 4</stat>
+        <stat label="G" min="1">Rating - 2</stat>
+        <stat label="R" min="1">Rating + 2</stat>
+        <stat label="S" min="1">Rating + 4</stat>
+        <stat label="C">Rating</stat>
+        <stat label="I">Rating</stat>
+        <stat label="L">Rating</stat>
+        <stat label="W">Rating</stat>
+        <stat label="EDG">Rating</stat>
+        <stat label="ESS">Rating</stat>
+        <stat label="M">Rating</stat>
+        <stat label="INI">2 + Rating * 2</stat>
+        <stat label="ID">2</stat>
+        <stat label="Astrale INI">Rating * 2</stat>
+        <stat label="Astrale ID">3</stat>
+        <movement>10/25</movement>
+        <skill>Askennen</skill>
+        <skill>Astralkampf</skill>
+        <skill>Ausweichen</skill>
+        <skill>Exotische Fernkampfwaffe</skill>
+        <skill>Waffenloser Kampf</skill>
+        <skill>Wahrnehmung</skill>
+        <power>Astrale Gestalt</power>
+        <power>Bewegung</power>
+        <power>Bewusstsein</power>
+        <power>Bindung</power>
+        <power>Materialisierung</power>
+        <power>Schutz</power>
+        <power>Suche</power>
+        <optional>Elementarer Angriff</optional>
+        <optional>Grauen</optional>
+        <optional>Verschleierung</optional>
+        <optional>Verschlingen</optional>
+        <optional>Verwirrung</optional>
+        <source>SR4</source>
+        <page>347</page>
+    </spirit>
+
+    <spirit>
+        <name>Feuergeist</name>
+        <kind>spirit</kind>
+        <hermetic>Kampf</hermetic>
+        <stat label="K" min="1">Rating + 1</stat>
+        <stat label="G" min="1">Rating + 2</stat>
+        <stat label="R" min="1">Rating + 3</stat>
+        <stat label="S" min="1">Rating - 2</stat>
+        <stat label="C">Rating</stat>
+        <stat label="I">Rating</stat>
+        <stat label="L">Rating</stat>
+        <stat label="W">Rating</stat>
+        <stat label="EDG">Rating</stat>
+        <stat label="ESS">Rating</stat>
+        <stat label="M">Rating</stat>
+        <stat label="INI">3 + Rating * 2</stat>
+        <stat label="ID">2</stat>
+        <stat label="Astrale INI">Rating * 2</stat>
+        <stat label="Astrale ID">3</stat>
+        <movement>15/40 (fliegend)</movement>
+        <skill>Askennen</skill>
+        <skill>Astralkampf</skill>
+        <skill>Ausweichen</skill>
+        <skill>Exotische Fernkampfwaffe</skill>
+        <skill>Fliegen</skill>
+        <skill>Waffenloser Kampf</skill>
+        <skill>Wahrnehmung</skill>
+        <power>Astrale Gestalt</power>
+        <power>Bewusstsein</power>
+        <power>Elementarer Angriff</power>
+        <power>Energieaura</power>
+        <power>Materialisierung</power>
+        <power>Unfall</power>
+        <power>Verschlingen</power>
+        <power>Verwirrung</power>
+        <optional>Grauen</optional>
+        <optional>Schutz</optional>
+        <optional>Suche</optional>
+        <optional>Übler Atem</optional>
+        <weakness>Allergie (Wasser, Schwer)</weakness>
+        <source>SR4</source>
+        <page>347</page>
+    </spirit>
+
+    <spirit>
+        <name>Luftgeist</name>
+        <kind>spirit</kind>
+        <hermetic>Wahrnehmung</hermetic>
+        <shamanic>Illusion</shamanic>
+        <stat label="K" min="1">Rating - 2</stat>
+        <stat label="G" min="1">Rating + 3</stat>
+        <stat label="R" min="1">Rating + 4</stat>
+        <stat label="S" min="1">Rating - 3</stat>
+        <stat label="C">Rating</stat>
+        <stat label="I">Rating</stat>
+        <stat label="L">Rating</stat>
+        <stat label="W">Rating</stat>
+        <stat label="EDG">Rating</stat>
+        <stat label="ESS">Rating</stat>
+        <stat label="M">Rating</stat>
+        <stat label="INI">3 + Rating * 2</stat>
+        <stat label="ID">2</stat>
+        <stat label="Astrale INI">Rating * 2</stat>
+        <stat label="Astrale ID">3</stat>
+        <movement>15/75 (fliegend)</movement>
+        <skill>Askennen</skill>
+        <skill>Astralkampf</skill>
+        <skill>Ausweichen</skill>
+        <skill>Exotische Fernkampfwaffe</skill>
+        <skill>Fliegen</skill>
+        <skill>Waffenloser Kampf</skill>
+        <skill>Wahrnehmung</skill>
+        <power>Astrale Gestalt</power>
+        <power>Bewegung</power>
+        <power>Bewusstsein</power>
+        <power>Materialisierung</power>
+        <power>Suche</power>
+        <power>Unfall</power>
+        <power>Verschleierung</power>
+        <power>Verschlingen</power>
+        <power>Verwirrung</power>
+        <optional>Elementarer Angriff</optional>
+        <optional>Energieaura</optional>
+        <optional>Grauen</optional>
+        <optional>Psychokinese</optional>
+        <optional>Schutz</optional>
+        <optional>Übler Atem</optional>
+        <source>SR4</source>
+        <page>348</page>
+    </spirit>
+
+    <spirit>
+        <name>Geist des Menschen</name>
+        <kind>spirit</kind>
+        <hermetic>Heilung</hermetic>
+        <shamanic>Manipulation</shamanic>
+        <stat label="K" min="1">Rating + 1</stat>
+        <stat label="G" min="1">Rating</stat>
+        <stat label="R" min="1">Rating + 2</stat>
+        <stat label="S" min="1">Rating - 2</stat>
+        <stat label="C">Rating</stat>
+        <stat label="I">Rating</stat>
+        <stat label="L">Rating</stat>
+        <stat label="W">Rating</stat>
+        <stat label="EDG">Rating</stat>
+        <stat label="ESS">Rating</stat>
+        <stat label="M">Rating</stat>
+        <stat label="INI">2 + Rating * 2</stat>
+        <stat label="ID">2</stat>
+        <stat label="Astrale INI">Rating * 2</stat>
+        <stat label="Astrale ID">3</stat>
+        <movement>10/25</movement>
+        <skill>Askennen</skill>
+        <skill>Astralkampf</skill>
+        <skill>Ausweichen</skill>
+        <skill>Spruchzauberei</skill>
+        <skill>Waffenloser Kampf</skill>
+        <skill>Wahrnehmung</skill>
+        <power>Astrale Gestalt</power>
+        <power>Bewusstsein</power>
+        <power>Einfluss</power>
+        <power>Gesteigerte Sinne (Infrarotsicht, Restlichtverstärkung)</power>
+        <power>Schutz</power>
+        <power>Suche</power>
+        <power>Unfall</power>
+        <power>Materialisierung</power>
+        <power>Verschleierung</power>
+        <power>Verwirrung</power>
+        <optional>Bewegung</optional>
+        <optional>Grauen</optional>
+        <optional>Natürlicher Zauberspruch (ein bekannter Zauber des Beschwörers, Kraft höchstens die des Geistes)</optional>
+        <optional>Psychokinese</optional>
+        <source>SR4</source>
+        <page>348</page>
+    </spirit>
+
+    <spirit>
+        <name>Geist des Tieres</name>
+        <kind>spirit</kind>
+        <shamanic>Kampf</shamanic>
+        <stat label="K" min="1">Rating + 2</stat>
+        <stat label="G" min="1">Rating + 1</stat>
+        <stat label="R" min="1">Rating + 2</stat>
+        <stat label="S" min="1">Rating + 2</stat>
+        <stat label="C">Rating</stat>
+        <stat label="I">Rating</stat>
+        <stat label="L">Rating</stat>
+        <stat label="W">Rating</stat>
+        <stat label="EDG">Rating</stat>
+        <stat label="ESS">Rating</stat>
+        <stat label="M">Rating</stat>
+        <stat label="INI">2 + Rating * 2</stat>
+        <stat label="ID">2</stat>
+        <stat label="Astrale INI">Rating * 2</stat>
+        <stat label="Astrale ID">3</stat>
+        <movement>10/45</movement>
+        <skill>Askennen</skill>
+        <skill>Astralkampf</skill>
+        <skill>Ausweichen</skill>
+        <skill>Waffenloser Kampf</skill>
+        <skill>Wahrnehmung</skill>
+        <power>Astrale Gestalt</power>
+        <power>Bewegung</power>
+        <power>Bewusstsein</power>
+        <power>Gesteigerte Sinne (Gehör, Geruch, Restlichtverstärker)</power>
+        <power>Grauen</power>
+        <power>Materialisierung</power>
+        <power>Tierbeherrschung</power>
+        <optional>Gift</optional>
+        <optional>Natürliche Waffe (Schaden Kraft K, PB 0)</optional>
+        <optional>Verschleierung</optional>
+        <optional>Verwirrung</optional>
+        <optional>Schutz</optional>
+        <optional>Suche</optional>
+        <optional>Übler Atem</optional>
+        <source>SR4</source>
+        <page>348</page>
+    </spirit>
+
+    <spirit>
+        <name>Wassergeist</name>
+        <kind>spirit</kind>
+        <hermetic>Illusion</hermetic>
+        <shamanic>Wahrnehmung</shamanic>
+        <stat label="K" min="1">Rating + 2</stat>
+        <stat label="G" min="1">Rating</stat>
+        <stat label="R" min="1">Rating + 2</stat>
+        <stat label="S" min="1">Rating</stat>
+        <stat label="C">Rating</stat>
+        <stat label="I">Rating</stat>
+        <stat label="L">Rating</stat>
+        <stat label="W">Rating</stat>
+        <stat label="EDG">Rating</stat>
+        <stat label="ESS">Rating</stat>
+        <stat label="M">Rating</stat>
+        <stat label="INI">2 + Rating * 2</stat>
+        <stat label="ID">2</stat>
+        <stat label="Astrale INI">Rating * 2</stat>
+        <stat label="Astrale ID">3</stat>
+        <movement>10/25 (30/75 schwimmend)</movement>
+        <skill>Askennen</skill>
+        <skill>Astralkampf</skill>
+        <skill>Ausweichen</skill>
+        <skill>Exotische Fernkampfwaffe</skill>
+        <skill>Waffenloser Kampf</skill>
+        <skill>Wahrnehmung</skill>
+        <power>Astrale Gestalt</power>
+        <power>Bewegung</power>
+        <power>Bewusstsein</power>
+        <power>Materialisierung</power>
+        <power>Suche</power>
+        <power>Verschleierung</power>
+        <power>Verschlingen</power>
+        <power>Verwirrung</power>
+        <optional>Bindung</optional>
+        <optional>Elementarer Angriff</optional>
+        <optional>Energieaura</optional>
+        <optional>Schutz</optional>
+        <optional>Unfall</optional>
+        <optional>Wetterbeherrschung</optional>
+        <weakness>Allergie (Feuer, Schwer)</weakness>
+        <source>SR4</source>
+        <page>348</page>
+    </spirit>
+
+    <!-- ── SPRITES (S. 282) ─────────────────────────────────── -->
+
+    <spirit>
+        <name>Daten-Sprite</name>
+        <kind>sprite</kind>
+        <stat label="Pilot">Rating</stat>
+        <stat label="Prozessor">Rating</stat>
+        <stat label="Firewall">Rating - 2</stat>
+        <stat label="Matrix-INI">Rating * 2</stat>
+        <stat label="INI-Durchgänge">3</stat>
+        <stat label="Edge">Rating</stat>
+        <stat label="Res">Rating</stat>
+        <skill>Computer</skill>
+        <skill>Datensuche</skill>
+        <skill>Elektronische Kriegsführung</skill>
+        <form>Analysieren</form>
+        <form>Editieren</form>
+        <form>Entschlüsselung</form>
+        <form>Schmöker</form>
+        <power>Steganografie</power>
+        <power>Wasserzeichen</power>
+        <optional>Entschärfen</optional>
+        <optional>Schnüffler</optional>
+        <optional>Schleicher</optional>
+        <optional>Verschlüsselung</optional>
+        <optional>beliebige Linguasoft (S. 376)</optional>
+        <source>SR4</source>
+        <page>282</page>
+    </spirit>
+
+    <spirit>
+        <name>Infiltrator-Sprite</name>
+        <kind>sprite</kind>
+        <stat label="Pilot">Rating</stat>
+        <stat label="Prozessor">Rating + 1</stat>
+        <stat label="Firewall">Rating</stat>
+        <stat label="Matrix-INI">Rating * 3</stat>
+        <stat label="INI-Durchgänge">3</stat>
+        <stat label="Edge">Rating</stat>
+        <stat label="Res">Rating</stat>
+        <skill>Computer</skill>
+        <skill>Elektronische Kriegsführung</skill>
+        <skill>Hacking</skill>
+        <form>Analyse</form>
+        <form>Ausnutzen</form>
+        <form>Schleicher</form>
+        <power>Unterdrücken</power>
+        <optional>Editieren</optional>
+        <optional>Entschärfen</optional>
+        <optional>Entschlüsselung</optional>
+        <optional>Scannen</optional>
+        <optional>Täuschung</optional>
+        <source>SR4</source>
+        <page>282</page>
+    </spirit>
+
+    <spirit>
+        <name>Kurier-Sprite</name>
+        <kind>sprite</kind>
+        <stat label="Pilot">Rating</stat>
+        <stat label="Prozessor">Rating + 1</stat>
+        <stat label="Firewall">Rating + 1</stat>
+        <stat label="Matrix-INI">Rating * 3</stat>
+        <stat label="INI-Durchgänge">3</stat>
+        <stat label="Edge">Rating</stat>
+        <stat label="Res">Rating</stat>
+        <skill>Computer</skill>
+        <skill>Datensuche</skill>
+        <skill>Hacking</skill>
+        <form>Analyse</form>
+        <form>Aufspüren</form>
+        <form>Editieren</form>
+        <form>Schleicher</form>
+        <form>Verschlüsselung</form>
+        <power>Cookie</power>
+        <power>Hash</power>
+        <optional>Ausnutzen</optional>
+        <optional>Befehl</optional>
+        <optional>Entschlüsselung</optional>
+        <optional>Scannen</optional>
+        <optional>Schmöker</optional>
+        <source>SR4</source>
+        <page>282</page>
+    </spirit>
+
+    <spirit>
+        <name>Maschinen-Sprite</name>
+        <kind>sprite</kind>
+        <stat label="Pilot">Rating</stat>
+        <stat label="Prozessor">Rating</stat>
+        <stat label="Firewall">Rating + 2</stat>
+        <stat label="Matrix-INI">Rating * 2</stat>
+        <stat label="INI-Durchgänge">3</stat>
+        <stat label="Edge">Rating</stat>
+        <stat label="Res">Rating</stat>
+        <skill>Computer</skill>
+        <skill>Elektronische Kriegsführung</skill>
+        <skill>Hardware</skill>
+        <form>Analyse</form>
+        <form>Befehl</form>
+        <power>Diagnose</power>
+        <power>Gremlins</power>
+        <power>Stabilität</power>
+        <optional>Editieren</optional>
+        <optional>Entschlüsselung</optional>
+        <optional>Medic</optional>
+        <optional>beliebige Autosoft (S. 287)</optional>
+        <source>SR4</source>
+        <page>282</page>
+    </spirit>
+
+    <spirit>
+        <name>Stör-Sprite</name>
+        <kind>sprite</kind>
+        <stat label="Pilot">Rating</stat>
+        <stat label="Prozessor">Rating + 2</stat>
+        <stat label="Firewall">Rating + 1</stat>
+        <stat label="Matrix-INI">Rating * 3</stat>
+        <stat label="INI-Durchgänge">3</stat>
+        <stat label="Edge">Rating</stat>
+        <stat label="Res">Rating</stat>
+        <skill>Computer</skill>
+        <skill>Matrixkampf</skill>
+        <skill>Hacking</skill>
+        <form>Analyse</form>
+        <form>Angriff</form>
+        <form>Panzerung</form>
+        <form>Schleicher</form>
+        <power>Elektronensturm</power>
+        <optional>Ausnutzen</optional>
+        <optional>Blackout</optional>
+        <optional>Medic</optional>
+        <optional>Schwarzer Hammer</optional>
+        <source>SR4</source>
+        <page>282</page>
+    </spirit>
+
+</spirits>

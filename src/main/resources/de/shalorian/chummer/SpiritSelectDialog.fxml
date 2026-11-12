@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.shalorian.chummer.view.dialog.SpiritSelectDialogController"
+      spacing="14" styleClass="dialog-pane" prefWidth="480">
+    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+    <!-- Filter-Zeile (keine Kategorien, daher nur die Suche) -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <ComboBox fx:id="categoryBox" prefWidth="150" visible="false" managed="false"/>
+        <TextField fx:id="searchField" promptText="Suche…" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <ListView fx:id="itemListView" prefHeight="180" VBox.vgrow="ALWAYS"/>
+
+    <GridPane hgap="14" vgap="6">
+        <columnConstraints>
+            <ColumnConstraints minWidth="90" prefWidth="100"/>
+            <ColumnConstraints minWidth="220" prefWidth="320" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label fx:id="forceCaption" text="Kraft:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Spinner fx:id="forceSpinner" prefWidth="90"
+                 GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="Dienste:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Spinner fx:id="servicesSpinner" prefWidth="90"
+                 GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label text="Zustand:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <CheckBox fx:id="boundCheck" text="gebunden"
+                  GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label text="Kategorie:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="categoryLabel" styleClass="attr-value"
+               GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Label text="Werte:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <Label fx:id="statsLabel" wrapText="true" styleClass="attr-range"
+               GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    </GridPane>
+
+    <Label fx:id="problemLabel" wrapText="true" styleClass="attr-range" maxWidth="Infinity"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Abbrechen" onAction="#onCancel" styleClass="btn-secondary"/>
+        <Button fx:id="okButton" text="OK" onAction="#onOk"
+                defaultButton="true" styleClass="btn-primary"/>
+    </HBox>
+</VBox>

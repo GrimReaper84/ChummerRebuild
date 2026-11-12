@@ -18,6 +18,7 @@ public final class DataPaths {
   public static final String GEAR_XML = "/de/shalorian/chummer/data/gear.xml";
   public static final String ADEPT_POWERS_XML = "/de/shalorian/chummer/data/adept_powers.xml";
   public static final String METAMAGIC_XML = "/de/shalorian/chummer/data/metamagic.xml";
+  public static final String SPIRITS_XML = "/de/shalorian/chummer/data/spirits.xml";
 
   private DataPaths() {}
 }
