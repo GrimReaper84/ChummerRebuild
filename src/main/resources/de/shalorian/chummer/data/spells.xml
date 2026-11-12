@@ -1,15 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Zauber (2 pro Kategorie: Heilung, Illusion,
-  Kampf, Manipulation, Wahrnehmung), direkt gegen docs/rulebooks/grundregelwerk.txt verifiziert
-  (Zauber-Kapitel S. 214 ff.). Die vollständige GRW-Kern-Liste (84 Zauber im C#-Original) ist bewusst
-  nicht Teil dieser Version — Vervollständigung ist ein separater Folgeauftrag (User-Entscheidung
-  2026-08-08), analog zum offenen Punkt bei qualities.xml.
+  Alle Zauber des SR4-Grundregelwerks (Strassengrimoire S. 238-249, 84 Zauber), Werte am Seitenbild geprüft
+  2026-11-12. Zauber aus Zusatzbänden (z.B. Straßenmagie) sind bewusst nicht enthalten.
+
+  <descriptors> Merkmale aus der Klammer hinter dem Namen; <type> M = Manazauber, P = Physischer Zauber;
+  <range> B = Berührung, BF = Blickfeld, (F) = Flächenzauber; <damage> K/G nur bei Kampfzaubern, sonst "–";
+  <duration> S = Sofort, A = Aufrechterhalten, P = Permanent; <dv> Entzug, K = Kraftstufe, ÷ wie im GRW.
+  Namen mit eckigen Klammern ([Attribut], [Critter], [Lebensform], [Objekt]) stehen für eine Gruppe: Laut GRW
+  wird jede Ausprägung als eigener Zauber gelernt.
 -->
 <spells>
 
-    <!-- ── HEILUNG ────────────────────────────────────────── -->
+    <!-- ── HEILZAUBER (S. 239/240) ── -->
 
+    <spell>
+        <name>[Attribut] Senken</name>
+        <descriptors>negativ</descriptors>
+        <category>Heilung</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>239</page>
+    </spell>
+    <spell>
+        <name>[Attribut] Steigern</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–2</dv>
+        <source>SR4</source>
+        <page>239</page>
+    </spell>
+    <spell>
+        <name>Entgiftung</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>(Toxinschaden)–4</dv>
+        <source>SR4</source>
+        <page>239</page>
+    </spell>
+    <spell>
+        <name>Gegenmittel</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>(Toxinschaden)–2</dv>
+        <source>SR4</source>
+        <page>239</page>
+    </spell>
     <spell>
         <name>Heilen</name>
         <descriptors></descriptors>
@@ -18,11 +69,10 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Schaden)-2</dv>
+        <dv>(Schaden)–2</dv>
         <source>SR4</source>
-        <page></page>
+        <page>239</page>
     </spell>
-
     <spell>
         <name>Krankheit Heilen</name>
         <descriptors></descriptors>
@@ -31,69 +81,511 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Krankheitsschaden)-2</dv>
+        <dv>(Krankheitsschaden)–2</dv>
         <source>SR4</source>
-        <page></page>
+        <page>239</page>
+    </spell>
+    <spell>
+        <name>Prophylaxe</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–2</dv>
+        <source>SR4</source>
+        <page>239</page>
+    </spell>
+    <spell>
+        <name>Reflexe Steigern</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>240</page>
+    </spell>
+    <spell>
+        <name>Sauerstoffmaske</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>240</page>
+    </spell>
+    <spell>
+        <name>Schmerzresistenz</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>(Schaden)–4</dv>
+        <source>SR4</source>
+        <page>240</page>
+    </spell>
+    <spell>
+        <name>Stabilisieren</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>(Überzähliger Schaden)–2</dv>
+        <source>SR4</source>
+        <page>240</page>
+    </spell>
+    <spell>
+        <name>Winterschlaf</name>
+        <descriptors></descriptors>
+        <category>Heilung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–3</dv>
+        <source>SR4</source>
+        <page>240</page>
     </spell>
 
-    <!-- ── ILLUSION ───────────────────────────────────────── -->
+    <!-- ── ILLUSIONSZAUBER (S. 240-242) ── -->
 
     <spell>
-        <name>Unsichtbarkeit</name>
-        <descriptors>Realistisch, Monosensorisch</descriptors>
+        <name>Heimlichkeit</name>
+        <descriptors>realistisch, monosensorisch</descriptors>
         <category>Illusion</category>
-        <type>M</type>
+        <type>P</type>
         <range>BF</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K+2)</dv>
+        <dv>(K÷2)+1</dv>
         <source>SR4</source>
-        <page></page>
+        <page>240</page>
     </spell>
-
     <spell>
         <name>Maske</name>
-        <descriptors>Realistisch, Vollsensorisch</descriptors>
+        <descriptors>realistisch, vollsensorisch</descriptors>
         <category>Illusion</category>
         <type>M</type>
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K+2)</dv>
+        <dv>(K÷2)</dv>
         <source>SR4</source>
-        <page></page>
+        <page>240</page>
+    </spell>
+    <spell>
+        <name>Physische Maske</name>
+        <descriptors>realistisch, vollsensorisch</descriptors>
+        <category>Illusion</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>240</page>
+    </spell>
+    <spell>
+        <name>Schweigen</name>
+        <descriptors>realistisch, monosensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>241</page>
+    </spell>
+    <spell>
+        <name>Stille</name>
+        <descriptors>realistisch, monosensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>241</page>
+    </spell>
+    <spell>
+        <name>Trugbild</name>
+        <descriptors>realistisch, vollsensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>241</page>
+    </spell>
+    <spell>
+        <name>Trideotrugbild</name>
+        <descriptors>realistisch, vollsensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>241</page>
+    </spell>
+    <spell>
+        <name>Unsichtbarkeit</name>
+        <descriptors>realistisch, monosensorisch</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>241</page>
+    </spell>
+    <spell>
+        <name>Verbesserte Unsichtbarkeit</name>
+        <descriptors>realistisch, monosensorisch</descriptors>
+        <category>Illusion</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>241</page>
+    </spell>
+    <spell>
+        <name>Unterhaltung</name>
+        <descriptors>offensichtlich, vollsensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>242</page>
+    </spell>
+    <spell>
+        <name>Trideo-Unterhaltung</name>
+        <descriptors>offensichtlich, vollsensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>242</page>
+    </spell>
+    <spell>
+        <name>Verwirrung</name>
+        <descriptors>realistisch, vollsensorisch</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>242</page>
+    </spell>
+    <spell>
+        <name>Massenverwirrung</name>
+        <descriptors>realistisch, vollsensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>242</page>
+    </spell>
+    <spell>
+        <name>Chaos</name>
+        <descriptors>realistisch, vollsensorisch</descriptors>
+        <category>Illusion</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>242</page>
+    </spell>
+    <spell>
+        <name>Chaotische Welt</name>
+        <descriptors>realistisch, vollsensorisch, Flächenzauber</descriptors>
+        <category>Illusion</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>242</page>
     </spell>
 
-    <!-- ── KAMPF ──────────────────────────────────────────── -->
+    <!-- ── KAMPFZAUBER (S. 243/244) ── -->
 
     <spell>
-        <name>Flammenwerfer</name>
-        <descriptors>Indirekt, Elementar</descriptors>
+        <name>Blitzstrahl</name>
+        <descriptors>indirekt, Elementar</descriptors>
         <category>Kampf</category>
         <type>P</type>
         <range>BF</range>
         <damage>K</damage>
         <duration>S</duration>
-        <dv>(K+2)+3</dv>
+        <dv>(K÷2)+3</dv>
         <source>SR4</source>
-        <page></page>
+        <page>243</page>
     </spell>
-
     <spell>
-        <name>Energieball</name>
-        <descriptors>Direkt, Flächenzauber</descriptors>
+        <name>Kugelblitz</name>
+        <descriptors>indirekt, Elementar, Flächenzauber</descriptors>
         <category>Kampf</category>
         <type>P</type>
         <range>BF (F)</range>
         <damage>K</damage>
         <duration>S</duration>
-        <dv>(K+2)+3</dv>
+        <dv>(K÷2)+5</dv>
         <source>SR4</source>
-        <page></page>
+        <page>243</page>
+    </spell>
+    <spell>
+        <name>Energieschlag</name>
+        <descriptors>direkt, Berührung</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>243</page>
+    </spell>
+    <spell>
+        <name>Energieblitz</name>
+        <descriptors>direkt</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>243</page>
+    </spell>
+    <spell>
+        <name>Energieball</name>
+        <descriptors>direkt, Flächenzauber</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>243</page>
+    </spell>
+    <spell>
+        <name>Flammenwerfer</name>
+        <descriptors>indirekt, Elementar</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>243</page>
+    </spell>
+    <spell>
+        <name>Feuerball</name>
+        <descriptors>indirekt, Elementar, Flächenzauber</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+5</dv>
+        <source>SR4</source>
+        <page>243</page>
+    </spell>
+    <spell>
+        <name>Säurestrom</name>
+        <descriptors>indirekt, Elementar</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Giftwelle</name>
+        <descriptors>indirekt, Elementar, Flächenzauber</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+5</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Schlag</name>
+        <descriptors>indirekt, Berührung</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>G</damage>
+        <duration>S</duration>
+        <dv>(K÷2)–2</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Stoß</name>
+        <descriptors>indirekt</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>G</damage>
+        <duration>S</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Druckwelle</name>
+        <descriptors>indirekt, Flächenzauber</descriptors>
+        <category>Kampf</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>G</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Schockhand</name>
+        <descriptors>direkt, Berührung</descriptors>
+        <category>Kampf</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>G</damage>
+        <duration>S</duration>
+        <dv>(K÷2)–3</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Betäubungsblitz</name>
+        <descriptors>direkt</descriptors>
+        <category>Kampf</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>G</damage>
+        <duration>S</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Betäubungsball</name>
+        <descriptors>direkt, Flächenzauber</descriptors>
+        <category>Kampf</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>G</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Todeshand</name>
+        <descriptors>direkt, Berührung</descriptors>
+        <category>Kampf</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)–2</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Manablitz</name>
+        <descriptors>direkt</descriptors>
+        <category>Kampf</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Manaball</name>
+        <descriptors>direkt, Flächenzauber</descriptors>
+        <category>Kampf</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>K</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>244</page>
     </spell>
 
-    <!-- ── MANIPULATION ───────────────────────────────────── -->
+    <!-- ── MANIPULATIONSZAUBER (S. 244-246) ── -->
 
+    <spell>
+        <name>Beeinflussen</name>
+        <descriptors>Beherrschung</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>P</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Eisdecke</name>
+        <descriptors>Umgebung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
     <spell>
         <name>Entzünden</name>
         <descriptors>Transformation</descriptors>
@@ -102,11 +594,178 @@
         <range>BF</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>K+2</dv>
+        <dv>(K÷2)</dv>
         <source>SR4</source>
-        <page></page>
+        <page>244</page>
     </spell>
-
+    <spell>
+        <name>Gedanken beherrschen</name>
+        <descriptors>Beherrschung</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>244</page>
+    </spell>
+    <spell>
+        <name>Mob-Bewusstsein</name>
+        <descriptors>Beherrschung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+4</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Gefühle beherrschen</name>
+        <descriptors>Beherrschung</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Mob-Laune</name>
+        <descriptors>Beherrschung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Gestaltwandlung</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Verwandlung in [Critter]</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Handlungen beherrschen</name>
+        <descriptors>Beherrschung</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Mob-Kontrolle</name>
+        <descriptors>Beherrschung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Levitieren</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Licht</name>
+        <descriptors>Umgebung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Manabarriere</name>
+        <descriptors>Umgebung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>M</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Panzerung</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>245</page>
+    </spell>
+    <spell>
+        <name>Physische Barriere</name>
+        <descriptors>Umgebung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>246</page>
+    </spell>
+    <spell>
+        <name>Poltergeist</name>
+        <descriptors>Umgebung, Flächenzauber</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF (F)</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>246</page>
+    </spell>
     <spell>
         <name>Schatten</name>
         <descriptors>Umgebung, Flächenzauber</descriptors>
@@ -115,37 +774,264 @@
         <range>BF (F)</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K+2)+1</dv>
+        <dv>(K÷2)+1</dv>
         <source>SR4</source>
-        <page></page>
+        <page>246</page>
+    </spell>
+    <spell>
+        <name>Schleimverwandlung</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>246</page>
+    </spell>
+    <spell>
+        <name>Schleuder</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>S</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>246</page>
+    </spell>
+    <spell>
+        <name>Versteinern</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>246</page>
+    </spell>
+    <spell>
+        <name>Zauberfinger</name>
+        <descriptors>Transformation</descriptors>
+        <category>Manipulation</category>
+        <type>P</type>
+        <range>BF</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>246</page>
     </spell>
 
-    <!-- ── WAHRNEHMUNG ────────────────────────────────────── -->
+    <!-- ── WAHRNEHMUNGSZAUBER (S. 248/249) ── -->
 
+    <spell>
+        <name>Feinde aufspüren</name>
+        <descriptors>aktiv, Flächenzauber</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Erweitertes Feinde aufspüren</name>
+        <descriptors>aktiv, erhöhte Reichweite</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+3</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
     <spell>
         <name>Geistessonde</name>
-        <descriptors>Aktiv, Blickrichtungsgebunden</descriptors>
+        <descriptors>aktiv, Blickrichtungsgebunden</descriptors>
         <category>Wahrnehmung</category>
         <type>M</type>
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K+2)+2</dv>
+        <dv>(K÷2)+2</dv>
         <source>SR4</source>
-        <page></page>
+        <page>248</page>
     </spell>
-
+    <spell>
+        <name>Gerät Analysieren</name>
+        <descriptors>aktiv, blickrichtungsgebunden</descriptors>
+        <category>Wahrnehmung</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Hellhören</name>
+        <descriptors>passiv, blickrichtungsgebunden</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Hellsicht</name>
+        <descriptors>passiv, blickrichtungsgebunden</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Individuum aufspüren</name>
+        <descriptors>aktiv, Flächenzauber</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
     <spell>
         <name>Kampfsinn</name>
-        <descriptors>Aktiv, Übersinnlich</descriptors>
+        <descriptors>aktiv, übersinnlich</descriptors>
         <category>Wahrnehmung</category>
         <type>M</type>
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K+2)+2</dv>
+        <dv>(K÷2)+2</dv>
         <source>SR4</source>
-        <page></page>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Leben aufspüren</name>
+        <descriptors>aktiv, Flächenzauber</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Erweitertes Leben aufspüren</name>
+        <descriptors>aktiv, erhöhte Reichweite</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>[Lebensform] aufspüren</name>
+        <descriptors>aktiv, Flächenzauber</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Erweitertes [Lebensform] aufspüren</name>
+        <descriptors>aktiv, erhöhte Reichweite</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Magie aufspüren</name>
+        <descriptors>aktiv, Flächenzauber</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>Erweitertes Magie aufspüren</name>
+        <descriptors>aktiv, erhöhte Reichweite</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+2</dv>
+        <source>SR4</source>
+        <page>248</page>
+    </spell>
+    <spell>
+        <name>[Objekt] aufspüren</name>
+        <descriptors>aktiv, Flächenzauber</descriptors>
+        <category>Wahrnehmung</category>
+        <type>P</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)–1</dv>
+        <source>SR4</source>
+        <page>249</page>
+    </spell>
+    <spell>
+        <name>Telepathie</name>
+        <descriptors>aktiv, übersinnlich</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)+1</dv>
+        <source>SR4</source>
+        <page>249</page>
+    </spell>
+    <spell>
+        <name>Wahrheit analysieren</name>
+        <descriptors>aktiv, blickrichtungsgebunden</descriptors>
+        <category>Wahrnehmung</category>
+        <type>M</type>
+        <range>B</range>
+        <damage>–</damage>
+        <duration>A</duration>
+        <dv>(K÷2)</dv>
+        <source>SR4</source>
+        <page>249</page>
     </spell>
 
 </spells>

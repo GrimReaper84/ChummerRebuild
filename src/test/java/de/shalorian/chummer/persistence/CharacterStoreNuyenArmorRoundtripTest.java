@@ -52,6 +52,19 @@ class CharacterStoreNuyenArmorRoundtripTest {
   }
 
   @Test
+  void roundtripPreservesChosenClothingPrice() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    original.getEquipment().addArmor(
+        new Armor(Objects.requireNonNull(ArmorDataLoader.findByName("Feedback-Kleidung")), true, 1_000));
+
+    CharacterStore.save(original, tempFile());
+    Armor loaded = CharacterStore.load(tempFile()).getEquipment().getArmor().getFirst();
+
+    assertEquals(1_000, loaded.getChosenPrice());
+    assertEquals(1_500, loaded.getNuyenCost());
+  }
+
+  @Test
   void fileWithoutNodesLoadsDefaults() throws IOException {
     Files.writeString(tempFile().toPath(), "{\"name\":\"Alt\",\"metatype\":\"Mensch\"}",
         StandardCharsets.UTF_8);

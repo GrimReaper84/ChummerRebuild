@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Komplexen-Formen (Kategorien "Standard" und
-  "Hacking", direkt gegen docs/rulebooks/grundregelwerk.txt verifiziert, Kapitel
-  STANDARDPROGRAMME/HACKING-PROGRAMME S. ca. 266-270). Komplexe Formen werden laut GRW nach den
-  Programmen benannt, deren Funktion sie nachbilden ("Der Einfachheit halber werden Komplexe Formen
-  nach den Programmen benannt, deren Funktion sie nachbilden"). Die Kategorien "Skillsofts"/"ARE
-  Programs"/"Autosoft" aus dem C#-Original sind bewusst nicht Teil dieser Version (siehe
-  docs/analysen/archiv/technomancer_analyse.md). Biofeedback-Filter ist laut GRW explizit NICHT als Komplexe
-  Form wählbar (Technomancer besitzen sie angeboren als Teil der Lebenden Persona) und daher hier
-  ausgelassen.
+  Alle Komplexen Formen des SR4-Grundregelwerks: die Standard- und Hacking-Programme S. 271–273, deren Namen
+  Technomancer für ihre Komplexen Formen übernehmen. Seiten und Fertigkeiten (Klammer hinter dem Programmnamen) am
+  Seitenbild geprüft 2026-11-12; "Keine" = ohne zugeordnete Fertigkeit.
+  Nicht enthalten: Biofeedback-Filter (Technomancer haben ihn angeboren, als Komplexe Form nicht wählbar, S. 272) und
+  Skillsofts/ARE-Programme/Autosofts aus dem C#-Original (siehe docs/analysen/archiv/technomancer_analyse.md).
 -->
 <complexforms>
 
@@ -19,7 +15,7 @@
         <category>Standard</category>
         <skill>Computer</skill>
         <source>SR4</source>
-        <page></page>
+        <page>271</page>
     </complexform>
 
     <complexform>
@@ -27,7 +23,7 @@
         <category>Standard</category>
         <skill>Verschieden</skill>
         <source>SR4</source>
-        <page></page>
+        <page>271</page>
     </complexform>
 
     <complexform>
@@ -35,7 +31,7 @@
         <category>Standard</category>
         <skill>Computer</skill>
         <source>SR4</source>
-        <page></page>
+        <page>271</page>
     </complexform>
 
     <complexform>
@@ -43,7 +39,7 @@
         <category>Standard</category>
         <skill>Prozessor</skill>
         <source>SR4</source>
-        <page></page>
+        <page>271</page>
     </complexform>
 
     <complexform>
@@ -51,7 +47,7 @@
         <category>Standard</category>
         <skill>Elektronische Kriegsführung</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
@@ -59,7 +55,7 @@
         <category>Standard</category>
         <skill>Datensuche</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
@@ -67,7 +63,7 @@
         <category>Standard</category>
         <skill>Elektronische Kriegsführung</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <!-- ── HACKING ────────────────────────────────────────── -->
@@ -77,7 +73,7 @@
         <category>Hacking</category>
         <skill>Hacking</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
@@ -85,7 +81,7 @@
         <category>Hacking</category>
         <skill>Computer</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
@@ -93,7 +89,7 @@
         <category>Hacking</category>
         <skill>Hacking</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
@@ -101,23 +97,23 @@
         <category>Hacking</category>
         <skill>Matrixkampf</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
         <name>Datenbombe</name>
         <category>Hacking</category>
-        <skill>Verschieden</skill>
+        <skill>Keine</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
         <name>ECCM</name>
         <category>Hacking</category>
-        <skill>Verschieden</skill>
+        <skill>Keine</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
@@ -125,7 +121,7 @@
         <category>Hacking</category>
         <skill>Hacking</skill>
         <source>SR4</source>
-        <page></page>
+        <page>272</page>
     </complexform>
 
     <complexform>
@@ -133,7 +129,7 @@
         <category>Hacking</category>
         <skill>Elektronische Kriegsführung</skill>
         <source>SR4</source>
-        <page></page>
+        <page>273</page>
     </complexform>
 
     <complexform>
@@ -141,7 +137,15 @@
         <category>Hacking</category>
         <skill>Computer</skill>
         <source>SR4</source>
-        <page></page>
+        <page>273</page>
+    </complexform>
+
+    <complexform>
+        <name>Panzerung</name>
+        <category>Hacking</category>
+        <skill>Keine</skill>
+        <source>SR4</source>
+        <page>273</page>
     </complexform>
 
     <complexform>
@@ -149,7 +153,7 @@
         <category>Hacking</category>
         <skill>Hacking</skill>
         <source>SR4</source>
-        <page></page>
+        <page>273</page>
     </complexform>
 
     <complexform>
@@ -157,7 +161,7 @@
         <category>Hacking</category>
         <skill>Elektronische Kriegsführung</skill>
         <source>SR4</source>
-        <page></page>
+        <page>273</page>
     </complexform>
 
     <complexform>
@@ -165,7 +169,7 @@
         <category>Hacking</category>
         <skill>Matrixkampf</skill>
         <source>SR4</source>
-        <page></page>
+        <page>273</page>
     </complexform>
 
     <complexform>
@@ -173,7 +177,7 @@
         <category>Hacking</category>
         <skill>Hacking</skill>
         <source>SR4</source>
-        <page></page>
+        <page>273</page>
     </complexform>
 
 </complexforms>

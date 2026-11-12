@@ -75,8 +75,8 @@ Das Modell setzt die SR4-Regeln durch:
   (SR4-Grundregelwerk S. 110, `Character.NUYEN_PER_BP`)
 - **Karrieremodus:** Nach dem Abschluss werden die Ressourcen-BP zu Start-Nuyen; Attribute kosten (neue Stufe × 5)
   Karma, Fertigkeiten (neue Stufe × 2) Karma
-- **Metatypen:** 15 Optionen (5 Grundrassen + 10 Varianten) mit eigenen Attributbereichen; Varianten überschreiben die
-  Attribute der Grundrasse
+- **Metatypen:** die 5 Metatypen des GRW (S. 105) mit eigenen Attributbereichen; Metavarianten (Runner-Kompendium)
+  sind entfernt, der Loader kennt `<variant>` aber weiterhin
 
 ## Sprache
 

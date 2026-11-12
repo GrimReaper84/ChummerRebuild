@@ -27,7 +27,7 @@
 | Feature                                                | Status | Anmerkung                                                               |
 |--------------------------------------------------------|--------|-------------------------------------------------------------------------|
 | 5 Grundrassen (Mensch, Elf, Zwerg, Ork, Troll)         | ✅      |                                                                         |
-| Metavarianten                                          | ✅      | Qualities je Metatyp in XML hinterlegt; Anzahl Varianten noch zu prüfen |
+| Metavarianten                                          | ❌      | Entfernt 2026-11-12: nicht im GRW (Runner-Kompendium), samt ihrer 5 RC-Qualities; `<variant>` bleibt im Loader |
 | Metatyp-BP-Kosten fließen in BP-Bilanz                 | ✅      | Alle 5 Grundrassen (0/20/25/30/40) gegen GRW-Tabelle S. 105 verifiziert, 2026-08-04 |
 | Rassen-Attributspannen korrekt (alle 5 Grundrassen)    | ✅      | Zwerg BOD (2-7) und Ork INT (1-6) am 2026-08-04 korrigiert, Rest stimmte bereits |
 | Bewegungsrate (Walking/Running)                        | ❌      | Nicht gespeichert, nicht angezeigt                                      |
@@ -136,7 +136,7 @@
 | Magier-Erkennung (feiner als reines MAG-Attribut)      | ✅      | Neuer `QualityBonusType.GRANTS_SPELLCASTING`, nur auf Quality "Magier" gesetzt — unterscheidet Magier von Adept (beide teilen weiterhin `GRANTS_MAGIC` fürs MAG-Attribut selbst), `Character.isMagician()`                                                        |
 | Magie-Tab (Tradition, Zauber)                          | ✅      | Eigener Tab, dynamisch ein-/ausgeblendet (`TabPane.getTabs()`), sichtbar sobald Gabe "Magier" aktiv — funktioniert bereits im Erstellungsmodus, nicht erst im Karrieremodus                                                                                        |
 | Tradition                                              | ✅      | Festes Enum `Tradition` (Hermetisch/Schamanistisch, GRW-Kern) mit Drain-Attributformel als Anzeigetext; freie Tradition-Erschaffung bewusst nicht umgesetzt                                                                                                         |
-| Zauber-Katalog                                         | ⚠️     | Initiale, direkt aus dem GRW-Text verifizierte Teilmenge (10 Zauber, 2 je GRW-Kategorie: Kampf/Wahrnehmung/Heilung/Illusion/Manipulation). Vollständige GRW-Kern-Liste (84 Zauber im C#-Original) ist offener Folgeauftrag, analog zum offenen Punkt bei Qualities |
+| Zauber-Katalog                                         | ✅      | Alle 84 GRW-Zauber (Strassengrimoire S. 238–249, am Bild geprüft 2026-11-12; Heilung 12, Illusion 15, Kampf 18, Manipulation 22, Wahrnehmung 17), Entzug als (K÷2)±x. Offen: Zauber mit Platzhalter ([Attribut], [Critter], [Lebensform], [Objekt]) brauchen eine Auswahl, damit mehrere Ausprägungen lernbar sind; Zusatzband-Zauber (Straßenmagie) bewusst nicht |
 | Zauber hinzufügen (3 BP / 5 Karma)                     | ✅      | Fixpreis pro Zauber in beiden Modi, Karrieremodus mit Karma-Bestätigungsdialog                                                                                                                                                                                       |
 | Zauber-Cap bei Erstellung (2×höchstes Spellcasting-Rating) | ✅  | `Character.canAddSpellAtCreation()`, kein Cap im Karrieremodus                                                                                                                                                                                                       |
 | Magische Aktionsfertigkeiten (Spruchzauberei/Ritualzauberei) | ✅ | Neu in `skills.xml`, eigene `SkillCategory.MAGICAL`, immer im Skills-Tab sichtbar (für alle Charaktere), aber nur für Magier steigerbar — `+`-Button deaktiviert ohne Gabe "Magier" (`Character.canRaiseSkill()`, GRW S. 208), gilt in Erstellung **und** Karrieremodus |
@@ -156,7 +156,7 @@
 |--------------------------------------------|--------|-----------|
 | RES-Attribut aktivieren (via Quality)      | ✅      | **Korrektur (2026-08-08):** bereits umgesetzt im Zuge des Sonderattribute-Features (analog zur EDG/MAG/RES-Korrektur vom 2026-08-06) — Quality "Technomant" (5 BP, `qualities.xml`), `QualityBonusType.GRANTS_RESONANCE`, `Character.hasResonance()`/`syncMagicOrResonance()`, Magie/Resonanz-Exklusivität, Persistenz. GRW S. 106 bestätigt. Checkliste war nicht mit dem Code synchron, siehe `docs/analysen/archiv/technomancer_java_analyse.md` |
 | Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/archiv/technomancer_plan.md`) |
-| Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (20 GRW-Einträge), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
+| Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (alle 21 GRW-Programme S. 271–273 inkl. Panzerung, Seiten am Bild geprüft 2026-11-12), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
 | Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ✅ | GRW S. 112, `Character.canAddComplexFormAtCreation()`, Hinweis im Technomancer-Tab, 2026-11-12 |
 | Wandlung (Submersion)                      | ❌      | **Korrektur (2026-08-08):** frühere "0 Treffer"-Recherche suchte nach dem falschen Begriff ("Submersion" statt der deutschen GRW-Übersetzung "Wandlung"). GRW-Kern-Seite 284 bestätigt (PDF-Bild verifiziert): eigener Regelabschnitt, Karmaformel `10+Grad×3`, RES-Maximum `6+Grad`, 5 Basis-Echoes (`source=SR4`). **Damit GRW-Kern-Feature**, nicht mehr auf Niedrig-Priorität/Unwired-only einstufen — bleibt aber reines Karrieremodus-Folgefeature, das ein Initiations-Analogon voraussetzt (siehe `docs/analysen/archiv/technomancer_analyse.md`) |
 
@@ -184,7 +184,7 @@
 | Rüstung kaufen und ausrüsten                  | ✅      | Tab "Straßenausrüstung" → "Rüstung", 13 GRW-Einträge (S. 373), Anlegen/Ablegen, "Alle anlegen/ablegen", Verfügbarkeit ≤ 12 bei Erschaffung, Karriere-Kauf über Nuyen-Log (2026-09-27) |
 | Ballistik/Impact-Berechnung (Stacking-Regeln) | ✅      | GRW S. 190/372: höchstes angelegtes Teil + Helm-/Schild-Boni |
 | Tragebelastung (Armor Encumbrance)            | ✅      | GRW S. 190 inkl. Rechenbeispiel; reduziert GES/REA in der "(Aug)"-Spalte. Helme/Schilde zählen mit; Untergrenze 1 **vorläufig** (kein GRW-Beleg, Nutzerentscheidung) |
-| Kleidung, Lederjacke/-mantel                  | ❌      | Zurückgestellt bis Zusatzbände (Runner's Kompendium/Arsenal) vorliegen |
+| Kleidung, Feedback-Kleidung, Lederjacke/-mantel | ✅      | 2026-11-12 (ADR-047): Kategorie „Kleidung“ (GRW S. 373), Kleidungspreis 20–100.000 ¥ beim Kauf eingegeben, Feedback-Kleidung/Lederjacke mit Aufschlag +500/+200 ¥ |
 | Rüstungsmodifikationen, GKP-/UEO-Zubehör      | ❌      | Zurückgestellt |
 | Schild-Malus −1 auf körperliche Proben        | ❌      | Zurückgestellt (keine Würfelpools im Modell) |
 | Darstellung als Baum + Detailbereich          | ❌      | Nutzerentscheidung 2026-09-30: Waffen-Muster (`docs/plaene/archiv/waffen_detailansicht_plan.md`) gefällt, Umstellung der Rüstung aber auf später verschoben. Die CSS-Klassen `detail-*` sind dafür schon allgemein angelegt |
@@ -395,7 +395,14 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
 6. ✅ **Würfelpools, Zustandsmonitor, Initiative (2026-11-12, ADR-045)**: Pool-Spalte, Tab „Zustand“, augmentiertes
    Maximum, Attributproben, Obergrenze Komplexe Formen. Offen: Matrix-Initiative, situative Quality-Boni.
 7. **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035).
-8. **Kataloge vervollständigen**: Zauber (10 von 84 GRW-Kern), Komplexe Formen, Cyberware/Bioware.
+8. **Kataloge vervollständigen** (Bestandsaufnahme `docs/analysen/katalog_vollstaendigkeit.md`; Quelle zuerst das GRW,
+   dann das C#, Zusatzband-Inhalte bleiben draußen, ADR-047), einer nach dem anderen:
+   - ✅ Zauber (84), Komplexe Formen (21), Kleidung (3), Metavarianten entfernt (2026-11-12)
+   - Cyberware (38 fehlen ohne Cybergliedmaßen) und Bioware (17) — zusammen mit den Implantat-Wirkungen als Feature
+   - Rüstung: Zubehör der Ganzkörperpanzerung/des Urban Explorer Overalls und Panzerungsmodifikationen (Einbau-Mechanik)
+   - Cybergliedmaßen samt Verbesserungen, Zubehör und Cyberwaffen (Attributersatz, ADR-005)
+   - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
+   - Noch ohne Katalog: Schutzpatrone, Metamagie, Echos, Geister/Sprites (mit ihren Features)
 9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
 10. **Grundlegende Überarbeitung der UI** (Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
     gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,

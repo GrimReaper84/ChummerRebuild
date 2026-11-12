@@ -56,6 +56,16 @@ Fallout2d20-Projekt übernommen).
 Verifikation ist `./gradlew build`; die App wird nicht gestartet.
 **Warum:** Das Display ist der echte Desktop des Nutzers, es gibt keine Klick-Automatisierung.
 
+### ADR-047: Kataloge: GRW zuerst, Zusatzbände draußen (2026-11-12)
+Kataloge werden einer nach dem anderen gegen das GRW vervollständigt; das GRW ist die erste Quelle, das C#-Original
+die zweite (Vollständigkeitskontrolle, Struktur). Inhalte aus Zusatzbänden bleiben draußen, auch wenn das C# sie als
+SR4 führt oder sie schon im Katalog standen: Die fünf Metavarianten und ihre fünf Qualities aus dem Runner-Kompendium
+sind entfernt (überholt den Teil von ADR-044, der sie behielt); der Loader kennt `<variant>` weiterhin. Zauber aus
+Straßenmagie kommen nicht hinein. Zauber mit Platzhalter im Namen ([Attribut], [Critter], [Lebensform], [Objekt])
+stehen vorerst als je ein Eintrag. Kleidung (S. 373) ist eine eigene Rüstungskategorie: Der Spieler wählt den
+Kleidungspreis aus 20–100.000 ¥, Feedback-Kleidung und Lederjacke kosten diesen Preis plus ihren Aufschlag.
+**Warum:** Nutzerentscheidungen 2026-11-12 (Metavarianten raus, Kleidung wie im GRW mit Preisspanne, GRW vor C#).
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)
@@ -131,7 +141,7 @@ Module im Laufzeit-Image ist die unterstützte Konfiguration, braucht keine Star
 mit der ohnehin entwickelt wird. Name, Version, Icon und Lizenz sind Nutzerentscheidungen per Rückfrage
 (`docs/plaene/archiv/release_plan.md`).
 
-### ADR-044: Gaben und Handicaps vollständig nach GRW (2026-11-12)
+### ADR-044: Gaben und Handicaps vollständig nach GRW (2026-11-12) — teilweise überholt durch ADR-047
 Der Katalog folgt der Tabelle S. 106 und den Beschreibungen S. 114–122: GRW-Namen (Zauberer, Magieradept,
 Technomancer, Glück, Unglück, Körperliche Schwäche, SIN-Mensch …), Stufen und Varianten als eigene Einträge mit
 `<group>` (nur einer je Gruppe), Auswahl per `<select>`, Regeln per `<requires>`/`<excludes>`/`<metatypes>`. Nicht-GRW-

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
@@ -14,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
-/** Deckt die GRW-verifizierte Rüstungs-Teilmenge ab (Tabelle Panzerung, GRW S. 373). */
+/** Kleidung und Panzerung laut GRW-Tabellen S. 373 (am Seitenbild verifiziert). */
 class ArmorDataLoaderTest {
 
   private static ArmorData find(String name) {
@@ -24,8 +25,34 @@ class ArmorDataLoaderTest {
   }
 
   @Test
-  void loadsAllThirteenEntries() {
-    assertEquals(13, ArmorDataLoader.getAllArmor().size());
+  void loadsAllSixteenEntries() {
+    assertEquals(16, ArmorDataLoader.getAllArmor().size());
+  }
+
+  @Test
+  void clothingHasPriceRangeAndSurcharge() {
+    // GRW S. 373: Kleidung 20–100.000 ¥; Feedback-Kleidung Verfügbarkeit 8, +500 ¥; Lederjacke 2/2, +200 ¥
+    ArmorData clothing = find("Kleidung");
+    assertEquals(ArmorCategory.CLOTHING, clothing.category());
+    assertTrue(clothing.hasVariablePrice());
+    assertEquals("20–100.000 ¥", clothing.priceText());
+    assertEquals("20–100.000 ¥ + 500 ¥", find("Feedback-Kleidung").priceText());
+    assertEquals("8", find("Feedback-Kleidung").availabilityText());
+    assertEquals("2/2", find("Lederjacke/-mantel").protectionText());
+    assertFalse(find("Panzerjacke").hasVariablePrice());
+    assertEquals("900 ¥", find("Panzerjacke").priceText());
+  }
+
+  @Test
+  void clothingCostsChosenPricePlusSurcharge() {
+    Armor jacket = new Armor(find("Lederjacke/-mantel"), true, 300);
+    assertEquals(500, jacket.getNuyenCost());
+    assertThrows(IllegalArgumentException.class,
+        () -> new Armor(find("Kleidung"), true, 10));
+    assertThrows(IllegalArgumentException.class,
+        () -> new Armor(find("Kleidung")));
+    assertThrows(IllegalArgumentException.class,
+        () -> new Armor(find("Panzerjacke"), true, 100));
   }
 
   @Test
@@ -80,8 +107,8 @@ class ArmorDataLoaderTest {
   }
 
   @Test
-  void clothingIsNotInCatalog() {
-    assertNull(ArmorDataLoader.findByName("Lederjacke"));
-    assertNull(ArmorDataLoader.findByName("Kleidung"));
+  void armorAccessoriesAndModificationsAreNotYetInCatalog() {
+    assertNull(ArmorDataLoader.findByName("Chemische Versiegelung"));
+    assertNull(ArmorDataLoader.findByName("Feuerresistenz"));
   }
 }

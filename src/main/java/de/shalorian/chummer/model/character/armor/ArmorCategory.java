@@ -3,12 +3,12 @@ package de.shalorian.chummer.model.character.armor;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Kategorie eines Rüstungsteils aus der GRW-Tabelle <i>Panzerung</i> (S. 373). Entscheidend ist der
- * Unterschied beim Schutzwert: SR4-Grundregelwerk S. 372: Helme und Schilde zählen nicht als eigene
- * Panzerung, sondern addieren ihre Stufe zur getragenen. Die Kategorie "Kleidung" ist vorerst nicht enthalten (siehe {@code
- * docs/plaene/archiv/nuyen_ruestung_plan.md} Abschnitt 13).
+ * Kategorie eines Rüstungsteils aus den GRW-Tabellen S. 373. Entscheidend ist der Unterschied beim Schutzwert:
+ * SR4-Grundregelwerk S. 372: Helme und Schilde zählen nicht als eigene Panzerung, sondern addieren ihre Stufe zur
+ * getragenen. Kleidung zählt wie Panzerung (Lederjacke 2/2, gewöhnliche Kleidung 0/0).
  */
 public enum ArmorCategory {
+  CLOTHING("Kleidung", false),
   ARMOR("Panzerung", false),
   HELMETS_AND_SHIELDS("Helme und Schilde", true);
 

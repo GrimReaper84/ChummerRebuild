@@ -5,22 +5,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * GRW S. 105: Nur der Mensch bekommt +1 Edge (Edge 2-7), alle anderen
- * Grundmetatypen sowie deren Varianten bleiben bei der Basisspanne 1-6.
+ * GRW S. 105: Nur der Mensch bekommt +1 Edge (Edge 2-7), alle anderen Metatypen bleiben bei der Basisspanne 1-6.
  */
 class MetatypeDataLoaderEdgeTest {
 
   @Test
-  void everyMetatypeAndVariantHasAnEdgeRange() {
+  void everyMetatypeHasAnEdgeRange() {
     for (MetatypeData m : MetatypeDataLoader.getAllMetatypes()) {
       assertNotNull(m.edgeRange(), m.name());
     }
   }
 
   @Test
-  void humanAndItsVariantGetTheEdgeBonus() {
+  void humanGetsTheEdgeBonus() {
     assertEquals(new AttributeRange(2, 7), MetatypeDataLoader.find("Mensch").edgeRange());
-    assertEquals(new AttributeRange(2, 7), MetatypeDataLoader.find("Nachtmensch").edgeRange());
   }
 
   @Test

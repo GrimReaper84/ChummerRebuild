@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    SR4-Metatypen und -Metavarianten mit Rassenattributgrenzen [min/max] und BP-Kosten.
-    Quelle: Shadowrun 4th Edition Grundregelwerk.
-    Hinweis: Metavarianten-Werte bitte gegen das SR4-GRW prüfen.
+    SR4-Metatypen mit Rassenattributgrenzen [min/max] und GP-Kosten laut Tabelle Metatyp-Attribute (GRW S. 105,
+    am Seitenbild geprüft). Metavarianten stehen nicht im GRW (Runner-Kompendium) und sind daher entfernt
+    (Nutzerentscheidung 2026-11-12); der Loader liest <variant> weiterhin, falls sie mit einem Zusatzband zurückkommen.
 -->
 <metatypes>
 
@@ -19,25 +19,6 @@
         <!-- GRW S. 105: Menschen erhalten als einzigen Metatyp-Bonus einen Punkt Edge mehr -->
         <edge min="2" max="7"/>
 
-        <variant name="Nachtmensch" bp="40">
-            <attribute name="BOD" min="1" max="6"/>
-            <attribute name="AGI" min="1" max="7"/>
-            <attribute name="REA" min="2" max="7"/>
-            <attribute name="STR" min="1" max="6"/>
-            <attribute name="CHA" min="1" max="5"/>
-            <attribute name="INT" min="2" max="7"/>
-            <attribute name="LOG" min="1" max="6"/>
-            <attribute name="WIL" min="1" max="6"/>
-            <edge min="2" max="7"/>
-            <qualities>
-                <positive>
-                    <quality>Restlichtverstärkung</quality>
-                </positive>
-                <negative>
-                    <quality>Unverkennbarer Stil</quality>
-                </negative>
-            </qualities>
-        </variant>
     </metatype>
 
     <!-- ── ELF ────────────────────────────────────────────── -->
@@ -57,25 +38,6 @@
             </positive>
         </qualities>
 
-        <variant name="Nachtelf" bp="60">
-            <attribute name="BOD" min="1" max="6"/>
-            <attribute name="AGI" min="2" max="8"/>
-            <attribute name="REA" min="2" max="7"/>
-            <attribute name="STR" min="1" max="6"/>
-            <attribute name="CHA" min="3" max="8"/>
-            <attribute name="INT" min="2" max="7"/>
-            <attribute name="LOG" min="1" max="6"/>
-            <attribute name="WIL" min="1" max="6"/>
-            <edge min="1" max="6"/>
-            <qualities>
-                <positive>
-                    <quality>Restlichtverstärkung</quality>
-                </positive>
-                <negative>
-                    <quality>Unverkennbarer Stil</quality>
-                </negative>
-            </qualities>
-        </variant>
     </metatype>
 
     <!-- ── ZWERG ──────────────────────────────────────────── -->
@@ -95,27 +57,6 @@
             </positive>
         </qualities>
 
-        <variant name="Kobold" bp="25">
-            <attribute name="BOD" min="2" max="7"/>
-            <attribute name="AGI" min="2" max="7"/>
-            <attribute name="REA" min="2" max="6"/>
-            <attribute name="STR" min="2" max="7"/>
-            <attribute name="CHA" min="1" max="6"/>
-            <attribute name="INT" min="1" max="6"/>
-            <attribute name="LOG" min="1" max="7"/>
-            <attribute name="WIL" min="2" max="7"/>
-            <edge min="1" max="6"/>
-            <qualities>
-                <positive>
-                    <quality>Arkaner Dämpfer</quality>
-                    <quality>Infrarotsicht</quality>
-                </positive>
-                <negative>
-                    <quality>Unverkennbarer Stil</quality>
-                    <quality>Neotenismus</quality>
-                </negative>
-            </qualities>
-        </variant>
     </metatype>
 
     <!-- ── ORK ────────────────────────────────────────────── -->
@@ -135,27 +76,6 @@
             </positive>
         </qualities>
 
-        <variant name="Hobgoblin" bp="30">
-            <attribute name="BOD" min="3" max="8"/>
-            <attribute name="AGI" min="2" max="7"/>
-            <attribute name="REA" min="2" max="7"/>
-            <attribute name="STR" min="2" max="7"/>
-            <attribute name="CHA" min="1" max="4"/>
-            <attribute name="INT" min="1" max="5"/>
-            <attribute name="LOG" min="1" max="5"/>
-            <attribute name="WIL" min="1" max="6"/>
-            <edge min="1" max="6"/>
-            <qualities>
-                <positive>
-                    <quality>Reißzähne</quality>
-                    <quality>Restlichtverstärkung</quality>
-                </positive>
-                <negative>
-                    <quality>Unverkennbarer Stil</quality>
-                    <quality>Schlechte Selbstkontrolle (Rachsüchtig)</quality>
-                </negative>
-            </qualities>
-        </variant>
     </metatype>
 
     <!-- ── TROLL ──────────────────────────────────────────── -->
@@ -175,26 +95,6 @@
             </positive>
         </qualities>
 
-        <variant name="Fomori" bp="50">
-            <attribute name="BOD" min="5" max="10"/>
-            <attribute name="AGI" min="1" max="5"/>
-            <attribute name="REA" min="2" max="7"/>
-            <attribute name="STR" min="4" max="9"/>
-            <attribute name="CHA" min="1" max="5"/>
-            <attribute name="INT" min="1" max="5"/>
-            <attribute name="LOG" min="1" max="5"/>
-            <attribute name="WIL" min="2" max="7"/>
-            <edge min="1" max="6"/>
-            <qualities>
-                <positive>
-                    <quality>Arkaner Dämpfer</quality>
-                    <quality>Infrarotsicht</quality>
-                </positive>
-                <negative>
-                    <quality>Unverkennbarer Stil</quality>
-                </negative>
-            </qualities>
-        </variant>
     </metatype>
 
 </metatypes>

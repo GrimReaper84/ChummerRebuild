@@ -7,11 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-/**
- * Deckt die initiale, verifizierte Komplexe-Formen-Teilmenge ab (siehe {@code complexforms.xml}-
- * Kommentar und {@code docs/plaene/archiv/technomancer_plan.md} Schritt 1) — Kategorien "Standard" und
- * "Hacking", analog zur bewusst unvollständigen Zauber-Teilmenge.
- */
+/** Komplexe Formen = Standard- und Hacking-Programme des GRW (S. 271–273, am Seitenbild geprüft). */
 class ComplexFormDataLoaderTest {
 
   @Test
@@ -22,6 +18,17 @@ class ComplexFormDataLoaderTest {
 
     assertTrue(standardCount >= 2, "Standard sollte mindestens 2 Einträge haben");
     assertTrue(hackingCount >= 2, "Hacking sollte mindestens 2 Einträge haben");
+  }
+
+  @Test
+  void containsAllRulebookPrograms() {
+    Map<String, ComplexFormData> forms = ComplexFormDataLoader.getAllComplexForms();
+    assertEquals(7, forms.values().stream().filter(f -> f.category().equals("Standard")).count());
+    assertEquals(14, forms.values().stream().filter(f -> f.category().equals("Hacking")).count());
+    forms.values().forEach(f -> assertTrue(f.page().matches("27[123]"), f.name()));
+    assertEquals("Keine", ComplexFormDataLoader.findByName("Panzerung").skill());
+    assertEquals("Keine", ComplexFormDataLoader.findByName("ECCM").skill());
+    assertNull(ComplexFormDataLoader.findByName("Biofeedback-Filter"));
   }
 
   @Test

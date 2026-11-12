@@ -127,7 +127,7 @@ public class CharacterStore {
         .map(c -> new CyberwareEntry(c.getName(), c.getGrade().name(), c.getRating()))
         .toList();
     data.armor = character.getEquipment().getArmor().stream()
-        .map(a -> new ArmorEntry(a.getName(), a.isEquipped()))
+        .map(a -> new ArmorEntry(a.getName(), a.isEquipped(), a.getChosenPrice()))
         .toList();
     data.weapons = character.getEquipment().getWeapons().stream().map(CharacterStore::toWeaponEntry)
         .toList();
@@ -300,9 +300,15 @@ public class CharacterStore {
   private static void applyArmor(@NonNull Character character, @NonNull CharacterData data) {
     for (ArmorEntry entry : data.armor) {
       ArmorData armorData = ArmorDataLoader.findByName(entry.name);
-      if (armorData != null) {
-        character.getEquipment().addArmor(new Armor(armorData, entry.equipped));
+      if (armorData == null) {
+        continue;
       }
+      // Kleidung ohne gültigen Preis (z.B. von Hand bearbeitet) fällt auf die Untergrenze zurück.
+      Integer price = null;
+      if (armorData.hasVariablePrice()) {
+        price = entry.price != null && armorData.isValidPrice(entry.price) ? entry.price : armorData.priceMin();
+      }
+      character.getEquipment().addArmor(new Armor(armorData, entry.equipped, price));
     }
   }
 

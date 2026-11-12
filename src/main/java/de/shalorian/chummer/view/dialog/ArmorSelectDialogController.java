@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.armor.Armor;
 import de.shalorian.chummer.model.character.armor.ArmorCategory;
 import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.armor.ArmorDataLoader;
@@ -12,13 +13,15 @@ import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Auswahl-Dialog für Rüstung (GRW-Tabelle Panzerung, S. 373) mit Kategorie-Filter und Info-Panel
- * (Schutz, Verfügbarkeit, Preis, Quelle). Rüstung mit Verfügbarkeit über 12 bleibt bei der
+ * Auswahl-Dialog für Rüstung (GRW-Tabellen Kleidung und Panzerung, S. 373) mit Kategorie-Filter und Info-Panel
+ * (Schutz, Verfügbarkeit, Preis, Quelle). Bei Kleidung gibt der Spieler den Kleidungspreis innerhalb der Spanne ein;
+ * OK ist erst mit gültigem Preis aktiv. Rüstung mit Verfügbarkeit über 12 bleibt bei der
  * Charaktererschaffung sichtbar, aber deaktiviert (GRW S. 111, siehe {@link
  * Equipment#isAvailableForPurchase(Availability, int)}).
  */
@@ -35,11 +38,22 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
   @FXML
   private Label sourceLabel;
   @FXML
+  private Label priceCaption;
+  @FXML
+  private TextField priceField;
+  @FXML
   private Button okButton;
 
   private @Nullable Stage stage;
   private @Nullable Character character;
-  private @Nullable ArmorData result;
+  private @Nullable Armor result;
+
+  @FXML
+  @Override
+  public void initialize() {
+    super.initialize();
+    priceField.textProperty().addListener((_, _, _) -> onListUpdated());
+  }
 
   public void setStage(@NonNull Stage stage) {
     this.stage = stage;
@@ -73,6 +87,7 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
   @Override
   protected void onListUpdated() {
     ArmorData selected = itemListView.getSelectionModel().getSelectedItem();
+    showPriceField(selected != null && selected.hasVariablePrice());
     if (selected == null) {
       protectionLabel.setText(NO_VALUE);
       availabilityLabel.setText(NO_VALUE);
@@ -88,9 +103,26 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
     }
     protectionLabel.setText(selected.protectionText());
     availabilityLabel.setText(availability);
-    costLabel.setText(selected.cost() + " ¥");
+    costLabel.setText(selected.priceText());
     sourceLabel.setText(selected.source() + " S. " + selected.page());
-    okButton.setDisable(!selectable);
+    okButton.setDisable(!selectable || (selected.hasVariablePrice() && enteredPrice(selected) == null));
+  }
+
+  private void showPriceField(boolean visible) {
+    priceCaption.setVisible(visible);
+    priceCaption.setManaged(visible);
+    priceField.setVisible(visible);
+    priceField.setManaged(visible);
+  }
+
+  /** Eingegebener Kleidungspreis, oder {@code null}, wenn er fehlt oder außerhalb der Spanne liegt. */
+  private @Nullable Integer enteredPrice(@NonNull ArmorData data) {
+    try {
+      int price = Integer.parseInt(priceField.getText().trim().replace(".", ""));
+      return data.isValidPrice(price) ? price : null;
+    } catch (NumberFormatException _) {
+      return null;
+    }
   }
 
   @FXML
@@ -99,7 +131,14 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
     if (selected == null || !isSelectable(selected)) {
       return;
     }
-    result = selected;
+    Integer price = null;
+    if (selected.hasVariablePrice()) {
+      price = enteredPrice(selected);
+      if (price == null) {
+        return;
+      }
+    }
+    result = new Armor(selected, true, price);
     if (stage != null) {
       stage.close();
     }
@@ -112,7 +151,8 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
     }
   }
 
-  public @NonNull Optional<ArmorData> getResult() {
+  /** Das gekaufte Rüstungsteil samt gewähltem Kleidungspreis, leer bei Abbruch. */
+  public @NonNull Optional<Armor> getResult() {
     return Optional.ofNullable(result);
   }
 }

@@ -128,7 +128,6 @@ class CharacterQualityRulesTest {
   void metatypeRestrictionUsesTheBaseMetatype() {
     assertNull(of("Mensch").getQualityBlockReason(q("Elfenposer"), false));
     assertNotNull(of("Elf").getQualityBlockReason(q("Elfenposer"), false));
-    assertNull(of("Nachtelf").getQualityBlockReason(q("Menschliches Aussehen"), false));
     assertNotNull(of("Troll").getQualityBlockReason(q("Menschliches Aussehen"), false));
   }
 

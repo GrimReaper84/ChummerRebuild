@@ -347,12 +347,12 @@ public final class StreetGearTabBuilder {
       ctrl.setCharacter(character);
       dialog.stage().showAndWait();
 
-      ctrl.getResult().ifPresent(data -> {
+      ctrl.getResult().ifPresent(piece -> {
         if (character.isCreated()
-            && host.services().nuyenChargeFailed(character, "Kauf: " + data.name(), data.cost())) {
+            && host.services().nuyenChargeFailed(character, "Kauf: " + piece.getName(), piece.getNuyenCost())) {
           return;
         }
-        character.getEquipment().addArmor(new Armor(data));
+        character.getEquipment().addArmor(piece);
         onArmorChanged(character);
       });
     } catch (IOException _) {

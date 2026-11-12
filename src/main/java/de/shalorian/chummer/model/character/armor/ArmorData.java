@@ -2,16 +2,20 @@ package de.shalorian.chummer.model.character.armor;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import java.text.NumberFormat;
+import java.util.Locale;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Unveränderlicher Katalogeintrag eines Rüstungsteils aus {@code armor.xml} (GRW-Tabelle
- * <i>Panzerung</i>, S. 373, gegen das PDF-Bild verifiziert). Bei {@link ArmorCategory#isBonus()
+ * Unveränderlicher Katalogeintrag eines Rüstungsteils aus {@code armor.xml} (GRW-Tabellen Kleidung und
+ * Panzerung, S. 373, gegen das PDF-Bild verifiziert). Bei {@link ArmorCategory#isBonus()
  * Helmen und Schilden} sind Ballistik und Stoß Boni ("+1/+2"), sonst absolute Werte.
  *
  * @param ballistic Ballistik-Wert (B)
  * @param impact    Stoß-Wert (S)
- * @param cost      Preis in Nuyen
+ * @param cost      fester Preis in Nuyen; bei Kleidung der Aufschlag auf den frei gewählten Kleidungspreis
+ * @param priceMin  Untergrenze des vom Spieler gewählten Preisanteils (Kleidung 20 ¥), {@code 0} ohne
+ * @param priceMax  Obergrenze dieses Preisanteils (Kleidung 100.000 ¥), {@code 0} ohne
  */
 public record ArmorData(
     @NonNull String name,
@@ -20,9 +24,40 @@ public record ArmorData(
     int impact,
     @NonNull Availability availability,
     int cost,
+    int priceMin,
+    int priceMax,
     @NonNull String source,
     @NonNull String page
 ) implements CatalogEntry {
+
+  /** Rüstung mit festem Preis (alles außer Kleidung). */
+  public ArmorData(@NonNull String name, @NonNull ArmorCategory category, int ballistic, int impact,
+      @NonNull Availability availability, int cost, @NonNull String source, @NonNull String page) {
+    this(name, category, ballistic, impact, availability, cost, 0, 0, source, page);
+  }
+
+  /**
+   * Ob der Spieler beim Kauf einen Preis innerhalb der Spanne wählt (Kleidung, GRW S. 373: 20–100.000 ¥; Feedback-
+   * Kleidung und Lederjacke kosten diesen Kleidungspreis plus ihren Aufschlag).
+   */
+  public boolean hasVariablePrice() {
+    return priceMax > 0;
+  }
+
+  /** Ob {@code price} als gewählter Preisanteil zulässig ist. */
+  public boolean isValidPrice(int price) {
+    return hasVariablePrice() && price >= priceMin && price <= priceMax;
+  }
+
+  /** Preis wie im GRW, z.B. {@code "900 ¥"}, {@code "20–100.000 ¥"} oder {@code "20–100.000 ¥ + 500 ¥"}. */
+  public @NonNull String priceText() {
+    NumberFormat format = NumberFormat.getIntegerInstance(Locale.GERMAN);
+    if (!hasVariablePrice()) {
+      return format.format(cost) + " ¥";
+    }
+    String range = format.format(priceMin) + "–" + format.format(priceMax) + " ¥";
+    return cost == 0 ? range : range + " + " + format.format(cost) + " ¥";
+  }
 
   /** Rüstung hat keine Stufe; Verfügbarkeitsformeln werden deshalb mit Stufe 0 ausgewertet. */
   private static final int NO_RATING = 0;

@@ -72,7 +72,13 @@ public class ArmorDataLoader {
         Integer.parseInt(childText(el, "impact")),
         Availability.parse(childText(el, "avail"), childText(el, "legality")),
         Integer.parseInt(childText(el, "cost")),
+        intOrZero(childText(el, "pricemin")),
+        intOrZero(childText(el, "pricemax")),
         childText(el, "source"),
         childText(el, "page"));
+  }
+
+  private static int intOrZero(@NonNull String text) {
+    return text.isEmpty() ? 0 : Integer.parseInt(text);
   }
 }

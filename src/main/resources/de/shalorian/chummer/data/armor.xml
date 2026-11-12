@@ -1,18 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Initiale, verifizierte Teilmenge der SR4-Grundregelwerk-Panzerung (Kapitel STRASSENAUSRÜSTUNG,
-  Tabelle "Panzerung" S. 373 — Werte direkt gegen das PDF-Bild verifiziert).
+  Kleidung und Panzerung des SR4-Grundregelwerks (Kapitel STRASSENAUSRÜSTUNG, Tabellen "Kleidung" und
+  "Panzerung" S. 373 — Werte direkt gegen das PDF-Bild verifiziert).
 
   <category> ist die GRW-Bezeichnung (siehe ArmorCategory). Bei "Helme und Schilde" sind <ballistic>
   und <impact> Boni, die zum höchsten getragenen Panzerungsteil addiert werden (GRW S. 372).
-  <avail>/<legality> wie in cyberware.xml (Legalität E = eingeschränkt, V = verboten).
+  <avail>/<legality> wie in cyberware.xml (Legalität E = eingeschränkt, V = verboten; leer = "–").
+  <pricemin>/<pricemax>: Preisspanne, aus der der Spieler beim Kauf den Kleidungspreis wählt; <cost> ist dann
+  der feste Aufschlag darauf (Tabelle Kleidung: Feedback-Kleidung "+500 ¥", Lederjacke/-mantel "+200 ¥").
 
-  Bewusst NICHT enthalten (siehe docs/plaene/archiv/nuyen_ruestung_plan.md Abschnitt 13):
-  - Kleidung (variabler Preis), Feedback-Kleidung (kein Schutz), Lederjacke/-mantel (kommt mit einer
-    Kleidungskategorie, sobald die Zusatzbände vorliegen)
-  - Zubehör der Ganzkörperpanzerung bzw. des Urban Explorer Overalls, Panzerungsmodifikationen
+  Noch nicht enthalten: Zubehör der Ganzkörperpanzerung bzw. des Urban Explorer Overalls und die
+  Panzerungsmodifikationen (brauchen eine Einbau-Mechanik, siehe docs/analysen/katalog_vollstaendigkeit.md).
 -->
 <armor>
+
+    <!-- ── KLEIDUNG (S. 373) ───────────────────────────────────── -->
+
+    <item>
+        <name>Kleidung</name>
+        <category>Kleidung</category>
+        <ballistic>0</ballistic>
+        <impact>0</impact>
+        <avail></avail>
+        <cost>0</cost>
+        <pricemin>20</pricemin>
+        <pricemax>100000</pricemax>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Feedback-Kleidung</name>
+        <category>Kleidung</category>
+        <ballistic>0</ballistic>
+        <impact>0</impact>
+        <avail>8</avail>
+        <cost>500</cost>
+        <pricemin>20</pricemin>
+        <pricemax>100000</pricemax>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
+
+    <item>
+        <name>Lederjacke/-mantel</name>
+        <category>Kleidung</category>
+        <ballistic>2</ballistic>
+        <impact>2</impact>
+        <avail></avail>
+        <cost>200</cost>
+        <pricemin>20</pricemin>
+        <pricemax>100000</pricemax>
+        <source>SR4</source>
+        <page>373</page>
+    </item>
 
     <!-- ── PANZERUNG (S. 373) ──────────────────────────────────── -->
 

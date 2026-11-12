@@ -825,7 +825,7 @@
         <bonus/>
     </quality>
 
-    <!-- ── Metatyp-Fähigkeiten und Qualities der Metavarianten (nicht wählbar) ── -->
+    <!-- ── Metatyp-Fähigkeiten (nicht wählbar) ── -->
     <quality>
         <name>Restlichtverstärkung</name>
         <bp>0</bp>
@@ -843,51 +843,6 @@
         <source>SR4</source>
         <page>105</page>
         <note>Natürliche Infrarotsicht (Besondere Fähigkeit des Metatyps).</note>
-        <metatype/>
-        <bonus/>
-    </quality>
-    <quality>
-        <name>Reißzähne</name>
-        <bp>0</bp>
-        <category>Positive</category>
-        <source>RC</source>
-        <note>Quality einer Metavariante (Runner's Companion).</note>
-        <metatype/>
-        <bonus/>
-    </quality>
-    <quality>
-        <name>Arkaner Dämpfer</name>
-        <bp>0</bp>
-        <category>Positive</category>
-        <source>RC</source>
-        <note>Quality einer Metavariante (Runner's Companion).</note>
-        <metatype/>
-        <bonus/>
-    </quality>
-    <quality>
-        <name>Unverkennbarer Stil</name>
-        <bp>0</bp>
-        <category>Negative</category>
-        <source>RC</source>
-        <note>Quality einer Metavariante (Runner's Companion).</note>
-        <metatype/>
-        <bonus/>
-    </quality>
-    <quality>
-        <name>Schlechte Selbstkontrolle (Rachsüchtig)</name>
-        <bp>0</bp>
-        <category>Negative</category>
-        <source>RC</source>
-        <note>Quality einer Metavariante (Runner's Companion).</note>
-        <metatype/>
-        <bonus/>
-    </quality>
-    <quality>
-        <name>Neotenismus</name>
-        <bp>0</bp>
-        <category>Negative</category>
-        <source>RC</source>
-        <note>Quality einer Metavariante (Runner's Companion).</note>
         <metatype/>
         <bonus/>
     </quality>
