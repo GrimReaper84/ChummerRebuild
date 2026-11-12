@@ -85,8 +85,6 @@ public final class CyberwareTabBuilder {
     }
     cyberwareContainer.getChildren().clear();
 
-    Label sectionLabel = new Label("Cyberware & Bioware");
-    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
 
     Label essenceLabel = new Label("Essenz: " + ESSENCE_FORMAT.toString(ch.getEssence()));
     essenceLabel.getStyleClass().add(STYLE_BP_VALUE);
@@ -99,7 +97,7 @@ public final class CyberwareTabBuilder {
 
     HBox header = new HBox(12);
     header.setAlignment(Pos.CENTER_LEFT);
-    header.getChildren().addAll(sectionLabel, essenceLabel, lossLabel);
+    header.getChildren().addAll(essenceLabel, lossLabel);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
     header.getChildren().addAll(spacer, costLabel);
@@ -186,7 +184,7 @@ public final class CyberwareTabBuilder {
         STYLE_ATTR_VALUE);
     Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(implant.getOwnNuyenCost())),
         STYLE_ATTR_BP);
-    Label effectLabel = styled(new Label(effectText(implant)), STYLE_ATTR_RANGE);
+    Label effectLabel = styled(new Label(effectText(implant)), "effect-text");
     Label sourceLabel = styled(new Label(sourceText(implant)), STYLE_ATTR_RANGE);
 
     HBox actions = new HBox(6);

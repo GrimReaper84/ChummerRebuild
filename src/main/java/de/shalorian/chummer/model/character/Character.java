@@ -1927,6 +1927,14 @@ public class Character {
         + getActiveSkillSpecializationBP() + getContactBP() + getSpellBP() + getComplexFormBP();
   }
 
+  /**
+   * Ob bei der Erschaffung BP oder Ressourcengeld überzogen sind (Fußzeile als Warnung, Hinweise im Status); im
+   * Karrieremodus nie.
+   */
+  public boolean isCreationOverspent() {
+    return !created && (getRemainingBP() < 0 || getRemainingNuyen() < 0);
+  }
+
   public int getRemainingBP() {
     return TOTAL_BP - getSpentBP();
   }

@@ -19,6 +19,9 @@
                 <SeparatorMenuItem/>
                 <MenuItem fx:id="menuExit"   text="Beenden"           onAction="#onExit"/>
             </Menu>
+            <Menu text="Einstellungen">
+                <CheckMenuItem fx:id="statusStaticItem" text="Status statisch anzeigen" onAction="#onStatusStaticChanged"/>
+            </Menu>
         </MenuBar>
     </top>
 

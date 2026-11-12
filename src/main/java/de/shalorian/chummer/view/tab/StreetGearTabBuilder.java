@@ -16,7 +16,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.armor.Armor;
@@ -99,9 +98,6 @@ public final class StreetGearTabBuilder {
   private void buildLifestyleTab(@NonNull Character character) {
     lifestyleContainer.getChildren().clear();
 
-    Label sectionLabel = new Label("Lebensstil");
-    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
-    lifestyleContainer.getChildren().add(sectionLabel);
 
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
@@ -230,8 +226,6 @@ public final class StreetGearTabBuilder {
 
   /** Kopfzeile mit Schutz, Behinderung und Kosten; Schutz/Behinderung als Refresher registriert (KON-abhängig). */
   private @NonNull HBox buildArmorSummaryHeader(@NonNull Character character) {
-    Label sectionLabel = new Label("Rüstung");
-    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
     Label protectionLabel = new Label();
     protectionLabel.getStyleClass().add(STYLE_BP_VALUE);
     Label encumbranceLabel = new Label();
@@ -257,7 +251,7 @@ public final class StreetGearTabBuilder {
     header.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    header.getChildren().addAll(sectionLabel, protectionLabel, encumbranceLabel, spacer, costLabel);
+    header.getChildren().addAll(protectionLabel, encumbranceLabel, spacer, costLabel);
     VBox.setMargin(header, new Insets(0, 0, 12, 0));
     return header;
   }

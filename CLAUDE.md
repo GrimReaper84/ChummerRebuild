@@ -34,8 +34,11 @@ Package überschaubar bleibt:
   `.weapon`, `.gear`, `.vehicle`, `.lifestyle`, `.equipment`: Modellklassen des jeweiligen Bereichs (z.B.
   `Skill`/`SkillDataLoader` in `.skill`, `SpellData`/`Tradition` in `.magic`); alle Kaufkategorien liegen in
   `equipment.Equipment` (`character.getEquipment()`)
-- `view` (Wurzel): `MainWindowController`, `CharacterViewController`
-- `view.tab`: ein Builder je Tab des Charakterbogens (`AttributeTabBuilder`, `SkillTabBuilder` mit
+- `view` (Wurzel): `MainWindowController`, `CharacterViewController`, `ViewPreferences` (Einstellungen der
+  Oberfläche in den Java-Preferences)
+- `view.shell`: Rahmen des Charakterbogens: Seitenleiste (`CharacterSection`, `SectionGroup`, `SectionNavigator`),
+  Status-Panel (`SlidePanel`, `FloatingButtonPosition`), Fußzeile (`FooterText`)
+- `view.tab`: ein Builder je Bereich des Charakterbogens, dazu `StatusOverviewBuilder`/`StatusHints` (`AttributeTabBuilder`, `SkillTabBuilder` mit
   `KnowledgeSkillSection`, `QualityTabBuilder`, `ContactTabBuilder`, `BiographyTabBuilder`, `MagicTabBuilder`,
   `TechnomancerTabBuilder`, `CyberwareTabBuilder`, `StreetGearTabBuilder`, `WeaponTabBuilder`, `GearTabBuilder`,
   `VehicleTabBuilder`, `LogTabBuilder`), ihre Anzeigewerte (`WeaponDetails`, `GearDetails`, `VehicleDetails`) und die
@@ -49,11 +52,16 @@ Package-Wurzel.
 
 **Controller-Hierarchie:**
 
-- `MainWindowController`: Wurzel; Dateimenü, öffnet den NewCharacterDialog, lädt/speichert über `CharacterStore`
-- `CharacterViewController`: vom Hauptfenster eingebunden; hält die FXML-Knoten und den Kopfbereich, erzeugt die
-  Tab-Builder und implementiert `CharacterTabHost`: Die Tabs melden fachliche Änderungen (z.B.
-  `onQualitiesChanged`), der Controller entscheidet zentral, was neu gebaut wird
+- `MainWindowController`: Wurzel; Menüs Datei und Einstellungen, öffnet den NewCharacterDialog, lädt/speichert über
+  `CharacterStore`
+- `CharacterViewController`: vom Hauptfenster eingebunden; hält die FXML-Knoten (Seiten der Bereiche in
+  `fx:define`), Kopf- und Fußzeile, Seitenleiste und Status-Panel, erzeugt die Tab-Builder und implementiert
+  `CharacterTabHost`: Die Bereiche melden fachliche Änderungen (z.B. `onQualitiesChanged`), der Controller entscheidet
+  zentral, was neu gebaut wird
 - `NewCharacterDialogController`, `LogEntryDialogController` und die Auswahldialoge in `view.dialog`: modale Dialoge
+
+**Optik:** Alle Farben stehen als Variablen (`-cr-…`) am Anfang von `style.css`; Schriften Inter und Chakra Petch
+liegen unter `resources/.../fonts/` (ADR-049).
 
 **UI-Refresh:** Die Tab-Builder führen `List<Runnable>`-Refresh-Listen für ihre +/−-Zeilen (`refresh()`). Ändert sich
 ein Wert, der andere Zeilen beeinflusst, meldet der Tab `refreshRows()`, und der Controller ruft `refresh()` aller Tabs.

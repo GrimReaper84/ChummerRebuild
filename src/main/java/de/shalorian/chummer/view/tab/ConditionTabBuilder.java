@@ -35,6 +35,7 @@ public final class ConditionTabBuilder {
 
   private static final String STYLE_BOX = "cm-box";
   private static final String STYLE_BOX_FILLED = "cm-box-filled";
+  private static final String STYLE_BOX_FILLED_STUN = "cm-box-filled-stun";
   private static final String STYLE_BOX_OVERFLOW = "cm-box-overflow";
   private static final int BOXES_PER_ROW = 3;
 
@@ -80,12 +81,12 @@ public final class ConditionTabBuilder {
 
   private @NonNull HBox buildMonitor(@NonNull Character ch) {
     VBox physical = new VBox(6, new Label("Körperlich (%d)".formatted(ch.getPhysicalBoxes())),
-        boxGrid(ch, ch.getPhysicalBoxes(), 0, ch.getPhysicalDamage(), false, ch::setPhysicalDamage));
+        boxGrid(ch, ch.getPhysicalBoxes(), 0, ch.getPhysicalDamage(), false, false, ch::setPhysicalDamage));
     physical.getChildren().add(new Label("Überzahl (%d)".formatted(ch.getPhysicalOverflowBoxes())));
     physical.getChildren().add(boxGrid(ch, ch.getPhysicalOverflowBoxes(), ch.getPhysicalBoxes(),
-        ch.getPhysicalDamage(), true, ch::setPhysicalDamage));
+        ch.getPhysicalDamage(), true, false, ch::setPhysicalDamage));
     VBox stun = new VBox(6, new Label("Geistig (%d)".formatted(ch.getStunBoxes())),
-        boxGrid(ch, ch.getStunBoxes(), 0, ch.getStunDamage(), false, ch::setStunDamage));
+        boxGrid(ch, ch.getStunBoxes(), 0, ch.getStunDamage(), false, true, ch::setStunDamage));
     physical.getChildren().forEach(n -> n.getStyleClass().add(STYLE_ATTR_NAME));
     stun.getChildren().forEach(n -> n.getStyleClass().add(STYLE_ATTR_NAME));
     return new HBox(40, physical, stun);
@@ -94,10 +95,11 @@ public final class ConditionTabBuilder {
   /**
    * Kästchenraster einer Spalte. {@code offset} ist die Anzahl Kästchen davor (bei den Überzahlkästchen die
    * Körperliche Spalte), damit Kästchen n immer für n Schaden steht. Kästchen, ab denen ein weiterer
-   * Verletzungsmodifikator gilt, tragen ihn als Beschriftung.
+   * Verletzungsmodifikator gilt, tragen ihn als Beschriftung. Gefüllte Kästchen der geistigen Spalte ({@code stun})
+   * sind blau statt rot, wie in der Status-Übersicht.
    */
   private @NonNull GridPane boxGrid(@NonNull Character ch, int count, int offset, int damage, boolean overflow,
-      @NonNull IntConsumer setDamage) {
+      boolean stun, @NonNull IntConsumer setDamage) {
     GridPane grid = new GridPane();
     grid.setHgap(4);
     grid.setVgap(4);
@@ -111,6 +113,9 @@ public final class ConditionTabBuilder {
       }
       if (box <= damage) {
         button.getStyleClass().add(STYLE_BOX_FILLED);
+        if (stun) {
+          button.getStyleClass().add(STYLE_BOX_FILLED_STUN);
+        }
       }
       button.setDisable(!career);
       button.setOnAction(_ -> {

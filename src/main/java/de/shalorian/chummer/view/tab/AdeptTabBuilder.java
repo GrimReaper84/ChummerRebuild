@@ -15,7 +15,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.adept.AdeptPower;
@@ -82,8 +81,6 @@ public final class AdeptTabBuilder {
     adeptContainer.getChildren().clear();
     refreshers.clear();
 
-    Label sectionLabel = new Label("Adeptenkräfte");
-    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
     Label pointsLabel = new Label();
     pointsLabel.getStyleClass().add(STYLE_BP_VALUE);
     refreshers.add(() -> {
@@ -103,7 +100,7 @@ public final class AdeptTabBuilder {
 
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    HBox header = new HBox(12, sectionLabel, pointsLabel, spacer, addBtn);
+    HBox header = new HBox(12, pointsLabel, spacer, addBtn);
     header.setAlignment(Pos.CENTER_LEFT);
     adeptContainer.getChildren().add(header);
 

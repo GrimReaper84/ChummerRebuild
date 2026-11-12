@@ -191,8 +191,6 @@ public final class VehicleTabBuilder {
   }
 
   private @NonNull HBox buildHeader(@NonNull Character character) {
-    Label title = new Label("Fahrzeuge & Drohnen");
-    title.getStyleClass().add(STYLE_SECTION_TITLE);
     Label costLabel = new Label("Kosten: " + character.getEquipment().getVehicleNuyenCost() + " ¥");
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
@@ -200,7 +198,7 @@ public final class VehicleTabBuilder {
     header.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    header.getChildren().addAll(title, spacer, costLabel);
+    header.getChildren().addAll(spacer, costLabel);
     VBox.setMargin(header, new Insets(0, 0, 12, 0));
     return header;
   }

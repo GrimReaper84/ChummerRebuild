@@ -13,7 +13,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
@@ -74,8 +73,6 @@ public final class TechnomancerTabBuilder {
     technomancerContainer.getChildren().clear();
     complexFormRefreshers.clear();
 
-    Label sectionLabel = new Label("Technomancer");
-    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
 
     // Fester Anzeigetext statt Auswahl-Steuerelement: das SR4-Grundregelwerk kennt kein "Stream"-
     // Auswahlkonzept (0 Treffer im GRW-Kern-Volltext), die Schwund-Widerstandsformel gilt
@@ -96,7 +93,7 @@ public final class TechnomancerTabBuilder {
 
     HBox header = new HBox(12);
     header.setAlignment(Pos.CENTER_LEFT);
-    header.getChildren().addAll(sectionLabel, fadingLabel);
+    header.getChildren().add(fadingLabel);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
     header.getChildren().add(spacer);

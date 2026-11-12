@@ -9,7 +9,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.magic.SpellData;
@@ -60,8 +59,6 @@ public final class MagicTabBuilder {
     }
     magicContainer.getChildren().clear();
 
-    Label sectionLabel = new Label("Magie");
-    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
 
     ComboBox<Tradition> traditionBox = new ComboBox<>();
     traditionBox.getItems().setAll(Tradition.values());
@@ -80,7 +77,7 @@ public final class MagicTabBuilder {
 
     HBox header = new HBox(12);
     header.setAlignment(Pos.CENTER_LEFT);
-    header.getChildren().addAll(sectionLabel, traditionBox);
+    header.getChildren().add(traditionBox);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
     header.getChildren().add(spacer);

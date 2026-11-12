@@ -6,6 +6,7 @@ import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_ABBR;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_AUG;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_AUG_BOOSTED;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
@@ -25,7 +26,6 @@ import de.shalorian.chummer.view.grid.RowControls;
 import de.shalorian.chummer.view.grid.RowModel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -223,7 +223,7 @@ public final class AttributeTabBuilder {
     addAttributeGridRow(grid, row, attrRefreshers,
         new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
             attr.getMax(), String.valueOf(character.getAugmentedMaximum(type))),
-        () -> augmentedAttributeText(character, type), new RowModel() {
+        type, new RowModel() {
           @Override
           public int value() {
             return attr.getValue();
@@ -280,14 +280,14 @@ public final class AttributeTabBuilder {
    * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Aug-Platzhalter, Bereich, BP-/Karma-Kosten) in ein MigPane ein und verdrahtet sie über
    * {@link IncrementWiring#wire}. Gemeinsam genutzt von {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
    * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am alten WinForms-{@code panAttributes}
-   * (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den Text aus
-   * {@code augmentedText} (bei jedem Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht), bzw.
-   * {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER}, wenn {@code augmentedText} {@code null} ist; der Klammerzusatz im Bereichs-Label zeigt das
+   * (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den wirksamen Wert von
+   * {@code augmentedType} (bei jedem Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht), verstärkt
+   * in der Akzentfarbe, bzw. {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER} bei Sonderattributen ({@code null}); der Klammerzusatz im Bereichs-Label zeigt das
    * augmentierte Maximum ({@link Character#getAugmentedMaximum(AttributeType)}, GRW S. 91), bei Sonderattributen keinen.
    */
   private void addAttributeGridRow(@NonNull MigPane grid, int row,
       @NonNull List<Runnable> refresherList, @NonNull AttributeRowLabel label,
-      @Nullable Supplier<String> augmentedText, @NonNull RowModel model,
+      @Nullable AttributeType augmentedType, @NonNull RowModel model,
       @NonNull Character character) {
     Label attrNameLabel = new Label(label.displayName());
     Label abbrLabel = new Label(label.abbreviation());
@@ -308,8 +308,16 @@ public final class AttributeTabBuilder {
     rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     bpLabel.getStyleClass().add(STYLE_ATTR_BP);
 
-    if (augmentedText != null) {
-      Runnable refreshAugmented = () -> augLabel.setText(augmentedText.get());
+    if (augmentedType != null) {
+      Runnable refreshAugmented = () -> {
+        augLabel.setText(augmentedAttributeText(character, augmentedType));
+        // Verstärkte Werte (Implantate, Adeptenkräfte) im Akzent; Abzüge durch Behinderung bleiben neutral.
+        augLabel.getStyleClass().remove(STYLE_ATTR_AUG_BOOSTED);
+        if (character.getAugmentedAttributeValue(augmentedType)
+            > character.getAttribute(augmentedType).getValue()) {
+          augLabel.getStyleClass().add(STYLE_ATTR_AUG_BOOSTED);
+        }
+      };
       refresherList.add(refreshAugmented);
       refreshAugmented.run();
     }

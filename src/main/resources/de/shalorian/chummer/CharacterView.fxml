@@ -6,271 +6,245 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootPane"
   styleClass="character-view"
   fx:controller="de.shalorian.chummer.view.CharacterViewController">
   <bottom>
-    <HBox alignment="CENTER_RIGHT" spacing="16" styleClass="status-bar">
-      <Label styleClass="status-label" text="Karma:"/>
-      <Label styleClass="status-value" text="0" fx:id="karmaStatusLabel"/>
-      <Label styleClass="status-label" text="Nuyen:"/>
-      <Label styleClass="status-value" text="0 ¥" fx:id="nuyenStatusLabel"/>
-      <Separator orientation="VERTICAL" prefHeight="14"/>
-      <padding>
-        <Insets bottom="5" left="20" right="20" top="5"/>
-      </padding>
+    <HBox alignment="CENTER_RIGHT" styleClass="footer-bar">
+      <Label styleClass="footer-text" fx:id="footerLabel"/>
     </HBox>
   </bottom>
   <center>
-    <TabPane fx:id="mainTabPane" styleClass="main-tabs" tabClosingPolicy="UNAVAILABLE">
-
-      <Tab text="Biografie">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="biographyContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Attribute">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container">
-            <Label styleClass="section-title" text="Attribute"/>
-            <VBox fx:id="attributeGridHost"/>
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Skills">
-        <VBox styleClass="attr-container">
-          <fx:define>
-            <ToggleGroup fx:id="skillSortToggleGroup"/>
-          </fx:define>
-          <HBox alignment="CENTER_LEFT" spacing="8" styleClass="skills-toolbar">
-            <ToggleButton fx:id="sortByCategoryBtn" text="Nach Kategorie" selected="true"
-              styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
-            <ToggleButton fx:id="sortByAlphabetBtn" text="Nach Alphabet"
-              styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
-            <padding>
-              <Insets bottom="8" left="36" right="36" top="12"/>
-            </padding>
-          </HBox>
-          <ScrollPane fitToWidth="true" styleClass="attr-scroll" VBox.vgrow="ALWAYS">
-            <VBox styleClass="attr-container" fx:id="skillsContainer">
-              <padding>
-                <Insets bottom="20" left="36" right="36" top="8"/>
-              </padding>
-            </VBox>
-          </ScrollPane>
-          <ScrollPane fitToWidth="true" styleClass="attr-scroll"
-            prefHeight="220" minHeight="220" maxHeight="220">
-            <VBox styleClass="attr-container" fx:id="knowledgeSkillsContainer">
-              <padding>
-                <Insets bottom="12" left="36" right="36" top="12"/>
-              </padding>
-            </VBox>
-          </ScrollPane>
-        </VBox>
-      </Tab>
-
-      <Tab text="Gaben &amp; Handicaps">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="qualitiesContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Zustand">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="conditionContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Magie" fx:id="magicTab">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="magicContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Adeptenkräfte" fx:id="adeptTab">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="adeptContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Technomancer" fx:id="technomancerTab">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="technomancerContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Cyberware &amp; Bioware">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="cyberwareContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Straßenausrüstung">
-        <TabPane styleClass="main-tabs" tabClosingPolicy="UNAVAILABLE">
-          <Tab text="Lebensstil">
-            <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-              <VBox styleClass="attr-container" fx:id="lifestyleContainer">
-                <padding>
-                  <Insets bottom="20" left="36" right="36" top="20"/>
-                </padding>
-              </VBox>
-            </ScrollPane>
-          </Tab>
-          <Tab text="Rüstung">
-            <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-              <VBox styleClass="attr-container" fx:id="armorContainer">
-                <padding>
-                  <Insets bottom="20" left="36" right="36" top="20"/>
-                </padding>
-              </VBox>
-            </ScrollPane>
-          </Tab>
-          <Tab text="Waffen">
-            <VBox styleClass="attr-container" fx:id="weaponContainer">
-              <padding>
-                <Insets bottom="20" left="36" right="36" top="20"/>
-              </padding>
-            </VBox>
-          </Tab>
-          <Tab text="Ausrüstung">
-            <VBox styleClass="attr-container" fx:id="gearContainer">
-              <padding>
-                <Insets bottom="20" left="36" right="36" top="20"/>
-              </padding>
-            </VBox>
-          </Tab>
-        </TabPane>
-      </Tab>
-
-      <Tab text="Fahrzeuge &amp; Drohnen">
-        <VBox styleClass="attr-container" fx:id="vehicleContainer">
-          <padding>
-            <Insets bottom="20" left="36" right="36" top="20"/>
-          </padding>
-        </VBox>
-      </Tab>
-      <Tab text="Kontakte">
-        <ScrollPane fitToWidth="true" styleClass="attr-scroll">
-          <VBox styleClass="attr-container" fx:id="contactsContainer">
-            <padding>
-              <Insets bottom="20" left="36" right="36" top="20"/>
-            </padding>
-          </VBox>
-        </ScrollPane>
-      </Tab>
-
-      <Tab text="Log">
-        <HBox styleClass="log-container">
-          <Separator orientation="VERTICAL">
-            <VBox.margin>
-              <Insets left="16" right="16"/>
-            </VBox.margin>
-          </Separator>
-
-          <!-- Karma -->
-          <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
-            <HBox alignment="CENTER_LEFT" spacing="10">
-              <Button onAction="#onAddKarma" styleClass="btn-secondary" fx:id="addKarmaBtn">
-                <graphic><FontIcon iconLiteral="fas-plus"/></graphic>
-                <tooltip><Tooltip text="Eintrag hinzufügen"/></tooltip>
-              </Button>
-              <Label styleClass="bp-label" text="Gesamt:"/>
-              <Label styleClass="bp-value" text="0" fx:id="karmaTotalLabel"/>
-              <Label styleClass="log-section-title" text="Karma"/>
-              <Region HBox.hgrow="ALWAYS"/>
-            </HBox>
-            <TableView VBox.vgrow="ALWAYS" fx:id="karmaTable"/>
-          </VBox>
-
-          <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
-            <HBox alignment="CENTER_LEFT" spacing="10">
-              <Button onAction="#onAddNuyen" styleClass="btn-secondary" fx:id="addNuyenBtn">
-                <graphic><FontIcon iconLiteral="fas-plus"/></graphic>
-                <tooltip><Tooltip text="Eintrag hinzufügen"/></tooltip>
-              </Button>
-              <Label styleClass="bp-label" text="Gesamt:"/>
-              <Label styleClass="bp-value" text="0 ¥" fx:id="nuyenTotalLabel"/>
-              <Label styleClass="log-section-title" text="Nuyen"/>
-              <Region HBox.hgrow="ALWAYS"/>
-            </HBox>
-            <TableView VBox.vgrow="ALWAYS" fx:id="nuyenTable"/>
-          </VBox>
-
-          <!-- Nuyen -->
-          <padding>
-            <Insets bottom="20" left="24" right="24" top="20"/>
-          </padding>
-
-        </HBox>
-      </Tab>
-
-    </TabPane>
+    <StackPane fx:id="contentHost" styleClass="content-host"/>
   </center>
+  <fx:define>
+    <!-- Seiten des Charakterbogens; SectionNavigator zeigt jeweils eine im Inhaltsbereich -->
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="biographyPage">
+        <VBox styleClass="attr-container" fx:id="biographyContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="attributesPage">
+        <VBox styleClass="attr-container">
+          <VBox fx:id="attributeGridHost"/>
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <VBox styleClass="attr-container" fx:id="skillsPage">
+        <fx:define>
+          <ToggleGroup fx:id="skillSortToggleGroup"/>
+        </fx:define>
+        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="skills-toolbar">
+          <ToggleButton fx:id="sortByCategoryBtn" text="Nach Kategorie" selected="true"
+            styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
+          <ToggleButton fx:id="sortByAlphabetBtn" text="Nach Alphabet"
+            styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
+          <padding>
+            <Insets bottom="8" left="36" right="36" top="12"/>
+          </padding>
+        </HBox>
+        <ScrollPane fitToWidth="true" styleClass="attr-scroll" VBox.vgrow="ALWAYS" fx:id="skillsScroll">
+          <VBox styleClass="attr-container" fx:id="skillsContainer">
+            <padding>
+              <Insets bottom="20" left="36" right="36" top="8"/>
+            </padding>
+          </VBox>
+        </ScrollPane>
+        <!-- Trennlinie zwischen aktiven Fertigkeiten und Wissensfertigkeiten -->
+        <Separator>
+          <VBox.margin>
+            <Insets left="36" right="36"/>
+          </VBox.margin>
+        </Separator>
+        <ScrollPane fitToWidth="true" styleClass="attr-scroll"
+          prefHeight="220" minHeight="220" maxHeight="220">
+          <VBox styleClass="attr-container" fx:id="knowledgeSkillsContainer">
+            <padding>
+              <Insets bottom="12" left="36" right="36" top="12"/>
+            </padding>
+          </VBox>
+        </ScrollPane>
+      </VBox>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="qualitiesPage">
+        <VBox styleClass="attr-container" fx:id="qualitiesContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="conditionPage">
+        <VBox styleClass="attr-container" fx:id="conditionContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="magicPage">
+        <VBox styleClass="attr-container" fx:id="magicContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="adeptPage">
+        <VBox styleClass="attr-container" fx:id="adeptContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="technomancerPage">
+        <VBox styleClass="attr-container" fx:id="technomancerContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="implantsPage">
+        <VBox styleClass="attr-container" fx:id="cyberwareContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="lifestylePage">
+        <VBox styleClass="attr-container" fx:id="lifestyleContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="armorPage">
+        <VBox styleClass="attr-container" fx:id="armorContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <VBox styleClass="attr-container" fx:id="weaponContainer">
+        <padding>
+          <Insets bottom="20" left="36" right="36" top="8"/>
+        </padding>
+      </VBox>
+
+
+      <VBox styleClass="attr-container" fx:id="gearContainer">
+        <padding>
+          <Insets bottom="20" left="36" right="36" top="8"/>
+        </padding>
+      </VBox>
+
+
+      <VBox styleClass="attr-container" fx:id="vehicleContainer">
+        <padding>
+          <Insets bottom="20" left="36" right="36" top="8"/>
+        </padding>
+      </VBox>
+
+
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="contactsPage">
+        <VBox styleClass="attr-container" fx:id="contactsContainer">
+          <padding>
+            <Insets bottom="20" left="36" right="36" top="8"/>
+          </padding>
+        </VBox>
+      </ScrollPane>
+
+
+      <HBox styleClass="log-container" fx:id="logPage">
+        <Separator orientation="VERTICAL">
+          <VBox.margin>
+            <Insets left="16" right="16"/>
+          </VBox.margin>
+        </Separator>
+
+        <!-- Karma -->
+        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
+          <HBox alignment="CENTER_LEFT" spacing="10">
+            <Button onAction="#onAddKarma" styleClass="btn-secondary" fx:id="addKarmaBtn">
+              <graphic><FontIcon iconLiteral="fas-plus"/></graphic>
+              <tooltip><Tooltip text="Eintrag hinzufügen"/></tooltip>
+            </Button>
+            <Label styleClass="bp-label" text="Gesamt:"/>
+            <Label styleClass="bp-value" text="0" fx:id="karmaTotalLabel"/>
+            <Label styleClass="log-section-title" text="Karma"/>
+            <Region HBox.hgrow="ALWAYS"/>
+          </HBox>
+          <TableView VBox.vgrow="ALWAYS" fx:id="karmaTable"/>
+        </VBox>
+
+        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
+          <HBox alignment="CENTER_LEFT" spacing="10">
+            <Button onAction="#onAddNuyen" styleClass="btn-secondary" fx:id="addNuyenBtn">
+              <graphic><FontIcon iconLiteral="fas-plus"/></graphic>
+              <tooltip><Tooltip text="Eintrag hinzufügen"/></tooltip>
+            </Button>
+            <Label styleClass="bp-label" text="Gesamt:"/>
+            <Label styleClass="bp-value" text="0 ¥" fx:id="nuyenTotalLabel"/>
+            <Label styleClass="log-section-title" text="Nuyen"/>
+            <Region HBox.hgrow="ALWAYS"/>
+          </HBox>
+          <TableView VBox.vgrow="ALWAYS" fx:id="nuyenTable"/>
+        </VBox>
+
+        <!-- Nuyen -->
+        <padding>
+          <Insets bottom="20" left="24" right="24" top="20"/>
+        </padding>
+
+      </HBox>
+
+  </fx:define>
   <top>
     <HBox alignment="CENTER_LEFT" spacing="16" styleClass="char-header">
-      <Button onAction="#onFinalize" styleClass="btn-finalize" text="Charakter abschließen"
-        fx:id="finalizeBtn"/>
+      <Label styleClass="char-name" fx:id="nameLabel"/>
       <ComboBox styleClass="char-metatype-box" fx:id="metatypeBox"/>
+      <Label managed="false" styleClass="char-metatype" visible="false" fx:id="metatypeLabelCareer"/>
       <HBox alignment="CENTER_LEFT" spacing="8" fx:id="nuyenBpBox">
         <Label styleClass="bp-label" text="Ressourcen:"/>
         <Button onAction="#onNuyenBpMinus" styleClass="attr-btn" text="−" fx:id="nuyenBpMinusBtn"/>
         <Button onAction="#onNuyenBpPlus" styleClass="attr-btn" text="+" fx:id="nuyenBpPlusBtn"/>
         <Label styleClass="bp-value" text="0 BP (0 ¥)" fx:id="nuyenBpValueLabel"/>
-        <Label styleClass="bp-label" text="Übrig:"/>
-        <Label styleClass="bp-value" text="0 ¥" fx:id="remainingNuyenLabel"/>
       </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="8" fx:id="bpBox">
-        <Label styleClass="bp-label" text="Verbleibende BP:"/>
-        <Label styleClass="bp-value" fx:id="remainingBpLabel"/>
-        <Label styleClass="bp-total" text="/ 400"/>
-      </HBox>
-      <Label managed="false" styleClass="char-metatype" visible="false" fx:id="metatypeLabelCareer"/>
-      <Label styleClass="char-name" fx:id="nameLabel"/>
       <Region HBox.hgrow="ALWAYS"/>
+      <Button onAction="#onFinalize" styleClass="btn-finalize" text="Charakter abschließen"
+        fx:id="finalizeBtn"/>
       <padding>
         <Insets bottom="10" left="20" right="20" top="10"/>
       </padding>

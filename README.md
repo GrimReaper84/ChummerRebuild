@@ -20,6 +20,8 @@ Windows, Linux und macOS.
 - **Würfelpools, Initiative und Zustandsmonitor** werden aus den aktuellen Werten berechnet.
 - **Karrieremodus**: Steigerungen mit Karma, Käufe mit Nuyen, Protokoll aller Änderungen.
 - **Biografie** mit Beschreibung, Hintergrund und Notizen.
+- **Übersichtliche Oberfläche**: Seitenleiste mit allen Bereichen, Status-Übersicht als ausklappbares Panel oder fester
+  Bereich, Fußzeile mit BP bzw. Karma, Nuyen und Essenz.
 
 Charaktere werden als JSON-Dateien gespeichert, wo du möchtest. Den genauen Stand je Bereich zeigt
 [`docs/feature_checklist.md`](docs/feature_checklist.md).
@@ -34,7 +36,7 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
    Panzerungsmodifikationen.
 3. **Cybergliedmaßen**: Arme, Beine und Torso mit eigenen Attributen, Verbesserungen, Zubehör und Cyberwaffen.
 4. **Magie und Resonanz ausbauen**: Geister und Sprites, Initiation mit Metamagie, Wandlung mit Echos.
-5. **Neue Oberfläche**: grundlegende Überarbeitung von Layout, Navigation und Darstellung der Werte.
+5. ✅ **Neue Oberfläche**: grundlegende Überarbeitung von Layout, Navigation und Darstellung der Werte.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in
 [`docs/feature_checklist.md`](docs/feature_checklist.md).
@@ -125,9 +127,14 @@ Worten. Zum Spielen brauchst du das Grundregelwerk.
 Vorbild ist das Open-Source-Programm Chummer, dessen Verhalten für diesen Neuaufbau analysiert wurde.
 
 Das Anwendungs-Icon ist das Symbol „dragon“ aus [Font Awesome Free](https://fontawesome.com) von Fonticons, Inc.,
-lizenziert unter [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); es wurde umgefärbt und auf einen dunklen
-Hintergrund gesetzt. Die Schaltflächen des Programms nutzen die Icon-Schrift von Font Awesome Free (Schriftdateien
+lizenziert unter [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); es wurde umgefärbt und auf einen
+petrolfarbenen Hintergrund gesetzt. Die Schaltflächen des Programms nutzen die Icon-Schrift von Font Awesome Free (Schriftdateien
 unter [SIL OFL 1.1](https://openfontlicense.org/), Icons unter CC BY 4.0) über [Ikonli](https://kordamp.org/ikonli/).
+
+Die Oberfläche nutzt die Schriften [Inter](https://rsms.me/inter/) (The Inter Project Authors) und
+[Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch) (The Chakra Petch Project Authors), beide unter
+[SIL OFL 1.1](https://openfontlicense.org/); die Lizenztexte liegen neben den Schriftdateien unter
+`src/main/resources/de/shalorian/chummer/fonts/`.
 
 ## Lizenz
 

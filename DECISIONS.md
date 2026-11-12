@@ -88,6 +88,23 @@ Wirkungssummen liegen in `Implants` (Unterobjekt von `Character`), die Implantat
 **Warum:** Nutzerentscheidungen 2026-11-12 (Kapazität und Einzelkauf, dauerhafte Wirkungen, sperren statt warnen,
 Preise wie im C#, Kommlink mit Einbau); `docs/plaene/archiv/implantate_plan.md`.
 
+### ADR-049: UI-Rework: Seitenleiste, Status-Panel, Kartenstil (2026-11-12)
+Der Charakterbogen hat statt Tabs eine gruppierte Seitenleiste (Charakter, Magie & Resonanz, Ausrüstung, Netzwerk &
+Protokoll; die Ebene Straßenausrüstung entfällt), eine schmale Kopfzeile (Name, Metatyp, Ressourcen-BP, Abschließen)
+und eine Fußzeile `BP | Nuyen | Essenz` bei der Erschaffung bzw. `Karma | Nuyen | Essenz` in der Karriere. Die
+Status-Übersicht liegt wie im Fallout2d20-Projekt in einem Slide-Panel mit verschiebbarem Knopf; Einstellungen ›
+„Status statisch anzeigen“ macht sie zum obersten Bereich unter „Charakter“ (Java-Preferences, gilt für alle
+Charaktere). Magie, Adeptenkräfte und Technomancer bleiben ohne Gabe sichtbar und deaktiviert (ADR-033). Optik dunkel
+mit Grau-Blau-Tönen, Türkis als Akzent, dunklem Petrol als Akzent-Hintergrund, alle Farben als CSS-Variablen; Schriften
+Inter und Chakra Petch (SIL OFL) im Projekt. Das App-Icon nutzt dieselben Farben. Zahlen ohne Tausenderpunkt wie bisher.
+Die Kästchen des Monitors sind im Status wie im Bereich „Zustand“ nur im Karrieremodus klickbar. Eingabe-, Rückfrage-
+und Hinweisdialoge zeigen statt der Java-Symbole Font-Awesome-Icons in der Akzentfarbe (`TabServices.applyDialogStyle`).
+Fußzeile und Status werden an einer Stelle aktualisiert (`CharacterViewController#updateSummary`); ob die Erschaffung
+überzogen ist, entscheidet `Character#isCreationOverspent`.
+Überholt den Teil von ADR-034, der den Aufbau nach den Designer.cs vorgab; Inhalte und Bedienung innerhalb der Bereiche
+bleiben.
+**Warum:** Nutzerentscheidungen 2026-11-12 nach klickbarem Entwurf; `docs/plaene/archiv/ui_rework_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)
@@ -301,7 +318,7 @@ Noch offen.
 Nicht nutzbare Listeneinträge bleiben sichtbar-deaktiviert; nur ganze Tabs dürfen bis zu ihrer Voraussetzung fehlen.
 **Warum:** Ausgeblendete Einträge führten zu einem Refresh-Bug; der Nutzer soll sehen, was es gibt.
 
-### ADR-034: Tabs gegen die alten Designer.cs aufbauen (2026-09-25)
+### ADR-034: Tabs gegen die alten Designer.cs aufbauen (2026-09-25) — teilweise überholt durch ADR-049
 Controls, Gruppierung und Reihenfolge aus `frmCreate`/`frmCareer.Designer.cs`, keine Pixelpositionen; bewusst
 verbesserte Muster bleiben.
 **Warum:** Vertraute Bedienung für Chummer-Nutzer.

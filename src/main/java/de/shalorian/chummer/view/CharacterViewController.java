@@ -10,6 +10,11 @@ import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.FinalizeDialogController;
+import de.shalorian.chummer.view.shell.CharacterSection;
+import de.shalorian.chummer.view.shell.FloatingButtonPosition;
+import de.shalorian.chummer.view.shell.FooterText;
+import de.shalorian.chummer.view.shell.SectionNavigator;
+import de.shalorian.chummer.view.shell.SlidePanel;
 import de.shalorian.chummer.view.tab.AdeptTabBuilder;
 import de.shalorian.chummer.view.tab.AttributeTabBuilder;
 import de.shalorian.chummer.view.tab.BiographyTabBuilder;
@@ -22,32 +27,41 @@ import de.shalorian.chummer.view.tab.LogTabBuilder;
 import de.shalorian.chummer.view.tab.MagicTabBuilder;
 import de.shalorian.chummer.view.tab.QualityTabBuilder;
 import de.shalorian.chummer.view.tab.SkillTabBuilder;
+import de.shalorian.chummer.view.tab.StatusOverviewBuilder;
 import de.shalorian.chummer.view.tab.StreetGearTabBuilder;
 import de.shalorian.chummer.view.tab.TabServices;
 import de.shalorian.chummer.view.tab.TechnomancerTabBuilder;
 import de.shalorian.chummer.view.tab.VehicleTabBuilder;
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 /**
- * Charakterbogen: hält die FXML-Knoten, den Kopfbereich (BP, Nuyen, Abschluss, Modus) und die Sichtbarkeit der
- * Magie-, Adepten- und Technomancer-Tabs. Den Inhalt der Tabs bauen die Builder in {@code view.tab}; ihre fachlichen
- * Rückmeldungen ({@link CharacterTabHost}) laufen hier zusammen, und hier wird entschieden, was neu gebaut wird.
+ * Charakterbogen: hält die FXML-Knoten, die Seitenleiste ({@link SectionNavigator}) mit den Seiten der Bereiche, den
+ * Kopfbereich (BP, Nuyen, Abschluss, Modus) und die Nutzbarkeit der Bereiche Magie, Adeptenkräfte und Technomancer.
+ * Den Inhalt der Bereiche bauen die Builder in {@code view.tab}; ihre fachlichen Rückmeldungen ({@link
+ * CharacterTabHost}) laufen hier zusammen, und hier wird entschieden, was neu gebaut wird.
  */
 public class CharacterViewController implements CharacterTabHost {
 
@@ -57,15 +71,13 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private ComboBox<MetatypeData> metatypeBox;
   @FXML
-  private Label remainingBpLabel;
-  @FXML
   private VBox attributeGridHost;
+  @FXML
+  private ScrollPane skillsScroll;
   @FXML
   private VBox skillsContainer;
   @FXML
   private Button finalizeBtn;
-  @FXML
-  private HBox bpBox;
   @FXML
   private HBox nuyenBpBox;
   @FXML
@@ -85,9 +97,7 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private Label nuyenTotalLabel;
   @FXML
-  private Label karmaStatusLabel;
-  @FXML
-  private Label nuyenStatusLabel;
+  private Label footerLabel;
   @FXML
   private VBox qualitiesContainer;
   @FXML
@@ -97,19 +107,42 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private VBox biographyContainer;
   @FXML
-  private TabPane mainTabPane;
+  private BorderPane rootPane;
   @FXML
-  private Tab magicTab;
+  private StackPane contentHost;
   @FXML
   private VBox magicContainer;
   @FXML
-  private Tab adeptTab;
-  @FXML
   private VBox adeptContainer;
   @FXML
-  private Tab technomancerTab;
-  @FXML
   private VBox technomancerContainer;
+  // Seiten der Bereiche (FXML fx:define), angezeigt vom SectionNavigator
+  @FXML
+  private Node biographyPage;
+  @FXML
+  private Node attributesPage;
+  @FXML
+  private Node skillsPage;
+  @FXML
+  private Node qualitiesPage;
+  @FXML
+  private Node conditionPage;
+  @FXML
+  private Node magicPage;
+  @FXML
+  private Node adeptPage;
+  @FXML
+  private Node technomancerPage;
+  @FXML
+  private Node implantsPage;
+  @FXML
+  private Node lifestylePage;
+  @FXML
+  private Node armorPage;
+  @FXML
+  private Node contactsPage;
+  @FXML
+  private Node logPage;
   @FXML
   private VBox cyberwareContainer;
   @FXML
@@ -123,8 +156,6 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private VBox vehicleContainer;
   @FXML
-  private Label remainingNuyenLabel;
-  @FXML
   private VBox knowledgeSkillsContainer;
   @FXML
   private ToggleGroup skillSortToggleGroup;
@@ -132,8 +163,6 @@ public class CharacterViewController implements CharacterTabHost {
   private ToggleButton sortByCategoryBtn;
   @FXML
   private ToggleButton sortByAlphabetBtn;
-  /** Alle Tabs in FXML-Reihenfolge, damit ein wieder eingeblendeter Tab an seinen Platz kommt. */
-  private @NonNull List<Tab> tabOrder = List.of();
   private @Nullable Character character;
   private final @NonNull TabServices services =
       new TabServices(() -> nameLabel.getScene().getWindow(), this::onLogChanged);
@@ -166,11 +195,18 @@ public class CharacterViewController implements CharacterTabHost {
   private VehicleTabBuilder vehicleTab;
   @SuppressWarnings("NullAway.Init")
   private LogTabBuilder logTab;
+  @SuppressWarnings("NullAway.Init")
+  private SectionNavigator navigator;
+  /** Seite des Status als fester Bereich (Einstellung „Status statisch anzeigen“). */
+  private final @NonNull ScrollPane statusPage = new ScrollPane();
+  /** Slide-Panel mit dem Status; erst nach {@link #configureStatus} vorhanden. */
+  private @Nullable SlidePanel slidePanel;
+  private boolean statusStatic;
 
   @FXML
   public void initialize() {
     attributeTab = new AttributeTabBuilder(attributeGridHost, wiring);
-    skillTab = new SkillTabBuilder(skillsContainer, knowledgeSkillsContainer, skillSortToggleGroup,
+    skillTab = new SkillTabBuilder(skillsScroll, skillsContainer, knowledgeSkillsContainer, skillSortToggleGroup,
         sortByAlphabetBtn, sortByCategoryBtn, this, wiring);
     qualityTab = new QualityTabBuilder(qualitiesContainer, this);
     contactTab = new ContactTabBuilder(contactsContainer, this, wiring);
@@ -183,8 +219,7 @@ public class CharacterViewController implements CharacterTabHost {
     streetGear = new StreetGearTabBuilder(lifestyleContainer, armorContainer, weaponContainer,
         gearContainer, this);
     vehicleTab = new VehicleTabBuilder(vehicleContainer, this);
-    logTab = new LogTabBuilder(karmaTable, nuyenTable, karmaTotalLabel, nuyenTotalLabel,
-        karmaStatusLabel, nuyenStatusLabel, this);
+    logTab = new LogTabBuilder(karmaTable, nuyenTable, karmaTotalLabel, nuyenTotalLabel, this);
 
     metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
     metatypeBox.setConverter(new MetatypeStringConverter());
@@ -200,38 +235,102 @@ public class CharacterViewController implements CharacterTabHost {
         return;
       }
       attributeTab.build();
-      updateBpDisplay();
       refreshRows();
     });
 
-    tabOrder = List.copyOf(mainTabPane.getTabs());
-    mainTabPane.getTabs().removeAll(magicTab, adeptTab, technomancerTab);
+    navigator = new SectionNavigator(contentHost, sectionPages());
+    navigator.setShown(CharacterSection.STATUS, false);
+    rootPane.setLeft(navigator.node());
   }
 
   /**
-   * Blendet die Tabs für Magie ({@link Character#isMagician()}), Adeptenkräfte ({@link Character#hasAdeptPowers()})
-   * und Technomancer ({@link Character#hasResonance()}) passend ein oder aus, in beiden Modi. Die Tabs werden aus
-   * {@link TabPane#getTabs()} entfernt bzw. an ihrer FXML-Position wieder eingefügt (wie im C#-Original). Magieradepten
-   * sehen Magie- und Adepten-Tab zugleich.
+   * Legt fest, wo der Status erscheint: im Slide-Panel mit schwebendem Knopf an {@code buttonPosition} oder, bei
+   * {@code statusStatic}, als oberster Bereich unter „Charakter“. Einmal vor {@link #setCharacter} aufzurufen; danach
+   * schaltet {@link #setStatusStatic} um.
    */
-  private void syncSpecialTabs() {
-    Character ch = this.character;
-    if (ch == null) {
-      return;
-    }
-    syncTabVisibility(magicTab, ch.isMagician());
-    syncTabVisibility(adeptTab, ch.hasAdeptPowers());
-    syncTabVisibility(technomancerTab, ch.hasResonance());
+  public void configureStatus(boolean statusStatic, @NonNull FloatingButtonPosition buttonPosition) {
+    slidePanel = new SlidePanel(rootPane, FontAwesomeSolid.HEARTBEAT, "Status (zum Verschieben ziehen)",
+        buttonPosition);
+    setStatusStatic(statusStatic);
   }
 
-  private void syncTabVisibility(@NonNull Tab tab, boolean visible) {
-    List<Tab> tabs = mainTabPane.getTabs();
-    if (visible && !tabs.contains(tab)) {
-      int index = (int) tabOrder.subList(0, tabOrder.indexOf(tab)).stream().filter(tabs::contains).count();
-      tabs.add(index, tab);
-    } else if (!visible) {
-      tabs.remove(tab);
+  /** Der Charakterbogen samt Slide-Panel, so wie er ins Hauptfenster gehört. */
+  public @NonNull Node node() {
+    return slidePanel().node();
+  }
+
+  private @NonNull SlidePanel slidePanel() {
+    return Objects.requireNonNull(slidePanel, "configureStatus wurde nicht aufgerufen");
+  }
+
+  /** Zeigt den Status sofort als festen Bereich oder im Slide-Panel. */
+  public void setStatusStatic(boolean statusStatic) {
+    this.statusStatic = statusStatic;
+    slidePanel().setAvailable(!statusStatic);
+    navigator.setShown(CharacterSection.STATUS, statusStatic);
+    if (statusStatic) {
+      navigator.select(CharacterSection.STATUS);
     }
+    updateSummary();
+  }
+
+  /**
+   * Aktualisiert, was den ganzen Charakter zusammenfasst: Fußzeile ({@link FooterText}, rot bei überzogener Erschaffung)
+   * und Status-Übersicht dort, wo sie gerade angezeigt wird. Einzige Stelle dafür; {@link #refreshRows()} ruft sie auf,
+   * Pfade ohne Zeilen-Refresh direkt.
+   */
+  private void updateSummary() {
+    if (character == null) {
+      return;
+    }
+    footerLabel.setText(FooterText.of(character));
+    setWarnStyle(footerLabel, character.isCreationOverspent());
+    Node overview = StatusOverviewBuilder.build(character, this::refreshRows);
+    if (statusStatic) {
+      statusPage.setContent(overview);
+    } else {
+      slidePanel().setContent(overview);
+    }
+  }
+
+  /** Die Seite je Bereich in der Reihenfolge von {@link CharacterSection}. */
+  private @NonNull Map<CharacterSection, Node> sectionPages() {
+    statusPage.setFitToWidth(true);
+    statusPage.getStyleClass().add("attr-scroll");
+    statusPage.setPadding(new Insets(12, 36, 24, 36));
+    Map<CharacterSection, Node> pages = new EnumMap<>(CharacterSection.class);
+    pages.put(CharacterSection.STATUS, statusPage);
+    pages.put(CharacterSection.BIOGRAPHY, biographyPage);
+    pages.put(CharacterSection.ATTRIBUTES, attributesPage);
+    pages.put(CharacterSection.SKILLS, skillsPage);
+    pages.put(CharacterSection.QUALITIES, qualitiesPage);
+    pages.put(CharacterSection.CONDITION, conditionPage);
+    pages.put(CharacterSection.MAGIC, magicPage);
+    pages.put(CharacterSection.ADEPT, adeptPage);
+    pages.put(CharacterSection.TECHNOMANCER, technomancerPage);
+    pages.put(CharacterSection.IMPLANTS, implantsPage);
+    pages.put(CharacterSection.LIFESTYLE, lifestylePage);
+    pages.put(CharacterSection.ARMOR, armorPage);
+    pages.put(CharacterSection.WEAPONS, weaponContainer);
+    pages.put(CharacterSection.GEAR, gearContainer);
+    pages.put(CharacterSection.VEHICLES, vehicleContainer);
+    pages.put(CharacterSection.CONTACTS, contactsPage);
+    pages.put(CharacterSection.LOG, logPage);
+    return pages;
+  }
+
+  /**
+   * Macht die Bereiche Magie ({@link Character#isMagician()}), Adeptenkräfte ({@link Character#hasAdeptPowers()}) und
+   * Technomancer ({@link Character#hasResonance()}) passend nutzbar, in beiden Modi. Ohne Gabe bleiben sie sichtbar und
+   * deaktiviert, mit Grund im Tooltip (ADR-033). Magieradepten nutzen Magie und Adeptenkräfte zugleich.
+   */
+  private void syncSpecialSections() {
+    if (character == null) {
+      return;
+    }
+    navigator.setEnabled(CharacterSection.MAGIC, character.isMagician(), "Nur mit der Gabe Zauberer oder Magieradept");
+    navigator.setEnabled(CharacterSection.ADEPT, character.hasAdeptPowers(), "Nur mit der Gabe Adept oder Magieradept");
+    navigator.setEnabled(CharacterSection.TECHNOMANCER, character.hasResonance(), "Nur mit der Gabe Technomancer");
   }
 
   public void setCharacter(@NonNull Character character) {
@@ -249,7 +348,6 @@ public class CharacterViewController implements CharacterTabHost {
     logTab.setCharacter(character);
     nameLabel.setText(character.getName());
     metatypeBox.setValue(character.getMetatype());
-    updateBpDisplay();
     updateNuyenBpDisplay();
     logTab.update();
     updateModeDisplay();
@@ -287,21 +385,24 @@ public class CharacterViewController implements CharacterTabHost {
     if (character != null) {
       nameLabel.setText(character.getName());
     }
+    updateSummary();
   }
 
   @Override
   public void onBpChanged() {
-    updateBpDisplay();
+    updateSummary();
   }
 
   @Override
   public void onLogChanged() {
     logTab.update();
+    updateSummary();
   }
 
   @Override
   public void onNuyenSpentChanged() {
     updateNuyenBpDisplay();
+    updateSummary();
   }
 
   @Override
@@ -311,14 +412,13 @@ public class CharacterViewController implements CharacterTabHost {
     skillTab.build();
     cyberwareTab.build();
     adeptTabBuilder.build();
-    updateBpDisplay();
     refreshRows();
   }
 
-  /** Baut den Tab Gaben &amp; Handicaps neu und blendet Magie-, Adepten- und Technomancer-Tab passend ein oder aus. */
+  /** Baut den Bereich Gaben &amp; Handicaps neu und macht Magie, Adeptenkräfte und Technomancer passend nutzbar. */
   private void buildQualitiesTab() {
     qualityTab.build();
-    syncSpecialTabs();
+    syncSpecialSections();
   }
 
   /**
@@ -358,6 +458,7 @@ public class CharacterViewController implements CharacterTabHost {
 
   @Override
   public void refreshRows() {
+    updateSummary();
     attributeTab.refresh();
     skillTab.refresh();
     qualityTab.refresh();
@@ -368,24 +469,12 @@ public class CharacterViewController implements CharacterTabHost {
     streetGear.refresh();
   }
 
-  private void updateBpDisplay() {
-    if (character == null) {
-      return;
-    }
-    int remaining = character.getRemainingBP();
-    remainingBpLabel.setText(String.valueOf(remaining));
-    setWarnStyle(remainingBpLabel, remaining < 0);
-  }
-
   private void updateNuyenBpDisplay() {
     if (character == null) {
       return;
     }
     int bp = character.getNuyenBP();
     nuyenBpValueLabel.setText(bp + " BP (" + character.getResourceNuyen() + NUYEN_SUFFIX + ")");
-    int remaining = character.getRemainingNuyen();
-    remainingNuyenLabel.setText(remaining + NUYEN_SUFFIX);
-    setWarnStyle(remainingNuyenLabel, remaining < 0);
     nuyenBpMinusBtn.setDisable(bp <= 0);
     nuyenBpPlusBtn.setDisable(bp >= Character.MAX_NUYEN_BP || character.getRemainingBP() <= 0);
   }
@@ -397,7 +486,6 @@ public class CharacterViewController implements CharacterTabHost {
     }
     character.setNuyenBP(character.getNuyenBP() - 1);
     updateNuyenBpDisplay();
-    updateBpDisplay();
     refreshRows();
   }
 
@@ -408,7 +496,6 @@ public class CharacterViewController implements CharacterTabHost {
     }
     character.setNuyenBP(character.getNuyenBP() + 1);
     updateNuyenBpDisplay();
-    updateBpDisplay();
     refreshRows();
   }
 
@@ -451,10 +538,9 @@ public class CharacterViewController implements CharacterTabHost {
     }
     boolean career = character.isCreated();
 
+    updateSummary();
     finalizeBtn.setVisible(!career);
     finalizeBtn.setManaged(!career);
-    bpBox.setVisible(!career);
-    bpBox.setManaged(!career);
     nuyenBpBox.setVisible(!career);
     nuyenBpBox.setManaged(!career);
     metatypeBox.setVisible(!career);
@@ -502,7 +588,7 @@ public class CharacterViewController implements CharacterTabHost {
       return;
     }
     character.addNuyenEntry(result.get());
-    logTab.update();
+    onLogChanged();
   }
 
 }

@@ -11,7 +11,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.Contact;
@@ -22,7 +21,6 @@ import de.shalorian.chummer.view.grid.RowModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -73,9 +71,6 @@ public final class ContactTabBuilder {
     contactsContainer.getChildren().clear();
     contactRefreshers.clear();
 
-    Label sectionLabel = new Label("Kontakte");
-    sectionLabel.getStyleClass().add(STYLE_SECTION_TITLE);
-    VBox.setMargin(sectionLabel, new Insets(0, 0, 4, 0));
 
     Button addBtn = new Button("Hinzufügen");
     addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -84,7 +79,6 @@ public final class ContactTabBuilder {
 
     HBox header = new HBox(8);
     header.setAlignment(Pos.CENTER_LEFT);
-    header.getChildren().add(sectionLabel);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
     header.getChildren().add(spacer);

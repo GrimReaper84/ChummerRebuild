@@ -14,6 +14,8 @@ public final class StyleClasses {
   public static final String STYLE_ATTR_BP = "attr-bp";
   public static final String STYLE_ATTR_ABBR = "attr-abbr";
   public static final String STYLE_ATTR_AUG = "attr-aug";
+  /** Verstärkter Wert über dem natürlichen (Akzentfarbe). */
+  public static final String STYLE_ATTR_AUG_BOOSTED = "attr-aug-boosted";
   public static final String STYLE_ATTR_GRID = "attr-grid";
   public static final String STYLE_ATTR_HEADER = "attr-header";
   public static final String STYLE_SECTION_TITLE = "section-title";

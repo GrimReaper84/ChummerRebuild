@@ -151,7 +151,7 @@ final class KnowledgeSkillSection {
     editBtn.setOnAction(_ -> {
       KnowledgeSkill current = ch.getNativeLanguage();
       TextInputDialog dialog = new TextInputDialog(current != null ? current.getName() : "");
-      host.services().applyDialogStyle(dialog.getDialogPane());
+      TabServices.applyDialogStyle(dialog);
       dialog.setTitle("Muttersprache");
       dialog.setHeaderText("Muttersprache des Charakters");
       dialog.setContentText("Sprache:");
@@ -328,7 +328,7 @@ final class KnowledgeSkillSection {
     }
     TextInputDialog dialog = new TextInputDialog(
         skill.getSpecialization() != null ? skill.getSpecialization() : "");
-    host.services().applyDialogStyle(dialog.getDialogPane());
+    TabServices.applyDialogStyle(dialog);
     dialog.setTitle("Spezialisierung");
     dialog.setHeaderText(skill.getName() + " – Spezialisierung");
     dialog.setContentText("Spezialisierung:");

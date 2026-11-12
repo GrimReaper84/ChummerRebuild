@@ -34,11 +34,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -62,6 +64,7 @@ public final class SkillTabBuilder {
   /** Spalte der Gruppen-BP im schmalen Gruppen-Grid des Alphabet-Modus. */
   private static final int GROUP_ONLY_BP_COLUMN = 5;
 
+  private final @NonNull ScrollPane skillsScroll;
   private final @NonNull VBox skillsContainer;
   private final @NonNull ToggleGroup skillSortToggleGroup;
   private final @NonNull ToggleButton sortByAlphabetBtn;
@@ -73,10 +76,12 @@ public final class SkillTabBuilder {
   private final @NonNull KnowledgeSkillSection knowledgeSection;
   private @Nullable Character character;
 
-  public SkillTabBuilder(@NonNull VBox skillsContainer, @NonNull VBox knowledgeSkillsContainer,
+  public SkillTabBuilder(@NonNull ScrollPane skillsScroll, @NonNull VBox skillsContainer,
+      @NonNull VBox knowledgeSkillsContainer,
       @NonNull ToggleGroup skillSortToggleGroup, @NonNull ToggleButton sortByAlphabetBtn,
       @NonNull ToggleButton sortByCategoryBtn, @NonNull CharacterTabHost host,
       @NonNull IncrementWiring wiring) {
+    this.skillsScroll = skillsScroll;
     this.skillsContainer = skillsContainer;
     this.skillSortToggleGroup = skillSortToggleGroup;
     this.sortByAlphabetBtn = sortByAlphabetBtn;
@@ -120,7 +125,12 @@ public final class SkillTabBuilder {
     skillsContainer.getChildren().clear();
     skillRefreshers.clear();
 
-    if (skillSortMode == SkillSortMode.ALPHABETICAL) {
+    // Alphabetisch scrollen die beiden Spalten jede für sich; die äußere Fläche füllt dann nur die Höhe aus.
+    boolean alphabetical = skillSortMode == SkillSortMode.ALPHABETICAL;
+    skillsScroll.setFitToHeight(alphabetical);
+    skillsScroll.setVbarPolicy(alphabetical ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    skillsScroll.setVvalue(0);
+    if (alphabetical) {
       buildAlphabeticalSkillsSection(ch);
     } else {
       buildCategorySkillsSection(ch);
@@ -159,34 +169,36 @@ public final class SkillTabBuilder {
    * {@link Character#getIndividualSkills()}.
    */
   private void buildAlphabeticalSkillsSection(@NonNull Character character) {
-    HBox columns = new HBox(24);
-
-    VBox leftColumn = new VBox();
-    Label groupsTitle = new Label("Fertigkeitsgruppen");
-    groupsTitle.getStyleClass().add(STYLE_SECTION_TITLE);
-    VBox.setMargin(groupsTitle, new Insets(0, 0, 4, 0));
-    leftColumn.getChildren().add(groupsTitle);
     MigPane groupGrid = buildGroupOnlyGrid();
-    leftColumn.getChildren().add(withRightFiller(groupGrid));
     int groupRow = 0;
     for (String groupName : character.getCoupledGroupNames()) {
       groupRow = addGroupHeaderRow(groupGrid, groupRow, groupName, true, GROUP_ONLY_BP_COLUMN, character);
     }
-
-    VBox rightColumn = new VBox();
-    Label individualTitle = new Label("Einzelfertigkeiten");
-    individualTitle.getStyleClass().add(STYLE_SECTION_TITLE);
-    VBox.setMargin(individualTitle, new Insets(0, 0, 4, 0));
-    rightColumn.getChildren().add(individualTitle);
     MigPane skillGrid = buildSkillGrid();
-    rightColumn.getChildren().add(withRightFiller(skillGrid));
     int skillRow = 1;
     for (Skill skill : character.getIndividualSkills()) {
       addSkillRow(skillGrid, skillRow++, skill, false, character);
     }
 
-    columns.getChildren().addAll(leftColumn, rightColumn);
+    VBox leftColumn = scrollingColumn("Fertigkeitsgruppen", groupGrid);
+    VBox rightColumn = scrollingColumn("Einzelfertigkeiten", skillGrid);
+    HBox.setHgrow(rightColumn, Priority.ALWAYS);
+    HBox columns = new HBox(24, leftColumn, rightColumn);
+    VBox.setVgrow(columns, Priority.ALWAYS);
     skillsContainer.getChildren().add(columns);
+  }
+
+  /** Eine Spalte des Alphabet-Modus: Titel fest oben, darunter die eigene, unabhängig scrollende Liste. */
+  private static @NonNull VBox scrollingColumn(@NonNull String title, @NonNull MigPane grid) {
+    Label label = new Label(title);
+    label.getStyleClass().add(STYLE_SECTION_TITLE);
+    VBox.setMargin(label, new Insets(0, 0, 4, 0));
+    ScrollPane scroll = new ScrollPane(withRightFiller(grid));
+    scroll.setFitToWidth(true);
+    scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scroll.getStyleClass().add("attr-scroll");
+    VBox.setVgrow(scroll, Priority.ALWAYS);
+    return new VBox(label, scroll);
   }
 
   /**
@@ -370,7 +382,7 @@ public final class SkillTabBuilder {
     useIcon(decoupleBtn, FontAwesomeSolid.UNLINK);
     decoupleBtn.setOnAction(_ -> {
       Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-      host.services().applyDialogStyle(confirm.getDialogPane());
+      TabServices.applyDialogStyle(confirm);
       confirm.setTitle("Gruppe auskoppeln");
       confirm.setHeaderText("Skillgruppe \"" + groupName + "\" wirklich auskoppeln?");
       int rating = character.getGroupRating(groupName);
@@ -533,7 +545,7 @@ public final class SkillTabBuilder {
     }
     TextInputDialog dialog = new TextInputDialog(
         skill.getSpecialization() != null ? skill.getSpecialization() : "");
-    host.services().applyDialogStyle(dialog.getDialogPane());
+    TabServices.applyDialogStyle(dialog);
     dialog.setTitle("Spezialisierung");
     dialog.setHeaderText(skill.getName() + " – Spezialisierung");
     dialog.setContentText("Spezialisierung:");

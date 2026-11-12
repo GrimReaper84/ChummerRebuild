@@ -30,7 +30,8 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Zeichnet das Anwendungs-Icon (Nutzerentscheidung 2026-11-11, {@code DECISIONS.md} ADR-043): das Font-Awesome-Free-
- * Symbol „dragon“ (CC BY 4.0, umgefärbt) in Neon-Cyan auf einem dunklen, abgerundeten Quadrat. Schreibt die
+ * Symbol „dragon“ (CC BY 4.0, umgefärbt) im Akzent-Türkis der Oberfläche auf einem abgerundeten Quadrat im dunklen
+ * Petrol der Akzent-Hintergründe (Farben wie {@code style.css}, Nutzerentscheidung 2026-11-12, ADR-049). Schreibt die
  * Fenster-Icons in die Hauptressourcen und die Installer-Icons (PNG, ICO, ICNS) in den Ordner {@code packaging}; wird
  * vom Gradle-Task {@code generateIcons} gestartet, nie vom Build. Die erzeugten Dateien sind eingecheckt.
  */
@@ -39,8 +40,10 @@ public final class GenerateIcons {
   private static final String FONT = "/META-INF/resources/fontawesome6/6.5.2/fonts/fa-solid-900.ttf";
   /** Font Awesome „dragon“ (fa-dragon). */
   private static final String DRAGON = "\uf6d5";
-  private static final Color CYAN = new Color(0x00E5FF);
-  private static final Color BACKGROUND = new Color(0x0D0F12);
+  /** {@code -cr-accent} aus {@code style.css}. */
+  private static final Color ACCENT = new Color(0x4FD1C5);
+  /** {@code -cr-accent-bg} aus {@code style.css}. */
+  private static final Color BACKGROUND = new Color(0x1F3A39);
   /** Eckenradius des abgerundeten Quadrats relativ zu seiner Größe. */
   private static final double CORNER = 0.22;
   /** Größere Seite des Symbols relativ zur Kachel. */
@@ -86,7 +89,7 @@ public final class GenerateIcons {
       double arc = 2 * CORNER * size;
       g.setColor(BACKGROUND);
       g.fill(new RoundRectangle2D.Double(0, 0, size, size, arc, arc));
-      g.setColor(CYAN);
+      g.setColor(ACCENT);
       g.fill(glyph(font, size));
     } finally {
       g.dispose();

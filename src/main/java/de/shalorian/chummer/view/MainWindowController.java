@@ -6,6 +6,8 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.persistence.CharacterStore;
 import de.shalorian.chummer.utils.PersistenceUtils;
 import de.shalorian.chummer.view.dialog.NewCharacterDialogController;
+import de.shalorian.chummer.view.shell.FloatingButtonPosition;
+import de.shalorian.chummer.view.tab.TabServices;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -15,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -40,6 +43,16 @@ public class MainWindowController {
   private MenuItem menuSaveAs;
   @FXML
   private MenuItem menuExit;
+  @FXML
+  private CheckMenuItem statusStaticItem;
+
+  /** Einstellung: Status als fester Bereich statt als Slide-Panel (Menü Einstellungen). */
+  private static final String STATUS_STATIC_KEY = "character.statusStatic";
+  private final @NonNull ViewPreferences preferences = ViewPreferences.user();
+  /** Position des Status-Knopfs, gemeinsam für alle Charaktere und gemerkt zwischen den Starts. */
+  private final @NonNull FloatingButtonPosition statusButtonPosition =
+      new FloatingButtonPosition(preferences, "character.statusButtonPosition");
+  private @Nullable CharacterViewController currentView;
 
   private @Nullable Stage stage;
   private @Nullable Character currentCharacter;
@@ -59,6 +72,16 @@ public class MainWindowController {
     menuExit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
     menuSave.setDisable(true);
     menuSaveAs.setDisable(true);
+    statusStaticItem.setSelected(preferences.getBoolean(STATUS_STATIC_KEY, false));
+  }
+
+  /** Merkt sich, ob der Status statisch angezeigt wird. */
+  @FXML
+  private void onStatusStaticChanged() {
+    preferences.putBoolean(STATUS_STATIC_KEY, statusStaticItem.isSelected());
+    if (currentView != null) {
+      currentView.setStatusStatic(statusStaticItem.isSelected());
+    }
   }
 
   @FXML
@@ -144,12 +167,14 @@ public class MainWindowController {
 
   private void showCharacter(@NonNull Character character) throws IOException {
     FXMLLoader viewLoader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("CharacterView.fxml")));
-    Parent charView = viewLoader.load();
+    viewLoader.load();
     CharacterViewController charCtrl = viewLoader.getController();
+    charCtrl.configureStatus(statusStaticItem.isSelected(), statusButtonPosition);
     charCtrl.setCharacter(character);
 
     currentCharacter = character;
-    borderPane.setCenter(charView);
+    currentView = charCtrl;
+    borderPane.setCenter(charCtrl.node());
     menuSave.setDisable(false);
     menuSaveAs.setDisable(false);
     updateTitle();
@@ -187,8 +212,7 @@ public class MainWindowController {
 
   private void showError(@NonNull String header, @Nullable String detail) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.getDialogPane().getStylesheets()
-        .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
+    TabServices.applyDialogStyle(alert);
     alert.setTitle("Fehler");
     alert.setHeaderText(header);
     alert.setContentText(detail);

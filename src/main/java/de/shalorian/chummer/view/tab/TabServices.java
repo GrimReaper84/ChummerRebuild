@@ -17,14 +17,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.controlsfx.control.Notifications;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  * Gemeinsame Dienste aller Tabs des Charakterbogens: Dialoge im App-Stil, Hinweise, Ja/Nein-Abfragen und die
@@ -32,6 +35,8 @@ import org.jspecify.annotations.Nullable;
  * {@link CharacterTabHost#services()}.
  */
 public final class TabServices {
+
+  private static final int DIALOG_ICON_SIZE = 28;
 
   private final @NonNull Supplier<Window> owner;
   private final @NonNull Runnable onLogChanged;
@@ -70,18 +75,44 @@ public final class TabServices {
   }
 
   /**
-   * Hängt das App-Stylesheet an einen {@link Alert} oder {@link TextInputDialog} — deren {@code DialogPane} bekommt
-   * sonst nie {@code style.css} zugewiesen und rendert rein mit dem JavaFX-Standard-Theme "Modena", was neben dem
-   * restlichen dunklen UI wie ein Fremdkörper wirkt.
+   * Passt einen {@link Alert} oder {@link TextInputDialog} an die App an: hängt {@code style.css} an (sonst rendert die
+   * {@code DialogPane} im Standard-Theme „Modena“) und ersetzt das eingebaute Java-Symbol durch ein Font-Awesome-Icon in
+   * der Akzentfarbe: Stift für Eingaben, Fragezeichen für Rückfragen, Dreieck für Warnungen, Kreis für Fehler und
+   * Hinweise.
    */
-  public void applyDialogStyle(@NonNull DialogPane pane) {
-    pane.getStylesheets()
+  public static void applyDialogStyle(@NonNull Dialog<?> dialog) {
+    dialog.getDialogPane().getStylesheets()
         .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
+    FontIcon icon = new FontIcon(dialogIcon(dialog));
+    icon.setIconSize(DIALOG_ICON_SIZE);
+    icon.getStyleClass().add("dialog-icon");
+    dialog.setGraphic(icon);
   }
 
-  /** Setzt Stylesheet und Besitzerfenster eines Alerts bzw. Eingabedialogs. */
+  private static @NonNull Ikon dialogIcon(@NonNull Dialog<?> dialog) {
+    if (!(dialog instanceof Alert alert)) {
+      return FontAwesomeSolid.PEN;
+    }
+    return switch (alert.getAlertType()) {
+      case CONFIRMATION -> FontAwesomeSolid.QUESTION_CIRCLE;
+      case WARNING -> FontAwesomeSolid.EXCLAMATION_TRIANGLE;
+      case ERROR -> FontAwesomeSolid.EXCLAMATION_CIRCLE;
+      case INFORMATION, NONE -> FontAwesomeSolid.INFO_CIRCLE;
+    };
+  }
+
+  /** Icon der Hinweise unten rechts statt des eingebauten ControlsFX-Symbols. */
+  private static @NonNull FontIcon notificationIcon(@NonNull Ikon ikon) {
+    FontIcon icon = new FontIcon(ikon);
+    icon.setIconSize(DIALOG_ICON_SIZE);
+    // Das Hinweis-Popup lädt style.css nicht, daher die Akzentfarbe (-cr-accent) direkt.
+    icon.setIconColor(Color.web("#4fd1c5"));
+    return icon;
+  }
+
+  /** Setzt Stil, Icon und Besitzerfenster eines Alerts bzw. Eingabedialogs. */
   private void prepare(@NonNull Dialog<?> dialog) {
-    applyDialogStyle(dialog.getDialogPane());
+    applyDialogStyle(dialog);
     dialog.initOwner(owner.get());
   }
 
@@ -91,7 +122,8 @@ public final class TabServices {
         .text("Dialog konnte nicht geöffnet werden")
         .position(Pos.BOTTOM_RIGHT)
         .owner(owner.get())
-        .showError();
+        .graphic(notificationIcon(FontAwesomeSolid.EXCLAMATION_CIRCLE))
+        .show();
   }
 
   /** Weicher Hinweis unten rechts (Projektregeln Abschnitt 8). */
@@ -101,7 +133,8 @@ public final class TabServices {
         .text(text)
         .position(Pos.BOTTOM_RIGHT)
         .owner(owner.get())
-        .showWarning();
+        .graphic(notificationIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE))
+        .show();
   }
 
   /** Ja/Nein-Dialog im App-Stil; {@code true} nur bei "Ja". */

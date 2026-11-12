@@ -320,6 +320,9 @@
 | Feature                                                              | Status | Anmerkung |
 |----------------------------------------------------------------------|--------|-----------|
 | Tastaturkürzel (Ctrl+N/O/S/Shift+S/Q)                                | ✅      |           |
+| Seitenleiste, Kopf- und Fußzeile, Status-Panel (statisch umschaltbar) | ✅      | UI-Rework 2026-11-12, ADR-049 |
+| Einheitliche Optik (Farbvariablen, Schriften, Kartenstil, Icon)      | ✅      | UI-Rework 2026-11-12, ADR-049 |
+| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ❌      | Nutzerwunsch 2026-11-12, später über die Einstellungen |
 | Bestätigungsdialog bei Karma-Ausgaben                                | ✅      |           |
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
@@ -408,7 +411,7 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
    - Noch ohne Katalog: Schutzpatrone, Metamagie, Echos, Geister/Sprites (mit ihren Features)
 9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
-10. **Grundlegende Überarbeitung der UI** (Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
+10. ✅ **Grundlegende Überarbeitung der UI** (umgesetzt 2026-11-12, ADR-049; Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
     gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,
     Darstellung der Werte, einheitliche Bausteine) vor der Planung mit dem Nutzer klären.
 

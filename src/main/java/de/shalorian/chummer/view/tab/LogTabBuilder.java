@@ -25,21 +25,16 @@ public final class LogTabBuilder {
   private final @NonNull TableView<LogEntry> nuyenTable;
   private final @NonNull Label karmaTotalLabel;
   private final @NonNull Label nuyenTotalLabel;
-  private final @NonNull Label karmaStatusLabel;
-  private final @NonNull Label nuyenStatusLabel;
   private final @NonNull CharacterTabHost host;
   private @Nullable Character character;
 
   public LogTabBuilder(@NonNull TableView<LogEntry> karmaTable,
       @NonNull TableView<LogEntry> nuyenTable, @NonNull Label karmaTotalLabel,
-      @NonNull Label nuyenTotalLabel, @NonNull Label karmaStatusLabel,
-      @NonNull Label nuyenStatusLabel, @NonNull CharacterTabHost host) {
+      @NonNull Label nuyenTotalLabel, @NonNull CharacterTabHost host) {
     this.karmaTable = karmaTable;
     this.nuyenTable = nuyenTable;
     this.karmaTotalLabel = karmaTotalLabel;
     this.nuyenTotalLabel = nuyenTotalLabel;
-    this.karmaStatusLabel = karmaStatusLabel;
-    this.nuyenStatusLabel = nuyenStatusLabel;
     this.host = host;
     buildLogTable(karmaTable);
     buildLogTable(nuyenTable);
@@ -84,11 +79,9 @@ public final class LogTabBuilder {
 
     int karma = character.getKarmaTotal();
     karmaTotalLabel.setText(String.valueOf(karma));
-    karmaStatusLabel.setText(String.valueOf(karma));
 
     int nuyen = character.getNuyenTotal();
     nuyenTotalLabel.setText(SpendCurrency.NUYEN.formatAmount(nuyen));
-    nuyenStatusLabel.setText(SpendCurrency.NUYEN.formatAmount(nuyen));
   }
 
   public @NonNull Optional<LogEntry> openEntryDialog(@NonNull String title) {
