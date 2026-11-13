@@ -19,12 +19,13 @@ import org.jspecify.annotations.Nullable;
  * sind zwei Packungen "pro 20 Stück" (GRW S. 374). Preis = Packungspreis × Menge ÷ Packungsgröße; die
  * Menge muss ein Vielfaches der Packungsgröße sein, daher wird nicht gerundet.
  *
- * <p><b>Einbauten:</b> Geräte nehmen Gegenstände der Kategorie {@link GearData#accepts()} als Kinder
- * auf: ein Kommlink höchstens ein Betriebssystem (Nutzerentscheidung 2026-10-04), Sicht- und
+ * <p><b>Einbauten:</b> Geräte nehmen Gegenstände der Kategorien {@link GearData#accepts()} als Kinder
+ * auf: ein Kommlink ein Betriebssystem (Nutzerentscheidung 2026-10-04), Hardware-Module und Softwarepakete (GRW
+ * S. 260), Programme und ein Sim-Modul, Sicht- und
  * Audiosensoren Verstärkungen und Sensorpakete Sensor-Funktionen bis zu ihrer Kapazität, ein
  * Magschloss seine Zusätze (GRW S. 379–382). Der Preis der Einbauten zählt zum Gerät, Zuschläge auf
  * die Verfügbarkeit erhöhen dessen Verfügbarkeit ({@link #getAvailabilityText()}). Matrixwerte siehe
- * {@link #getCommlinkStats()}.
+ * {@link #getMatrixStats()}; ob ein Programm läuft, zählt für das Prozessorlimit ({@link #isRunning()}).
  */
 public class Gear {
 
@@ -39,6 +40,7 @@ public class Gear {
   private final @NonNull String extra;
   private final @Nullable Integer chosenPackPrice;
   private int quantity;
+  private boolean running;
   private final List<Gear> installed = new ArrayList<>();
 
   /**
@@ -204,16 +206,29 @@ public class Gear {
   /**
    * Warum {@code child} in Stufe {@code childRating} nicht in diesen Gegenstand eingebaut werden kann,
    * oder {@code null}. Das Gerät muss die Kategorie aufnehmen ({@link GearData#accepts()}); ein
-   * Kommlink nimmt nur ein Betriebssystem auf; derselbe Einbau steckt höchstens einmal im Gerät, außer
-   * er ist "pro Stück" erhältlich (Biometrischer Scanner, GRW S. 382); die Einbauten dürfen die
+   * Kommlink nimmt nur ein Betriebssystem und ein Sim-Modul auf, von der Elektronik nur, was sich ins Kommlink
+   * einbauen lässt, Module und Pakete nach {@link MatrixUpgrades}; derselbe Einbau steckt höchstens einmal im Gerät,
+   * außer er ist "pro Stück" erhältlich (Biometrischer Scanner, GRW S. 382); die Einbauten dürfen die
    * Kapazität nicht übersteigen (GRW S. 379/380).
    */
   public @Nullable String installProblem(@NonNull GearData child, int childRating) {
-    if (child.category() != data.accepts()) {
+    if (!data.accepts().contains(child.category())) {
       return child.name() + " lässt sich nicht in " + data.name() + " einbauen";
     }
-    if (child.category() == GearCategory.OPERATING_SYSTEMS && !installed.isEmpty()) {
+    if (child.category() == GearCategory.OPERATING_SYSTEMS && getOperatingSystem() != null) {
       return data.name() + " hat bereits ein Betriebssystem";
+    }
+    if (child.category() == GearCategory.ELECTRONIC_ACCESSORIES
+        && !child.matrixFlags().contains(MatrixFlag.COMMLINK_OPTION)) {
+      return child.name() + " lässt sich nicht in " + data.name() + " einbauen";
+    }
+    if (child.simLevel() > 0 && installed.stream().anyMatch(g -> g.data.simLevel() > 0)) {
+      return data.name() + " hat bereits ein Sim-Modul";
+    }
+    MatrixBase base = getMatrixBase();
+    String upgradeProblem = base == null ? null : MatrixUpgrades.problem(child, childRating, base, installed);
+    if (upgradeProblem != null) {
+      return upgradeProblem;
     }
     if (!child.repeatable() && installed.stream().anyMatch(g -> g.data.equals(child))) {
       return child.name() + " ist bereits eingebaut";
@@ -240,20 +255,63 @@ public class Gear {
     installed.add(child);
   }
 
-  /** Baut genau diesen Gegenstand aus; {@code false}, wenn er hier nicht eingebaut ist. */
+  /**
+   * Baut genau diesen Gegenstand aus; {@code false}, wenn er hier nicht eingebaut ist. Mit dem Betriebssystem gehen
+   * auch die Softwarepakete, weil sie ohne Betriebssystem nichts aufrüsten.
+   */
   public boolean uninstall(@NonNull Gear child) {
-    return installed.remove(child);
+    boolean removed = installed.remove(child);
+    if (removed && child.data.category() == GearCategory.OPERATING_SYSTEMS) {
+      installed.removeIf(g -> g.data.category() == GearCategory.SOFTWARE_PACKAGES);
+    }
+    return removed;
+  }
+
+  /** Eingebautes Betriebssystem eines Kommlinks, oder {@code null}. */
+  public @Nullable Gear getOperatingSystem() {
+    return installed.stream().filter(g -> g.data.category() == GearCategory.OPERATING_SYSTEMS).findFirst()
+        .orElse(null);
+  }
+
+  /** Ob dies ein Matrixprogramm ist, das auf einem Gerät laufen kann. */
+  public boolean isProgram() {
+    return data.category() == GearCategory.MATRIX_PROGRAMS;
+  }
+
+  /** Ob das Programm läuft; zählt nur, solange es in einem Gerät eingebaut ist (Prozessorlimit, GRW S. 261). */
+  public boolean isRunning() {
+    return running;
   }
 
   /**
-   * Matrixwerte eines Kommlinks mit seinem Betriebssystem (GRW S. 260, 374), oder {@code null} bei
-   * anderen Gegenständen.
+   * Startet bzw. beendet das Programm.
+   *
+   * @throws IllegalStateException wenn dies kein Programm ist
    */
-  public @Nullable CommlinkStats getCommlinkStats() {
+  public void setRunning(boolean running) {
+    if (!isProgram()) {
+      throw new IllegalStateException(data.name() + " ist kein Programm");
+    }
+    this.running = running;
+  }
+
+  /**
+   * Ausgangswerte eines Kommlinks: Prozessor und Signal des Modells, Firewall und System des Betriebssystems (GRW
+   * S. 260, 374), oder {@code null} bei anderen Gegenständen.
+   */
+  public @Nullable MatrixBase getMatrixBase() {
     if (data.category() != GearCategory.COMMLINKS) {
       return null;
     }
-    return CommlinkStats.of(data, installed.isEmpty() ? null : installed.getFirst().data);
+    Gear os = getOperatingSystem();
+    return new MatrixBase(data.processor(), data.signal(), os == null ? 0 : os.data.firewall(),
+        os == null ? 0 : os.data.system());
+  }
+
+  /** Wirksame Matrixwerte eines Kommlinks mit Einbauten ({@link MatrixStats}), oder {@code null}. */
+  public @Nullable MatrixStats getMatrixStats() {
+    MatrixBase base = getMatrixBase();
+    return base == null ? null : MatrixStats.of(base, installed);
   }
 
   // --- Verfügbarkeit ---
@@ -309,7 +367,7 @@ public class Gear {
    */
   public boolean canInstallAnyOf(@NonNull Collection<GearData> candidates) {
     return candidates.stream()
-        .filter(candidate -> candidate.category() == data.accepts())
+        .filter(candidate -> data.accepts().contains(candidate.category()))
         .anyMatch(candidate -> installProblem(candidate, candidate.lowestRating()) == null);
   }
 

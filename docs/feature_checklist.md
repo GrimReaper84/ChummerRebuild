@@ -159,6 +159,7 @@
 | Technomancer-Tab (Schwund, Komplexe Formen) | ✅      | Eigener Tab, nur sichtbar mit Resonanz (`syncTechnomancerTabVisibility()`); Schwund-Widerstand als feste Anzeige "Willenskraft + Resonanz" — kein Stream-Auswahlkonzept, da das GRW-Kern keine Streams kennt (User-Entscheidung 2026-08-08, `docs/plaene/archiv/technomancer_plan.md`) |
 | Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (alle 21 GRW-Programme S. 271–273 inkl. Panzerung, Seiten am Bild geprüft 2026-11-12), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
 | Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ✅ | GRW S. 112, `Character.canAddComplexFormAtCreation()`, Hinweis im Technomancer-Tab, 2026-11-12 |
+| Lebende Persona | ✅ | 2026-11-13 (ADR-054): Firewall WIL, Prozessor INT (+1 in VR), Signal RES ÷ 2 aufgerundet, System LOG, je ≤ RES; Biofeedback-Filter CHA (S. 279, am Bild) |
 | Sprites (registriert/kompiliert)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Technomancer, 5 Sprite-Arten mit Werten (S. 282); Erschaffung 1 BP je Dienst, Stufe = Resonanz, Dienste ≤ Kompilieren, registrierte ≤ Charisma (S. 113); Karriere nur eintragen |
 | Wandlung (Submersion)                      | ✅      | 2026-11-12 (ADR-052): gleicher Bereich, Titel „Wandlung“, fünf Echos (S. 284), Firewall-/System-Upgrade und Neurofilter bis 3×, Wirkung als Hinweis. Offen: Lebende Persona als Rechnung |
 
@@ -179,7 +180,8 @@
 | Unverträglichkeiten                                           | ✅      | Datengetrieben, im Dialog gesperrt mit Grund, in beide Richtungen; Gesteigerte Reflexe ↔ technische Initiativesteigerung (S. 230) |
 | Kommlink-Headware                                             | ✅      | Kommlink-Modell aus dem Ausrüstungskatalog wird eingebaut, samt Betriebssystem (S. 386) |
 | Cybergliedmaßen, Cyberwaffen                                  | ✅      | 2026-11-12 (ADR-051): 14 Glieder mit Stelle, An-/Abnehmen, Maßanfertigung, Verbesserungen, 5 Zubehörteile, 4 Cyber-Nahkampfwaffen, Head-/Bodyware mit Gliedkapazität, Durchschnitt über fünf Körperteile, Monitor +1 je Glied, Gliedpanzerung (Summe wie C#), Waffen mit Glied-STR. Offen: Cyberguns (GRW ohne Kosten), Einstellung Gliedpanzerung als Durchschnitt, Schockhand-Ladungen |
-| Smartlink-Bonus, Matrix-Initiative (Sim-Modul), Talentleitungen mit Aktionssofts | ❌ | Nur Hinweis, bis Waffen-Pools, Matrix-Initiative bzw. Aktionssofts kommen |
+| Datenbuchse, Kommlink, Sim-Modul, Simrig für VR | ✅ | 2026-11-13 (ADR-054): Neuralinterface bzw. Sim-Modul (kalt/heiß) als Implantat-Wirkung, zählen für den Matrixzugang (S. 258, 386) |
+| Smartlink-Bonus, Talentleitungen mit Aktionssofts | ❌ | Nur Hinweis, bis Waffen-Pools (Roadmap 8) bzw. Aktionssofts kommen |
 
 ---
 
@@ -226,8 +228,8 @@
 | Allgemeine Ausrüstung kaufen | ✅ | Gear Teil A (`docs/plaene/archiv/gear_plan.md`, 2026-10-04): Unter-Tab "Ausrüstung" (Baum nach Bereich + Detailbereich), 140 Einträge aus 28 GRW-Tabellen (S. 368, 374–385, 395, am Bild übertragen), Menge in Packungsschritten mit Zusammenführen, Pflicht-Zusatztext (Lizenz mit Vorauswahl), Preisspannen mit Mindestpreis, Karriere-Kauf/Mengenerhöhung über das Nuyen-Log, Persistenz. UI vom Nutzer noch nicht angesehen |
 | Stufe ≤ 6 bei Erschaffung (allgemein) | ✅ | `Equipment.isAvailableForPurchase` (GRW S. 111), gilt für alle Kaufkategorien mit Stufe |
 | Kommlink mit Prozessor/Signal + Betriebssystem (Firewall/System) | ✅ | Gear Teil B (2026-10-08): 9 Kommlinks, 6 Betriebssysteme (GRW S. 374, am Bild); Betriebssystem als Kindknoten, gekauft über "Betriebssystem installieren", höchstens eins je Kommlink; System ≤ Prozessor (S. 260) mit Hinweis im Detailbereich; Kommlinks/Betriebssysteme sind Einzelstücke (Menge 1, kein Zusammenführen). UI vom Nutzer noch nicht angesehen |
-| Matrixprogramme mit Preisbändern | ✅ | Gear Teil B: 6 Zeilen der Tabelle S. 376 (Preis bis Stufe 3 / ab Stufe 4), Programmname als Pflicht-Zusatztext (Freitext, keine Programmliste). Programme "System"/"Firewall" sind reine Käufe ohne Wirkung auf Kommlink-Werte |
-| Kommlink-Aufrüstungen, laufende Programme/Matrix-Regeln | ❌ | Zurückgestellt; Programme nicht einem Kommlink zugeordnet. **Korrektur 2026-10-09:** GRW-Preise gibt es doch: Tabelle "Preise für Hardware-Upgrades" S. 261 (Prozessor/Signal, Modulstufe 1–6, am Bild geprüft), Regel S. 260 (höchstens +2 auf die Ausgangsstufe, ein Modul je Attribut); Firewall/System als Softwarepaket zu den Programmpreisen S. 376. Umsetzung bleibt offen (gemeinsam mit Fahrzeug-Matrix-Upgrades zu entscheiden, `docs/analysen/archiv/fahrzeuge_analyse.md` F12) |
+| Matrixprogramme | ✅ | 2026-11-13 (ADR-054): 7 Standard-, 15 Hackingprogramme und Agent einzeln (S. 271–273, am Bild), Preisbänder der Tabelle S. 272/376; einzeln kaufbar oder ins Kommlink einbaubar, Stufe wirkt höchstens mit dem System. Programmpakete (Basic User …) bleiben draußen |
+| Kommlink-Aufrüstungen, laufende Programme, aktives Kommlink | ✅ | 2026-11-13 (ADR-054): Prozessor-/Signal-Modul 1–6 (S. 261, am Bild), Firewall-/System-Paket (S. 260/376), +2 nur auf Hardware, eins je Attribut; Schalter „läuft“ mit Prozessorlimit (S. 261); Sim-Modul im Kommlink; aktives Kommlink (auch Headware) wird im Status-Panel gewählt |
 | Sensoren, Sicht-/Audioverstärkung, Magschloss-Zusätze (Kapazität) | ✅ | Gear Teil C (2026-10-08): 10 visuelle/optische Geräte, 8 Sichtverstärkungen, 3 Audiosensoren, 3 Audioverstärkungen, 3 Sensorpakete (RFID/Mikro/Hand, 0 ¥ mangels GRW-Preis), 12 Sensor-Funktionen (inkl. Kamera/Mikrofon als Sensor), 3 Magschloss-Zusätze (GRW S. 378–382, am Bild). Einbau über "Einbauen" mit Kapazitätsprüfung, Verfügbarkeitszuschläge erhöhen die Verfügbarkeit des Geräts (auch für die Grenze 12 bei Erschaffung). UI vom Nutzer noch nicht angesehen |
 | Drohnen-/Fahrzeug-Sensorpakete | ✅ | Fahrzeug-Feature (2026-10-09): Stationär/kleine Drohne 5/4, Mittlere Drohne 6/4, Große Drohne 8/4, Fahrzeug 12/5 (Kapazität/Signal, GRW S. 381); "Sensorpaket (Hand)" heißt jetzt "Sensorpaket (Hand/Minidrohne)" wie die GRW-Zeile (alte Speicherdateien verlieren diesen Eintrag beim Laden) |
 | Autosoft-Typ als Auswahl | ✅ | 2026-10-09: Abwehr, Clearsight, Elektronische Kriegsführung, Steuerung, Zielerfassung (GRW S. 287); ohne Unterangabe Waffe/Fahrzeugtyp (Nutzerentscheidung) |
@@ -251,7 +253,7 @@
 | Waffen in Halterungen | ✅ | Feuerwaffen bis LMG + Granatwerfer (GRW S. 395 + Nutzerentscheidung), eine je Halterung, nur Tabellenwerte (ohne Fertigkeit/Würfelpool); gehören nicht zu den Charakterwaffen |
 | Ausrüstung im Fahrzeug | ✅ | Beliebige Ausrüstung, mitgeliefertes Sensorpaket mit Einbau von Sensor-Funktionen, mitgelieferte Autosofts (Doberman, Steel Lynx, Stormcloud, Fly-Spy) und Medkit 4 (AutoDoc) kostenlos und nicht entfernbar |
 | Zubehör an Fahrzeugwaffen | ❌ | Zurückgestellt (Nutzerentscheidung 2026-10-09) |
-| Matrix-Upgrades (Prozessor/Signal/Firewall/System) | ❌ | Zurückgestellt, gemeinsam mit den Kommlink-Aufrüstungen (GRW S. 260/261, 376) |
+| Matrix-Upgrades (Prozessor/Signal/Firewall/System) | ✅ | 2026-11-13 (ADR-054): Gerätestufe als Ausgangswert, dieselben Module und Pakete wie beim Kommlink (S. 260/261) |
 | Pilot-Upgrade | ❌ | Kein eindeutiger GRW-Beleg, zurückgestellt |
 | Eigenname, Notizen, Orte | ❌ | Zurückgestellt (gemeinsam mit Gear/Waffen) |
 | Schaden am Zustandsmonitor, Würfelpools Rigger/Drohnen, Fahrzeugkampf | ❌ | Roadmap (Condition Monitor, Würfelpools) |
@@ -285,7 +287,7 @@
 |----------------------------------------------------|--------|-----------|
 | Physische Initiative = INT + REA (+ Modifikatoren) | ✅      | Initiativeattribut (GRW S. 172) mit wirksamen Werten, gekappt auf ⌊1,5 × (REA-Max + INT-Max)⌋ (S. 91), Verletzungsmodifikator abgezogen; Tab „Zustand“, 2026-11-12 |
 | Astrale Initiative = INT × 2                       | ✅      | GRW S. 227, 3 Durchgänge, nur mit Astralzugang (Gabe Zauberer; Magieradept nicht, S. 116) |
-| Matrix-Initiative (mit Commlink oder Technomancer) | ❌      | Zurückgestellt (Nutzerentscheidung 2026-11-12). GRW S. 265/276/279: kaltes/heißes Sim mit Prozessor + INT, Technomancer INT × 2 + 1 |
+| Matrix-Initiative (mit Commlink oder Technomancer) | ✅      | 2026-11-13 (ADR-054): AR = körperlich (S. 265); VR kalt Prozessor + INT / 2, heiß + 1 / 3 (S. 276), braucht Sim-Modul und Neuralinterface (S. 258); Technomancer (INT × 2) + 1 / 3 (S. 279) |
 | Initiative Passes anzeigen                         | ✅      | 1 + Gesteigerte Reflexe (S. 230); Reflexbooster noch nicht; astral 3 |
 
 ---
@@ -368,12 +370,12 @@
 **Roadmap bis zum ersten Release (Nutzerentscheidung 2026-11-13, Reihenfolge fest):** Die Punkte 1–5 der
 README-Roadmap sind erledigt; es folgen:
 
-6. **Matrix und Kommlinks:** Hardware-Aufrüstungen (S. 260/261) und Firewall/System (S. 376), Programme einem
-   Kommlink zuordnen, Matrix-Initiative (S. 265/276/279, Abschnitt 16), Sim-Modul und Smartlink als echte Boni
-   (Abschnitt 10), Matrix-Upgrades für Fahrzeuge (Abschnitt 14).
+6. ✅ **Matrix und Kommlinks (2026-11-13, ADR-054):** Hardware-Aufrüstungen (S. 260/261) und Firewall/System (S. 376), Programme einem
+   Kommlink zuordnen, Matrix-Initiative (S. 265/276/279, Abschnitt 16) mit Sim-Modul (Abschnitt 10), Lebende
+   Persona, Matrix-Upgrades für Fahrzeuge (Abschnitt 14). Plan: `docs/plaene/archiv/matrix_kommlinks_plan.md`.
 7. **Magie abrunden:** Foki binden (Karma) und ihre Wirkung (Abschnitt 13), Katalog der Schutzpatrone mit Boni
    (bisher nur Freitext an der Gabe), situative Adeptenkräfte als Rechnung.
-8. **Kampfwerte vervollständigen:** Munitionswirkung auf Waffenwerte (Abschnitt 13), Smartlink-Bonus auf den Pool,
+8. **Kampfwerte vervollständigen:** Munitionswirkung auf Waffenwerte (Abschnitt 13), Smartlink-Bonus auf den Pool (aus Punkt 6 verschoben, Nutzerentscheidung 2026-11-13),
    Würfelpools für Rigger und Drohnen, Fahrzeugschaden am Zustandsmonitor (Abschnitt 14).
 9. **Karrieremodus ausbauen:** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
    von Ausrüstung (GRW-Beleg noch suchen, Abschnitt 15).

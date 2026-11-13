@@ -148,6 +148,9 @@ public final class VehicleTabBuilder {
       for (Gear gear : vehicle.getGear()) {
         selectedItem = addGearItem(item, vehicle, gear, selected, selectedItem);
       }
+      for (Gear upgrade : vehicle.getMatrixUpgrades()) {
+        selectedItem = addGearItem(item, vehicle, upgrade, selected, selectedItem);
+      }
     }
     TreeItem<VehicleTreeEntry> root = new TreeItem<>();
     root.getChildren().addAll(groups.values());
@@ -224,6 +227,9 @@ public final class VehicleTabBuilder {
       }
     });
 
+    Button matrixBtn = vehicleButton("Matrix-Upgrade einbauen", FontAwesomeSolid.MICROCHIP, tree);
+    matrixBtn.setOnAction(_ -> withVehicle(tree, v -> onAddMatrixUpgrade(character, v)));
+
     Button gearBtn = vehicleButton("Ausrüstung ins Fahrzeug legen", FontAwesomeSolid.BOX_OPEN, tree);
     gearBtn.setOnAction(_ -> withVehicle(tree, v -> onAddGear(character, v)));
 
@@ -231,7 +237,7 @@ public final class VehicleTabBuilder {
     installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       VehicleTreeEntry entry = selectedEntry(tree);
       Gear gear = entry == null ? null : entry.gear();
-      return gear == null || gear.getData().accepts() == null;
+      return gear == null || gear.getData().accepts().isEmpty();
     }, tree.getSelectionModel().selectedItemProperty()));
     installBtn.setOnAction(_ -> {
       VehicleTreeEntry entry = selectedEntry(tree);
@@ -256,7 +262,7 @@ public final class VehicleTabBuilder {
     toolbar.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    toolbar.getChildren().addAll(spacer, removeBtn, installBtn, gearBtn, weaponBtn, mountBtn,
+    toolbar.getChildren().addAll(spacer, removeBtn, installBtn, gearBtn, matrixBtn, weaponBtn, mountBtn,
         riggerBtn, addBtn);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
@@ -344,6 +350,7 @@ public final class VehicleTabBuilder {
     addRowCells(grid, 4, detailKey("Verf."), detailValue(d.availability()),
         detailKey("Preis"), detailValue(d.cost()),
         detailKey("Quelle"), detailValue(d.source()));
+    addRowCells(grid, 5, detailKey("Matrix"), detailValue(d.matrix()));
     Label included = detailHint("Mitgeliefert: " + d.included());
     included.setWrapText(true);
     details.getChildren().addAll(title, grid, included);
@@ -508,6 +515,32 @@ public final class VehicleTabBuilder {
     }
   }
 
+  /**
+   * Kauft ein Hardware-Modul oder Softwarepaket für {@code vehicle} (GRW S. 260/261); im Karrieremodus wird der Preis
+   * nach Bestätigung abgebucht.
+   */
+  private void onAddMatrixUpgrade(@NonNull Character character, @NonNull Vehicle vehicle) {
+    try {
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml",
+          "Matrix-Upgrade für " + vehicle.getName());
+      GearSelectDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setVehicleUpgradeTarget(character, vehicle);
+      dialog.stage().showAndWait();
+
+      ctrl.getResult().ifPresent(upgrade -> {
+        if (character.isCreated() && host.services().nuyenChargeFailed(character,
+            "Kauf: " + upgrade.getDisplayName() + " für " + vehicle.getName(), upgrade.getNuyenCost())) {
+          return;
+        }
+        vehicle.addMatrixUpgrade(upgrade);
+        onChanged(character, upgrade);
+      });
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
+    }
+  }
+
   private void onInstall(@NonNull Character character, @NonNull Vehicle vehicle,
       @NonNull Gear device) {
     // Prüfung im Handler statt Sperre aus Live-Zustand (Projektregeln §8)
@@ -574,6 +607,9 @@ public final class VehicleTabBuilder {
         return;
       }
       vehicle.removeRiggerAdapter();
+      onChanged(character, vehicle);
+    } else if (gear != null && vehicle.getMatrixUpgrades().contains(gear)) {
+      vehicle.removeMatrixUpgrade(gear);
       onChanged(character, vehicle);
     } else if (gear != null) {
       if (vehicle.isIncluded(gear)) {

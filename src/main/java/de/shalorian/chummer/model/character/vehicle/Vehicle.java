@@ -4,6 +4,9 @@ import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
+import de.shalorian.chummer.model.character.gear.MatrixBase;
+import de.shalorian.chummer.model.character.gear.MatrixStats;
+import de.shalorian.chummer.model.character.gear.MatrixUpgrades;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponData;
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class Vehicle {
   private final List<WeaponMount> mounts = new ArrayList<>();
   private final List<Gear> includedGear = new ArrayList<>();
   private final List<Gear> gear = new ArrayList<>();
+  private final List<Gear> matrixUpgrades = new ArrayList<>();
   private boolean riggerAdapterPurchased;
 
   /**
@@ -152,6 +156,44 @@ public class Vehicle {
   /** Baut einen nachgerüsteten Riggeradapter aus (ein mitgelieferter bleibt). */
   public void removeRiggerAdapter() {
     riggerAdapterPurchased = false;
+  }
+
+  // --- Matrix (GRW S. 260/261) ---
+
+  /** Eingebaute Hardware-Module und Softwarepakete. */
+  public @NonNull List<Gear> getMatrixUpgrades() {
+    return Collections.unmodifiableList(matrixUpgrades);
+  }
+
+  /** Matrixwerte: alle Attribute = Gerätestufe (S. 261), ersetzt durch eingebaute Module und Pakete (S. 260). */
+  public @NonNull MatrixStats getMatrixStats() {
+    return MatrixStats.of(MatrixBase.ofDeviceRating(getDeviceRating()), matrixUpgrades);
+  }
+
+  /** Warum {@code upgrade} in Stufe {@code rating} nicht eingebaut werden kann, oder {@code null}. */
+  public @Nullable String matrixUpgradeProblem(@NonNull GearData upgrade, int rating) {
+    if (upgrade.matrixAttribute() == null) {
+      return upgrade.name() + " ist kein Hardware-Modul oder Softwarepaket";
+    }
+    return MatrixUpgrades.problem(upgrade, rating, MatrixBase.ofDeviceRating(getDeviceRating()), matrixUpgrades);
+  }
+
+  /**
+   * Baut ein Modul bzw. Paket ein.
+   *
+   * @throws IllegalArgumentException wenn {@link #matrixUpgradeProblem} einen Grund liefert
+   */
+  public void addMatrixUpgrade(@NonNull Gear upgrade) {
+    String problem = matrixUpgradeProblem(upgrade.getData(), upgrade.getRating());
+    if (problem != null) {
+      throw new IllegalArgumentException(problem);
+    }
+    matrixUpgrades.add(upgrade);
+  }
+
+  /** Baut genau dieses Modul bzw. Paket aus. */
+  public void removeMatrixUpgrade(@NonNull Gear upgrade) {
+    matrixUpgrades.remove(upgrade);
   }
 
   // --- Waffenhalterungen ---
@@ -332,6 +374,7 @@ public class Vehicle {
       }
     }
     cost += gear.stream().mapToInt(Gear::getNuyenCost).sum();
+    cost += matrixUpgrades.stream().mapToInt(Gear::getNuyenCost).sum();
     cost += includedGear.stream()
         .flatMap(device -> device.getInstalled().stream())
         .mapToInt(Gear::getNuyenCost)

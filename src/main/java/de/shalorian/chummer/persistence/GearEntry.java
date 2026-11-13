@@ -18,6 +18,10 @@ class GearEntry {
   public @Nullable Integer packPrice;
   /** Einbauten, z.B. das Betriebssystem eines Kommlinks; fehlt in Dateien vor Gear Teil B. */
   public @NonNull List<GearEntry> installed = new ArrayList<>();
+  /** Ob ein Programm läuft (Prozessorlimit); fehlt in Dateien vor ADR-054. */
+  public boolean running;
+  /** Ob dies das ausdrücklich gewählte aktive Kommlink ist; fehlt in Dateien vor ADR-054. */
+  public boolean active;
 
   public GearEntry() {
   }

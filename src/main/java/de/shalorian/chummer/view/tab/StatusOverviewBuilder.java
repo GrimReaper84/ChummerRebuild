@@ -1,15 +1,18 @@
 package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.MatrixAccess;
 import de.shalorian.chummer.model.character.armor.SpecialProtection;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
+import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
@@ -42,12 +45,13 @@ public final class StatusOverviewBuilder {
   /**
    * Baut die Übersicht für {@code character}.
    *
-   * @param onDamageChanged nach einem Klick auf ein Kästchen aufgerufen, damit alle Anzeigen den Schaden nachziehen
+   * @param onDamageChanged nach einem Klick auf ein Kästchen bzw. nach der Wahl des aktiven Kommlinks aufgerufen, damit
+   *                        alle Anzeigen nachziehen
    */
   public static @NonNull Node build(@NonNull Character character, @NonNull Runnable onDamageChanged) {
     VBox root = new VBox(CARD_GAP);
     root.setPrefWidth(WIDTH);
-    root.getChildren().addAll(header(character), initiative(character), conditionMonitor(character, onDamageChanged),
+    root.getChildren().addAll(header(character), initiative(character, onDamageChanged), conditionMonitor(character, onDamageChanged),
         protectionAndEssence(character), specialAttributes(character));
     List<String> hints = StatusHints.of(character);
     if (!hints.isEmpty()) {
@@ -63,7 +67,7 @@ public final class StatusOverviewBuilder {
     return card(new VBox(2, name, meta));
   }
 
-  private static @NonNull Node initiative(@NonNull Character c) {
+  private static @NonNull Node initiative(@NonNull Character c, @NonNull Runnable onChanged) {
     int wound = c.getWoundModifier();
     String composition = "REA %d + INT %d".formatted(c.getAugmentedAttributeValue(AttributeType.REA),
         c.getAugmentedAttributeValue(AttributeType.INT)) + (wound == 0 ? "" : " − " + -wound + " Verletzung");
@@ -73,7 +77,56 @@ public final class StatusOverviewBuilder {
     grid.add(figure(String.valueOf(c.getInitiativePasses()), "Durchgänge", c.getInitiativePasses() > 1), 1, 0);
     grid.add(figure(astral, c.hasAstralAccess()
         ? "Astral, " + Character.ASTRAL_INITIATIVE_PASSES + " Durchgänge" : "Astral", false), 2, 0);
-    return card(titled("INITIATIVE", grid));
+    addMatrixRow(grid, c);
+    List<Gear> commlinks = c.getEquipment().getCommlinks();
+    if (commlinks.size() < 2) {
+      return card(titled("INITIATIVE", grid));
+    }
+    return card(titled("INITIATIVE", new VBox(8, grid, commlinkChooser(c, commlinks, onChanged))));
+  }
+
+  /**
+   * Auswahl des aktiven Kommlinks bei mehreren (Ausrüstung und Kommlink-Headware); ohne Wahl gilt keins, und die
+   * Matrixzeile nennt das. Das Panel wird nach jeder Änderung neu gebaut, die Auswahl veraltet also nicht.
+   */
+  private static @NonNull Node commlinkChooser(@NonNull Character c, @NonNull List<Gear> commlinks,
+      @NonNull Runnable onChanged) {
+    List<Gear> carried = c.getEquipment().getGear();
+    ComboBox<String> box = new ComboBox<>();
+    box.setPromptText("Aktives Kommlink wählen");
+    box.getItems().setAll(commlinks.stream()
+        .map(g -> g.getDisplayName() + (carried.contains(g) ? "" : " (implantiert)")).toList());
+    Gear active = c.getEquipment().getActiveCommlink();
+    if (active != null) {
+      box.getSelectionModel().select(commlinks.indexOf(active));
+    }
+    box.getSelectionModel().selectedIndexProperty().addListener((_, _, index) -> {
+      if (index.intValue() >= 0) {
+        c.getEquipment().setActiveCommlink(commlinks.get(index.intValue()));
+        onChanged.run();
+      }
+    });
+    box.setMaxWidth(Double.MAX_VALUE);
+    return new VBox(2, styled(new Label("Aktives Kommlink"), "key-caption"), box);
+  }
+
+  /**
+   * Matrixinitiative (GRW S. 265, 276, 279): Wert und Durchgänge je Zugang, dazu ein Hinweis, was für VR fehlt; in AR
+   * gilt die Körperliche Initiative.
+   */
+  private static void addMatrixRow(@NonNull GridPane grid, @NonNull Character c) {
+    MatrixAccess access = c.getMatrixAccess();
+    boolean online = access != MatrixAccess.NONE;
+    String caption = "Matrix · " + access.getDisplayName() + (access == MatrixAccess.AR ? " (körperlich)" : "");
+    grid.add(figure(online ? String.valueOf(c.getMatrixInitiative()) : "–", caption, false), 0, 1);
+    grid.add(figure(online ? String.valueOf(c.getMatrixInitiativePasses()) : "–", "Matrix-Durchgänge",
+        access.isVirtual()), 1, 1);
+    String hint = c.getMatrixAccessHint();
+    if (hint != null) {
+      Label hintLabel = styled(new Label(hint), "key-caption");
+      hintLabel.setWrapText(true);
+      grid.add(hintLabel, 2, 1);
+    }
   }
 
   private static @NonNull Node conditionMonitor(@NonNull Character c, @NonNull Runnable onDamageChanged) {

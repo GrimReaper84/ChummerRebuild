@@ -24,8 +24,9 @@ import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.cyberware.ImplantEffect;
 import de.shalorian.chummer.model.character.cyberware.LimbAttributes;
 import de.shalorian.chummer.model.character.cyberware.LimbPart;
-import de.shalorian.chummer.model.character.gear.CommlinkStats;
 import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearCategory;
+import de.shalorian.chummer.model.character.gear.MatrixStats;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.dialog.CyberwareSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
@@ -33,9 +34,11 @@ import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
@@ -413,14 +416,16 @@ public final class CyberwareTabBuilder {
     if (commlink == null) {
       return row;
     }
-    addCommlinkRow(grid, row, headware, commlink);
-    return row + 1;
+    return addCommlinkRow(grid, row, headware, commlink);
   }
 
-  /** Eingebautes Kommlink der Kommlink-Headware samt Betriebssystem. */
-  private void addCommlinkRow(@NonNull MigPane grid, int row, @NonNull Cyberware headware, @NonNull Gear commlink) {
-    String os = commlink.getInstalled().isEmpty() ? "ohne Betriebssystem"
-        : commlink.getInstalled().getFirst().getName();
+  /**
+   * Eingebautes Kommlink der Kommlink-Headware samt Betriebssystem, darunter je Einbau (Module, Pakete, Programme,
+   * Sim-Modul) eine Zeile; Programme mit Schalter „läuft“ (Prozessorlimit, GRW S. 261). Liefert die nächste Zeile.
+   */
+  private int addCommlinkRow(@NonNull MigPane grid, int row, @NonNull Cyberware headware, @NonNull Gear commlink) {
+    Gear operatingSystem = commlink.getOperatingSystem();
+    String os = operatingSystem == null ? "ohne Betriebssystem" : operatingSystem.getName();
     Label nameLabel = styled(new Label(CHILD_PREFIX + commlink.getName() + " (" + os + ")"), STYLE_ATTR_NAME);
     Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(commlink.getNuyenCost())), STYLE_ATTR_BP);
     Label statsLabel = styled(new Label(commlinkStatsText(commlink)), STYLE_ATTR_RANGE);
@@ -429,11 +434,9 @@ public final class CyberwareTabBuilder {
 
     HBox actions = new HBox(6);
     actions.setAlignment(Pos.CENTER_LEFT);
-    if (commlink.getInstalled().isEmpty()) {
-      Button osBtn = actionButton("Betriebssystem", FontAwesomeSolid.PLUS);
-      osBtn.setOnAction(_ -> onInstallOperatingSystem(commlink));
-      actions.getChildren().add(osBtn);
-    }
+    Button installBtn = actionButton("Einbauen", FontAwesomeSolid.MICROCHIP);
+    installBtn.setOnAction(_ -> onInstallIntoCommlink(commlink));
+    actions.getChildren().add(installBtn);
     Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(_ -> {
       headware.removeCommlink();
@@ -442,20 +445,50 @@ public final class CyberwareTabBuilder {
     actions.getChildren().add(removeBtn);
     addRowCells(grid, row, nameLabel, new Label(), new Label(), new Label(), new Label(), priceLabel,
         statsLabel, sourceLabel, actions);
-  }
-
-  /** Matrixwerte des eingebauten Kommlinks wie im Ausrüstungs-Detail (GRW S. 260, 374); ohne Betriebssystem „–“. */
-  private static @NonNull String commlinkStatsText(@NonNull Gear commlink) {
-    CommlinkStats stats = commlink.getCommlinkStats();
-    if (stats == null) {
-      return "";
+    int next = row + 1;
+    MatrixStats stats = Objects.requireNonNull(commlink.getMatrixStats());
+    for (Gear part : commlink.getInstalled()) {
+      if (part.getData().category() == GearCategory.OPERATING_SYSTEMS) {
+        continue; // steht schon in der Kommlink-Zeile
+      }
+      addCommlinkPartRow(grid, next++, commlink, part, stats);
     }
-    return "Prozessor %d, Signal %d, Firewall %s, System %s".formatted(stats.processor(), stats.signal(),
-        orNoValue(stats.firewall()), orNoValue(stats.system()));
+    return next;
   }
 
-  private static @NonNull String orNoValue(int value) {
-    return value == 0 ? "–" : String.valueOf(value);
+  /** Ein Einbau im Headware-Kommlink; Programme zeigen ihre wirksame Stufe (höchstens System, S. 271). */
+  private void addCommlinkPartRow(@NonNull MigPane grid, int row, @NonNull Gear commlink, @NonNull Gear part,
+      @NonNull MatrixStats stats) {
+    Label nameLabel = styled(new Label("      " + CHILD_PREFIX.strip() + " " + part.getDisplayName()), STYLE_ATTR_NAME);
+    Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(part.getNuyenCost())), STYLE_ATTR_BP);
+    Label infoLabel = styled(new Label(part.isProgram()
+        ? "läuft mit Stufe " + stats.programRating(part.getRating()) : ""), STYLE_ATTR_RANGE);
+    HBox actions = new HBox(6);
+    actions.setAlignment(Pos.CENTER_LEFT);
+    if (part.isProgram()) {
+      CheckBox running = new CheckBox("läuft");
+      running.setSelected(part.isRunning());
+      running.selectedProperty().addListener((_, _, value) -> {
+        part.setRunning(value);
+        onCyberwareChanged();
+      });
+      actions.getChildren().add(running);
+    }
+    Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
+    removeBtn.setOnAction(_ -> {
+      commlink.uninstall(part);
+      onCyberwareChanged();
+    });
+    actions.getChildren().add(removeBtn);
+    addRowCells(grid, row, nameLabel, new Label(), new Label(), new Label(), new Label(), priceLabel, infoLabel,
+        styled(new Label(part.getData().source() + " S. " + part.getData().page()), STYLE_ATTR_RANGE), actions);
+  }
+
+  /** Matrixwerte des eingebauten Kommlinks, dieselben Texte wie im Ausrüstungs-Detail ({@link GearDetails}). */
+  private static @NonNull String commlinkStatsText(@NonNull Gear commlink) {
+    GearDetails d = GearDetails.of(commlink);
+    return "Prozessor %s, Signal %s, Firewall %s, System %s".formatted(d.processor(), d.signal(), d.firewall(),
+        d.system());
   }
 
   private static @NonNull Label styled(@NonNull Label label, @NonNull String styleClass) {
@@ -499,6 +532,8 @@ public final class CyberwareTabBuilder {
         case KNOWLEDGE_SKILL_DICE -> "Wissensfertigkeiten +" + value;
         case SELECTED_SKILL_DICE -> implant.getChoice() + " +" + value;
         case WOUND_BOXES_IGNORED -> value + " Kästchen ignoriert";
+        case DNI -> "Neuralinterface";
+        case SIM_MODULE -> value > 1 ? "heißes Sim" : "kaltes Sim";
       });
     }
     return String.join(", ", parts);
@@ -600,23 +635,23 @@ public final class CyberwareTabBuilder {
   }
 
   /** Baut ein Betriebssystem in das Kommlink der Kommlink-Headware ein, wie im Ausrüstungs-Tab. */
-  private void onInstallOperatingSystem(@NonNull Gear commlink) {
+  private void onInstallIntoCommlink(@NonNull Gear commlink) {
     Character ch = this.character;
     if (ch == null) {
       return;
     }
     try {
-      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml", "Betriebssystem einbauen");
+      DialogHandle dialog = host.services().openDialog("GearSelectDialog.fxml", "Einbau in " + commlink.getName());
       GearSelectDialogController ctrl = dialog.loader().getController();
       ctrl.setStage(dialog.stage());
       ctrl.setInstallTarget(ch, commlink);
       dialog.stage().showAndWait();
 
-      ctrl.getResult().ifPresent(os -> {
-        if (chargeFailed(ch, os.getName() + " in " + commlink.getName(), os.getNuyenCost())) {
+      ctrl.getResult().ifPresent(part -> {
+        if (chargeFailed(ch, part.getName() + " in " + commlink.getName(), part.getNuyenCost())) {
           return;
         }
-        commlink.install(os);
+        commlink.install(part);
         onCyberwareChanged();
       });
     } catch (IOException _) {

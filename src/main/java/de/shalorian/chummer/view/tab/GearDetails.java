@@ -1,11 +1,11 @@
 package de.shalorian.chummer.view.tab;
 
-import de.shalorian.chummer.model.character.gear.CommlinkStats;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearUnit;
+import de.shalorian.chummer.model.character.gear.MatrixStats;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -28,12 +28,13 @@ import org.jspecify.annotations.Nullable;
  * @param ammunition   ob die Kampfwerte Modifikatoren der Munition sind ("Schadensmod.",
  *                     "PB-Modifikator", GRW S. 369)
  * @param commlink     ob der Gegenstand ein Kommlink ist (dann sind die vier Matrixwerte belegt)
- * @param processor    Prozessor eines Kommlinks, leer bei anderen Gegenständen (ebenso die drei
- *                     folgenden Werte)
+ * @param processor    wirksamer Prozessor eines Kommlinks, ggf. mit Senkung durch das Prozessorlimit (GRW S. 261),
+ *                     leer bei anderen Gegenständen (ebenso die folgenden Matrixwerte)
  * @param signal       Signal eines Kommlinks
  * @param firewall     Firewall des installierten Betriebssystems, "–" ohne Betriebssystem
  * @param system       wirksames System, ggf. mit Hinweis auf die Begrenzung durch den Prozessor
  *                     (GRW S. 260)
+ * @param processorLimit laufende Programme gegen das Prozessorlimit, z.B. "6 laufend, Limit 5"
  */
 record GearDetails(
     @NonNull String name,
@@ -55,14 +56,15 @@ record GearDetails(
     @NonNull String processor,
     @NonNull String signal,
     @NonNull String firewall,
-    @NonNull String system
+    @NonNull String system,
+    @NonNull String processorLimit
 ) {
 
   private static final String NO_VALUE = "–";
 
   static @NonNull GearDetails of(@NonNull Gear gear) {
     GearData data = gear.getData();
-    CommlinkStats stats = gear.getCommlinkStats();
+    MatrixStats stats = gear.getMatrixStats();
     return new GearDetails(
         gear.getDisplayName(),
         data.category().getDisplayName(),
@@ -80,10 +82,11 @@ record GearDetails(
         data.combat(),
         data.category() == GearCategory.AMMUNITION,
         stats != null,
-        stats == null ? "" : String.valueOf(stats.processor()),
+        stats == null ? "" : processorText(stats),
         stats == null ? "" : String.valueOf(stats.signal()),
         stats == null ? "" : orNoValue(stats.firewall()),
-        stats == null ? "" : systemText(stats));
+        stats == null ? "" : systemText(stats),
+        stats == null ? "" : stats.runningPrograms() + " laufend, Limit " + stats.processorLimit());
   }
 
   private static @NonNull String capacityText(@NonNull Gear gear) {
@@ -99,8 +102,15 @@ record GearDetails(
     return value > 0 ? String.valueOf(value) : NO_VALUE;
   }
 
+  /** z.B. "4" oder "3 (−1 Prozessorlimit)". */
+  private static @NonNull String processorText(@NonNull MatrixStats stats) {
+    int penalty = stats.processorPenalty();
+    return penalty == 0 ? String.valueOf(stats.processor())
+        : stats.processor() + " (−" + penalty + " Prozessorlimit)";
+  }
+
   /** z.B. "3", "1 (auf Prozessor begrenzt, Betriebssystem 3)" oder "–" ohne Betriebssystem. */
-  private static @NonNull String systemText(@NonNull CommlinkStats stats) {
+  private static @NonNull String systemText(@NonNull MatrixStats stats) {
     if (!stats.isSystemCapped()) {
       return orNoValue(stats.system());
     }

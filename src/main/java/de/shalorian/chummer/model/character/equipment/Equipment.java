@@ -13,6 +13,7 @@ import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.skill.Skill;
@@ -65,6 +66,7 @@ public class Equipment {
   private final List<Gear> gear = new ArrayList<>();
   private final List<Vehicle> vehicles = new ArrayList<>();
   private final @NonNull Lifestyle lifestyle = new Lifestyle();
+  private @Nullable Gear activeCommlink;
 
   /** Leere Ausrüstung für {@code owner}; ruft im Konstruktor nichts auf dem Charakter auf. */
   public Equipment(@NonNull Character owner) {
@@ -417,6 +419,46 @@ public class Equipment {
     if (!gear.remove(item)) {
       gear.forEach(device -> device.uninstall(item));
     }
+  }
+
+  // --- Kommlinks ---
+
+  /** Kommlinks des Charakters: gekaufte Kommlink-Modelle und die Kommlinks in Kommlink-Headware (S. 374, 386). */
+  public @NonNull List<Gear> getCommlinks() {
+    List<Gear> commlinks = new ArrayList<>(gear.stream()
+        .filter(g -> g.getData().category() == GearCategory.COMMLINKS).toList());
+    commlinks.addAll(owner.getImplants().getCommlinks());
+    return commlinks;
+  }
+
+  /**
+   * Das Kommlink, über das der Charakter online geht (Matrixinitiative): das gewählte, solange es noch vorhanden ist,
+   * sonst das einzige Kommlink; {@code null} ohne Kommlink oder bei mehreren ohne Wahl.
+   */
+  public @Nullable Gear getActiveCommlink() {
+    Gear chosen = getChosenCommlink();
+    if (chosen != null) {
+      return chosen;
+    }
+    List<Gear> commlinks = getCommlinks();
+    return commlinks.size() == 1 ? commlinks.getFirst() : null;
+  }
+
+  /** Das ausdrücklich gewählte Kommlink, solange es noch vorhanden ist, sonst {@code null} (Speichern). */
+  public @Nullable Gear getChosenCommlink() {
+    return activeCommlink != null && getCommlinks().contains(activeCommlink) ? activeCommlink : null;
+  }
+
+  /**
+   * Wählt das aktive Kommlink.
+   *
+   * @throws IllegalArgumentException wenn {@code commlink} keins der Kommlinks des Charakters ist
+   */
+  public void setActiveCommlink(@NonNull Gear commlink) {
+    if (!getCommlinks().contains(commlink)) {
+      throw new IllegalArgumentException(commlink.getName() + " ist kein Kommlink des Charakters");
+    }
+    activeCommlink = commlink;
   }
 
   /** Gesamtpreis aller gekauften Ausrüstungsgegenstände in Nuyen. */

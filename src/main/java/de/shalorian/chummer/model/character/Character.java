@@ -12,6 +12,9 @@ import de.shalorian.chummer.model.character.condition.AttributeTest;
 import de.shalorian.chummer.model.character.cyberware.ImplantEffectType;
 import de.shalorian.chummer.model.character.cyberware.Implants;
 import de.shalorian.chummer.model.character.equipment.Equipment;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.GearData;
+import de.shalorian.chummer.model.character.gear.MatrixFlag;
 import de.shalorian.chummer.model.character.initiation.Initiation;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
@@ -33,6 +36,7 @@ import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.spirit.Spirits;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
+import de.shalorian.chummer.model.character.technomancer.LivingPersona;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -1553,6 +1557,116 @@ public class Character {
    */
   public int getAstralInitiative() {
     return Math.max(0, getAugmentedAttributeValue(AttributeType.INT) * 2 + getWoundModifier());
+  }
+
+  // --- Matrix ---
+
+  /** Durchgänge in VR mit kaltem Sim (S. 276). */
+  public static final int VR_COLD_PASSES = 2;
+  /** Durchgänge in VR mit heißem Sim, auch für Technomancer (S. 276, 279). */
+  public static final int VR_HOT_PASSES = 3;
+
+  /**
+   * Matrixzugang: Technomancer über die Lebende Persona immer heißes Sim (S. 279); sonst braucht es ein aktives
+   * Kommlink ({@link Equipment#getActiveCommlink()}), für VR dazu ein Sim-Modul und ein Direktes Neuralinterface
+   * (S. 258). Das Sim-Modul steckt im aktiven Kommlink, ist implantiert oder Teil eines Simrigs; das Interface kommt
+   * aus einem Implantat (Datenbuchse, Kommlink, Sim-Modul) oder aus Elektroden bzw. Simrig (S. 374, 386).
+   */
+  public @NonNull MatrixAccess getMatrixAccess() {
+    if (hasResonance()) {
+      return MatrixAccess.VR_HOT;
+    }
+    Gear commlink = equipment.getActiveCommlink();
+    if (commlink == null) {
+      return MatrixAccess.NONE;
+    }
+    int sim = simModuleLevel(commlink);
+    if (sim == 0 || !hasNeuralInterface()) {
+      return MatrixAccess.AR;
+    }
+    return sim > 1 ? MatrixAccess.VR_HOT : MatrixAccess.VR_COLD;
+  }
+
+  /**
+   * 0 ohne Sim-Modul, 1 kaltes, 2 heißes Sim. Es zählt ein Sim-Modul im aktiven Kommlink, ein implantiertes oder das
+   * eines getragenen Simrigs; ein lose gekauftes Sim-Modul ist mit keinem Kommlink verbunden und zählt nicht
+   * (Plan-Annahme A3). Ein Simrig erkennt man daran, dass er Neuralinterface und Sim-Modul zugleich ist.
+   */
+  private int simModuleLevel(@NonNull Gear commlink) {
+    int level = implants.maxLevel(ImplantEffectType.SIM_MODULE);
+    for (Gear part : commlink.getInstalled()) {
+      level = Math.max(level, part.getData().simLevel());
+    }
+    for (Gear item : equipment.getGear()) {
+      if (item.getData().matrixFlags().contains(MatrixFlag.DNI)) {
+        level = Math.max(level, item.getData().simLevel());
+      }
+    }
+    return level;
+  }
+
+  private boolean hasNeuralInterface() {
+    return implants.maxLevel(ImplantEffectType.DNI) > 0
+        || equipment.getGear().stream().anyMatch(g -> g.getData().matrixFlags().contains(MatrixFlag.DNI));
+  }
+
+  /** Was für den Matrixzugang bzw. für VR fehlt, oder {@code null} bei VR. */
+  public @Nullable String getMatrixAccessHint() {
+    return switch (getMatrixAccess()) {
+      case NONE -> equipment.getCommlinks().isEmpty() ? "Kein Kommlink" : "Aktives Kommlink wählen";
+      case AR -> {
+        Gear commlink = Objects.requireNonNull(equipment.getActiveCommlink());
+        List<String> missing = new ArrayList<>();
+        if (simModuleLevel(commlink) == 0) {
+          missing.add("Sim-Modul (im aktiven Kommlink, implantiert oder im Simrig)");
+        }
+        if (!hasNeuralInterface()) {
+          missing.add("Direktes Neuralinterface");
+        }
+        yield "Für VR fehlt: " + String.join(", ", missing);
+      }
+      case VR_COLD, VR_HOT -> null;
+    };
+  }
+
+  /**
+   * Matrixinitiative mit Verletzungsmodifikator, nicht unter 0: Technomancer über die Lebende Persona (S. 279), sonst
+   * in AR die Körperliche Initiative (S. 265), in VR Prozessor des aktiven Kommlinks (nach Prozessorlimit) + Intuition,
+   * mit heißem Sim + 1 (S. 276).
+   */
+  public int getMatrixInitiative() {
+    LivingPersona persona = getLivingPersona();
+    int intuition = getAugmentedAttributeValue(AttributeType.INT);
+    int base = persona != null ? persona.matrixInitiative() : switch (getMatrixAccess()) {
+      case NONE, AR -> getInitiativeAttribute();
+      case VR_COLD -> activeCommlinkProcessor() + intuition;
+      case VR_HOT -> activeCommlinkProcessor() + intuition + 1;
+    };
+    return Math.max(0, base + getWoundModifier());
+  }
+
+  private int activeCommlinkProcessor() {
+    Gear commlink = Objects.requireNonNull(equipment.getActiveCommlink());
+    return Objects.requireNonNull(commlink.getMatrixStats()).processor();
+  }
+
+  /** Durchgänge der Matrixinitiative: in AR die körperlichen, in VR 2 (kalt) bzw. 3 (heiß) (S. 276). */
+  public int getMatrixInitiativePasses() {
+    return switch (getMatrixAccess()) {
+      case NONE, AR -> getInitiativePasses();
+      case VR_COLD -> VR_COLD_PASSES;
+      case VR_HOT -> VR_HOT_PASSES;
+    };
+  }
+
+  /** Lebende Persona aus den wirksamen Werten (S. 279), oder {@code null} ohne Resonanz. */
+  public @Nullable LivingPersona getLivingPersona() {
+    if (!hasResonance()) {
+      return null;
+    }
+    return LivingPersona.of(getAugmentedAttributeValue(AttributeType.WIL), getAugmentedAttributeValue(AttributeType.INT),
+        getAugmentedAttributeValue(AttributeType.LOG), getAugmentedAttributeValue(AttributeType.CHA),
+        getEffectiveMagicOrResonanceValue());
   }
 
   /**

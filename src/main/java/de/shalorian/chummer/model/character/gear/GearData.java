@@ -4,6 +4,7 @@ import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.cyberware.RatingFormula;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import java.math.RoundingMode;
+import java.util.Set;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -21,8 +22,8 @@ import org.jspecify.annotations.Nullable;
  * "Preis (bis Stufe 6)" (S. 376, z.B. Hacking "Stufe x 500 ¥" bzw. "Stufe x 1.000 ¥"). {@link
  * #cost()} gilt dann bis Stufe 3, {@link #highCost()} ab Stufe {@value #HIGH_COST_FROM_RATING}.
  *
- * <p><b>Einbauten:</b> Geräte mit {@link #accepts()} nehmen Gegenstände dieser Kategorie auf
- * (Kommlink → Betriebssystem, Brille → Sichtverstärkung, Sensorpaket → Sensor-Funktion, Magschloss →
+ * <p><b>Einbauten:</b> Geräte mit {@link #accepts()} nehmen Gegenstände dieser Kategorien auf
+ * (Kommlink → Betriebssystem, Module, Pakete, Programme, Sim-Modul; Brille → Sichtverstärkung, Sensorpaket → Sensor-Funktion, Magschloss →
  * Zusätze). Hat das Gerät eine {@link #capacity()}, darf die Summe der {@link #capacityCost()} seiner
  * Einbauten sie nicht übersteigen. SR4-Grundregelwerk S. 379: Sichtverstärkungen belegen je 1 Punkt
  * (Ultraschall 2), Audioverstärkung "1 Punkt Kapazität (pro Stufe)"; S. 380: Die Sensoren eines Pakets
@@ -46,7 +47,8 @@ import org.jspecify.annotations.Nullable;
  * @param highCost     Preisformel ab Stufe {@value #HIGH_COST_FROM_RATING} (Matrixprogramme), sonst
  *                     leer
  * @param availabilitySurcharge ob die Verfügbarkeit ein Zuschlag auf das Gerät ist ("+4")
- * @param accepts      Kategorie, deren Gegenstände das Gerät als Einbau aufnimmt, sonst {@code null}
+ * @param accepts      Kategorien, deren Gegenstände das Gerät als Einbau aufnimmt (Kommlink: Betriebssystem,
+ *                     Hardware-Module, Softwarepakete, Programme, Sim-Modul), sonst leer
  * @param capacity     Kapazitätsformel des Geräts ("Rating" bzw. fester Wert), leer ohne Kapazität
  * @param capacityCost Kapazitätsbedarf als Einbau ("1", "2", "Rating"), leer ohne Bedarf
  * @param repeatable   ob derselbe Einbau mehrfach in einem Gerät stecken darf ("pro Stück")
@@ -54,6 +56,8 @@ import org.jspecify.annotations.Nullable;
  * @param packSize     Anzahl Einheiten, für die {@link #cost()} gilt (mindestens 1)
  * @param variableCost ob der Preis eine Spanne ist, die der Spieler festlegt
  * @param extraKind    ob und wie ein Zusatztext beim Kauf anzugeben ist
+ * @param matrixFlags  Merkmale für den Matrixzugang (Neuralinterface, Sim-Modul, Kommlink-Einbau), sonst leer
+ * @param matrixAttribute Attribut, das ein Hardware-Modul oder Softwarepaket aufrüstet (S. 260), sonst {@code null}
  * @param extraLabel   Feldbezeichnung des Zusatztexts (z.B. "Fertigkeit"), leer ohne Zusatztext
  * @param note         Hinweis aus Tabelle oder Text (z.B. Waffenwerte, Monatsbeitrag), sonst leer
  */
@@ -71,7 +75,7 @@ public record GearData(
     @NonNull String cost,
     @NonNull String highCost,
     boolean availabilitySurcharge,
-    @Nullable GearCategory accepts,
+    @NonNull Set<GearCategory> accepts,
     @NonNull String capacity,
     @NonNull String capacityCost,
     boolean repeatable,
@@ -80,6 +84,8 @@ public record GearData(
     @NonNull GearUnit unit,
     boolean variableCost,
     @NonNull ExtraKind extraKind,
+    @NonNull Set<MatrixFlag> matrixFlags,
+    @Nullable MatrixAttribute matrixAttribute,
     @NonNull String extraLabel,
     @NonNull String note,
     @NonNull String source,
@@ -90,12 +96,25 @@ public record GearData(
   public static final int HIGH_COST_FROM_RATING = 4;
 
   public GearData {
+    accepts = Set.copyOf(accepts);
+    matrixFlags = Set.copyOf(matrixFlags);
     if (packSize < 1) {
       throw new IllegalArgumentException(name + ": Packungsgröße muss mindestens 1 sein");
     }
     if (minRating > maxRating || (maxRating > 0 && minRating < 1)) {
       throw new IllegalArgumentException(name + ": ungültiger Stufenbereich");
     }
+  }
+
+  /**
+   * Sim-Modul des Gegenstands (GRW S. 374): 0 ohne, 1 kaltes Sim (Sim-Modul, auch im Simrig enthalten), 2 heißes Sim
+   * (modifiziertes Sim-Modul).
+   */
+  public int simLevel() {
+    if (matrixFlags.contains(MatrixFlag.SIM_HOT)) {
+      return 2;
+    }
+    return matrixFlags.contains(MatrixFlag.SIM_COLD) ? 1 : 0;
   }
 
   /** Ob der Gegenstand in Stufen (bzw. Kraftstufen) erhältlich ist. */
@@ -123,7 +142,7 @@ public record GearData(
    * eigenen), und Einbauten selbst, weil sie in genau einem Gerät stecken.
    */
   public boolean isSingleItem() {
-    return accepts != null || category.isInstalledOnly();
+    return !accepts.isEmpty() || category.isInstalledOnly();
   }
 
   /** Verfügbarkeit wie im GRW angezeigt, bei einem Zuschlag mit "+" (z.B. "+4E", "8", "–"). */

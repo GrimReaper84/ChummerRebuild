@@ -92,4 +92,17 @@ class GearDetailsTest {
     assertEquals("Führerschein", license.extra());
     assertEquals("6V", license.availability());
   }
+
+  @Test
+  void commlinkShowsProcessorLimitPenalty() {
+    // Meta Link (Prozessor 1) mit Vector Xim (System 1): ein laufendes Programm senkt den Prozessor auf 0 (S. 261)
+    Gear commlink = new Gear(find("Meta Link"), 0);
+    commlink.install(new Gear(find("Vector Xim"), 0));
+    Gear analyse = new Gear(find("Analyse"), 1);
+    commlink.install(analyse);
+    analyse.setRunning(true);
+    GearDetails d = GearDetails.of(commlink);
+    assertEquals("0 (−1 Prozessorlimit)", d.processor());
+    assertEquals("1 laufend, Limit 1", d.processorLimit());
+  }
 }

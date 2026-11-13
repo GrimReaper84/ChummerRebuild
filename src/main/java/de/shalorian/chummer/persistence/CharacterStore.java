@@ -142,13 +142,14 @@ public class CharacterStore {
     data.initiation = new InitiationEntry(character.getInitiation().getGrade(),
         character.getInitiation().getTechniques().stream().map(TechniqueData::name).toList());
     IdentityHashMap<Cyberware, Integer> pairIds = pairIds(character);
+    Gear chosenCommlink = character.getEquipment().getChosenCommlink();
     data.cyberware = character.getEquipment().getCyberware().stream()
-        .map(implant -> toCyberwareEntry(implant, pairIds))
+        .map(implant -> toCyberwareEntry(implant, pairIds, chosenCommlink))
         .toList();
     data.armor = character.getEquipment().getArmor().stream().map(CharacterStore::toArmorEntry).toList();
     data.weapons = character.getEquipment().getWeapons().stream().map(CharacterStore::toWeaponEntry)
         .toList();
-    data.gear = character.getEquipment().getGear().stream().map(CharacterStore::toGearEntry)
+    data.gear = character.getEquipment().getGear().stream().map(g -> toGearEntry(g, chosenCommlink))
         .toList();
     data.vehicles = character.getEquipment().getVehicles().stream()
         .map(CharacterStore::toVehicleEntry)
@@ -179,6 +180,7 @@ public class CharacterStore {
         .toList();
     entry.includedGear = vehicle.getIncludedGear().stream().map(CharacterStore::toGearEntry).toList();
     entry.gear = vehicle.getGear().stream().map(CharacterStore::toGearEntry).toList();
+    entry.matrixUpgrades = vehicle.getMatrixUpgrades().stream().map(CharacterStore::toGearEntry).toList();
     return entry;
   }
 
@@ -208,13 +210,14 @@ public class CharacterStore {
   }
 
   private static @NonNull CyberwareEntry toCyberwareEntry(@NonNull Cyberware implant,
-      @NonNull IdentityHashMap<Cyberware, Integer> pairIds) {
+      @NonNull IdentityHashMap<Cyberware, Integer> pairIds, @Nullable Gear chosenCommlink) {
     CyberwareEntry entry = new CyberwareEntry(implant.getName(), implant.getGrade().name(), implant.getRating());
     entry.choice = implant.getChoice();
     entry.price = implant.getChosenPrice();
-    entry.installed = implant.getInstalled().stream().map(child -> toCyberwareEntry(child, pairIds)).toList();
+    entry.installed = implant.getInstalled().stream()
+        .map(child -> toCyberwareEntry(child, pairIds, chosenCommlink)).toList();
     Gear commlink = implant.getCommlink();
-    entry.commlink = commlink == null ? null : toGearEntry(commlink);
+    entry.commlink = commlink == null ? null : toGearEntry(commlink, chosenCommlink);
     BodyLocation location = implant.getLocation();
     if (location != null) {
       entry.location = location.name();
@@ -228,10 +231,19 @@ public class CharacterStore {
     return entry;
   }
 
+  /** Wie {@link #toGearEntry(Gear)}, dazu die Markierung, ob {@code gear} das gewählte aktive Kommlink ist. */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieses Kommlink
+  private static @NonNull GearEntry toGearEntry(@NonNull Gear gear, @Nullable Gear chosenCommlink) {
+    GearEntry entry = toGearEntry(gear);
+    entry.active = gear == chosenCommlink;
+    return entry;
+  }
+
   private static @NonNull GearEntry toGearEntry(@NonNull Gear gear) {
     GearEntry entry = new GearEntry(gear.getName(), gear.getRating(), gear.getQuantity(),
         gear.getExtra(), gear.getChosenPackPrice());
     entry.installed = gear.getInstalled().stream().map(CharacterStore::toGearEntry).toList();
+    entry.running = gear.isRunning();
     return entry;
   }
 
@@ -280,10 +292,14 @@ public class CharacterStore {
     applyTradition(character, data);
     applySpells(character, data);
     applyComplexForms(character, data);
-    applyCyberware(character, data);
+    Gear chosenCommlink = applyCyberware(character, data);
     applyArmor(character, data);
     applyWeapons(character, data);
-    applyGear(character, data);
+    Gear chosenGear = applyGear(character, data);
+    chosenCommlink = chosenGear != null ? chosenGear : chosenCommlink;
+    if (chosenCommlink != null) {
+      character.getEquipment().setActiveCommlink(chosenCommlink);
+    }
     applyVehicles(character, data);
     applyLifestyle(character, data);
     // Schaden zuletzt: die Spaltengröße hängt von verstärkter KON und WIL ab (Qualities, Attribute, Adeptenkräfte,
@@ -351,16 +367,22 @@ public class CharacterStore {
    * passen, werden — analog {@link #applyComplexForms} — übersprungen; eine unbekannte Grade fällt auf {@link
    * CyberwareGrade#STANDARD} zurück (analog zur Nachsicht bei {@link #applyTradition}). Zubehör und Kommlink, die
    * nicht mehr passen, werden ebenfalls übersprungen.
+   *
+   * @return das als aktiv gespeicherte Headware-Kommlink, oder {@code null}
    */
-  private static void applyCyberware(@NonNull Character character, @NonNull CharacterData data) {
+  private static @Nullable Gear applyCyberware(@NonNull Character character, @NonNull CharacterData data) {
     Map<Integer, List<Cyberware>> pairs = new HashMap<>();
+    List<Gear> chosen = new ArrayList<>();
     for (CyberwareEntry entry : data.cyberware) {
-      Cyberware implant = toCyberware(entry, pairs);
+      Cyberware implant = toCyberware(entry, pairs, chosen);
       if (implant != null) {
         character.getEquipment().addCyberware(implant);
       }
     }
     linkPairs(character, pairs);
+    // nur ein Kommlink, das tatsächlich eingebaut ist, kommt in Frage
+    List<Gear> commlinks = character.getImplants().getCommlinks();
+    return chosen.stream().filter(commlinks::contains).findFirst().orElse(null);
   }
 
   /**
@@ -379,9 +401,12 @@ public class CharacterStore {
     }
   }
 
-  /** Implantat aus {@code entry}; Teile einer Sprunghydraulik sammelt {@code pairs} nach ihrer Kennung. */
+  /**
+   * Implantat aus {@code entry}; Teile einer Sprunghydraulik sammelt {@code pairs} nach ihrer Kennung, ein als aktiv
+   * gespeichertes Kommlink {@code chosen}.
+   */
   private static @Nullable Cyberware toCyberware(@NonNull CyberwareEntry entry,
-      @NonNull Map<Integer, List<Cyberware>> pairs) {
+      @NonNull Map<Integer, List<Cyberware>> pairs, @NonNull List<Gear> chosen) {
     CyberwareData cyberwareData = CyberwareDataLoader.findByName(entry.name);
     if (cyberwareData == null) {
       return null;
@@ -411,7 +436,7 @@ public class CharacterStore {
       if (childEntry.pairedCopy && childEntry.pair == 0) {
         continue; // zweiter Teil ohne Kennung: sein Original ist nicht zuzuordnen
       }
-      Cyberware child = toCyberware(childEntry, pairs);
+      Cyberware child = toCyberware(childEntry, pairs, chosen);
       if (child != null && implant.installProblem(child.getData(), child.getRating()) == null) {
         implant.install(child);
         if (childEntry.pair > 0) {
@@ -422,6 +447,9 @@ public class CharacterStore {
     Gear commlink = entry.commlink == null ? null : toGear(entry.commlink);
     if (commlink != null && implant.commlinkProblem(commlink.getData()) == null) {
       implant.setCommlink(commlink);
+      if (Objects.requireNonNull(entry.commlink).active) {
+        chosen.add(commlink);
+      }
     }
     return implant;
   }
@@ -494,8 +522,11 @@ public class CharacterStore {
    * Stellt die gekaufte Ausrüstung wieder her; unbekannte Katalognamen, Einträge mit unzulässiger
    * Stufe, Menge, Zusatztext oder Preis und Einbauten ohne Gerät (Betriebssystem ohne Kommlink)
    * werden übersprungen statt die ganze Datei abzulehnen.
+   *
+   * @return das als aktiv gespeicherte Kommlink der Ausrüstung, oder {@code null}
    */
-  private static void applyGear(@NonNull Character character, @NonNull CharacterData data) {
+  private static @Nullable Gear applyGear(@NonNull Character character, @NonNull CharacterData data) {
+    Gear chosen = null;
     for (GearEntry entry : data.gear) {
       Gear gear = toGear(entry);
       if (gear == null) {
@@ -504,9 +535,13 @@ public class CharacterStore {
       // Einbauten ohne Gerät und Pfeile ohne Bogen gehören nicht in die Ausrüstungsliste
       GearCategory category = gear.getData().category();
       if (!category.isInstalledOnly() && category != GearCategory.ARROWS) {
-        character.getEquipment().addGear(gear);
+        Gear added = character.getEquipment().addGear(gear);
+        if (entry.active && category == GearCategory.COMMLINKS) {
+          chosen = added;
+        }
       }
     }
+    return chosen;
   }
 
   /**
@@ -528,6 +563,7 @@ public class CharacterStore {
       applyMounts(vehicle, entry.mounts);
       applyIncludedGear(vehicle, entry.includedGear);
       applyVehicleGear(vehicle, entry.gear);
+      applyMatrixUpgrades(vehicle, entry.matrixUpgrades);
       character.getEquipment().addVehicle(vehicle);
     }
   }
@@ -544,6 +580,16 @@ public class CharacterStore {
       GearEntry savedDevice = entries.get(i);
       if (device.getName().equals(savedDevice.name)) {
         installChildren(device, savedDevice.installed);
+      }
+    }
+  }
+
+  /** Stellt die Matrix-Aufrüstungen eines Fahrzeugs wieder her; unpassende werden übersprungen. */
+  private static void applyMatrixUpgrades(@NonNull Vehicle vehicle, @NonNull List<GearEntry> entries) {
+    for (GearEntry upgradeEntry : entries) {
+      Gear upgrade = toGear(upgradeEntry);
+      if (upgrade != null && vehicle.matrixUpgradeProblem(upgrade.getData(), upgrade.getRating()) == null) {
+        vehicle.addMatrixUpgrade(upgrade);
       }
     }
   }
@@ -597,6 +643,9 @@ public class CharacterStore {
       return null;
     }
     installChildren(gear, entry.installed);
+    if (entry.running && gear.isProgram()) {
+      gear.setRunning(true);
+    }
     return gear;
   }
 

@@ -46,6 +46,7 @@ public final class TechnomancerTabBuilder {
   private final @NonNull VBox technomancerContainer;
   private final @NonNull CharacterTabHost host;
   private final @NonNull SpiritSection spiritSection;
+  private final @NonNull LivingPersonaSection personaSection = new LivingPersonaSection();
   private final @NonNull IncrementWiring wiring;
   private final @NonNull List<Runnable> complexFormRefreshers = new ArrayList<>();
   private @Nullable Character character;
@@ -63,10 +64,14 @@ public final class TechnomancerTabBuilder {
     this.character = character;
   }
 
-  /** Bewertet die +/−-Zeilen der Komplexen Formen neu (Karma, Resonanz-Cap) und baut den Abschnitt Sprites neu. */
+  /**
+   * Bewertet die +/−-Zeilen der Komplexen Formen neu (Karma, Resonanz-Cap) und baut die Abschnitte Lebende Persona und
+   * Sprites neu.
+   */
   public void refresh() {
     complexFormRefreshers.forEach(Runnable::run);
     if (character != null) {
+      personaSection.build(character);
       spiritSection.build(character);
     }
   }
@@ -104,6 +109,7 @@ public final class TechnomancerTabBuilder {
     HBox.setHgrow(spacer, Priority.ALWAYS);
     header.getChildren().add(spacer);
     header.getChildren().add(addBtn);
+    technomancerContainer.getChildren().add(personaSection.build(ch));
     technomancerContainer.getChildren().add(header);
 
     MigPane grid = buildComplexFormGrid();

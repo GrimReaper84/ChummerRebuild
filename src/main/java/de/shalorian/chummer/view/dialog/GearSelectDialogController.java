@@ -9,6 +9,7 @@ import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
+import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -88,6 +89,8 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
   private @Nullable Gear installTarget;
   /** Ob nur Pfeile für einen Bogen gekauft werden (Waffen-Tab). */
   private boolean arrowsOnly;
+  /** Fahrzeug, das ein Hardware-Modul oder Softwarepaket bekommt (GRW S. 260/261), sonst {@code null}. */
+  private @Nullable Vehicle upgradeTarget;
   /** Kommlink-Headware, in die das gewählte Kommlink-Modell eingebaut wird (GRW S. 386), sonst {@code null}. */
   private @Nullable Cyberware commlinkTarget;
   /** Eintrag, für den Stufe, Menge, Zusatztext und Preis zuletzt eingerichtet wurden. */
@@ -146,6 +149,14 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     updateList();
   }
 
+  /** Kauf eines Hardware-Moduls oder Softwarepakets für {@code vehicle}; nur diese erscheinen (GRW S. 260/261). */
+  public void setVehicleUpgradeTarget(@NonNull Character character, @NonNull Vehicle vehicle) {
+    this.character = character;
+    this.upgradeTarget = vehicle;
+    refreshCategoryOptions();
+    updateList();
+  }
+
   /** Kauf von Pfeilen für einen Bogen; nur Pfeile erscheinen (GRW S. 361). */
   public void setArrowsOnly(@NonNull Character character) {
     this.character = character;
@@ -165,6 +176,9 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     }
     if (commlinkTarget != null) {
       return commlinkTarget.commlinkProblem(data);
+    }
+    if (upgradeTarget != null) {
+      return upgradeTarget.matrixUpgradeProblem(data, rating);
     }
     if (data.category() == GearCategory.ARROWS && !arrowsOnly) {
       return "Pfeile werden im Waffen-Tab an einem Bogen gekauft („Pfeile hinzufügen“).";
@@ -212,7 +226,10 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     if (commlinkTarget != null) {
       return data.category() == commlinkTarget.getData().acceptedGear();
     }
-    return installTarget == null || data.category() == installTarget.getData().accepts();
+    if (upgradeTarget != null) {
+      return data.matrixAttribute() != null;
+    }
+    return installTarget == null || installTarget.getData().accepts().contains(data.category());
   }
 
   /**

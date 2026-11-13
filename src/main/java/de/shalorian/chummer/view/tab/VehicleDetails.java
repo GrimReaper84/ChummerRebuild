@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view.tab;
 
+import de.shalorian.chummer.model.character.gear.MatrixStats;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.vehicle.VehicleData;
 import de.shalorian.chummer.model.character.vehicle.VehicleModification;
@@ -19,6 +20,7 @@ import org.jspecify.annotations.NonNull;
  * @param riggerAdapter    "mitgeliefert", "eingebaut" oder "–"
  * @param included         mitgelieferte Ausstattung, kommagetrennt
  * @param cost             Fahrzeugpreis, mit Ausstattung zusätzlich die Gesamtsumme
+ * @param matrix           wirksame Matrixwerte aus Gerätestufe und Aufrüstungen (GRW S. 260/261)
  */
 record VehicleDetails(
     @NonNull String name,
@@ -38,7 +40,8 @@ record VehicleDetails(
     @NonNull String availability,
     @NonNull String cost,
     @NonNull String source,
-    @NonNull String note
+    @NonNull String note,
+    @NonNull String matrix
 ) {
 
   private static final String NO_VALUE = "–";
@@ -65,7 +68,13 @@ record VehicleDetails(
         data.availability().displayText(0),
         costText(vehicle),
         data.source() + " S. " + data.page(),
-        data.note());
+        data.note(),
+        matrixText(vehicle.getMatrixStats()));
+  }
+
+  private static @NonNull String matrixText(@NonNull MatrixStats stats) {
+    return "Prozessor %d · Signal %d · Firewall %d · System %d".formatted(stats.processor(), stats.signal(),
+        stats.firewall(), stats.system());
   }
 
   private static @NonNull String sensorText(@NonNull Vehicle vehicle) {

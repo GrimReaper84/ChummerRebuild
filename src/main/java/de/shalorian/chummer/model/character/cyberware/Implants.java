@@ -3,6 +3,7 @@ package de.shalorian.chummer.model.character.cyberware;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.adept.AdeptPowerEffect;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.quality.QualityBonusType;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -420,6 +422,20 @@ public class Implants {
   }
 
   // --- Wirkungen ---
+
+  /**
+   * Höchster Wert einer Wirkung über alle Implantate samt Einbauten in Cybergliedmaßen, z.B. ob ein Direktes
+   * Neuralinterface vorhanden ist oder welches Sim-Modul implantiert ist (GRW S. 258, 386).
+   */
+  public int maxLevel(@NonNull ImplantEffectType type) {
+    return implantsWithLimbParts().stream().mapToInt(c -> c.getData().effectValue(type, null, c.getRating())).max()
+        .orElse(0);
+  }
+
+  /** Eingebaute Kommlinks der Kommlink-Headware, auch in Cybergliedmaßen (S. 386). */
+  public @NonNull List<Gear> getCommlinks() {
+    return implantsWithLimbParts().stream().flatMap(c -> Stream.ofNullable(c.getCommlink())).toList();
+  }
 
   /** Summe einer Wirkung über alle Implantate, unabhängig vom Ziel. */
   public int level(@NonNull ImplantEffectType type) {

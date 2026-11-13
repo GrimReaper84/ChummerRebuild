@@ -16,6 +16,7 @@ import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
+import de.shalorian.chummer.model.character.gear.MatrixStats;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -44,10 +46,12 @@ import org.tbee.javafx.scene.layout.MigPane;
  * {@code frmCreate.Designer.cs}: Kopfzeile mit Kosten, Werkzeugleiste (Gegenstand hinzufügen,
  * Auswahl entfernen), links ein Baum der gekauften Gegenstände, rechts ein Detailbereich mit den
  * Werten und einem Mengen-Stepper. Abweichend vom Original gruppiert der Baum nach Bereich der
- * GRW-Ausrüstungsliste ({@link GearArea}); Lagerorte, "Equipped", Kommlink-Schalter und Fokusbindung
+ * GRW-Ausrüstungsliste ({@link GearArea}); Lagerorte, "Equipped" und Fokusbindung
  * fehlen bewusst ({@code docs/plaene/archiv/gear_plan.md} Abschnitt 7). Einbauten (Betriebssystem im
  * Kommlink, Verstärkungen, Sensor-Funktionen, Magschloss-Zusätze) hängen als Kindknoten unter ihrem
- * Gerät und werden über "Einbauen" gekauft; Geräte mit Kapazität zeigen "belegt von gesamt".
+ * Gerät und werden über "Einbauen" gekauft; Geräte mit Kapazität zeigen "belegt von gesamt". Kommlinks zeigen
+ * ihre Matrixwerte samt Prozessorlimit, eingebaute Programme den Schalter „läuft“; das aktive Kommlink wählt man im
+ * Status-Panel, weil dort alle Kommlinks samt Headware bekannt sind.
  *
  * <p>Nach jeder Änderung wird der Tab neu aufgebaut und die Auswahl erhalten. Gear hängt nicht an
  * Attributen oder Fertigkeiten, daher gibt es keinen Refresh des Detailbereichs.
@@ -166,7 +170,7 @@ final class GearTabBuilder {
     // Bindung an die Baumauswahl (UI-Zustand); die Kategorie eines Gegenstands ändert sich nie.
     installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       Gear gear = selectedGear(tree);
-      return gear == null || gear.getData().accepts() == null;
+      return gear == null || gear.getData().accepts().isEmpty();
     }, tree.getSelectionModel().selectedItemProperty()));
     installBtn.setOnAction(_ -> {
       Gear gear = selectedGear(tree);
@@ -266,8 +270,21 @@ final class GearTabBuilder {
     if (d.commlink()) {
       addRowCells(grid, row++, detailKey("Prozessor"), detailValue(d.processor()),
           detailKey("Signal"), detailValue(d.signal()));
-      addRowCells(grid, row, detailKey("Firewall"), detailValue(d.firewall()),
+      addRowCells(grid, row++, detailKey("Firewall"), detailValue(d.firewall()),
           detailKey("System"), detailValue(d.system()));
+      addRowCells(grid, row++, detailKey("Programme"), detailValue(d.processorLimit()));
+    }
+    Gear device = deviceOf(gear, character);
+    MatrixStats deviceStats = device == null ? null : device.getMatrixStats();
+    if (gear.isProgram() && deviceStats != null) {
+      CheckBox running = new CheckBox("läuft");
+      running.setSelected(gear.isRunning());
+      running.selectedProperty().addListener((_, _, value) -> {
+        gear.setRunning(value);
+        onChanged.run();
+      });
+      addRowCells(grid, row, detailKey("Läuft mit Stufe"),
+          detailValue(String.valueOf(deviceStats.programRating(gear.getRating()))), detailKey("Zustand"), running);
     }
     details.getChildren().addAll(title, grid);
     if (!d.note().isEmpty()) {
@@ -275,6 +292,14 @@ final class GearTabBuilder {
       note.setWrapText(true);
       details.getChildren().add(note);
     }
+  }
+
+  /** Das Kommlink, in dem {@code part} eingebaut ist (auch Kommlink-Headware), oder {@code null}. */
+  private static @Nullable Gear deviceOf(@NonNull Gear part, @NonNull Character character) {
+    return character.getEquipment().getCommlinks().stream()
+        .filter(device -> device.getInstalled().contains(part))
+        .findFirst()
+        .orElse(null);
   }
 
   // ── Aktionen ──────────────────────────────────────────────

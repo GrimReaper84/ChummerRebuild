@@ -124,9 +124,10 @@ class GearCapacityTest {
     goggles.install(gear("Infrarot", 0));
     assertFalse(goggles.canInstallAnyOf(GearDataLoader.getAllGear().values()));
 
+    // Ein Kommlink mit Betriebssystem nimmt weiter Programme, Module und ein Sim-Modul auf (GRW S. 260, 271)
     Gear commlink = gear("Meta Link", 0);
     commlink.install(gear("Vector Xim", 0));
-    assertFalse(commlink.canInstallAnyOf(GearDataLoader.getAllGear().values()));
+    assertTrue(commlink.canInstallAnyOf(GearDataLoader.getAllGear().values()));
     assertFalse(gear("Survival-Kit", 0).canInstallAnyOf(GearDataLoader.getAllGear().values()));
   }
 

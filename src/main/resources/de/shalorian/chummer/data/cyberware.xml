@@ -68,6 +68,7 @@
         <essence>0.1</essence>
         <cost>500</cost>
         <limbcapacity>1</limbcapacity>
+        <effect type="dni">1</effect>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -113,6 +114,7 @@
         <allowgear>Kommlink-Modell</allowgear>
         <note>Gehäuse für ein Kommlink; das Kommlink-Modell wird eingebaut und zusätzlich bezahlt.</note>
         <limbcapacity>2</limbcapacity>
+        <effect type="dni">1</effect>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -134,6 +136,8 @@
         <excludes>Sim-Modul (modifiziert für heißes Sim)</excludes>
         <note>Erlaubt VR über kaltes Sim.</note>
         <limbcapacity>2</limbcapacity>
+        <effect type="dni">1</effect>
+        <effect type="simmodule">1</effect>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -146,6 +150,8 @@
         <legality>V</legality>
         <note>Erlaubt VR über kaltes und heißes Sim.</note>
         <limbcapacity>2</limbcapacity>
+        <effect type="dni">1</effect>
+        <effect type="simmodule">2</effect>
         <source>SR4</source>
         <page>386</page>
     </item>
@@ -603,6 +609,8 @@
         <cost>5000</cost>
         <avail>8</avail>
         <note>Implantatversion des Simrigs (S. 374).</note>
+        <effect type="dni">1</effect>
+        <effect type="simmodule">1</effect>
         <source>SR4</source>
         <page>389</page>
     </item>

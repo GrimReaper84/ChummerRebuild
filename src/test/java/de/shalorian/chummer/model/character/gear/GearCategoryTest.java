@@ -51,7 +51,8 @@ class GearCategoryTest {
 
   @Test
   void installedOnlyCategories() {
-    Set<GearCategory> installedOnly = EnumSet.of(GearCategory.OPERATING_SYSTEMS,
+    Set<GearCategory> installedOnly = EnumSet.of(GearCategory.OPERATING_SYSTEMS, GearCategory.HARDWARE_UPGRADES,
+        GearCategory.SOFTWARE_PACKAGES,
         GearCategory.VISION_ENHANCEMENTS, GearCategory.AUDIO_ENHANCEMENTS,
         GearCategory.SENSOR_FUNCTIONS, GearCategory.MAGLOCK_OPTIONS);
     for (GearCategory category : GearCategory.values()) {

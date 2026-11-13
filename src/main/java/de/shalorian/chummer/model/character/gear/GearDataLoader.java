@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.gear;
 
 import static de.shalorian.chummer.utils.XmlUtils.childText;
+import static de.shalorian.chummer.utils.XmlUtils.childTexts;
 import static de.shalorian.chummer.utils.XmlUtils.firstChild;
 
 import de.shalorian.chummer.model.character.DataPaths;
@@ -9,6 +10,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -80,8 +82,8 @@ public class GearDataLoader {
     String costFor = childText(el, "costfor");
     // Verfügbarkeit als Zuschlag auf das Gerät ("+4", GRW S. 379/382)
     String avail = childText(el, "avail");
-    String accepts = childText(el, "accepts");
     Element extra = firstChild(el, "extra");
+    String matrixAttribute = childText(el, "matrixattribute");
     return new GearData(
         childText(el, "name"),
         GearCategory.fromDisplayName(childText(el, "category")),
@@ -97,7 +99,7 @@ public class GearDataLoader {
         childText(el, "cost"),
         childText(el, "costhigh"),
         avail.startsWith("+"),
-        accepts.isEmpty() ? null : GearCategory.fromDisplayName(accepts),
+        childTexts(el, "accepts").stream().map(GearCategory::fromDisplayName).collect(Collectors.toSet()),
         childText(el, "capacity"),
         childText(el, "capacitycost"),
         Boolean.parseBoolean(childText(el, "repeatable")),
@@ -106,6 +108,8 @@ public class GearDataLoader {
         GearUnit.fromSingular(childText(el, "unit")),
         Boolean.parseBoolean(childText(el, "variablecost")),
         extraKind(extra),
+        childTexts(el, "matrix").stream().map(MatrixFlag::fromCode).collect(Collectors.toSet()),
+        matrixAttribute.isEmpty() ? null : MatrixAttribute.valueOf(matrixAttribute),
         extra == null ? "" : extra.getTextContent().trim(),
         childText(el, "note"),
         childText(el, "source"),

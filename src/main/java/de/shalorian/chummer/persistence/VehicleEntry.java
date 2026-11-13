@@ -19,6 +19,8 @@ class VehicleEntry {
   public @NonNull List<GearEntry> includedGear = new ArrayList<>();
   /** Gekaufte Ausrüstung im Fahrzeug. */
   public @NonNull List<GearEntry> gear = new ArrayList<>();
+  /** Hardware-Module und Softwarepakete; fehlt in Dateien vor ADR-054. */
+  public @NonNull List<GearEntry> matrixUpgrades = new ArrayList<>();
 
   public VehicleEntry() {
     // Für Jackson-Deserialisierung benötigt.

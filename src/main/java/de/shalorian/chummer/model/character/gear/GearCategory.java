@@ -11,10 +11,11 @@ import org.jspecify.annotations.NonNull;
  * Pfeile ({@link #ARROWS}) werden im Waffen-Tab am Bogen gekauft, nicht als eigenständige Ausrüstung.
  *
  * <p>Einige Kategorien werden nur als Einbau in ein passendes Gerät gekauft ({@link
- * #isInstalledOnly()}): Betriebssysteme in Kommlinks (Nutzerentscheidung 2026-10-04), Sicht- und
+ * #isInstalledOnly()}): Betriebssysteme, Hardware-Module und Softwarepakete in Kommlinks (Nutzerentscheidung
+ * 2026-10-04, GRW S. 260), Sicht- und
  * Audioverstärkungen in Sicht- bzw. Audiosensoren (S. 379), Sensor-Funktionen in Sensorpakete
  * (S. 380) und die Zusätze des Magschlosses (S. 382). Welches Gerät was aufnimmt, steht je Eintrag in
- * {@link GearData#accepts()}.
+ * {@link GearData#accepts()}; Matrixprogramme und Sim-Module lassen sich auch einzeln kaufen.
  */
 public enum GearCategory {
   ARROWS("Pfeile", GearArea.PROJECTILES),
@@ -28,11 +29,14 @@ public enum GearCategory {
   EXPLOSIVE_ACCESSORIES("Sprengstoff-Zubehör", GearArea.EXPLOSIVES),
   COMMLINKS("Kommlink-Modell", GearArea.ELECTRONICS),
   OPERATING_SYSTEMS("Handelsübliche Betriebssysteme", GearArea.ELECTRONICS),
+  /** Steht nicht in der Ausrüstungsliste, sondern bei den Matrixregeln (S. 261); gehört fachlich zu den Kommlinks. */
+  HARDWARE_UPGRADES("Hardware-Upgrades", GearArea.ELECTRONICS),
   ELECTRONIC_ACCESSORIES("Elektronik-Zubehör", GearArea.ELECTRONICS),
   OTHER_ELECTRONICS("Sonstige Elektronik", GearArea.ELECTRONICS),
   RFID_TAGS("RFID-Marker", GearArea.ELECTRONICS),
   COMMUNICATION("Kommunikationssystem", GearArea.ELECTRONICS),
   MATRIX_PROGRAMS("Matrixprogramme", GearArea.DATACHIPS_AND_SOFTWARE),
+  SOFTWARE_PACKAGES("Softwarepakete", GearArea.DATACHIPS_AND_SOFTWARE),
   DATA_STORAGE("Speichermedien", GearArea.DATACHIPS_AND_SOFTWARE),
   SOFTWARE("Software", GearArea.DATACHIPS_AND_SOFTWARE),
   SKILLSOFTS("Talentsoft", GearArea.DATACHIPS_AND_SOFTWARE),
@@ -87,8 +91,8 @@ public enum GearCategory {
    */
   public boolean isInstalledOnly() {
     return switch (this) {
-      case OPERATING_SYSTEMS, VISION_ENHANCEMENTS, AUDIO_ENHANCEMENTS, SENSOR_FUNCTIONS,
-           MAGLOCK_OPTIONS -> true;
+      case OPERATING_SYSTEMS, HARDWARE_UPGRADES, SOFTWARE_PACKAGES, VISION_ENHANCEMENTS, AUDIO_ENHANCEMENTS,
+           SENSOR_FUNCTIONS, MAGLOCK_OPTIONS -> true;
       default -> false;
     };
   }

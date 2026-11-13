@@ -27,7 +27,11 @@ public enum ImplantEffectType {
   /** Würfel auf die beim Kauf gewählte Fertigkeit oder Fertigkeitsgruppe: Reflexrekorder (S. 394). */
   SELECTED_SKILL_DICE("selectedskilldice"),
   /** Kästchen je Spalte, die beim Verletzungsmodifikator nicht zählen: Schadenskompensator (S. 394). */
-  WOUND_BOXES_IGNORED("woundboxesignored");
+  WOUND_BOXES_IGNORED("woundboxesignored"),
+  /** Direktes Neuralinterface für VR: Datenbuchse, Kommlink, Sim-Modul (S. 386), Simrig (S. 389); siehe GRW S. 258. */
+  DNI("dni"),
+  /** Implantiertes Sim-Modul: 1 = kaltes Sim, 2 = auch heißes Sim (S. 374, 386). */
+  SIM_MODULE("simmodule");
 
   private final @NonNull String code;
 

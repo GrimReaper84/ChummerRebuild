@@ -165,6 +165,19 @@ späteren Änderungen (Charisma, Magie/Resonanz, Fertigkeit) nicht mehr, gibt es
 Status (wie bei der Initiation), nichts wird automatisch geändert.
 **Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/geister_sprites_plan.md`.
 
+### ADR-054: Matrix und Kommlinks (2026-11-13)
+Ein Kommlink nimmt Betriebssystem, Hardware-Module (Prozessor, Signal), Softwarepakete (Firewall, System), Programme und
+ein Sim-Modul auf (`GearData.accepts` ist eine Menge). Ein Modul ersetzt den Ausgangswert durch seine Stufe, Hardware
+höchstens +2, je Attribut eins (S. 260/261); das System bleibt höchstens beim aufgerüsteten Prozessor. Programme gibt es
+einzeln nach GRW (S. 271–273), sie laufen höchstens mit dem System; laufende Programme senken den Prozessor je volles
+Prozessorlimit um 1 (S. 261, Schalter „läuft“). Die Rechnung steht nur in `MatrixStats`/`MatrixUpgrades` und gilt auch
+für Fahrzeuge (Gerätestufe als Ausgangswert). Ein aktives Kommlink je Charakter (ohne Wahl das einzige; gewählt im
+Status-Panel, das alle Kommlinks samt Headware kennt; gespeichert wird nur die ausdrückliche Wahl) liefert die
+Matrixinitiative: AR körperlich, VR nur mit Sim-Modul und Direktem Neuralinterface, kalt Prozessor + INT / 2, heiß + 1 /
+3 (S. 258, 265, 276); Technomancer über die Lebende Persona (S. 279). Mit dem Betriebssystem gehen die Softwarepakete.
+Agenten zählen als gewöhnliche Programme (kein eigenes Merkmal). Smartlink-Bonus und Programmpakete bleiben draußen.
+**Warum:** Nutzerentscheidungen 2026-11-13; `docs/plaene/archiv/matrix_kommlinks_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

@@ -14,7 +14,9 @@
   <extra> = Pflicht-Zusatztext beim Kauf mit Feldbezeichnung; kind="LICENSE" = Lizenz-Vorauswahl.
 
   Gear Teil B: Kommlinks, Betriebssysteme, Matrixprogramme (S. 374/376), ebenfalls vom PDF-Bild.
-  Kommlink-Aufrüstungen fehlen (kein GRW-Preis, kommen mit "Vernetzt").
+  Matrix und Kommlinks (docs/plaene/archiv/matrix_kommlinks_plan.md): Programme einzeln (S. 271-273), Softwarepakete
+  und Hardware-Upgrades (S. 260/261) mit <matrixattribute>; Kommlinks nehmen mehrere <accepts> auf; <matrix> =
+  Merkmal für VR (dni = Direktes Neuralinterface, sim-cold/sim-hot = Sim-Modul, commlink-option = Einbau ins Kommlink).
   Gear Teil C: Sicht-/Audiosensoren, Verstärkungen, Sensorpakete, Sensor-Funktionen, Magschloss-Zusätze
   (S. 378-382), ebenfalls vom PDF-Bild.
   <accepts> = Kategorie, die das Gerät als Einbau aufnimmt; <capacity> = Kapazität (Formel), <capacitycost> =
@@ -503,6 +505,10 @@
         <name>Meta Link</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>1</processor>
         <signal>2</signal>
         <cost>100</cost>
@@ -513,6 +519,10 @@
         <name>CMT Clip</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>1</processor>
         <signal>3</signal>
         <cost>300</cost>
@@ -523,6 +533,10 @@
         <name>Sony Emperor</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>2</processor>
         <signal>3</signal>
         <cost>700</cost>
@@ -533,6 +547,10 @@
         <name>Renraku Sensei</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>2</processor>
         <signal>4</signal>
         <cost>1000</cost>
@@ -543,6 +561,10 @@
         <name>Novatech Airware</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>3</processor>
         <signal>3</signal>
         <cost>1250</cost>
@@ -553,6 +575,10 @@
         <name>Erika Elite</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>3</processor>
         <signal>4</signal>
         <cost>2500</cost>
@@ -563,6 +589,10 @@
         <name>Hermes Ikon</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>4</processor>
         <signal>3</signal>
         <cost>3000</cost>
@@ -573,6 +603,10 @@
         <name>Transys Avalon</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>4</processor>
         <signal>4</signal>
         <cost>5000</cost>
@@ -583,6 +617,10 @@
         <name>Fairlight Caliban</name>
         <category>Kommlink-Modell</category>
         <accepts>Handelsübliche Betriebssysteme</accepts>
+        <accepts>Hardware-Upgrades</accepts>
+        <accepts>Softwarepakete</accepts>
+        <accepts>Matrixprogramme</accepts>
+        <accepts>Elektronik-Zubehör</accepts>
         <processor>4</processor>
         <signal>5</signal>
         <cost>8000</cost>
@@ -677,6 +715,7 @@
         <category>Elektronik-Zubehör</category>
         <device>3</device>
         <cost>50</cost>
+        <matrix>dni</matrix>
         <source>SR4</source>
         <page>374</page>
     </item>
@@ -686,6 +725,7 @@
         <device>3</device>
         <avail>2</avail>
         <cost>100</cost>
+        <matrix>dni</matrix>
         <source>SR4</source>
         <page>374</page>
     </item>
@@ -704,6 +744,8 @@
         <device>3</device>
         <cost>100</cost>
         <variablecost>true</variablecost>
+        <matrix>sim-cold</matrix>
+        <matrix>commlink-option</matrix>
         <source>SR4</source>
         <page>374</page>
     </item>
@@ -715,6 +757,8 @@
         <legality>V</legality>
         <cost>250</cost>
         <variablecost>true</variablecost>
+        <matrix>sim-hot</matrix>
+        <matrix>commlink-option</matrix>
         <source>SR4</source>
         <page>374</page>
     </item>
@@ -724,6 +768,8 @@
         <device>3</device>
         <avail>12</avail>
         <cost>1000</cost>
+        <matrix>dni</matrix>
+        <matrix>sim-cold</matrix>
         <source>SR4</source>
         <page>374</page>
     </item>
@@ -864,57 +910,267 @@
         <page>376</page>
     </item>
 
-    <!-- ── Matrixprogramme (zwei Preisbänder: <cost> bis Stufe 3, <costhigh> ab Stufe 4; Pilotstufe = Stufe) (S. 376) ── -->
+    <!-- ── Matrixprogramme einzeln (Beschreibungen S. 271-273, am Bild geprüft, Seite im Hinweis); Preise und
+         Verfügbarkeit nach Art aus der Tabelle Matrixprogramme (S. 272/376, <page> = 376): <cost> bis Stufe 3, <costhigh> ab Stufe 4. Ein Programm läuft
+         höchstens mit dem System des Geräts (S. 271). ── -->
     <item>
-        <name>Matrixprogramm (Standard)</name>
+        <name>Analyse</name>
         <category>Matrixprogramme</category>
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <extra>Programm</extra>
+        <note>Standardprogramm; Fertigkeit: Computer; Beschreibung S. 271.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
     <item>
-        <name>Matrixprogramm (Hacking)</name>
+        <name>Befehl</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <costhigh>Rating * 100</costhigh>
+        <note>Standardprogramm; Fertigkeit: je nach gesteuertem Gerät; Beschreibung S. 271.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Editieren</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <costhigh>Rating * 100</costhigh>
+        <note>Standardprogramm; Fertigkeit: Computer; Beschreibung S. 271.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Realitätsfilter</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <costhigh>Rating * 100</costhigh>
+        <note>Standardprogramm; Fertigkeit: keine; wirkt auf den Prozessor; Beschreibung S. 271.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Scannen</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <costhigh>Rating * 100</costhigh>
+        <note>Standardprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Schmöker</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <costhigh>Rating * 100</costhigh>
+        <note>Standardprogramm; Fertigkeit: Datensuche; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Verschlüsselung</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <cost>Rating * 50</cost>
+        <costhigh>Rating * 100</costhigh>
+        <note>Standardprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Angriff</name>
         <category>Matrixprogramme</category>
         <rating>1-6</rating>
         <avail>Rating * 2</avail>
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <extra>Programm</extra>
+        <note>Hackingprogramm; Fertigkeit: Hacking oder Matrixkampf; Beschreibung S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
     <item>
-        <name>Matrixprogramm (Agent/IC/Pilot)</name>
+        <name>Aufspüren</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Computer; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Ausnutzen</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Biofeedback-Filter</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Blackout</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Matrixkampf; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Datenbombe</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>ECCM</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Entschärfen</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 272.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Entschlüsselung</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung S. 273.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Medic</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Computer; Beschreibung S. 273.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Panzerung</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 273.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Schleicher</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 273.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Schnüffler</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Elektronische Kriegsführung oder Hacking; Beschreibung S. 273.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Schwarzer Hammer</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Matrixkampf; Beschreibung S. 273.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Täuschung</name>
+        <category>Matrixprogramme</category>
+        <rating>1-6</rating>
+        <avail>Rating * 2</avail>
+        <legality>E</legality>
+        <cost>Rating * 500</cost>
+        <costhigh>Rating * 1000</costhigh>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 273.</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>Agent</name>
         <category>Matrixprogramme</category>
         <rating>1-6</rating>
         <avail>Rating * 3</avail>
         <cost>Rating * 1000</cost>
         <costhigh>Rating * 2500</costhigh>
-        <extra>Programm</extra>
-        <source>SR4</source>
-        <page>376</page>
-    </item>
-    <item>
-        <name>Matrixprogramm (System)</name>
-        <category>Matrixprogramme</category>
-        <rating>1-6</rating>
-        <cost>Rating * 200</cost>
-        <costhigh>Rating * 500</costhigh>
-        <note>Einzelnes Systemprogramm; wird nicht mit den Werten eines Kommlinks verrechnet (dafür „Betriebssystem installieren“).</note>
-        <source>SR4</source>
-        <page>376</page>
-    </item>
-    <item>
-        <name>Matrixprogramm (Firewall)</name>
-        <category>Matrixprogramme</category>
-        <rating>1-6</rating>
-        <cost>Rating * 200</cost>
-        <costhigh>Rating * 500</costhigh>
-        <note>Einzelnes Systemprogramm; wird nicht mit den Werten eines Kommlinks verrechnet (dafür „Betriebssystem installieren“).</note>
+        <note>Stufe = Pilot; ein laufender Agent zählt gegen das Prozessorlimit; Beschreibung S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -928,6 +1184,54 @@
         <extra kind="AUTOSOFT">Autosoft</extra>
         <source>SR4</source>
         <page>376</page>
+    </item>
+
+    <!-- ── Softwarepakete (Firewall, System): ersetzen den Wert des Betriebssystems, ein Paket je Attribut (S. 260);
+         Preis wie Systemprogramme in der Tabelle Matrixprogramme (S. 272/376) ── -->
+    <item>
+        <name>Firewall-Paket</name>
+        <category>Softwarepakete</category>
+        <rating>1-6</rating>
+        <cost>Rating * 200</cost>
+        <costhigh>Rating * 500</costhigh>
+        <matrixattribute>FIREWALL</matrixattribute>
+        <note>Hebt die Firewall eines Geräts auf die Paketstufe; nur mit Betriebssystem (Regel S. 260).</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+    <item>
+        <name>System-Paket</name>
+        <category>Softwarepakete</category>
+        <rating>1-6</rating>
+        <cost>Rating * 200</cost>
+        <costhigh>Rating * 500</costhigh>
+        <matrixattribute>SYSTEM</matrixattribute>
+        <note>Hebt das System eines Geräts auf die Paketstufe, höchstens bis zum Prozessor; nur mit Betriebssystem (Regel S. 260).</note>
+        <source>SR4</source>
+        <page>376</page>
+    </item>
+
+    <!-- ── Hardware-Upgrades (Tabelle Preise für Hardware-Upgrades S. 261, am Bild geprüft): Modulstufe = neue Stufe,
+         höchstens 2 über dem Ausgangswert, ein Modul je Attribut (S. 260) ── -->
+    <item>
+        <name>Prozessor-Modul</name>
+        <category>Hardware-Upgrades</category>
+        <rating>1-6</rating>
+        <avail>4; 4; 8; 8; 12; 16</avail>
+        <cost>250; 750; 1250; 2000; 4000; 8000</cost>
+        <matrixattribute>PROCESSOR</matrixattribute>
+        <source>SR4</source>
+        <page>261</page>
+    </item>
+    <item>
+        <name>Signal-Modul</name>
+        <category>Hardware-Upgrades</category>
+        <rating>1-6</rating>
+        <avail>4; 4; 8; 8; 12; 16</avail>
+        <cost>10; 50; 150; 500; 1000; 3000</cost>
+        <matrixattribute>SIGNAL</matrixattribute>
+        <source>SR4</source>
+        <page>261</page>
     </item>
 
     <!-- ── Speichermedien (S. 377) ── -->

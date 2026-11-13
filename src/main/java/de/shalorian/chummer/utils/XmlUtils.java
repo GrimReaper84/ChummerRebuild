@@ -1,5 +1,7 @@
 package de.shalorian.chummer.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -24,6 +26,18 @@ public final class XmlUtils {
     }
     String text = child.getTextContent();
     return text == null ? "" : text.trim();
+  }
+
+  /** Getrimmte Texte aller direkten Kind-Elemente {@code tag} von {@code parent} in Dokumentreihenfolge. */
+  public static @NonNull List<String> childTexts(@NonNull Element parent, @NonNull String tag) {
+    List<String> texts = new ArrayList<>();
+    NodeList list = parent.getChildNodes();
+    for (int i = 0; i < list.getLength(); i++) {
+      if (list.item(i) instanceof Element element && tag.equals(element.getTagName())) {
+        texts.add(element.getTextContent().trim());
+      }
+    }
+    return texts;
   }
 
   /**

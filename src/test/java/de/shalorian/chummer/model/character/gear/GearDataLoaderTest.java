@@ -35,11 +35,13 @@ class GearDataLoaderTest {
     expected.put(GearCategory.EXPLOSIVE_ACCESSORIES, 1);
     expected.put(GearCategory.COMMLINKS, 9);
     expected.put(GearCategory.OPERATING_SYSTEMS, 6);
+    expected.put(GearCategory.HARDWARE_UPGRADES, 2);
     expected.put(GearCategory.ELECTRONIC_ACCESSORIES, 11);
     expected.put(GearCategory.OTHER_ELECTRONICS, 2);
     expected.put(GearCategory.RFID_TAGS, 4);
     expected.put(GearCategory.COMMUNICATION, 6);
-    expected.put(GearCategory.MATRIX_PROGRAMS, 6);
+    expected.put(GearCategory.MATRIX_PROGRAMS, 24);
+    expected.put(GearCategory.SOFTWARE_PACKAGES, 2);
     expected.put(GearCategory.DATA_STORAGE, 1);
     expected.put(GearCategory.SOFTWARE, 3);
     expected.put(GearCategory.SKILLSOFTS, 3);
@@ -81,6 +83,9 @@ class GearDataLoaderTest {
   void categoriesFollowRulebookPageOrder() {
     int previousCategoryMaxPage = 0;
     for (GearCategory category : GearCategory.values()) {
+      if (category == GearCategory.HARDWARE_UPGRADES) {
+        continue; // Tabelle bei den Matrixregeln (S. 261), nicht in der Ausrüstungsliste
+      }
       IntSummaryStatistics pages = GearDataLoader.getAllGear().values().stream()
           .filter(g -> g.category() == category)
           .mapToInt(g -> Integer.parseInt(g.page()))
@@ -128,13 +133,18 @@ class GearDataLoaderTest {
 
   @Test
   void installedOnlyEntriesFitIntoSomeDeviceAndDevicesAcceptInstalledOnlyCategories() {
+    // Einzeln kaufbar und zugleich einbaubar sind nur Programme und Sim-Module (Kommlink, GRW S. 271, 374)
+    Set<GearCategory> standaloneButInstallable = Set.of(GearCategory.MATRIX_PROGRAMS,
+        GearCategory.ELECTRONIC_ACCESSORIES);
     Set<GearCategory> accepted = GearDataLoader.getAllGear().values().stream()
-        .map(GearData::accepts).filter(Objects::nonNull).collect(Collectors.toSet());
+        .flatMap(d -> d.accepts().stream()).collect(Collectors.toSet());
     for (GearData data : GearDataLoader.getAllGear().values()) {
-      assertEquals(data.category().isInstalledOnly(), accepted.contains(data.category()),
-          data.name());
-      GearCategory accepts = data.accepts();
-      assertTrue(accepts == null || accepts.isInstalledOnly(), data.name());
+      if (data.category().isInstalledOnly()) {
+        assertTrue(accepted.contains(data.category()), data.name());
+      }
+      for (GearCategory accepts : data.accepts()) {
+        assertTrue(accepts.isInstalledOnly() || standaloneButInstallable.contains(accepts), data.name());
+      }
     }
   }
 
@@ -161,7 +171,8 @@ class GearDataLoaderTest {
   @Test
   void onlyMatrixProgramsHaveASecondPriceBand() {
     for (GearData data : GearDataLoader.getAllGear().values()) {
-      assertEquals(data.category() == GearCategory.MATRIX_PROGRAMS, !data.highCost().isEmpty(),
+      assertEquals(data.category() == GearCategory.MATRIX_PROGRAMS
+              || data.category() == GearCategory.SOFTWARE_PACKAGES, !data.highCost().isEmpty(),
           data.name());
     }
   }
@@ -274,7 +285,7 @@ class GearDataLoaderTest {
     capacities.forEach((name, capacity) -> {
       GearData pack = find(name);
       assertEquals(capacity, pack.capacityFor(0), name);
-      assertEquals(GearCategory.SENSOR_FUNCTIONS, pack.accepts(), name);
+      assertEquals(Set.of(GearCategory.SENSOR_FUNCTIONS), pack.accepts(), name);
       assertEquals(0, pack.packCostFor(0), name);
     });
     assertTrue(find("Sensorpaket (Fahrzeug)").note().startsWith("Signal 5."));

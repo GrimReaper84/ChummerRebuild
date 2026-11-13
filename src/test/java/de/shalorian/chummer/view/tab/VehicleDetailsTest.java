@@ -59,4 +59,15 @@ class VehicleDetailsTest {
     assertEquals("+3", VehicleDetails.of(vehicle("Eurocar Westwind 3K (Sportwagen)")).handling());
     assertEquals("-2", VehicleDetails.of(vehicle("Mitsubishi Nightsky (Limousine)")).handling());
   }
+
+  @Test
+  void matrixValuesFollowDeviceRatingAndUpgrades() {
+    Vehicle comet = vehicle("Mercury Comet (Mittelklassewagen)");
+    int rating = comet.getDeviceRating();
+    assertEquals("Prozessor %d · Signal %d · Firewall %d · System %d".formatted(rating, rating, rating, rating),
+        VehicleDetails.of(comet).matrix());
+    comet.addMatrixUpgrade(new Gear(Objects.requireNonNull(GearDataLoader.findByName("Signal-Modul")), rating + 2));
+    assertEquals("Prozessor %d · Signal %d · Firewall %d · System %d".formatted(rating, rating + 2, rating, rating),
+        VehicleDetails.of(comet).matrix());
+  }
 }
