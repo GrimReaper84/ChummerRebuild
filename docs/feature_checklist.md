@@ -365,6 +365,22 @@
 
 ## Prioritisierte Reihenfolge für nächste Schritte
 
+**Roadmap bis zum ersten Release (Nutzerentscheidung 2026-11-13, Reihenfolge fest):** Die Punkte 1–5 der
+README-Roadmap sind erledigt; es folgen:
+
+6. **Matrix und Kommlinks:** Hardware-Aufrüstungen (S. 260/261) und Firewall/System (S. 376), Programme einem
+   Kommlink zuordnen, Matrix-Initiative (S. 265/276/279, Abschnitt 16), Sim-Modul und Smartlink als echte Boni
+   (Abschnitt 10), Matrix-Upgrades für Fahrzeuge (Abschnitt 14).
+7. **Magie abrunden:** Foki binden (Karma) und ihre Wirkung (Abschnitt 13), Katalog der Schutzpatrone mit Boni
+   (bisher nur Freitext an der Gabe), situative Adeptenkräfte als Rechnung.
+8. **Kampfwerte vervollständigen:** Munitionswirkung auf Waffenwerte (Abschnitt 13), Smartlink-Bonus auf den Pool,
+   Würfelpools für Rigger und Drohnen, Fahrzeugschaden am Zustandsmonitor (Abschnitt 14).
+9. **Karrieremodus ausbauen:** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
+   von Ausrüstung (GRW-Beleg noch suchen, Abschnitt 15).
+10. **Restliche GRW-Inhalte:** Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für Wissensfertigkeiten
+    (ADR-032), Portrait.
+11. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
+
 **Als Nächstes (Stand 2026-11-11):**
 
 Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038), Fallout-Workflow (ADR-008).

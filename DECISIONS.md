@@ -160,7 +160,9 @@ bzw. Kompilieren-Stufe Dienste, gebundene bzw. registrierte ≤ Charisma. Im Spi
 kein Karma), Dienste lassen sich verbrauchen und erhöhen. Geisterarten nur die fünf der eigenen Tradition (S. 213).
 `spirits.xml` enthält sechs Geister (S. 347/348) und fünf Sprites (S. 282) mit Werteblock als Formeln, Fertigkeiten,
 Kräften und optionalen Kräften bzw. Komplexen Formen (je 3 volle Punkte eine); die Oberfläche zeigt sie, gerechnet
-wird damit sonst nichts. Watcher, Fessellose und Freie Geister bleiben draußen.
+wird damit sonst nichts. Watcher, Fessellose und Freie Geister bleiben draußen. Passen eingetragene Einträge nach
+späteren Änderungen (Charisma, Magie/Resonanz, Fertigkeit) nicht mehr, gibt es nur einen Hinweis im Abschnitt und im
+Status (wie bei der Initiation), nichts wird automatisch geändert.
 **Warum:** Nutzerentscheidungen 2026-11-12; `docs/plaene/archiv/geister_sprites_plan.md`.
 
 ## Architektur und Code

@@ -79,7 +79,7 @@ public class Spirits {
   public @Nullable String getAddProblem(@NonNull SpiritData data, int force, int services, boolean bound) {
     SpiritKind kind = data.kind();
     if (!isAvailable(kind)) {
-      return kind == SpiritKind.SPIRIT ? "Nur für Zauberer und Magieradepten" : "Nur für Technomancer";
+      return kind.getUnavailableText();
     }
     if (kind == SpiritKind.SPIRIT && data.categoryIn(owner.getTradition()) == null) {
       return "Die Tradition " + owner.getTradition().getDisplayName() + " ruft keinen " + data.name();
@@ -87,9 +87,9 @@ public class Spirits {
     if (force < 1 || services < 0) {
       return kind.getPowerName() + " mindestens 1, Dienste nicht negativ";
     }
-    if (!owner.isCreated() && force != getCreationForce()) {
-      return "%s bei der Erschaffung = %s (%d)".formatted(kind.getPowerName(), kind.getAttributeName(),
-          getCreationForce());
+    String forceProblem = creationForceProblem(kind, force);
+    if (forceProblem != null) {
+      return forceProblem;
     }
     if (bound && countBound(kind) >= getBoundLimit()) {
       return boundLimitText(kind);
@@ -171,6 +171,31 @@ public class Spirits {
     return entries.stream().filter(Spirit::isBound).mapToInt(Spirit::getServices).sum();
   }
 
+  /**
+   * Hinweise auf Einträge einer Art, die nach späteren Änderungen (Charisma, Magie bzw. Resonanz, Essenz, Herbeirufen
+   * bzw. Kompilieren) nicht mehr den Regeln entsprechen, sonst leer: mehr gebundene bzw. registrierte als Charisma
+   * (S. 112, 222, 281), bei der Erschaffung außerdem Kraft bzw. Stufe ungleich Magie bzw. Resonanz und Dienste
+   * außerhalb 1 bis Herbeirufen- bzw. Kompilieren-Stufe (S. 112/113). Nur Hinweis, es wird nichts geändert.
+   */
+  public @NonNull List<String> getProblems(@NonNull SpiritKind kind) {
+    List<String> problems = new ArrayList<>();
+    int bound = countBound(kind);
+    if (bound > getBoundLimit()) {
+      problems.add(boundLimitText(kind) + ", eingetragen sind " + bound);
+    }
+    for (Spirit spirit : getEntries(kind)) {
+      String forceProblem = creationForceProblem(kind, spirit.getForce());
+      if (forceProblem != null) {
+        problems.add(spirit.getName() + ": " + forceProblem);
+      }
+      String servicesProblem = spirit.isBound() ? creationServicesProblem(kind, spirit.getServices()) : null;
+      if (servicesProblem != null) {
+        problems.add(spirit.getName() + ": " + servicesProblem);
+      }
+    }
+    return problems;
+  }
+
   /** Entfernt Einträge, deren Art der Charakter nicht mehr haben kann (Gabe entfernt). */
   public void syncWithGifts() {
     entries.removeIf(s -> !isAvailable(s.getData().kind()));
@@ -180,6 +205,15 @@ public class Spirits {
   public void restore(@NonNull List<Spirit> saved) {
     entries.clear();
     saved.stream().filter(s -> isAvailable(s.getData().kind())).forEach(entries::add);
+  }
+
+  /** Bei der Erschaffung: Kraft bzw. Stufe = wirksame Magie bzw. Resonanz (S. 112/113). */
+  private @Nullable String creationForceProblem(@NonNull SpiritKind kind, int force) {
+    if (owner.isCreated() || force == getCreationForce()) {
+      return null;
+    }
+    return "%s bei der Erschaffung = %s (%d)".formatted(kind.getPowerName(), kind.getAttributeName(),
+        getCreationForce());
   }
 
   /** Bei der Erschaffung: gebundene schulden 1 bis Herbeirufen- bzw. Kompilieren-Stufe Dienste. */

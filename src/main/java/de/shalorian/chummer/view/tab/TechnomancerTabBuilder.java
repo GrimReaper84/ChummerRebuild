@@ -63,9 +63,12 @@ public final class TechnomancerTabBuilder {
     this.character = character;
   }
 
-  /** Bewertet die +/−-Zeilen der Komplexen Formen neu (Karma, Resonanz-Cap). */
+  /** Bewertet die +/−-Zeilen der Komplexen Formen neu (Karma, Resonanz-Cap) und baut den Abschnitt Sprites neu. */
   public void refresh() {
     complexFormRefreshers.forEach(Runnable::run);
+    if (character != null) {
+      spiritSection.build(character);
+    }
   }
 
   public void build() {

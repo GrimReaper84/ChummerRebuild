@@ -8,7 +8,7 @@ class SpiritEntry {
   public @NonNull String name = "";
   public int force = 1;
   public int services;
-  public boolean bound = true;
+  public boolean bound;
 
   public SpiritEntry() {
   }

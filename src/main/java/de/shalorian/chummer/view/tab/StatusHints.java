@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import java.util.ArrayList;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
@@ -8,7 +9,8 @@ import org.jspecify.annotations.NonNull;
 /**
  * Hinweise der Status-Übersicht: was am Charakter gerade nicht stimmt. Bei der Erschaffung überzogene BP oder
  * überzogenes Ressourcengeld und Essenz auf 0 oder darunter (GRW S. 111), in beiden Modi überzogene Kraftpunkte und ein
- * Initiations- bzw. Wandlungsgrad über dem wirksamen Magie- bzw. Resonanzwert.
+ * Initiations- bzw. Wandlungsgrad über dem wirksamen Magie- bzw. Resonanzwert sowie Geister und Sprites, die nicht mehr
+ * den Regeln entsprechen ({@code Spirits#getProblems}).
  */
 public final class StatusHints {
 
@@ -33,6 +35,9 @@ public final class StatusHints {
     String adeptProblem = character.getAdeptPowers().getProblem();
     if (adeptProblem != null) {
       hints.add(adeptProblem);
+    }
+    for (SpiritKind kind : SpiritKind.values()) {
+      hints.addAll(character.getSpirits().getProblems(kind));
     }
     String initiationHint = character.getInitiation().getAboveAttributeHint();
     if (initiationHint != null) {

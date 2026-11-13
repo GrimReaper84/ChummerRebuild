@@ -55,6 +55,13 @@ public final class MagicTabBuilder {
     this.character = character;
   }
 
+  /** Baut den Abschnitt Geister neu, damit Charisma, Magie und Hinweise nach Attributänderungen stimmen. */
+  public void refresh() {
+    if (character != null) {
+      spiritSection.build(character);
+    }
+  }
+
   public void build() {
     Character ch = this.character;
     if (ch == null) {

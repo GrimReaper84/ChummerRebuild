@@ -492,6 +492,7 @@ public class CharacterViewController implements CharacterTabHost {
     contactTab.refresh();
     conditionTab.refresh();
     adeptTabBuilder.refresh();
+    magicTabBuilder.refresh();
     technomancerTabBuilder.refresh();
     initiationTab.build(); // klein; zieht die Warnung „Grad über Magie“ nach, wenn sich Magie/Resonanz ändert
     streetGear.refresh();

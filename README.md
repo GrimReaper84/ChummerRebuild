@@ -37,6 +37,15 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 3. ✅ **Cybergliedmaßen**: Arme, Beine und Torso mit eigenen Attributen, Verbesserungen, Zubehör und Cyberwaffen.
 4. ✅ **Magie und Resonanz ausbauen**: Geister und Sprites, Initiation mit Metamagie, Wandlung mit Echos.
 5. ✅ **Neue Oberfläche**: grundlegende Überarbeitung von Layout, Navigation und Darstellung der Werte.
+6. **Matrix und Kommlinks**: Hardware-Aufrüstungen, Programme auf dem Kommlink, Matrix-Initiative, Sim-Modul und
+   Smartlink als echte Boni, Matrix-Upgrades für Fahrzeuge.
+7. **Magie abrunden**: Foki binden und ihre Wirkung, Schutzpatrone mit ihren Boni, situative Adeptenkräfte.
+8. **Kampfwerte vervollständigen**: Munitionswirkung auf Waffenwerte, Smartlink-Bonus, Würfelpools für Rigger und
+   Drohnen, Fahrzeugschaden.
+9. **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
+10. **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für
+    Wissensfertigkeiten, Portrait.
+11. **Charakterbogen**: Drucken und Exportieren.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in
 [`docs/feature_checklist.md`](docs/feature_checklist.md).

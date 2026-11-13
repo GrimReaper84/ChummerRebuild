@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -42,7 +43,8 @@ import org.tbee.javafx.scene.layout.MigPane;
  * Abschnitt Geister (im Bereich Magie) bzw. Sprites (im Bereich Technomancer), GRW S. 112/113, 222, 281/282: Kopf mit
  * Zahl der gebundenen bzw. registrierten Einträge gegen Charisma und BP bei der Erschaffung, je Eintrag Art, Kraft bzw.
  * Stufe, Dienste mit +/−, Zustand und Entfernen; der Tooltip am Namen zeigt Werte, Fertigkeiten und Kräfte aus dem
- * Katalog. Nach jeder Änderung baut sich der Abschnitt selbst neu und meldet BP über {@link CharacterTabHost}.
+ * Katalog, darunter Hinweise auf Einträge, die nicht mehr den Regeln entsprechen. Nach jeder Änderung baut sich der
+ * Abschnitt selbst neu und meldet BP über {@link CharacterTabHost}; der Tab baut ihn bei {@code refresh()} neu.
  */
 final class SpiritSection {
 
@@ -76,6 +78,13 @@ final class SpiritSection {
     HBox header = new HBox(12, title, countLabel, spacer, addBtn);
     header.setAlignment(Pos.CENTER_LEFT);
     box.getChildren().addAll(separator, header);
+    for (String problem : spirits.getProblems(kind)) {
+      Label warning = styled(new Label(problem), STYLE_ATTR_RANGE);
+      warning.setWrapText(true);
+      setWarnStyle(warning, true);
+      VBox.setMargin(warning, new Insets(6, 0, 0, 0));
+      box.getChildren().add(warning);
+    }
 
     List<Spirit> entries = spirits.getEntries(kind);
     if (entries.isEmpty()) {
@@ -114,7 +123,7 @@ final class SpiritSection {
 
     Button state = new Button(spirit.isBound() ? kind.getBoundName() : kind.getUnboundName());
     state.getStyleClass().add(STYLE_BTN_SECONDARY);
-    state.setTooltip(new Tooltip(spirit.isBound() ? "Klicken zum Lösen" : "Klicken zum Binden bzw. Registrieren"));
+    state.setTooltip(new Tooltip(spirit.isBound() ? "Klicken zum Lösen" : "Klicken zum " + kind.getBindVerb()));
     state.setOnAction(_ -> toggleBound(ch, spirit));
 
     Label stats = styled(new Label(data.statsText(spirit.getForce())), STYLE_ATTR_RANGE);

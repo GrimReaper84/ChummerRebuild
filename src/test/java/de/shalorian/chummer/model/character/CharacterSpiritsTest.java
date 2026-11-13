@@ -14,6 +14,7 @@ import de.shalorian.chummer.model.character.spirit.SpiritData;
 import de.shalorian.chummer.model.character.spirit.SpiritDataLoader;
 import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.spirit.Spirits;
+import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
@@ -111,6 +112,41 @@ class CharacterSpiritsTest {
     assertThrows(IllegalArgumentException.class, () -> spirits.setServices(fire, -1));
     spirits.setBound(fire, false);
     spirits.setBound(fire, true);
+  }
+
+  @Test
+  void laterChangesInCreationShowProblems() {
+    // S. 112: Werte passen beim Eintragen; danach sinken Magie, Herbeirufen und Charisma
+    Character c = mage(4, 3, 2);
+    Spirits spirits = c.getSpirits();
+    spirits.add(new Spirit(data("Erdgeist"), 4, 3, true));
+    spirits.add(new Spirit(data("Luftgeist"), 4, 1, true));
+    spirits.add(new Spirit(data("Feuergeist"), 4, 0, false));
+    assertTrue(spirits.getProblems(SpiritKind.SPIRIT).isEmpty());
+
+    Objects.requireNonNull(c.getMagicOrResonance()).setValue(3);
+    Objects.requireNonNull(c.getSkill("Herbeirufen")).setRating(2);
+    c.getAttribute(AttributeType.CHA).setValue(1);
+    assertEquals(List.of(
+        "Höchstens 1 Geister gebunden (Charisma), eingetragen sind 2",
+        "Erdgeist: Kraft bei der Erschaffung = Magie (3)",
+        "Erdgeist: Bei der Erschaffung 1 bis 2 Dienste (Herbeirufen 2)",
+        "Luftgeist: Kraft bei der Erschaffung = Magie (3)",
+        "Feuergeist: Kraft bei der Erschaffung = Magie (3)"), spirits.getProblems(SpiritKind.SPIRIT));
+    assertTrue(spirits.getProblems(SpiritKind.SPRITE).isEmpty());
+  }
+
+  @Test
+  void careerOnlyKeepsCharismaProblem() {
+    Character c = mage(5, 1, 2);
+    c.setCreated(true);
+    Spirits spirits = c.getSpirits();
+    spirits.add(new Spirit(data("Feuergeist"), 7, 4, true));
+    spirits.add(new Spirit(data("Erdgeist"), 2, 9, true));
+    assertTrue(spirits.getProblems(SpiritKind.SPIRIT).isEmpty());
+    c.getAttribute(AttributeType.CHA).setValue(1);
+    assertEquals(List.of("Höchstens 1 Geister gebunden (Charisma), eingetragen sind 2"),
+        spirits.getProblems(SpiritKind.SPIRIT));
   }
 
   @Test
