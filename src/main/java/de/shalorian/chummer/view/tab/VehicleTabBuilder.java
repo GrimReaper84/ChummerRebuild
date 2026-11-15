@@ -61,6 +61,7 @@ public final class VehicleTabBuilder {
 
   private final @NonNull VBox container;
   private final @NonNull CharacterTabHost host;
+  private @Nullable Runnable detailRefresher;
 
   public VehicleTabBuilder(@NonNull VBox container, @NonNull CharacterTabHost host) {
     this.container = container;
@@ -69,6 +70,16 @@ public final class VehicleTabBuilder {
 
   public void build(@NonNull Character character) {
     build(character, null);
+  }
+
+  /**
+   * Baut nur den Detailbereich der Auswahl neu: Fahrzeugpools hängen an Fertigkeiten, Verletzung, Implantaten und am
+   * aktiven Kommlink des Charakters.
+   */
+  public void refresh() {
+    if (detailRefresher != null) {
+      detailRefresher.run();
+    }
   }
 
   /** Baut den Tab neu auf und wählt den Knoten von {@code selected} aus, falls angegeben. */
@@ -82,6 +93,7 @@ public final class VehicleTabBuilder {
     details.setPadding(new Insets(0, 0, 0, 16));
     Runnable showSelected = () -> showDetails(details, selectedEntry(tree), character);
     tree.getSelectionModel().selectedItemProperty().addListener((_, _, _) -> showSelected.run());
+    detailRefresher = showSelected;
 
     TreeItem<VehicleTreeEntry> toSelect = fillTree(tree, character, selected);
     if (toSelect != null) {
@@ -327,6 +339,7 @@ public final class VehicleTabBuilder {
       }
     } else {
       showVehicleDetails(details, VehicleDetails.of(vehicle));
+      details.getChildren().add(VehicleCombatSection.build(character, vehicle, this::refresh));
     }
   }
 

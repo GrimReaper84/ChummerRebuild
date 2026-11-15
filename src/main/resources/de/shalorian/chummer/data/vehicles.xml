@@ -6,6 +6,8 @@
   <mounts>: Anzahl mitgelieferter Waffenhalterungen (S. 395 Halterungsregel), note = Bauform laut Fahrzeugtext.
   <gear>: mitgelieferte Ausrüstung (Name im Ausrüstungskatalog), zuerst das Sensorpaket nach Größe (S. 380/381);
   Autosofts und Medkit laut Fahrzeugtexten S. 395–398. Alle Drohnen haben einen Riggeradapter (S. 398, im Code).
+  <skill>: Fahrzeugfertigkeit (S. 154/155): Hovercraft und Fahrzeuge ohne Beine Bodenfahrzeuge, alles in der Luft
+  Flugzeuge, Boote Schiffe; Drohnen nach ihrem Text S. 398 (Kanmushi vierbeinig → Läufer).
 -->
 <vehicles>
 
@@ -13,6 +15,7 @@
     <item>
         <name>Dodge Scoot (Scooter)</name>
         <category>Motorräder</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>1</handling>
         <accel>10/15</accel>
         <speed>60</speed>
@@ -28,6 +31,7 @@
     <item>
         <name>Harley-Davidson Scorpion (Chopper)</name>
         <category>Motorräder</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>2</handling>
         <accel>15/30</accel>
         <speed>120</speed>
@@ -43,6 +47,7 @@
     <item>
         <name>Yamaha Growler (Offroad)</name>
         <category>Motorräder</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>1</handling>
         <accel>15/40</accel>
         <speed>150</speed>
@@ -58,6 +63,7 @@
     <item>
         <name>Suzuki Mirage (Rennmaschine)</name>
         <category>Motorräder</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>2</handling>
         <accel>20/50</accel>
         <speed>200</speed>
@@ -75,6 +81,7 @@
     <item>
         <name>Eurocar Westwind 3K (Sportwagen)</name>
         <category>Pkw</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>3</handling>
         <accel>20/60</accel>
         <speed>240</speed>
@@ -90,6 +97,7 @@
     <item>
         <name>Ford Spiral 115Ti (Günstiger Sportwagen)</name>
         <category>Pkw</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>2</handling>
         <accel>15/55</accel>
         <speed>180</speed>
@@ -105,6 +113,7 @@
     <item>
         <name>Honda Spirit (Kleinwagen)</name>
         <category>Pkw</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>1</handling>
         <accel>10/20</accel>
         <speed>80</speed>
@@ -120,6 +129,7 @@
     <item>
         <name>Mercury Comet (Mittelklassewagen)</name>
         <category>Pkw</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>0</handling>
         <accel>15/30</accel>
         <speed>110</speed>
@@ -135,6 +145,7 @@
     <item>
         <name>Mitsubishi Nightsky (Limousine)</name>
         <category>Pkw</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>-2</handling>
         <accel>15/25</accel>
         <speed>100</speed>
@@ -151,6 +162,7 @@
     <item>
         <name>Toyota Gopher (Pick-Up)</name>
         <category>Pkw</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>0</handling>
         <accel>5/20</accel>
         <speed>100</speed>
@@ -168,6 +180,7 @@
     <item>
         <name>GMC Bulldog Step-Van (Kleinlaster)</name>
         <category>Lkw</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>0</handling>
         <accel>5/10</accel>
         <speed>90</speed>
@@ -185,6 +198,7 @@
     <item>
         <name>GMC Everglades (Hovercraft)</name>
         <category>Hovercrafts</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>1</handling>
         <accel>10/20</accel>
         <speed>120</speed>
@@ -203,6 +217,7 @@
     <item>
         <name>Chrysler-Nissan Patrol-1 (Streifenwagen)</name>
         <category>Militär- und Sicherheitsfahrzeuge</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>3</handling>
         <accel>10/45</accel>
         <speed>180</speed>
@@ -221,6 +236,7 @@
     <item>
         <name>GMC Beachcraft (Patrouillen-Hovercraft)</name>
         <category>Militär- und Sicherheitsfahrzeuge</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>2</handling>
         <accel>10/40</accel>
         <speed>160</speed>
@@ -238,6 +254,7 @@
     <item>
         <name>Ares Citymaster (Aufruhrbekämpfungsfahrzeug)</name>
         <category>Militär- und Sicherheitsfahrzeuge</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>-1</handling>
         <accel>5/30</accel>
         <speed>120</speed>
@@ -259,6 +276,7 @@
     <item>
         <name>Morgan Cutlass (Patrouillenboot)</name>
         <category>Schiffe und U-Boote</category>
+        <skill>Schiffe</skill>
         <handling>2</handling>
         <accel>15/30</accel>
         <speed>60</speed>
@@ -278,6 +296,7 @@
     <item>
         <name>MT Sea Nymph (Jacht)</name>
         <category>Schiffe und U-Boote</category>
+        <skill>Schiffe</skill>
         <handling>-3</handling>
         <accel>10/20</accel>
         <speed>45</speed>
@@ -293,6 +312,7 @@
     <item>
         <name>SC Otter (Sportboot)</name>
         <category>Schiffe und U-Boote</category>
+        <skill>Schiffe</skill>
         <handling>1</handling>
         <accel>5/10</accel>
         <speed>45</speed>
@@ -308,6 +328,7 @@
     <item>
         <name>Vulkan Electronaut (Mini-U-Boot)</name>
         <category>Schiffe und U-Boote</category>
+        <skill>Schiffe</skill>
         <handling>0</handling>
         <accel>5/10</accel>
         <speed>30</speed>
@@ -326,6 +347,7 @@
     <item>
         <name>Cessna C750 (Propellermaschine)</name>
         <category>Flugzeuge</category>
+        <skill>Flugzeuge</skill>
         <handling>-1</handling>
         <accel>20/90</accel>
         <speed>340</speed>
@@ -344,6 +366,7 @@
     <item>
         <name>Ares Dragon (Frachthubschrauber)</name>
         <category>Rotormaschinen</category>
+        <skill>Flugzeuge</skill>
         <handling>-1</handling>
         <accel>10/40</accel>
         <speed>260</speed>
@@ -360,6 +383,7 @@
     <item>
         <name>Hughes Stallion (Mehrzweckhubschrauber)</name>
         <category>Rotormaschinen</category>
+        <skill>Flugzeuge</skill>
         <handling>-1</handling>
         <accel>15/50</accel>
         <speed>190</speed>
@@ -376,6 +400,7 @@
     <item>
         <name>Northrup Wasp (Gyrokopter)</name>
         <category>Rotormaschinen</category>
+        <skill>Flugzeuge</skill>
         <handling>0</handling>
         <accel>15/30</accel>
         <speed>130</speed>
@@ -397,6 +422,7 @@
     <item>
         <name>GMC Banshee (Thunderbird)</name>
         <category>Senkrechtstarter</category>
+        <skill>Flugzeuge</skill>
         <handling>1</handling>
         <accel>50/250</accel>
         <speed>1000</speed>
@@ -414,6 +440,7 @@
     <item>
         <name>Fed Boeing Commuter (Kippflügelmaschine)</name>
         <category>Senkrechtstarter</category>
+        <skill>Flugzeuge</skill>
         <handling>-2</handling>
         <accel>10/30</accel>
         <speed>120</speed>
@@ -433,6 +460,7 @@
     <item>
         <name>Shiawase Kanmushi (Mikrodrohne)</name>
         <category>Drohnen</category>
+        <skill>Läufer</skill>
         <handling>1</handling>
         <accel>2/10</accel>
         <speed>10</speed>
@@ -450,6 +478,7 @@
     <item>
         <name>S-B Microskimmer (Mikrodrohne)</name>
         <category>Drohnen</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>1</handling>
         <accel>2/10</accel>
         <speed>10</speed>
@@ -466,6 +495,7 @@
     <item>
         <name>Lone Star iBall (Minidrohne)</name>
         <category>Drohnen</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>1</handling>
         <accel>3/15</accel>
         <speed>15</speed>
@@ -483,6 +513,7 @@
     <item>
         <name>MCT Fly-Spy (Minidrohne)</name>
         <category>Drohnen</category>
+        <skill>Flugzeuge</skill>
         <handling>1</handling>
         <accel>3/15</accel>
         <speed>15</speed>
@@ -500,6 +531,7 @@
     <item>
         <name>Aztechnology Crawler (Klein)</name>
         <category>Drohnen</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>0</handling>
         <accel>5/20</accel>
         <speed>50</speed>
@@ -516,6 +548,7 @@
     <item>
         <name>Lockheed Optic-X (Klein)</name>
         <category>Drohnen</category>
+        <skill>Flugzeuge</skill>
         <handling>0</handling>
         <accel>5/20</accel>
         <speed>75</speed>
@@ -532,6 +565,7 @@
     <item>
         <name>GM-Nissan Doberman (Mittel)</name>
         <category>Drohnen</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>0</handling>
         <accel>10/25</accel>
         <speed>75</speed>
@@ -552,6 +586,7 @@
     <item>
         <name>MCT-Nissan Roto-Drohne (Mittel)</name>
         <category>Drohnen</category>
+        <skill>Flugzeuge</skill>
         <handling>0</handling>
         <accel>10/25</accel>
         <speed>100</speed>
@@ -568,6 +603,7 @@
     <item>
         <name>Renraku Stormcloud (Mittel)</name>
         <category>Drohnen</category>
+        <skill>Flugzeuge</skill>
         <handling>-3</handling>
         <accel>5/10</accel>
         <speed>25</speed>
@@ -586,6 +622,7 @@
     <item>
         <name>C-D Dalmatian (Groß)</name>
         <category>Drohnen</category>
+        <skill>Flugzeuge</skill>
         <handling>0</handling>
         <accel>15/40</accel>
         <speed>120</speed>
@@ -602,6 +639,7 @@
     <item>
         <name>CrashCart AutoDoc (Groß)</name>
         <category>Drohnen</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>0</handling>
         <accel>5/10</accel>
         <speed>30</speed>
@@ -621,6 +659,7 @@
     <item>
         <name>Steel Lynx (Groß)</name>
         <category>Drohnen</category>
+        <skill>Bodenfahrzeuge</skill>
         <handling>0</handling>
         <accel>15/40</accel>
         <speed>120</speed>

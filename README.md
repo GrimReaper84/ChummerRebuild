@@ -40,12 +40,13 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 6. ✅ **Matrix und Kommlinks**: Hardware-Aufrüstungen, Programme auf dem Kommlink, Matrix-Initiative mit Sim-Modul,
    Lebende Persona, Matrix-Upgrades für Fahrzeuge.
 7. ✅ **Magie abrunden**: Foki binden und ihre Wirkung, Schutzpatrone mit ihren Boni, situative Adeptenkräfte.
-8. **Kampfwerte vervollständigen**: Munitionswirkung auf Waffenwerte, Smartlink-Bonus, Würfelpools für Rigger und
+8. ✅ **Kampfwerte vervollständigen**: Munitionswirkung auf Waffenwerte, Smartlink-Bonus, Würfelpools für Rigger und
    Drohnen, Fahrzeugschaden.
-9. **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
-10. **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für
+9. **Status-Panel überarbeiten**: kleinere Anpassungen an Inhalt und Darstellung.
+10. **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
+11. **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für
     Wissensfertigkeiten, Portrait.
-11. **Charakterbogen**: Drucken und Exportieren.
+12. **Charakterbogen**: Drucken und Exportieren.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in
 [`docs/feature_checklist.md`](docs/feature_checklist.md).

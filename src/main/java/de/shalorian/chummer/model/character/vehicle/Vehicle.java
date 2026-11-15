@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
+import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -32,6 +33,8 @@ public class Vehicle {
 
   private static final int CONDITION_MONITOR_BASE = 8;
   private static final int BODY_PER_MOUNT = 3;
+  /** Katalogname der Autosofts (S. 287). */
+  private static final String AUTOSOFT = "Autosoft";
 
   private final @NonNull VehicleData data;
   private final List<WeaponMount> mounts = new ArrayList<>();
@@ -39,6 +42,7 @@ public class Vehicle {
   private final List<Gear> gear = new ArrayList<>();
   private final List<Gear> matrixUpgrades = new ArrayList<>();
   private boolean riggerAdapterPurchased;
+  private int damage;
 
   /**
    * Neues Fahrzeug mit seiner mitgelieferten Ausstattung.
@@ -78,6 +82,24 @@ public class Vehicle {
     return CONDITION_MONITOR_BASE + (data.body() + 1) / 2;
   }
 
+  /**
+   * Eingetragener Schaden in Kästchen (S. 197: nur körperlich). Fahrzeuge haben keinen Verletzungsmodifikator
+   * (Nutzerentscheidung 2026-11-15, das GRW nennt keinen).
+   */
+  public int getDamage() {
+    return damage;
+  }
+
+  /** Setzt den Schaden, begrenzt auf 0 bis zum vollen Zustandsmonitor. */
+  public void setDamage(int damage) {
+    this.damage = Math.clamp(damage, 0, getConditionMonitor());
+  }
+
+  /** Ob der Zustandsmonitor voll ist (Fahrzeug zerstört bzw. außer Gefecht). */
+  public boolean isDestroyed() {
+    return damage >= getConditionMonitor();
+  }
+
   /** Gerätestufe nach Fahrzeugart (Tabelle Gerätestufen, GRW S. 261, siehe {@link VehicleCategory#deviceRating()}). */
   public int getDeviceRating() {
     return data.category().deviceRating();
@@ -100,6 +122,18 @@ public class Vehicle {
         .mapToInt(sensor -> sensor.getData().hasRating() ? sensor.getRating() : data.sensor())
         .sum();
     return OptionalInt.of((sum + sensors.size() - 1) / sensors.size());
+  }
+
+  /**
+   * Höchste Stufe der Autosofts dieser Art im Fahrzeug (mitgeliefert oder gekauft), z.B. „Zielerfassung“; 0 ohne
+   * (S. 287).
+   */
+  public int getAutosoftRating(@NonNull String type) {
+    return Stream.concat(includedGear.stream(), gear.stream())
+        .filter(g -> g.getName().equals(AUTOSOFT) && g.getExtra().equals(type))
+        .mapToInt(Gear::getRating)
+        .max()
+        .orElse(0);
   }
 
   /** Das mitgelieferte Sensorpaket, oder {@code null}, falls der Katalog keines vorsieht. */

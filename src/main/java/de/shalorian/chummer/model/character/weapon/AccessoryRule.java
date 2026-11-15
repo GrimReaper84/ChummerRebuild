@@ -59,6 +59,9 @@ public enum AccessoryRule {
    */
   SMARTGUN("", true, false),
 
+  /** Lasermarkierer (S. 368): +1 im Fernkampf, nicht zusammen mit dem Smartgun-Bonus (S. 180). */
+  LASER_SIGHT("", false, false),
+
   /** S. 367: Smartgun-Zubehör nur für Granat- und Raketenwerfer. */
   AIRBURST("nur Granat- und Raketenwerfer", false, false),
 
@@ -88,7 +91,7 @@ public enum AccessoryRule {
       case SOUND_SUPPRESSOR -> hasMode(weapon, "SM", "AM");
       case SHOCK_PAD -> category == SHOTGUNS || isRifleOrHeavy(category);
       case GYROSTABILIZER -> isRifleOrHeavy(category);
-      case SMARTGUN -> true;
+      case SMARTGUN, LASER_SIGHT -> true;
       case AIRBURST -> category == GRENADE_LAUNCHERS || category == MISSILE_LAUNCHERS;
       case SPEEDLOADER -> isRevolver(weapon);
       case SPARE_CLIP -> weapon.ammo().contains("(s)");

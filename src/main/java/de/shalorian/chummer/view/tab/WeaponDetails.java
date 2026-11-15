@@ -1,6 +1,8 @@
 package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.equipment.Equipment;
+import de.shalorian.chummer.model.character.skill.DicePool;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
@@ -20,8 +22,12 @@ import org.jspecify.annotations.Nullable;
  * @param damage        Schaden für den Charakter berechnet, z.B. "6K"
  * @param recoil        RK inkl. gekauftem Zubehör (Waffen-Plan Teil C)
  * @param cost          Waffenpreis, mit gekauftem Zubehör zusätzlich die Summe
- * @param damageFormula GRW-Schadensformel, wenn der Schaden berechnet wurde, sonst leer
+ * @param damageFormula GRW-Schadensformel, wenn der Schaden aus der Stärke berechnet wurde, sonst leer
  * @param skill         Fertigkeit mit Wert, z.B. "Pistolen 4"
+ * @param dicePool      Würfelpool der Waffe, {@code null} ohne mögliche Probe (auch bei Fahrzeugwaffen)
+ * @param skillRating   Wert der Waffenfertigkeit (0: Probe ohne Fertigkeitswert, gedämpft angezeigt)
+ * @param specialization Spezialisierung, wenn sie auf die Waffe passt (+2, S. 147), sonst {@code null}
+ * @param armorType     Panzerung gegen die geladene Munition (S. 369), leer bei Waffen ohne Munition
  * @param rangeBands    Reichweitenstufen Kurz/Mittel/Weit/Extrem in Metern, leer bei Nahkampfwaffen
  * @param rangeNote     Tabellenzeile der Reichweiten (GRW S. 179) und ggf. Stärkebezug, leer bei
  *                      Nahkampfwaffen
@@ -31,10 +37,14 @@ record WeaponDetails(
     @NonNull String name,
     @NonNull String category,
     @NonNull String skill,
+    @Nullable DicePool dicePool,
+    int skillRating,
+    @Nullable String specialization,
     @NonNull String damage,
     @NonNull String damageFormula,
     @NonNull String recoil,
     @NonNull String armorPiercing,
+    @NonNull String armorType,
     @NonNull String reach,
     @NonNull String mode,
     @NonNull String ammo,
@@ -49,38 +59,49 @@ record WeaponDetails(
   private static final String NO_VALUE = "–";
 
   static @NonNull WeaponDetails of(@NonNull Weapon weapon, @NonNull Character character) {
+    Equipment equipment = character.getEquipment();
     WeaponData data = weapon.getData();
-    String damage = character.getEquipment().getWeaponDamageText(weapon);
-    Skill skill = character.getEquipment().getWeaponSkill(weapon);
-    return build(weapon, skill.getName() + " " + skill.getRating(), damage,
-        // Berechnet wurde genau dann, wenn der Text von der GRW-Formel abweicht.
-        damage.equals(data.damage()) ? "" : data.damage(),
-        character.getEquipment().getWeaponRangeBands(weapon));
+    String damage = equipment.getWeaponDamageText(weapon);
+    Skill skill = equipment.getWeaponSkill(weapon);
+    DicePool pool = equipment.getWeaponDicePool(weapon).orElse(null);
+    String specialization = equipment.isWeaponSpecialized(weapon) ? skill.getSpecialization() : null;
+    return build(weapon, skill.getName() + " " + skill.getRating(), pool, skill.getRating(), specialization, damage,
+        // Formel nur, wenn der Schaden aus der Stärke kommt (Munition ändert sonst auch feste Werte).
+        data.damage().contains("STR") && !damage.equals(data.damage()) ? data.damage() : "",
+        equipment.getWeaponArmorPiercingText(weapon), equipment.getWeaponArmorType(weapon),
+        equipment.getWeaponRangeBands(weapon));
   }
 
   /**
    * Werte einer Waffe in einer Fahrzeug-Waffenhalterung: nur die Tabellenwerte, ohne Stärke und
    * Fertigkeit des Charakters (Nutzerentscheidung 2026-10-09). Halterungswaffen sind Feuerwaffen bzw.
-   * Granatwerfer mit festem Schaden und festen Reichweiten; Würfelpools für Rigger und Drohnen (GRW
-   * S. 203, 287) sind zurückgestellt.
+   * Granatwerfer mit festem Schaden und festen Reichweiten; ihr Angriff steht in den Fahrzeugpools ({@code
+   * VehiclePools}, GRW S. 287).
    */
   static @NonNull WeaponDetails ofMounted(@NonNull Weapon weapon) {
-    return build(weapon, NO_VALUE, weapon.getData().damage(), "", weapon.getRangeBands(0));
+    return build(weapon, NO_VALUE, null, 0, null, weapon.getData().damage(), "", weapon.getData().armorPiercing(), "",
+        weapon.getRangeBands(0));
   }
 
   /** Gemeinsamer Aufbau; nur Fertigkeit, Schaden und Reichweiten hängen vom Einsatz ab. */
   private static @NonNull WeaponDetails build(@NonNull Weapon weapon, @NonNull String skillText,
-      @NonNull String damage, @NonNull String damageFormula, @Nullable RangeBands bands) {
+      @Nullable DicePool dicePool, int skillRating, @Nullable String specialization, @NonNull String damage,
+      @NonNull String damageFormula, @NonNull String armorPiercing, @NonNull String armorType,
+      @Nullable RangeBands bands) {
     WeaponData data = weapon.getData();
     WeaponRange range = data.range();
     return new WeaponDetails(
         weapon.getDisplayName(),
         data.category().getDisplayName(),
         skillText,
+        dicePool,
+        skillRating,
+        specialization,
         orDash(damage),
         damageFormula,
         weapon.getRecoil().displayText(),
-        orDash(data.armorPiercing()),
+        orDash(armorPiercing),
+        armorType,
         orDash(data.reach()),
         orDash(data.mode()),
         orDash(data.ammo()),

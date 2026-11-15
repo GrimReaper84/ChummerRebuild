@@ -13,6 +13,8 @@ class WeaponEntry {
   public @NonNull List<AccessoryEntry> accessories = new ArrayList<>();
   /** Pfeilstapel eines Bogens; fehlt in Dateien vor Gear Teil D. */
   public @NonNull List<GearEntry> arrows = new ArrayList<>();
+  /** Name der geladenen Munition (Stapel der Ausrüstung), leer für Standardmunition. */
+  public @NonNull String ammo = "";
 
   public WeaponEntry() {
   }

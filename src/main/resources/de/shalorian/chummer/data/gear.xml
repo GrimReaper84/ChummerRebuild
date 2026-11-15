@@ -23,7 +23,7 @@
   Kapazitätsbedarf als Einbau ("[1]" → 1, "pro Stufe" → Rating); <avail>+n</avail> = Zuschlag auf die
   Verfügbarkeit des Geräts; <repeatable> = darf mehrfach im selben Gerät stecken ("pro Stück").
   Gear Teil D: Pfeile, Bolzen, Munition, Granaten, Raketen, Lenkraketen, Sprengstoffe (S. 361, 369-371),
-  ebenfalls vom PDF-Bild. <damage>/<ap>/<blast>/<armortype> = Kampfwerte nur zur Anzeige.
+  ebenfalls vom PDF-Bild. <damage>/<ap>/<blast>/<armortype> = Kampfwerte; bei geladener Munition wirken sie auf die Waffe (ADR-056).
   Kleidung gehört zum Rüstungs-Feature.
   Namen: Einträge, die im GRW nur unter ihrer Tabelle stehen ("Kiste", "Metall", "Heilung", "Gold"),
   sind um den Tabellennamen ergänzt, damit der Katalogname eindeutig ist.
@@ -111,7 +111,7 @@
         <page>368</page>
     </item>
 
-    <!-- ── Munition pro 10 Schuss (Zusatz = Waffenklasse, außer bei Munition für eine feste Waffe; Kampfwerte nur Anzeige) (S. 369) ── -->
+    <!-- ── Munition pro 10 Schuss (Zusatz = Waffenklasse, außer bei Munition für eine feste Waffe; geladen wirken Schaden/PB auf die Waffe, ADR-056) (S. 369) ── -->
     <item>
         <name>APDS-Geschosse</name>
         <category>Munition</category>

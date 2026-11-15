@@ -192,6 +192,19 @@ Anlass einer situativen Adeptenkraft steht an ihrer Wirkung (`AdeptPowerEffect.g
 Waffen-Tab die feste, nicht kaufbare Zeile „Waffenloser Angriff“ ((STR÷2)G, S. 188), an der Kritischer Schlag sichtbar wird.
 **Warum:** Nutzerentscheidungen 2026-11-13 und 2026-11-15 (Review-Befund 5, Option a); `docs/plaene/archiv/magie_abrunden_plan.md`.
 
+### ADR-056: Kampfwerte: Waffenpool, Munition, Rigger-/Drohnenpools, Fahrzeugschaden (2026-11-15)
+Jede Waffe zeigt den Pool ihrer Fertigkeit; Fernkampf mit Smartgunsystem + Smartlink +2, sonst Lasermarkierer +1, nicht
+kumulativ (S. 180). Ein Smartlink zählt als Cyberware immer, im Gerät nur mit Bildverbindung im selben Gerät (S. 380).
+Je Waffe ist eine Munitionssorte aus der Ausrüstung geladen (gleiche Waffenklasse; Leuchtspur nur Vollautomatik);
+Schaden, PB und Panzerung folgen der Tabelle S. 369 (`AmmoEffect`), Munition für feste Waffen ist nicht ladbar.
+Fahrzeugpools nach der Tabelle S. 287 in drei Spalten (`VehiclePools`): hineingesprungen nur mit Riggeradapter, mit
+Riggerkontrolle +2 auch auf Geschütze; autonom nur Drohnen, Angriff nur mit Zielerfassung, sonst Pilot allein ohne
+passende Autosoft; Fernsteuerung mit dem laufenden Befehl des aktiven Kommlinks. Der Verletzungsmodifikator des Riggers
+gilt hineingesprungen und ferngesteuert; Implantat- und Adeptenwürfel und der Schild-Malus des Riggers zählen dort
+nicht, die Sperren der Fertigkeit (Inkompetenz, ahnungslos) schon. Die Fahrzeugfertigkeit steht je Fahrzeug im Katalog. Fahrzeugschaden nur im
+Karrieremodus, ohne Verletzungsmodifikator.
+**Warum:** Nutzerentscheidungen 2026-11-15; `docs/plaene/archiv/kampfwerte_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

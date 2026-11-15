@@ -12,9 +12,10 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.condition.AttributeTest;
 import de.shalorian.chummer.model.character.skill.DicePool;
+import de.shalorian.chummer.view.grid.ConditionBoxes;
+import java.util.List;
 import java.util.function.IntConsumer;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
@@ -33,8 +34,6 @@ import org.tbee.javafx.scene.layout.MigPane;
  */
 public final class ConditionTabBuilder {
 
-  private static final String STYLE_BOX = "cm-box";
-  private static final String STYLE_BOX_FILLED = "cm-box-filled";
   private static final String STYLE_BOX_FILLED_STUN = "cm-box-filled-stun";
   private static final String STYLE_BOX_OVERFLOW = "cm-box-overflow";
   private static final int BOXES_PER_ROW = 3;
@@ -100,31 +99,13 @@ public final class ConditionTabBuilder {
    */
   private @NonNull GridPane boxGrid(@NonNull Character ch, int count, int offset, int damage, boolean overflow,
       boolean stun, @NonNull IntConsumer setDamage) {
-    GridPane grid = new GridPane();
-    grid.setHgap(4);
-    grid.setVgap(4);
-    boolean career = ch.isCreated();
-    for (int i = 0; i < count; i++) {
-      int box = offset + i + 1;
-      Button button = new Button(overflow ? "" : woundMarker(ch, box));
-      button.getStyleClass().add(STYLE_BOX);
-      if (overflow) {
-        button.getStyleClass().add(STYLE_BOX_OVERFLOW);
-      }
-      if (box <= damage) {
-        button.getStyleClass().add(STYLE_BOX_FILLED);
-        if (stun) {
-          button.getStyleClass().add(STYLE_BOX_FILLED_STUN);
-        }
-      }
-      button.setDisable(!career);
-      button.setOnAction(_ -> {
-        setDamage.accept(box == damage ? box - 1 : box);
-        host.refreshRows();
-      });
-      grid.add(button, i % BOXES_PER_ROW, i / BOXES_PER_ROW);
-    }
-    return grid;
+    return ConditionBoxes.grid(count, offset, damage, BOXES_PER_ROW, ch.isCreated(),
+        box -> overflow ? "" : woundMarker(ch, box),
+        overflow ? List.of(STYLE_BOX_OVERFLOW) : List.of(), stun ? List.of(STYLE_BOX_FILLED_STUN) : List.of(),
+        newDamage -> {
+          setDamage.accept(newDamage);
+          host.refreshRows();
+        });
   }
 
   /** "−n", wenn mit diesem Kästchen der Verletzungsmodifikator der Spalte auf −n steigt, sonst leer. */

@@ -216,7 +216,9 @@
 | Feature                     | Status | Anmerkung        |
 |-----------------------------|--------|------------------|
 | Waffen kaufen und verwalten | ✅      | Teil A umgesetzt 2026-09-28 (`docs/plaene/archiv/waffen_plan.md`): 63 GRW-Kern-Waffen (Tabellen S. 361/363/366, am Bild geprüft) mit Tabellenwerten als Text, Bogen mit Stufe 1–8 (Mindeststärke), Kauf/Entfernen, Nuyen-Budget, Verfügbarkeit ≤ 12 (sichtbar-deaktiviert), Karriere-Kauf über Nuyen-Log, Persistenz; Unter-Tab "Waffen" seit 2026-09-30 als Baum nach Kategorie + Detailbereich wie im Original (`docs/plaene/archiv/waffen_detailansicht_plan.md`; vom Nutzer angesehen und für gut befunden) |
-| Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ✅ | Teil B umgesetzt 2026-09-30: Schaden aus Stärke (GRW S. 188, STR÷2 aufgerundet; Bogen nach Mindeststärke S. 361), Reichweiten laut Tabelle S. 179 (am Bild geprüft; `<range>` je Waffe, Abweichungen laut Waffentext: Hämmerli 620S, Mossberg AM-CMDT, Spezielle Waffen S. 362/365), Fertigkeit mit Wert je Kategorie (S. 147/148, 360–366). Tabelle aktualisiert sich bei Attribut-/Fertigkeitsänderung. **Einschränkungen:** Exotische Waffen teilen sich je eine Fertigkeit (GRW: je Waffe eigene); Pfeilstufe nicht modelliert; kein Würfelpool (Roadmap Stufe 3) |
+| Berechnete Werte (STR-Schaden, Reichweiten, Fertigkeit) | ✅ | Teil B umgesetzt 2026-09-30: Schaden aus Stärke (GRW S. 188, STR÷2 aufgerundet; Bogen nach Mindeststärke S. 361), Reichweiten laut Tabelle S. 179 (am Bild geprüft; `<range>` je Waffe, Abweichungen laut Waffentext: Hämmerli 620S, Mossberg AM-CMDT, Spezielle Waffen S. 362/365), Fertigkeit mit Wert je Kategorie (S. 147/148, 360–366). Tabelle aktualisiert sich bei Attribut-/Fertigkeitsänderung. **Einschränkungen:** Exotische Waffen teilen sich je eine Fertigkeit (GRW: je Waffe eigene); Pfeilstufe nicht modelliert |
+| Würfelpool je Waffe, Smartlink, Lasermarkierer | ✅ | 2026-11-15 (ADR-056): Pool der Waffenfertigkeit (S. 177/186), Spezialisierung „8 (10)“ (S. 147), Smartlink +2 mit Smartgunsystem, sonst Lasermarkierer +1, nicht kumulativ (S. 180); jede Waffe, auch eingebaute |
+| Geladene Munition | ✅ | 2026-11-15 (ADR-056): eine Sorte je Waffe aus passender Munition der Ausrüstung; Schaden, PB und Panzerung nach Tabelle S. 369 (Gel, Schocker, Flechette-Ausnahme bei (f)); Leuchtspur nur Vollautomatik, Salvenbonus als Hinweis; Munition für feste Waffen nicht ladbar |
 | Zubehör mit Halterungen     | ✅      | Teil C umgesetzt 2026-10-04: 16 GRW-Zubehörteile (Tabelle S. 368, am Bild geprüft) an Halterungen Lauf/Unterlauf/Aufmontiert je Waffenklasse (S. 357), eine pro Halterung, Zubehör ohne Halterung mehrfach; Sonderregeln laut Zubehörtexten S. 367/368 (Gasventil nur Automatikpistolen/MPs/Sturmgewehre/MGs und nicht entfernbar, Schalldämpfer EM/HM ohne Revolver, Schallunterdrücker SM/AM, Schockpolster und Gyrostabilisator nur Gewehre/schwere Waffen, Airburst nur Granat-/Raketenwerfer, Schnelllader nur Revolver, Ersatzladestreifen nur Ladestreifen-Waffen, Projektilwaffen nur Lasermarkierer/Smartgun); mitgeliefertes Zubehör laut Waffentexten S. 362–366 (`<included>`), höchstens ein Gasventil/Smartgunsystem/Schockpolster je Waffe; RK "x (y)" inkl. Zubehör (Gasventil fest, alles andere im Klammerwert); internes Smartgunsystem kostet den Waffenpreis; Budget, Karriere-Kauf, Persistenz. **Einschränkungen:** Spezielle Waffen ohne Halterung (kein GRW-Beleg); Airburst verlangt kein Smartgunsystem; HK-XM30-Umbausätze zurückgestellt (nur `<note>`) |
 | Waffenmodifikationen        | ❌      | Nur Arsenal, zurückgestellt |
 | Munition, Pfeile/Bolzen, Granaten/Raketen | ✅ | Im Gear-Feature umgesetzt (Gear Teil D, 2026-10-08), siehe Abschnitt 13 |
@@ -235,13 +237,14 @@
 | Sensoren, Sicht-/Audioverstärkung, Magschloss-Zusätze (Kapazität) | ✅ | Gear Teil C (2026-10-08): 10 visuelle/optische Geräte, 8 Sichtverstärkungen, 3 Audiosensoren, 3 Audioverstärkungen, 3 Sensorpakete (RFID/Mikro/Hand, 0 ¥ mangels GRW-Preis), 12 Sensor-Funktionen (inkl. Kamera/Mikrofon als Sensor), 3 Magschloss-Zusätze (GRW S. 378–382, am Bild). Einbau über "Einbauen" mit Kapazitätsprüfung, Verfügbarkeitszuschläge erhöhen die Verfügbarkeit des Geräts (auch für die Grenze 12 bei Erschaffung). UI vom Nutzer noch nicht angesehen |
 | Drohnen-/Fahrzeug-Sensorpakete | ✅ | Fahrzeug-Feature (2026-10-09): Stationär/kleine Drohne 5/4, Mittlere Drohne 6/4, Große Drohne 8/4, Fahrzeug 12/5 (Kapazität/Signal, GRW S. 381); "Sensorpaket (Hand)" heißt jetzt "Sensorpaket (Hand/Minidrohne)" wie die GRW-Zeile (alte Speicherdateien verlieren diesen Eintrag beim Laden) |
 | Autosoft-Typ als Auswahl | ✅ | 2026-10-09: Abwehr, Clearsight, Elektronische Kriegsführung, Steuerung, Zielerfassung (GRW S. 287); ohne Unterangabe Waffe/Fahrzeugtyp (Nutzerentscheidung) |
-| Smartlink erfordert Bildverbindung | ❌ | GRW S. 380; derzeit nur Hinweis, keine Einbauprüfung |
+| Smartlink erfordert Bildverbindung | ✅ | GRW S. 380: ein Smartlink im Gerät zählt für den Smartlink-Bonus nur mit Bildverbindung im selben Gerät (ADR-056); Einbau selbst bleibt erlaubt |
 | Mage-Sight-Brille/Periskop "[1]" als Einbau | ❌ | GRW nennt keinen Einbauort; nur als eigenständiges Gerät |
 | Orte/Lager-Kategorien        | ❌      | Zurückgestellt (später gemeinsam für Gear, Waffen, Rüstung) |
 | Holster, Versteckte Armhalterung, Smart-Feuerplattform | ✅ | Als Gear in Teil A (Tabelle Feuerwaffenzubehör, GRW S. 368); Smart-Feuerplattform ohne Waffenbezug, Werte als Hinweis |
 | Foki kaufen, binden, aktivieren | ✅ | 2026-11-13 (ADR-055): Fokusart und Zusatz als Auswahl (Zauberkategorie, Geisterart, Nahkampffertigkeit); Bindung im Detail des Fokus (Erschaffung 1 BP je Kraft, Karriere Kraft × Faktor Karma, S. 112/234), höchstens Magie Foki und Kraft 5 × Magie, aktiv höchstens Logik (S. 233/234). Zauberspeicher ohne Mechanik |
 | Munition, Pfeile/Bolzen, Granaten/Raketen | ✅ | Gear Teil D (2026-10-08, GRW S. 361, 369–371 am Bild): 11 Munitionssorten pro 10 Schuss mit Waffenklasse (Auswahl, GRW S. 368/369; Taserpfeil, Sturmkanonen-Geschosse, Injektionspfeile mit fester Waffe), Bolzen/Injektionsbolzen als normale Ausrüstung; Pfeile (Stufe 1–8, Preis fest) im Waffen-Tab am Bogen mit Schaden nach min(Pfeil, Bogen) und Mengen-Stepper; 7 Granaten (Standard/Minigranate), 3 Raketen, 3 Lenkraketen (Sensorstufe 1–6), 3 Sprengstoffe pro kg, Sprengkapsel; Kampfwerte nur als Anzeige. UI vom Nutzer noch nicht angesehen |
-| Munitionswirkung auf Waffenwerte, Granaten/Sprengstoff im Kampf | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
+| Munitionswirkung auf Waffenwerte | ✅ | 2026-11-15 (ADR-056), siehe Abschnitt 12 |
+| Granaten/Sprengstoff im Kampf | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
 | DIY/Hacked/Gratis/Aufschlag/Schwarzmarkt, Verkauf, "ausgerüstet" | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
 
 ---
@@ -258,7 +261,9 @@
 | Matrix-Upgrades (Prozessor/Signal/Firewall/System) | ✅ | 2026-11-13 (ADR-054): Gerätestufe als Ausgangswert, dieselben Module und Pakete wie beim Kommlink (S. 260/261) |
 | Pilot-Upgrade | ❌ | Kein eindeutiger GRW-Beleg, zurückgestellt |
 | Eigenname, Notizen, Orte | ❌ | Zurückgestellt (gemeinsam mit Gear/Waffen) |
-| Schaden am Zustandsmonitor, Würfelpools Rigger/Drohnen, Fahrzeugkampf | ❌ | Roadmap (Condition Monitor, Würfelpools) |
+| Würfelpools Rigger/Drohnen | ✅ | 2026-11-15 (ADR-056): Tabelle S. 287 (am Bild) in drei Spalten: hineingesprungen (Fertigkeiten des Riggers, Prozessor/Sensor des Fahrzeugs, Riggerkontrolle +2, S. 286/385, nur mit Riggeradapter), autonom (Pilot + Autosoft, nur Drohnen, Angriff nur mit Zielerfassung S. 202), Fernsteuerung (laufendes Befehl auf dem aktiven Kommlink); Fahrzeugprobe des Fahrers mit Handling (S. 198); Fahrzeugfertigkeit je Fahrzeug im Katalog |
+| Schaden am Zustandsmonitor | ✅ | 2026-11-15 (ADR-056): Kästchen im Fahrzeugdetail, nur Karrieremodus, gespeichert, ohne Verletzungsmodifikator (S. 197) |
+| Fahrzeugkampf-Manöver (Rammen, Verfolgungsjagd) | ❌ | Zurückgestellt |
 | Arsenal-Inhalte (Slots, Mod-Boni, weitere Fahrzeuge/Mods), Gebrauchtwagen, Verkauf | ❌ | Zusatzband bzw. kein GRW-Beleg, zurückgestellt |
 
 --------------------------------|--------|------------------|
@@ -369,7 +374,7 @@
 
 ## Prioritisierte Reihenfolge für nächste Schritte
 
-**Roadmap bis zum ersten Release (Nutzerentscheidung 2026-11-13, Reihenfolge fest):** Die Punkte 1–5 der
+**Roadmap bis zum ersten Release (Nutzerentscheidung 2026-11-13, Reihenfolge fest; Punkt 9 ergänzt 2026-11-15):** Die Punkte 1–5 der
 README-Roadmap sind erledigt; es folgen:
 
 6. ✅ **Matrix und Kommlinks (2026-11-13, ADR-054):** Hardware-Aufrüstungen (S. 260/261) und Firewall/System (S. 376), Programme einem
@@ -377,13 +382,15 @@ README-Roadmap sind erledigt; es folgen:
    Persona, Matrix-Upgrades für Fahrzeuge (Abschnitt 14). Plan: `docs/plaene/archiv/matrix_kommlinks_plan.md`.
 7. ✅ **Magie abrunden (2026-11-13, ADR-055):** Foki binden (Karma) und ihre Wirkung (Abschnitt 13), Katalog der Schutzpatrone mit Boni
    (bisher nur Freitext an der Gabe), situative Adeptenkräfte als Rechnung.
-8. **Kampfwerte vervollständigen:** Munitionswirkung auf Waffenwerte (Abschnitt 13), Smartlink-Bonus auf den Pool (aus Punkt 6 verschoben, Nutzerentscheidung 2026-11-13),
+8. ✅ **Kampfwerte vervollständigen (2026-11-15, ADR-056):** Munitionswirkung auf Waffenwerte (Abschnitt 13), Smartlink-Bonus auf den Pool (aus Punkt 6 verschoben, Nutzerentscheidung 2026-11-13),
    Würfelpools für Rigger und Drohnen, Fahrzeugschaden am Zustandsmonitor (Abschnitt 14).
-9. **Karrieremodus ausbauen:** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
+9. **Status-Panel leicht überarbeiten (Nutzerwunsch 2026-11-15):** Anpassungen, die dem Nutzer aufgefallen sind
+   (Liste folgt); nach den Kampfwerten, damit deren neue Werte gleich mit eingeordnet werden.
+10. **Karrieremodus ausbauen:** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
    von Ausrüstung (GRW-Beleg noch suchen, Abschnitt 15).
-10. **Restliche GRW-Inhalte:** Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für Wissensfertigkeiten
+11. **Restliche GRW-Inhalte:** Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für Wissensfertigkeiten
     (ADR-032), Portrait.
-11. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
+12. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
 
 **Als Nächstes (Stand 2026-11-11):**
 

@@ -4,8 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.skill.SkillCategory;
+import de.shalorian.chummer.model.character.skill.SkillDataLoader;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 class VehicleDataLoaderTest {
@@ -73,6 +78,18 @@ class VehicleDataLoaderTest {
   }
 
   /** Werte, in denen das C#-Original vom GRW abweicht (S. 397). */
+  @Test
+  void everyVehicleHasAVehicleSkill() {
+    // S. 154/155: Hovercraft = Bodenfahrzeuge, Luftfahrzeuge = Flugzeuge; Drohnen nach ihrem Text S. 398
+    Set<String> skills = SkillDataLoader.createFreshSkills().stream()
+        .filter(s -> s.getCategory() == SkillCategory.VEHICLE).map(Skill::getName).collect(Collectors.toSet());
+    VehicleDataLoader.getAllVehicles().values().forEach(v -> assertTrue(skills.contains(v.skill()), v.name()));
+    assertEquals("Bodenfahrzeuge", find("GMC Everglades (Hovercraft)").skill());
+    assertEquals("Flugzeuge", find("MCT Fly-Spy (Minidrohne)").skill());
+    assertEquals("Läufer", find("Shiawase Kanmushi (Mikrodrohne)").skill());
+    assertEquals("Schiffe", find("SC Otter (Sportboot)").skill());
+  }
+
   @Test
   void usesRulebookValuesWhereTheOriginalDeviates() {
     assertEquals(25_500, find("GMC Everglades (Hovercraft)").cost());

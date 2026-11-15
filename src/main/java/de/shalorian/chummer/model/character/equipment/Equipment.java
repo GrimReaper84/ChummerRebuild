@@ -15,10 +15,13 @@ import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
 import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
+import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
+import de.shalorian.chummer.model.character.skill.DicePool;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
+import de.shalorian.chummer.model.character.weapon.AmmoEffect;
 import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
@@ -32,6 +35,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.ToIntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,6 +66,20 @@ public class Equipment {
   private static final String IMPLANT_WEAPON_SOURCE = "Implantat";
   /** Katalogname des waffenlosen Grundangriffs (GRW S. 188). */
   private static final String UNARMED_ATTACK = "Waffenloser Angriff";
+
+  /** Munition, die nur in vollautomatischen Waffen geladen wird (S. 369). */
+  private static final String TRACER_ROUNDS = "Leuchtspurgeschosse";
+  private static final String FULL_AUTO = "AM";
+  /** Panzerung gegen Standardmunition (S. 369). */
+  private static final String STANDARD_ARMOR_TYPE = "Ballistisch";
+  /** Smartlink mit Smartgun-Waffe (GRW S. 180). */
+  private static final int SMARTLINK_BONUS = 2;
+  /** Lasermarkierer (GRW S. 180). */
+  private static final int LASER_SIGHT_BONUS = 1;
+  /** Katalogname des Smartlinks, als Cyberware und als Sichtverstärkung gleich (S. 379/388). */
+  private static final String SMARTLINK = "Smartlink";
+  /** Katalogname der Bildverbindung (S. 379). */
+  private static final String IMAGE_LINK = "Bildverbindung";
 
   /** Schadenswert am Anfang eines Schadenscodes, z.B. „4“ in „4K“. */
   private static final Pattern LEADING_NUMBER = Pattern.compile("(\\d+)(.*)");
@@ -392,13 +410,65 @@ public class Equipment {
   }
 
   /**
+   * Würfelpool für Angriffe mit der Waffe: Pool der Waffenfertigkeit (Fertigkeit + Geschicklichkeit, ohne Wert nach den
+   * Regeln von S. 146; Verletzung, Implantate und Adeptenkräfte schon eingerechnet, GRW S. 177/186), bei Fernkampfwaffen
+   * dazu Smartlink +2 mit Smartgunsystem, sonst Lasermarkierer +1; beide Boni zählen nicht zusammen (S. 180). Leer, wenn
+   * die Fertigkeit nicht genutzt werden kann.
+   */
+  public @NonNull Optional<DicePool> getWeaponDicePool(@NonNull Weapon weapon) {
+    Optional<DicePool> base = owner.getSkillDicePool(getWeaponSkill(weapon));
+    if (base.isEmpty() || weapon.getData().category().isMelee()) {
+      return base;
+    }
+    DicePool pool = base.get();
+    if (weapon.hasSmartgun() && hasSmartlink()) {
+      return Optional.of(new DicePool(pool.dice() + SMARTLINK_BONUS,
+          pool.breakdown() + " + Smartlink " + SMARTLINK_BONUS));
+    }
+    if (weapon.hasLaserSight()) {
+      return Optional.of(new DicePool(pool.dice() + LASER_SIGHT_BONUS,
+          pool.breakdown() + " + Lasermarkierer " + LASER_SIGHT_BONUS));
+    }
+    return base;
+  }
+
+  /**
+   * Ob die Spezialisierung der Waffenfertigkeit auf diese Waffe passt (dann +2 Würfel, GRW S. 147): gleich dem
+   * Waffennamen oder der Waffenkategorie, ohne Groß-/Kleinschreibung.
+   */
+  public boolean isWeaponSpecialized(@NonNull Weapon weapon) {
+    String specialization = getWeaponSkill(weapon).getSpecialization();
+    return specialization != null && (specialization.equalsIgnoreCase(weapon.getName())
+        || specialization.equalsIgnoreCase(weapon.getData().category().getDisplayName()));
+  }
+
+  /**
+   * Ob der Charakter einen nutzbaren Smartlink hat (GRW S. 180): als Cyberware (S. 388) oder in einem Gerät wie Brille
+   * oder Kontaktlinsen, das zugleich eine Bildverbindung enthält (S. 380). Gegenstände in Fahrzeugen zählen nicht.
+   */
+  public boolean hasSmartlink() {
+    boolean implant = cyberware.stream()
+        .flatMap(c -> Stream.concat(Stream.of(c), c.getInstalled().stream()))
+        .anyMatch(c -> c.getData().name().equals(SMARTLINK));
+    return implant || gear.stream().anyMatch(g -> containsInstalled(g, SMARTLINK) && containsInstalled(g, IMAGE_LINK));
+  }
+
+  private static boolean containsInstalled(@NonNull Gear device, @NonNull String name) {
+    return device.getInstalled().stream().anyMatch(child -> child.getName().equals(name));
+  }
+
+  /**
    * Schaden der Waffe für diesen Charakter (GRW S. 188: halbe Stärke aufgerundet plus Waffenmodifikator;
    * beim Bogen nach Mindeststärke). Grundlage ist die wirksame Stärke ({@link
    * Character#getAugmentedAttributeValue(AttributeType)}), die derzeit der investierten entspricht,
    * da es noch keine Stärkemodifikatoren gibt.
    */
   public @NonNull String getWeaponDamageText(@NonNull Weapon weapon) {
-    String damage = weapon.getDamageText(owner.getAugmentedAttributeValue(AttributeType.STR));
+    String damage = baseDamage(weapon);
+    AmmoEffect effect = loadedAmmoEffect(weapon);
+    if (effect != null) {
+      damage = effect.applyToDamage(damage);
+    }
     int strike = owner.getAdeptPowers().level(AdeptPowerEffect.CRITICAL_STRIKE);
     if (strike == 0 || weapon.getData().category() != WeaponCategory.UNARMED) {
       return damage;
@@ -406,6 +476,93 @@ public class Equipment {
     // Kritischer Schlag (GRW S. 231): je Stufe +1 Schaden waffenlos
     Matcher m = LEADING_NUMBER.matcher(damage);
     return m.matches() ? (Integer.parseInt(m.group(1)) + strike) + m.group(2) : damage + " +" + strike;
+  }
+
+  /**
+   * PB der Waffe für diesen Charakter: Tabellenwert, mit geladener Munition nach S. 369 verändert ({@link
+   * AmmoEffect}).
+   */
+  public @NonNull String getWeaponArmorPiercingText(@NonNull Weapon weapon) {
+    String ap = weapon.getData().armorPiercing();
+    AmmoEffect effect = loadedAmmoEffect(weapon);
+    return effect == null ? ap : effect.applyToArmorPiercing(ap, baseDamage(weapon));
+  }
+
+  /** Schaden nach Stärke bzw. Mindeststärke, ohne Munition und Kritischen Schlag. */
+  private @NonNull String baseDamage(@NonNull Weapon weapon) {
+    return weapon.getDamageText(owner.getAugmentedAttributeValue(AttributeType.STR));
+  }
+
+  /**
+   * Hinweise zu Boni, die nicht im Pool stehen: Smartgunsystem ohne nutzbaren Smartlink (S. 180, 380) und der
+   * Salvenbonus von Leuchtspur (S. 180, 369).
+   */
+  public @NonNull List<String> getWeaponHints(@NonNull Weapon weapon) {
+    List<String> hints = new ArrayList<>();
+    if (!weapon.getData().category().isMelee() && weapon.hasSmartgun() && !hasSmartlink()) {
+      hints.add("Smartgunsystem ohne Smartlink (Cyberware oder mit Bildverbindung im Gerät): kein Bonus (GRW S. 180)");
+    }
+    Gear ammo = getLoadedAmmo(weapon);
+    if (ammo != null && ammo.getName().equals(TRACER_ROUNDS)) {
+      hints.add("Leuchtspur: Salven +1/+2/+3, nicht zusammen mit Smartlink oder Lasermarkierer (GRW S. 180, 369)");
+    }
+    return hints;
+  }
+
+  /**
+   * Munitionssorten der Ausrüstung, die in die Waffe passen (GRW S. 368/369): Munition mit eigener Wirkung, deren
+   * Waffenklasse der Kategorie der Waffe entspricht; Leuchtspurgeschosse nur in vollautomatischen Waffen (S. 369).
+   */
+  public @NonNull List<Gear> getAmmoCandidates(@NonNull Weapon weapon) {
+    WeaponData data = weapon.getData();
+    if (!data.category().usesAmmunition()) {
+      return List.of();
+    }
+    return gear.stream()
+        .filter(g -> g.getData().category() == GearCategory.AMMUNITION && ammoEffect(g) != null)
+        .filter(g -> g.getExtra().equals(data.category().getDisplayName()))
+        .filter(g -> !g.getName().equals(TRACER_ROUNDS) || List.of(data.mode().split("/")).contains(FULL_AUTO))
+        .toList();
+  }
+
+  /**
+   * Lädt {@code ammo} in die Waffe bzw. mit {@code null} wieder Standardmunition (Nutzerentscheidung 2026-11-15: eine
+   * Munitionssorte je Waffe).
+   *
+   * @throws IllegalArgumentException wenn die Munition nicht zu {@link #getAmmoCandidates(Weapon)} gehört
+   */
+  public void loadAmmo(@NonNull Weapon weapon, @Nullable Gear ammo) {
+    if (ammo != null && !getAmmoCandidates(weapon).contains(ammo)) {
+      throw new IllegalArgumentException(ammo.getDisplayName() + " passt nicht in " + weapon.getName());
+    }
+    weapon.setLoadedAmmoStack(ammo);
+  }
+
+  /** Geladene Munition, oder {@code null} für Standardmunition, auch wenn der Stapel nicht mehr passt oder fehlt. */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau der geladene Stapel
+  public @Nullable Gear getLoadedAmmo(@NonNull Weapon weapon) {
+    Gear stack = weapon.getLoadedAmmoStack();
+    return stack != null && getAmmoCandidates(weapon).stream().anyMatch(g -> g == stack) ? stack : null;
+  }
+
+  /** Panzerung, gegen die die Waffe mit ihrer Munition geht (S. 369), leer bei Waffen ohne Munition. */
+  public @NonNull String getWeaponArmorType(@NonNull Weapon weapon) {
+    if (!weapon.getData().category().usesAmmunition()) {
+      return "";
+    }
+    AmmoEffect effect = loadedAmmoEffect(weapon);
+    return effect == null ? STANDARD_ARMOR_TYPE : effect.armorType();
+  }
+
+  private @Nullable AmmoEffect loadedAmmoEffect(@NonNull Weapon weapon) {
+    Gear ammo = getLoadedAmmo(weapon);
+    return ammo == null ? null : ammoEffect(ammo);
+  }
+
+  private static @Nullable AmmoEffect ammoEffect(@NonNull Gear ammo) {
+    GearCombatStats stats = ammo.getData().combat();
+    return stats == null ? null
+        : AmmoEffect.fromTable(ammo.getName(), stats.damage(), stats.armorPiercing(), stats.armorType());
   }
 
   /**

@@ -21,6 +21,8 @@ class VehicleEntry {
   public @NonNull List<GearEntry> gear = new ArrayList<>();
   /** Hardware-Module und Softwarepakete; fehlt in Dateien vor ADR-054. */
   public @NonNull List<GearEntry> matrixUpgrades = new ArrayList<>();
+  /** Schaden in Kästchen (nur im Karrieremodus eingetragen); fehlt in Dateien vor ADR-056. */
+  public int damage = 0;
 
   public VehicleEntry() {
     // Für Jackson-Deserialisierung benötigt.

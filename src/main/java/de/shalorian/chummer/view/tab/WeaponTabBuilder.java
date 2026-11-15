@@ -25,17 +25,20 @@ import de.shalorian.chummer.view.dialog.AccessorySelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import de.shalorian.chummer.view.dialog.WeaponSelectDialogController;
+import de.shalorian.chummer.view.converter.AmmoStringConverter;
 import de.shalorian.chummer.view.grid.GridSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -56,8 +59,8 @@ import org.tbee.javafx.scene.layout.MigPane;
  * Auswahl entfernen), links ein Baum der gekauften Waffen mit ihrem Zubehör als Kindknoten
  * (mitgeliefertes zuerst, wie "Part of base Weapon" im Original), rechts ein Detailbereich mit allen
  * Werten des gewählten Knotens. Abweichend vom Original ist der Baum nach Waffenkategorie gruppiert
- * (statt nach Waffenorten), und es gibt keinen Würfelpool (Roadmap Stufe 3); siehe {@code
- * docs/plaene/archiv/waffen_detailansicht_plan.md}.
+ * (statt nach Waffenorten); siehe {@code docs/plaene/archiv/waffen_detailansicht_plan.md}. Seit ADR-056 zeigt das
+ * Detail den Würfelpool (mit Smartlink/Lasermarkierer) und die geladene Munition.
  *
  * <p>Nach Kauf/Entfernen wird der Tab neu aufgebaut. Schaden, Reichweiten und Fertigkeitswert hängen an
  * Stärke und Fertigkeiten; {@link #refresh()} baut deshalb nur den Detailbereich der aktuellen Auswahl
@@ -65,6 +68,7 @@ import org.tbee.javafx.scene.layout.MigPane;
  */
 final class WeaponTabBuilder {
 
+  private static final String STANDARD_AMMO = "Standardmunition";
   /** Spaltenköpfe des Reichweitenblocks mit den Modifikatoren laut GRW S. 179. */
   private static final String[] RANGE_HEADERS =
       {"Kurz (±0)", "Mittel (−1)", "Weit (−3)", "Extrem (−6)"};
@@ -291,12 +295,17 @@ final class WeaponTabBuilder {
     }
   }
 
-  private static void showWeaponDetails(@NonNull VBox details, @NonNull Weapon weapon,
+  private void showWeaponDetails(@NonNull VBox details, @NonNull Weapon weapon,
       @NonNull Character character) {
     WeaponDetails d = WeaponDetails.of(weapon, character);
     Label title = new Label(d.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
-    details.getChildren().addAll(title, buildValueGrid(d), buildRangeSection(d));
+    details.getChildren().addAll(title, buildValueGrid(d));
+    if (weapon.getData().category().usesAmmunition() && !weapon.getData().builtIn()) {
+      details.getChildren().add(ammoSelector(weapon, character));
+    }
+    character.getEquipment().getWeaponHints(weapon).forEach(hint -> details.getChildren().add(detailHint(hint)));
+    details.getChildren().add(buildRangeSection(d));
     if (weapon.takesArrows()) {
       details.getChildren().add(buildArrowSection(weapon));
     }
@@ -305,6 +314,37 @@ final class WeaponTabBuilder {
       note.setWrapText(true);
       details.getChildren().add(note);
     }
+  }
+
+  /**
+   * Auswahl der geladenen Munition (GRW S. 369, eine Sorte je Waffe): ein passender Stapel aus der Ausrüstung, leer =
+   * Standardmunition; „Standard“ entlädt wieder. Die Wahl baut den Tab neu auf, damit Schaden, PB und Panzerung
+   * nachziehen.
+   */
+  private @NonNull HBox ammoSelector(@NonNull Weapon weapon, @NonNull Character character) {
+    ComboBox<Gear> box = new ComboBox<>();
+    box.setConverter(new AmmoStringConverter());
+    box.setPromptText(STANDARD_AMMO);
+    box.getItems().setAll(character.getEquipment().getAmmoCandidates(weapon));
+    Gear loaded = character.getEquipment().getLoadedAmmo(weapon);
+    box.setValue(loaded);
+    box.setOnAction(_ -> {
+      character.getEquipment().loadAmmo(weapon, box.getValue());
+      onWeaponsChanged(character, weapon, null);
+    });
+    Button standard = new Button("Standard");
+    standard.getStyleClass().add(STYLE_BTN_SECONDARY);
+    standard.setDisable(loaded == null);
+    standard.setOnAction(_ -> {
+      character.getEquipment().loadAmmo(weapon, null);
+      onWeaponsChanged(character, weapon, null);
+    });
+    HBox row = new HBox(8, detailKey("Geladene Munition"), box, standard);
+    row.setAlignment(Pos.CENTER_LEFT);
+    if (box.getItems().isEmpty()) {
+      row.getChildren().add(detailHint("keine passende Munition in der Ausrüstung"));
+    }
+    return row;
   }
 
   /** Gekauftes Zubehör: Halterung, RK, Verfügbarkeit, Preis an dieser Waffe, Quelle, Regelhinweis. */
@@ -398,8 +438,11 @@ final class WeaponTabBuilder {
   static @NonNull MigPane buildValueGrid(@NonNull WeaponDetails d) {
     MigPane grid = new MigPane("", "[][]24[][]24[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
+    Label pool = DicePoolLabel.create();
+    DicePoolLabel.show(pool, Optional.ofNullable(d.dicePool()), d.skillRating(), d.specialization());
     addRowCells(grid, 0, detailKey("Kategorie"), detailValue(d.category()),
-        detailKey("Fertigkeit"), detailValue(d.skill()));
+        detailKey("Fertigkeit"), detailValue(d.skill()),
+        detailKey("Würfelpool"), pool);
     addRowCells(grid, 1, detailKey("Schaden"), damage(d),
         detailKey("RK"), detailValue(d.recoil()),
         detailKey("PB"), detailValue(d.armorPiercing()));
@@ -409,6 +452,9 @@ final class WeaponTabBuilder {
     addRowCells(grid, 3, detailKey("Verf."), detailValue(d.availability()),
         detailKey("Preis"), detailValue(d.cost()),
         detailKey("Quelle"), detailValue(d.source()));
+    if (!d.armorType().isEmpty()) {
+      addRowCells(grid, 4, detailKey("Panzerung"), detailValue(d.armorType()));
+    }
     return grid;
   }
 

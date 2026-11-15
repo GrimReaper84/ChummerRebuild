@@ -147,7 +147,8 @@ public class CharacterStore {
         .map(implant -> toCyberwareEntry(implant, pairIds, chosenCommlink))
         .toList();
     data.armor = character.getEquipment().getArmor().stream().map(CharacterStore::toArmorEntry).toList();
-    data.weapons = character.getEquipment().getWeapons().stream().map(CharacterStore::toWeaponEntry)
+    data.weapons = character.getEquipment().getWeapons().stream()
+        .map(w -> toWeaponEntry(w, character.getEquipment().getLoadedAmmo(w)))
         .toList();
     data.gear = character.getEquipment().getGear().stream().map(g -> toGearEntry(g, chosenCommlink))
         .toList();
@@ -160,12 +161,14 @@ public class CharacterStore {
     return data;
   }
 
-  private static @NonNull WeaponEntry toWeaponEntry(@NonNull Weapon weapon) {
+  /** Waffe in der Speicherdatei; {@code ammo} ist die gültig geladene Munition (sonst {@code null}). */
+  private static @NonNull WeaponEntry toWeaponEntry(@NonNull Weapon weapon, @Nullable Gear ammo) {
     WeaponEntry entry = new WeaponEntry(weapon.getName(), weapon.getRating(),
         weapon.getAccessories().stream()
             .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
             .toList());
     entry.arrows = weapon.getArrows().stream().map(CharacterStore::toGearEntry).toList();
+    entry.ammo = ammo == null ? "" : ammo.getName();
     return entry;
   }
 
@@ -175,12 +178,13 @@ public class CharacterStore {
     entry.mounts = vehicle.getMounts().stream()
         .map(m -> {
           Weapon weapon = m.getWeapon();
-          return new MountEntry(m.isIncluded(), weapon == null ? null : toWeaponEntry(weapon));
+          return new MountEntry(m.isIncluded(), weapon == null ? null : toWeaponEntry(weapon, null));
         })
         .toList();
     entry.includedGear = vehicle.getIncludedGear().stream().map(CharacterStore::toGearEntry).toList();
     entry.gear = vehicle.getGear().stream().map(CharacterStore::toGearEntry).toList();
     entry.matrixUpgrades = vehicle.getMatrixUpgrades().stream().map(CharacterStore::toGearEntry).toList();
+    entry.damage = vehicle.getDamage();
     return entry;
   }
 
@@ -296,8 +300,8 @@ public class CharacterStore {
     applyComplexForms(character, data);
     Gear chosenCommlink = applyCyberware(character, data);
     applyArmor(character, data);
-    applyWeapons(character, data);
     Gear chosenGear = applyGear(character, data);
+    applyWeapons(character, data); // nach der Ausrüstung: geladene Munition verweist auf ihre Stapel
     chosenCommlink = chosenGear != null ? chosenGear : chosenCommlink;
     if (chosenCommlink != null) {
       character.getEquipment().setActiveCommlink(chosenCommlink);
@@ -494,6 +498,10 @@ public class CharacterStore {
       Weapon weapon = toWeapon(entry);
       if (weapon != null) {
         character.getEquipment().addWeapon(weapon);
+        // unbekannte oder nicht mehr passende Munition: Standardmunition
+        character.getEquipment().getAmmoCandidates(weapon).stream()
+            .filter(g -> g.getName().equals(entry.ammo)).findFirst()
+            .ifPresent(ammo -> character.getEquipment().loadAmmo(weapon, ammo));
       }
     }
   }
@@ -566,6 +574,7 @@ public class CharacterStore {
       applyIncludedGear(vehicle, entry.includedGear);
       applyVehicleGear(vehicle, entry.gear);
       applyMatrixUpgrades(vehicle, entry.matrixUpgrades);
+      vehicle.setDamage(entry.damage);
       character.getEquipment().addVehicle(vehicle);
     }
   }

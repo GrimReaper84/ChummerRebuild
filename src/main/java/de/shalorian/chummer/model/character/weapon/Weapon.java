@@ -31,6 +31,8 @@ public class Weapon {
   private final List<Gear> arrows = new ArrayList<>();
   private final @NonNull String builtInSource;
   private final @Nullable Integer fixedStrength;
+  /** Geladene Munition (Stapel der Ausrüstung), {@code null} für Standardmunition; geprüft wird in {@code Equipment}. */
+  private @Nullable Gear loadedAmmo;
 
   /**
    * Waffe mit Stufe.
@@ -215,6 +217,29 @@ public class Weapon {
       throw new IllegalStateException(accessory.getName() + " kann nicht entfernt werden");
     }
     accessories.remove(accessory);
+  }
+
+  /**
+   * Gewählter Munitionsstapel, oder {@code null}. Ob er noch zur Ausrüstung gehört, prüft {@code
+   * Equipment#getLoadedAmmo}.
+   */
+  public @Nullable Gear getLoadedAmmoStack() {
+    return loadedAmmo;
+  }
+
+  /** Setzt den Munitionsstapel ohne Prüfung; Prüfung und Regeln in {@code Equipment#loadAmmo}. */
+  public void setLoadedAmmoStack(@Nullable Gear ammo) {
+    this.loadedAmmo = ammo;
+  }
+
+  /** Ob die Waffe ein Smartgunsystem hat, mitgeliefert oder eingebaut (GRW S. 368). */
+  public boolean hasSmartgun() {
+    return ruleHolder(AccessoryRule.SMARTGUN) != null;
+  }
+
+  /** Ob die Waffe einen Lasermarkierer trägt (GRW S. 368). */
+  public boolean hasLaserSight() {
+    return ruleHolder(AccessoryRule.LASER_SIGHT) != null;
   }
 
   /**

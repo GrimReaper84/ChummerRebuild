@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.tab;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
@@ -54,6 +55,22 @@ class WeaponDetailsTest {
     assertEquals("Pistolen 0", predator.skill());
     assertEquals("–", predator.reach());
     assertEquals("350 ¥", predator.cost());
+  }
+
+  @Test
+  void poolShowsSpecializationInBrackets() {
+    // S. 147: passende Spezialisierung +2
+    Character c = mensch();
+    c.getAttribute(AttributeType.AGI).setValue(3);
+    Objects.requireNonNull(c.getSkill("Pistolen")).setRating(2);
+    Objects.requireNonNull(c.getSkill("Pistolen")).setSpecialization("Ares Predator IV");
+
+    WeaponDetails predator = WeaponDetails.of(weapon("Ares Predator IV"), c);
+
+    assertEquals(5, Objects.requireNonNull(predator.dicePool()).dice());
+    assertEquals("Ares Predator IV", predator.specialization());
+    assertEquals("Ballistisch", predator.armorType());
+    assertNull(WeaponDetails.ofMounted(weapon("Ares Predator IV")).dicePool());
   }
 
   @Test

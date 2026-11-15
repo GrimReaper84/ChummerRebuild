@@ -1503,6 +1503,32 @@ public class Character {
     return Optional.of(defaultingPool(type.getDisplayName(), attribute, implantDice, bonusText));
   }
 
+  /**
+   * Pool aus Fertigkeit + einem fremden Wert statt des verbundenen Attributs, z.B. Prozessor oder Sensor einer Drohne
+   * beim Hineinspringen (S. 286/287) oder die Stufe von Befehl beim Fernsteuern. Dieselben Sperren wie {@link
+   * #getSkillDicePool(Skill)} (Inkompetenz, ohne Fertigkeitswert nur wenn erlaubt und nicht ahnungslos), aber ohne
+   * Implantat- und Adeptenwürfel und ohne Schild-Malus, weil nicht der Körper des Charakters handelt
+   * (Nutzerentscheidung 2026-11-15). Verletzungsmodifikator eingerechnet.
+   */
+  public @NonNull Optional<DicePool> getSkillDicePool(@NonNull Skill skill, @NonNull String valueName, int value) {
+    if (!isSkillAccessible(skill)) {
+      return Optional.empty();
+    }
+    if (skill.getRating() > 0) {
+      return Optional.of(dicePool(value + skill.getRating(),
+          ratingBreakdown(valueName, value, skill.getName(), skill.getRating())));
+    }
+    if (!skill.isDefaultable() || isSkillCostDoubled(skill.getCategory())) {
+      return Optional.empty();
+    }
+    return Optional.of(defaultingPool(valueName, value, 0, ""));
+  }
+
+  /** Pool aus {@code dice} Würfeln mit dem Verletzungsmodifikator des Charakters (S. 193), nicht unter 0. */
+  public @NonNull DicePool getWoundedPool(int dice, @NonNull String breakdown) {
+    return dicePool(dice, breakdown);
+  }
+
   /** Würfel mit Spezialisierung: +{@value #SPECIALIZATION_DICE} im Spezialgebiet (S. 147). */
   public static int withSpecialization(@NonNull DicePool pool) {
     return pool.dice() + SPECIALIZATION_DICE;

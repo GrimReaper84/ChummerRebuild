@@ -27,7 +27,8 @@ class VehicleTest {
 
   /** Synthetisches Fahrzeug mit beliebigem Rumpf, ohne mitgelieferte Teile. */
   private static Vehicle withBody(int body) {
-    return new Vehicle(new VehicleData("Testwagen", VehicleCategory.CARS, 0, 10, 20, 100, 1, body,
+    return new Vehicle(new VehicleData("Testwagen", VehicleCategory.CARS, "Bodenfahrzeuge", 0, 10, 20, 100, 1,
+        body,
         6, 2, Availability.NONE, 10_000, 0, "", List.of(), "", "SR4", "397"));
   }
 
@@ -40,6 +41,18 @@ class VehicleTest {
   }
 
   /** GRW-Beispiel S. 197: Rumpf 3 ergibt 10 Kästchen. */
+  @Test
+  void damageIsClampedAndFullMonitorMeansDestroyed() {
+    Vehicle vehicle = withBody(3);
+    vehicle.setDamage(-2);
+    assertEquals(0, vehicle.getDamage());
+    vehicle.setDamage(9);
+    assertFalse(vehicle.isDestroyed());
+    vehicle.setDamage(15);
+    assertEquals(10, vehicle.getDamage());
+    assertTrue(vehicle.isDestroyed());
+  }
+
   @Test
   void conditionMonitorMatchesGrwExample() {
     assertEquals(10, withBody(3).getConditionMonitor());

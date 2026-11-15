@@ -86,6 +86,7 @@
 
     <item>
         <name>Lasermarkierer</name>
+        <rule>LASER_SIGHT</rule>
         <mount>Aufmontiert</mount>
         <mount>Unterlauf</mount>
         <projectile/>

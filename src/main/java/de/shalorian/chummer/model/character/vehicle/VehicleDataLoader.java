@@ -82,6 +82,7 @@ public class VehicleDataLoader {
     return new VehicleData(
         name,
         VehicleCategory.fromDisplayName(childText(el, "category")),
+        childText(el, "skill"),
         Integer.parseInt(childText(el, "handling")),
         Integer.parseInt(accel[0].trim()),
         Integer.parseInt(accel[1].trim()),

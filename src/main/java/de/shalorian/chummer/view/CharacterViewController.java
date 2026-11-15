@@ -496,6 +496,7 @@ public class CharacterViewController implements CharacterTabHost {
     technomancerTabBuilder.refresh();
     initiationTab.build(); // klein; zieht die Warnung „Grad über Magie“ nach, wenn sich Magie/Resonanz ändert
     streetGear.refresh();
+    vehicleTab.refresh();
   }
 
   private void updateNuyenBpDisplay() {

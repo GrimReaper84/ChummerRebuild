@@ -12,6 +12,7 @@ import org.jspecify.annotations.NonNull;
  * 25.500 ¥ statt 25.000 ¥, Sensor der Luftfahrzeuge). Die mitgelieferte Ausstattung (Halterungen,
  * Autosofts, Medkit) folgt den Fahrzeugtexten S. 395–398.
  *
+ * @param skill           Fahrzeugfertigkeit, mit der das Fahrzeug gesteuert wird (S. 154/155), z.B. „Bodenfahrzeuge“
  * @param handling        Handling (kann negativ sein)
  * @param accelWalking    Beschleunigung, erster Wert ("Gehen")
  * @param accelRunning    Beschleunigung, zweiter Wert ("Laufen")
@@ -26,6 +27,7 @@ import org.jspecify.annotations.NonNull;
 public record VehicleData(
     @NonNull String name,
     @NonNull VehicleCategory category,
+    @NonNull String skill,
     int handling,
     int accelWalking,
     int accelRunning,
