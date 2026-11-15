@@ -219,9 +219,19 @@ final class ArmorTabBuilder {
     }, tree.getSelectionModel().selectedItemProperty()));
     removeBtn.setOnAction(_ -> onRemoveSelected(character, tree));
 
+    // Verkaufen (Karriere): ganzes Rüstungsteil samt Einbauten
+    Button sellBtn = host.services().sellButton(character, "Ausgewähltes Rüstungsteil verkaufen",
+        tree.getSelectionModel().selectedItemProperty(), () -> {
+          ArmorTreeEntry entry = selectedEntry(tree);
+          return entry == null || entry.mod() != null ? null : entry.armor();
+        }, Armor::getName, Armor::getNuyenCost, armor -> {
+          character.getEquipment().removeArmor(armor);
+          onChanged(character, null, null);
+        });
+
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    HBox toolbar = new HBox(8, spacer, removeBtn, equipAllBtn, unequipAllBtn, equipBtn, installBtn, addBtn);
+    HBox toolbar = new HBox(8, spacer, sellBtn, removeBtn, equipAllBtn, unequipAllBtn, equipBtn, installBtn, addBtn);
     toolbar.setAlignment(Pos.CENTER_LEFT);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;

@@ -1,11 +1,9 @@
 package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.LogEntry;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.view.grid.RowControls;
 import de.shalorian.chummer.view.grid.RowModel;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -35,16 +33,17 @@ public final class IncrementWiring {
    */
   public void wire(@NonNull List<Runnable> refresherList,
       @NonNull RowControls controls, boolean career, @NonNull RowModel model,
-      @NonNull Character character) {
+      @NonNull Character character, @NonNull LogCategory category) {
     if (career) {
-      wireCareerIncrementable(refresherList, controls, model, character);
+      wireCareerIncrementable(refresherList, controls, model, character, category);
     } else {
       wireCreationIncrementable(refresherList, controls, model, character);
     }
   }
 
   private void wireCareerIncrementable(@NonNull List<Runnable> refresherList,
-      @NonNull RowControls controls, @NonNull RowModel model, @NonNull Character character) {
+      @NonNull RowControls controls, @NonNull RowModel model, @NonNull Character character,
+      @NonNull LogCategory category) {
     Label valueLabel = controls.valueLabel();
     Label costLabel = controls.costLabel();
     Button minus = controls.minus();
@@ -67,11 +66,9 @@ public final class IncrementWiring {
       String label = model.actionLabel(val, val + 1);
       if (val < model.max() && character.getKarmaTotal() >= karmaCost && model.canIncrement()
           && host.services().confirmKarmaSpend(label, karmaCost, character)) {
-        character.addKarmaEntry(
-            new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+        host.services().bookKarma(character, category, label, -karmaCost);
         model.increment();
         host.refreshRows();
-        host.onLogChanged();
       }
     });
 

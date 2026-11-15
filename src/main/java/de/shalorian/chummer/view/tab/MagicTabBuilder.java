@@ -11,6 +11,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.spirit.SpiritKind;
@@ -181,7 +182,8 @@ public final class MagicTabBuilder {
       ctrl.getResult().ifPresent(spellData -> {
         if (ch.isCreated()) {
           String label = "Zauber gelernt: " + spellData.name();
-          if (host.services().karmaChargeFailed(ch, label, ch.getSpellKarmaCost())) {
+          if (host.services().karmaChargeFailed(ch, LogCategory.MAGIC_RESONANCE, label,
+              ch.getSpellKarmaCost())) {
             return;
           }
         }

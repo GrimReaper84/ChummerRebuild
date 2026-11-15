@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
@@ -34,8 +35,8 @@ class FooterTextTest {
   void careerShowsKarmaAndNuyenFromLog() {
     Character c = mensch();
     c.setCreated(true);
-    c.addKarmaEntry(new LogEntry("Run", 7, LocalDate.of(2072, 1, 1)));
-    c.addNuyenEntry(new LogEntry("Bezahlung", 2350, LocalDate.of(2072, 1, 1)));
+    c.addKarmaEntry(new LogEntry("Run", 7, LocalDate.of(2072, 1, 1), LogCategory.MANUAL));
+    c.addNuyenEntry(new LogEntry("Bezahlung", 2350, LocalDate.of(2072, 1, 1), LogCategory.MANUAL));
     assertEquals("Karma: 7  |  Nuyen: 2350 ¥  |  Essenz: 6,00", FooterText.of(c));
   }
 

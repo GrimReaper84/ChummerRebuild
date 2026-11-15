@@ -13,6 +13,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.view.dialog.ContactEditDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
@@ -253,10 +254,10 @@ public final class ContactTabBuilder {
     } else {
       wiring.wire(contactRefreshers,
           new RowControls(connectionValue, connectionCost, connectionMinus, connectionPlus), false,
-          connectionModel, character);
+          connectionModel, character, LogCategory.CONTACT);
       wiring.wire(contactRefreshers,
           new RowControls(loyaltyValue, loyaltyCost, loyaltyMinus, loyaltyPlus), false, loyaltyModel,
-          character);
+          character, LogCategory.CONTACT);
     }
 
     useIcon(removeBtn, FontAwesomeSolid.TRASH);

@@ -15,6 +15,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
@@ -322,7 +323,7 @@ public final class AttributeTabBuilder {
       refreshAugmented.run();
     }
     wiring.wire(refresherList, new RowControls(valueLabel, bpLabel, minus, plus),
-        character.isCreated(), model, character);
+        character.isCreated(), model, character, LogCategory.ATTRIBUTE);
 
     addRowCells(grid, row, attrNameLabel, abbrLabel, minus, valueLabel, plus, augLabel, rangeLabel,
         bpLabel);

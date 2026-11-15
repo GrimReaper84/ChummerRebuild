@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view.dialog;
 
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -66,7 +67,7 @@ public class LogEntryDialogController {
     if (typeBox.getValue().startsWith("Ausgabe")) {
       amount = -amount;
     }
-    result = new LogEntry(descriptionField.getText().trim(), amount, date);
+    result = new LogEntry(descriptionField.getText().trim(), amount, date, LogCategory.MANUAL);
     if (stage != null) {
       stage.close();
     }

@@ -155,7 +155,7 @@ class CharacterSpecialAttributeTest {
     c.setCreated(true);
     c.getMagicOrResonance().setValue(4);
     c.addKarmaEntry(new LogEntry("Magie gesteigert", -75,
-        java.time.LocalDate.now(java.time.ZoneId.systemDefault())));
+        java.time.LocalDate.now(java.time.ZoneId.systemDefault()), LogCategory.MANUAL));
     int karmaBefore = c.getKarmaTotal();
 
     c.removeQuality(selected(c, "Zauberer"));

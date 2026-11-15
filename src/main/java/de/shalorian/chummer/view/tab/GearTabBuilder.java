@@ -12,6 +12,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearCombatStats;
@@ -203,11 +204,21 @@ final class GearTabBuilder {
       }
     });
 
+    // Verkaufen (Karriere): ganzer Stapel samt Einbauten; Einbauten gehen mit ihrem Gerät
+    Button sellBtn = host.services().sellButton(character, "Ausgewählten Gegenstand verkaufen",
+        tree.getSelectionModel().selectedItemProperty(), () -> {
+          Gear gear = selectedGear(tree);
+          return gear != null && character.getEquipment().getGear().contains(gear) ? gear : null;
+        }, Gear::getDisplayName, Gear::getNuyenCost, gear -> {
+          character.getEquipment().removeGear(gear);
+          onGearChanged(character, null);
+        });
+
     HBox toolbar = new HBox(8);
     toolbar.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    toolbar.getChildren().addAll(spacer, removeBtn, installBtn, addBtn);
+    toolbar.getChildren().addAll(spacer, sellBtn, removeBtn, installBtn, addBtn);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
   }
@@ -323,7 +334,7 @@ final class GearTabBuilder {
         host.services().warn("Fokus binden", problem);
         return;
       }
-      if (character.isCreated() && host.services().karmaChargeFailed(character,
+      if (character.isCreated() && host.services().karmaChargeFailed(character, LogCategory.MAGIC_RESONANCE,
           "Fokus binden: " + focus.getDisplayName(), foci.getBindingKarma(focus))) {
         return;
       }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterBiography;
 import de.shalorian.chummer.model.character.Contact;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.adept.AdeptPowerData;
 import de.shalorian.chummer.model.character.adept.AdeptPowerDataLoader;
@@ -58,6 +59,7 @@ import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,6 +85,24 @@ public class CharacterStore {
 
   public static @NonNull Character load(@NonNull File file) throws IOException {
     return fromData(MAPPER.readValue(file, CharacterData.class));
+  }
+
+  /** Merkt den aktuellen Stand im Speicherformat (für Rückgängig, nur im Speicher). */
+  public static @NonNull CharacterSnapshot snapshot(@NonNull Character character) {
+    try {
+      return new CharacterSnapshot(MAPPER.writeValueAsBytes(toData(character)));
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  /** Baut aus einem gemerkten Stand einen neuen Charakter, wie beim Laden einer Datei. */
+  public static @NonNull Character restore(@NonNull CharacterSnapshot snapshot) {
+    try {
+      return fromData(MAPPER.readValue(snapshot.json(), CharacterData.class));
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
   private static @NonNull CharacterData toData(@NonNull Character character) {
@@ -123,10 +143,10 @@ public class CharacterStore {
         .toList();
     data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
     data.karmaLog = character.getKarmaLog().stream()
-        .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString()))
+        .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString(), e.category().name()))
         .toList();
     data.nuyenLog = character.getNuyenLog().stream()
-        .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString()))
+        .map(e -> new LogEntryData(e.description(), e.amount(), e.date().toString(), e.category().name()))
         .toList();
     data.biography = toBiographyData(character.getBiography());
     data.tradition = character.getTradition().name();
@@ -832,11 +852,20 @@ public class CharacterStore {
     }
   }
 
+  /** Art aus der Datei; unbekannt oder fehlend → {@link LogCategory#MANUAL}. */
+  private static @NonNull LogCategory category(@NonNull String name) {
+    try {
+      return LogCategory.valueOf(name);
+    } catch (IllegalArgumentException _) {
+      return LogCategory.MANUAL;
+    }
+  }
+
   private static void applyLog(@NonNull List<LogEntryData> entries,
       @NonNull Consumer<LogEntry> sink) {
     for (LogEntryData e : entries) {
       if (!e.date.isEmpty()) {
-        sink.accept(new LogEntry(e.description, e.amount, LocalDate.parse(e.date)));
+        sink.accept(new LogEntry(e.description, e.amount, LocalDate.parse(e.date), category(e.category)));
       }
     }
   }

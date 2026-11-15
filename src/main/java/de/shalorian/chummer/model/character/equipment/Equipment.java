@@ -72,6 +72,8 @@ public class Equipment {
   private static final String FULL_AUTO = "AM";
   /** Panzerung gegen Standardmunition (S. 369). */
   private static final String STANDARD_ARMOR_TYPE = "Ballistisch";
+  /** Grundpreis beim Verkauf in Prozent des Originalpreises (GRW S. 358). */
+  public static final int SALE_PERCENT = 30;
   /** Smartlink mit Smartgun-Waffe (GRW S. 180). */
   private static final int SMARTLINK_BONUS = 2;
   /** Lasermarkierer (GRW S. 180). */
@@ -571,6 +573,14 @@ public class Equipment {
    */
   public @Nullable RangeBands getWeaponRangeBands(@NonNull Weapon weapon) {
     return weapon.getRangeBands(owner.getAugmentedAttributeValue(AttributeType.STR));
+  }
+
+  /**
+   * Grundpreis beim Verkauf: {@value #SALE_PERCENT} % des Originalpreises, abgerundet (GRW S. 358). Den tatsächlichen
+   * Erlös bestimmt die Verhandlungsprobe; die App belegt nur vor.
+   */
+  public static int saleBasePrice(int originalPrice) {
+    return originalPrice * SALE_PERCENT / 100;
   }
 
   // --- Übrige Ausrüstung (Gear) ---

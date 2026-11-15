@@ -13,6 +13,7 @@ import de.shalorian.chummer.model.character.technomancer.ComplexFormDataLoader;
 import de.shalorian.chummer.model.character.Contact;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityData;
@@ -305,9 +306,9 @@ class CharacterStoreTest {
   @Test
   void roundtripPreservesLogs() throws IOException {
     Character original = mensch("Test");
-    original.addKarmaEntry(new LogEntry("Mission", 10, LocalDate.of(2026, Month.JANUARY, 15)));
-    original.addKarmaEntry(new LogEntry("Attribut", -6, LocalDate.of(2026, Month.FEBRUARY, 1)));
-    original.addNuyenEntry(new LogEntry("Startkapital", 8000, LocalDate.of(2026, Month.JANUARY, 15)));
+    original.addKarmaEntry(new LogEntry("Mission", 10, LocalDate.of(2026, Month.JANUARY, 15), LogCategory.MANUAL));
+    original.addKarmaEntry(new LogEntry("Attribut", -6, LocalDate.of(2026, Month.FEBRUARY, 1), LogCategory.MANUAL));
+    original.addNuyenEntry(new LogEntry("Startkapital", 8000, LocalDate.of(2026, Month.JANUARY, 15), LogCategory.MANUAL));
 
     CharacterStore.save(original, tempFile());
     Character loaded = CharacterStore.load(tempFile());

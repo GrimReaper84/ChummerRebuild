@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -80,6 +81,8 @@ public class CharacterViewController implements CharacterTabHost {
   private VBox skillsContainer;
   @FXML
   private Button finalizeBtn;
+  @FXML
+  private Button undoBtn;
   @FXML
   private HBox nuyenBpBox;
   @FXML
@@ -168,6 +171,7 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private ToggleButton sortByAlphabetBtn;
   private @Nullable Character character;
+  private @NonNull Consumer<Character> onCharacterReplaced = _ -> { };
   private final @NonNull TabServices services =
       new TabServices(() -> nameLabel.getScene().getWindow(), this::onLogChanged);
   private final @NonNull IncrementWiring wiring = new IncrementWiring(this);
@@ -345,7 +349,47 @@ public class CharacterViewController implements CharacterTabHost {
         initiationKind == null ? CharacterSection.INITIATION.getTitle() : initiationKind.getProcessName());
   }
 
+  /** Wird aufgerufen, wenn „Rückgängig“ den Charakter durch den früheren Stand ersetzt (Hauptfenster übernimmt ihn). */
+  public void setOnCharacterReplaced(@NonNull Consumer<Character> onCharacterReplaced) {
+    this.onCharacterReplaced = onCharacterReplaced;
+  }
+
+  /** Zeigt einen neu geladenen oder angelegten Charakter; ein Verlauf zu einem früheren Charakter gilt nicht mehr. */
   public void setCharacter(@NonNull Character character) {
+    services.undoHistory().clear();
+    showCharacter(character);
+  }
+
+  /**
+   * Nimmt die letzte Karma- bzw. Nuyen-Buchung der Sitzung zurück (ADR-058): Rückfrage, dann wird der Stand vor der
+   * Buchung wiederhergestellt; auch Änderungen ohne Buchung seitdem gehen verloren.
+   */
+  @FXML
+  private void onUndo() {
+    Character current = character;
+    if (current == null) {
+      return;
+    }
+    LogEntry entry = services.undoHistory().undoableEntry(current);
+    if (entry == null) {
+      return;
+    }
+    if (!services.confirmYesNo("Rückgängig", "„%s“ (%s) rückgängig machen?".formatted(entry.description(),
+            services.undoHistory().lastAmountText()),
+        "Der Charakter wird auf den Stand vor dieser Buchung zurückgesetzt. Auch alles, was seitdem ohne Buchung "
+            + "geändert wurde (Schaden, Edge, Notizen …), geht dabei verloren.")) {
+      return;
+    }
+    Character restored = services.undoHistory().undo(current);
+    showCharacter(restored);
+    onCharacterReplaced.accept(restored);
+  }
+
+  private void updateUndoButton() {
+    undoBtn.setDisable(character == null || services.undoHistory().undoableEntry(character) == null);
+  }
+
+  private void showCharacter(@NonNull Character character) {
     this.character = character;
     attributeTab.setCharacter(character);
     skillTab.setCharacter(character);
@@ -363,6 +407,7 @@ public class CharacterViewController implements CharacterTabHost {
     metatypeBox.setValue(character.getMetatype());
     updateNuyenBpDisplay();
     logTab.update();
+    updateUndoButton();
     updateModeDisplay();
     buildQualitiesTab();
     biographyTab.build();
@@ -411,6 +456,7 @@ public class CharacterViewController implements CharacterTabHost {
   public void onLogChanged() {
     logTab.update();
     updateSummary();
+    updateUndoButton();
   }
 
   @Override
@@ -554,6 +600,7 @@ public class CharacterViewController implements CharacterTabHost {
 
       ctrl.getResult().ifPresent(diceSum -> {
         ch.finalizeCreation(diceSum);
+        services.undoHistory().clear(); // der Abschluss der Erschaffung ist nicht rückgängig zu machen
         updateModeDisplay();
         logTab.update();
       });
@@ -571,6 +618,9 @@ public class CharacterViewController implements CharacterTabHost {
     updateSummary();
     finalizeBtn.setVisible(!career);
     finalizeBtn.setManaged(!career);
+    undoBtn.setVisible(career);
+    undoBtn.setManaged(career);
+    updateUndoButton();
     nuyenBpBox.setVisible(!career);
     nuyenBpBox.setManaged(!career);
     metatypeBox.setVisible(!career);
@@ -604,8 +654,7 @@ public class CharacterViewController implements CharacterTabHost {
     if (result.isEmpty()) {
       return;
     }
-    character.addKarmaEntry(result.get());
-    logTab.update();
+    services.bookKarma(character, result.get());
     refreshRows();
   }
 
@@ -618,8 +667,7 @@ public class CharacterViewController implements CharacterTabHost {
     if (result.isEmpty()) {
       return;
     }
-    character.addNuyenEntry(result.get());
-    onLogChanged();
+    services.bookNuyen(character, result.get());
   }
 
 }

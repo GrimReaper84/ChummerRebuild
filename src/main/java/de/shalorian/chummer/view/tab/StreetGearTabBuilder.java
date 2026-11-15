@@ -9,8 +9,10 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.view.converter.LifestyleLevelStringConverter;
@@ -79,7 +81,7 @@ public final class StreetGearTabBuilder {
   /**
    * Lebensstil-Unter-Tab: Stufe und im Voraus bezahlte Monate (GRW S. 111), Kosten und — bei der
    * Erschaffung — der Startkapital-Wurf, den die Stufe beim Abschluss festlegt (GRW S. 114). Im
-   * Karrieremodus nur Anzeige; laufende Lebensstilzahlungen werden über das Nuyen-Log gebucht.
+   * Karrieremodus Monat bezahlen und Stufe wechseln (S. 310).
    */
   private void buildLifestyleTab(@NonNull Character character) {
     lifestyleContainer.getChildren().clear();
@@ -91,7 +93,7 @@ public final class StreetGearTabBuilder {
     lifestyleContainer.getChildren().add(withRightFiller(grid));
 
     if (character.isCreated()) {
-      fillLifestyleInCareerMode(grid, character.getEquipment().getLifestyle());
+      fillLifestyleInCareerMode(grid, character);
     } else {
       fillLifestyleInCreationMode(grid, character);
     }
@@ -109,11 +111,50 @@ public final class StreetGearTabBuilder {
         + "Ressourcen verfallen (GRW S. 114).");
   }
 
-  private void fillLifestyleInCareerMode(@NonNull MigPane grid, @NonNull Lifestyle lifestyle) {
-    addLifestyleRow(grid, 0, "Stufe:", new Label(lifestyle.getLevel().getDisplayName()));
-    addLifestyleRow(grid, 1, "Monate im Voraus:", new Label(String.valueOf(lifestyle.getMonths())));
+  /**
+   * Karrieremodus (GRW S. 310): „Monat bezahlen“ bucht die Monatskosten und zählt einen Monat dazu; eine neue Stufe
+   * bucht ihren ersten Monat. Gebucht wird vor der Änderung (Rückgängig, ADR-058).
+   */
+  private void fillLifestyleInCareerMode(@NonNull MigPane grid, @NonNull Character character) {
+    Lifestyle lifestyle = character.getEquipment().getLifestyle();
+    LifestyleLevel current = lifestyle.getLevel();
+    ComboBox<LifestyleLevel> levelBox = new ComboBox<>();
+    levelBox.getItems().setAll(LifestyleLevel.values());
+    levelBox.setConverter(new LifestyleLevelStringConverter());
+    levelBox.setValue(current);
+    Button change = new Button("Stufe wechseln");
+    change.getStyleClass().add(STYLE_BTN_SECONDARY);
+    change.disableProperty().bind(levelBox.valueProperty().isEqualTo(current));
+    change.setOnAction(_ -> {
+      LifestyleLevel target = levelBox.getValue();
+      // kostenlose Stufe (Straße): wechseln ohne Buchung, wie „Monat bezahlen“ bei 0 ¥ gesperrt ist
+      if (target != null && (target.getMonthlyCost() == 0 || !host.services().nuyenChargeFailed(character,
+          LogCategory.LIFESTYLE, "Lebensstil " + target.getDisplayName() + " (1. Monat)",
+          target.getMonthlyCost()))) {
+        lifestyle.changeLevel(target);
+        onLifestyleChanged(character);
+      }
+    });
+    HBox levelRow = new HBox(8, levelBox, change);
+    levelRow.setAlignment(Pos.CENTER_LEFT);
+    addLifestyleRow(grid, 0, "Stufe:", levelRow);
+
+    Button pay = new Button("Monat bezahlen");
+    pay.getStyleClass().add(STYLE_BTN_SECONDARY);
+    pay.setDisable(current.getMonthlyCost() == 0);
+    pay.setOnAction(_ -> {
+      if (!host.services().nuyenChargeFailed(character, LogCategory.LIFESTYLE,
+          "Lebensstil " + current.getDisplayName() + " (Monat " + (lifestyle.getMonths() + 1) + ")",
+          current.getMonthlyCost())) {
+        lifestyle.payMonth();
+        onLifestyleChanged(character);
+      }
+    });
+    HBox monthsRow = new HBox(8, new Label(String.valueOf(lifestyle.getMonths())), pay);
+    monthsRow.setAlignment(Pos.CENTER_LEFT);
+    addLifestyleRow(grid, 1, "Bezahlte Monate:", monthsRow);
     addLifestyleCostRows(grid, 2, lifestyle);
-    addLifestyleHint("Lebensstilzahlungen im Karrieremodus bitte über das Nuyen-Log buchen.");
+    addLifestyleHint("Versäumte Zahlungen regelt der Spielleiter (GRW S. 310).");
   }
 
   private void addLifestyleCostRows(@NonNull MigPane grid, int row, @NonNull Lifestyle lifestyle) {

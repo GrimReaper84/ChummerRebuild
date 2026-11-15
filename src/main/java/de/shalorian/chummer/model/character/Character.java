@@ -2203,7 +2203,7 @@ public class Character {
     int startingCapital = equipment.getLifestyle().getLevel().startingCapital(diceSum, getRemainingNuyen());
     nuyenLog.add(new LogEntry(
         "Startkapital (Lebensstil " + equipment.getLifestyle().getLevel().getDisplayName() + ")",
-        startingCapital, LocalDate.now(ZoneId.systemDefault())));
+        startingCapital, LocalDate.now(ZoneId.systemDefault()), LogCategory.START));
     nuyenBP = 0;
     created = true;
     return startingCapital;

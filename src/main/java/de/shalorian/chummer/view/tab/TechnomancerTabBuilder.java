@@ -15,6 +15,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.view.dialog.ComplexFormSelectDialogController;
@@ -218,7 +219,7 @@ public final class TechnomancerTabBuilder {
           public @NonNull String actionLabel(int from, int to) {
             return complexForm.getName() + " " + from + " → " + to;
           }
-        }, character);
+        }, character, LogCategory.MAGIC_RESONANCE);
 
     removeBtn.setOnAction(_ -> {
       character.removeComplexForm(complexForm.getName());
@@ -262,7 +263,7 @@ public final class TechnomancerTabBuilder {
         if (ch.isCreated()) {
           String label = "Komplexe Form gelernt: " + data.name();
           int karmaCost = ComplexForm.KARMA_NEW;
-          if (host.services().karmaChargeFailed(ch, label, karmaCost)) {
+          if (host.services().karmaChargeFailed(ch, LogCategory.MAGIC_RESONANCE, label, karmaCost)) {
             return;
           }
         }

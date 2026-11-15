@@ -11,6 +11,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.quality.QualityType;
@@ -214,7 +215,8 @@ public final class QualityTabBuilder {
     }
     if (c.isCreated() && q.data().type() == QualityType.NEGATIVE && !q.gratis()) {
       int karmaCost = c.getQualityKarmaCost(q.data());
-      if (host.services().karmaChargeFailed(c, "%s loswerden".formatted(qualityName), karmaCost)) {
+      if (host.services().karmaChargeFailed(c, LogCategory.QUALITY, "%s loswerden".formatted(qualityName),
+          karmaCost)) {
         return;
       }
     }
@@ -293,7 +295,8 @@ public final class QualityTabBuilder {
     // Eine Gabe im Karrieremodus erwerben kostet die doppelten GP-Kosten in Karma.
     if (ch.isCreated() && r.data().type() == QualityType.POSITIVE && !r.gratis()) {
       int karmaCost = ch.getQualityKarmaCost(r.data());
-      if (host.services().karmaChargeFailed(ch, "%s erwerben".formatted(r.data().name()), karmaCost)) {
+      if (host.services().karmaChargeFailed(ch, LogCategory.QUALITY, "%s erwerben".formatted(r.data().name()),
+          karmaCost)) {
         return;
       }
     }

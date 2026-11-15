@@ -211,6 +211,10 @@
             <Label styleClass="bp-value" text="0" fx:id="karmaTotalLabel"/>
             <Label styleClass="log-section-title" text="Karma"/>
             <Region HBox.hgrow="ALWAYS"/>
+            <Button onAction="#onUndo" styleClass="btn-secondary" fx:id="undoBtn" disable="true">
+              <graphic><FontIcon iconLiteral="fas-undo"/></graphic>
+              <tooltip><Tooltip text="Letzten Schritt rückgängig (Karma oder Nuyen)"/></tooltip>
+            </Button>
           </HBox>
           <TableView VBox.vgrow="ALWAYS" fx:id="karmaTable"/>
         </VBox>

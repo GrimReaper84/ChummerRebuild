@@ -259,11 +259,19 @@ final class WeaponTabBuilder {
     }, tree.getSelectionModel().selectedItemProperty()));
     removeBtn.setOnAction(_ -> onRemoveSelected(character, tree));
 
+    // Verkaufen (Karriere): nur gekaufte Waffen samt Zubehör und Pfeilen, nichts Eingebautes
+    Button sellBtn = host.services().sellButton(character, "Ausgewählte Waffe verkaufen",
+        tree.getSelectionModel().selectedItemProperty(), () -> sellableWeapon(character, tree),
+        Weapon::getDisplayName, Weapon::getTotalNuyenCost, weapon -> {
+          character.getEquipment().removeWeapon(weapon);
+          onWeaponsChanged(character, null, null);
+        });
+
     HBox toolbar = new HBox(8);
     toolbar.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    toolbar.getChildren().addAll(spacer, removeBtn, addArrowsBtn, addAccessoryBtn, addBtn);
+    toolbar.getChildren().addAll(spacer, sellBtn, removeBtn, addArrowsBtn, addAccessoryBtn, addBtn);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
   }
@@ -563,6 +571,14 @@ final class WeaponTabBuilder {
     } catch (IOException _) {
       host.services().showDialogLoadError();
     }
+  }
+
+  /** Die gewählte gekaufte Waffe (Waffenknoten), oder {@code null}. */
+  private static @Nullable Weapon sellableWeapon(@NonNull Character character,
+      @NonNull TreeView<WeaponTreeEntry> tree) {
+    WeaponTreeEntry entry = selectedEntry(tree);
+    Weapon weapon = entry == null || !entry.isWeapon() ? null : entry.weapon();
+    return weapon != null && character.getEquipment().getWeapons().contains(weapon) ? weapon : null;
   }
 
   /** Entfernt die gewählte Waffe, das gewählte Zubehör bzw. den gewählten Pfeilstapel. */

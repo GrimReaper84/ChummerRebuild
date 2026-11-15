@@ -270,11 +270,21 @@ public final class VehicleTabBuilder {
       }
     });
 
+    // Verkaufen (Karriere): nur das ganze Fahrzeug samt Ausstattung
+    Button sellBtn = host.services().sellButton(character, "Ausgewähltes Fahrzeug verkaufen",
+        tree.getSelectionModel().selectedItemProperty(), () -> {
+          VehicleTreeEntry entry = selectedEntry(tree);
+          return entry == null || !entry.isVehicle() ? null : entry.vehicle();
+        }, Vehicle::getName, Vehicle::getNuyenCost, vehicle -> {
+          character.getEquipment().removeVehicle(vehicle);
+          onChanged(character, null);
+        });
+
     HBox toolbar = new HBox(8);
     toolbar.setAlignment(Pos.CENTER_LEFT);
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    toolbar.getChildren().addAll(spacer, removeBtn, installBtn, gearBtn, matrixBtn, weaponBtn, mountBtn,
+    toolbar.getChildren().addAll(spacer, sellBtn, removeBtn, installBtn, gearBtn, matrixBtn, weaponBtn, mountBtn,
         riggerBtn, addBtn);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;

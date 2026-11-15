@@ -171,6 +171,10 @@ public class MainWindowController {
     CharacterViewController charCtrl = viewLoader.getController();
     charCtrl.configureStatus(statusStaticItem.isSelected(), statusButtonPosition);
     charCtrl.setCharacter(character);
+    charCtrl.setOnCharacterReplaced(restored -> {
+      currentCharacter = restored;
+      updateTitle();
+    });
 
     currentCharacter = character;
     currentView = charCtrl;

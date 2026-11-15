@@ -214,6 +214,19 @@ Panel trennt die Kästchen dort, wo der Verletzungsmodifikator steigt (S. 193; j
 verschoben).
 **Warum:** Nutzerwünsche und -entscheidungen 2026-11-15; `docs/plaene/archiv/status_panel_plan.md`.
 
+### ADR-058: Karrieremodus: Arten im Log, Rückgängig, Lebensstil, Verkauf (2026-11-15)
+Jeder Log-Eintrag hat eine von zehn Arten (`LogCategory`, Kontakte eigene Art); Einträge alter Dateien gelten als
+„Manuell“. Alle Buchungen
+laufen über `TabServices.book`, die vor dem Eintrag den Stand des Charakters merkt (`CharacterStore.snapshot`);
+„Rückgängig“ stellt den Stand vor der letzten Buchung wieder her, beliebig oft, nur in der laufenden Sitzung, und setzt
+dabei auch Änderungen ohne Buchung seitdem zurück (die Rückfrage sagt das). Der Abschluss der Erschaffung samt
+Startkapital ist nicht rückgängig zu machen. Lebensstil im Karrieremodus: Monat bezahlen und Stufe wechseln buchen Nuyen (S. 310), eine kostenlose Stufe
+wechselt ohne Buchung; versäumte Zahlungen sind
+für spätere Einstellungen vorgemerkt. Verkauf von Waffen, Rüstung, Ausrüstung und Fahrzeugen über ein Zahlenfeld, mit 30 %
+vorbelegt und änderbar (S. 358), keine Cyberware.
+**Warum:** Nutzerentscheidungen 2026-11-15; `docs/plaene/archiv/karrieremodus_plan.md`. Ein Stand je Buchung ersetzt die
+rund 40 Umkehr-Fälle des C#-Originals und kann keine Abhängigkeiten späterer Schritte übersehen.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

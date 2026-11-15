@@ -43,10 +43,11 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 8. ✅ **Kampfwerte vervollständigen**: Munitionswirkung auf Waffenwerte, Smartlink-Bonus, Würfelpools für Rigger und
    Drohnen, Fahrzeugschaden.
 9. ✅ **Status-Panel überarbeiten**: Zustandsmonitor mit Verletzungsstufen, Edgepunkte und Edge verheizen.
-10. **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
+10. ✅ **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
 11. **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für
     Wissensfertigkeiten, Portrait.
 12. **Charakterbogen**: Drucken und Exportieren.
+13. **NSCs**: Vorgefertigte NSCs wie sie in den Regelbüchern beschrieben sind und die Möglichkeit eigene NSCs zu erstellen.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in
 [`docs/feature_checklist.md`](docs/feature_checklist.md).
@@ -56,18 +57,18 @@ Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sin
 Die aktuelle Version gibt es auf der Seite [Releases](https://github.com/GrimReaper84/ChummerRebuild/releases). Jedes
 Paket bringt sein eigenes Java mit, sonst muss nichts installiert werden.
 
-| System | Installer | Portabel |
-|---|---|---|
-| Windows | `.msi` | `…-win.zip` |
-| Linux (Debian, Ubuntu, Mint, …) | `.deb` | `…-linux.zip` |
-| macOS (Apple Silicon) | `.dmg` | `…-mac-aarch64.zip` |
+| System                          | Installer | Portabel            |
+|---------------------------------|-----------|---------------------|
+| Windows                         | `.msi`    | `…-win.zip`         |
+| Linux (Debian, Ubuntu, Mint, …) | `.deb`    | `…-linux.zip`       |
+| macOS (Apple Silicon)           | `.dmg`    | `…-mac-aarch64.zip` |
 
 Die Pakete sind nicht signiert, daher warnt dein System beim ersten Start:
 
-- **Windows:** SmartScreen meldet „Der Computer wurde durch Windows geschützt“ → *Weitere Informationen* →
-  *Trotzdem ausführen*. Der Installer braucht keine Administratorrechte.
-- **macOS:** Die App wird beim ersten Start blockiert → Rechtsklick auf die App → *Öffnen*, oder unter
-  *Systemeinstellungen → Datenschutz & Sicherheit* erlauben.
+- **Windows:** SmartScreen meldet „Der Computer wurde durch Windows geschützt“ → *Weitere Informationen* → *Trotzdem ausführen*. Der Installer braucht
+  keine Administratorrechte.
+- **macOS:** Die App wird beim ersten Start blockiert → Rechtsklick auf die App → *Öffnen*, oder unter *Systemeinstellungen → Datenschutz &
+  Sicherheit* erlauben.
 - **Linux:** Installation mit `sudo apt install ./chummer-sr4-reborn_<version>_amd64.deb`; die App erscheint im Menü
   unter *Spiele*.
 

@@ -59,4 +59,18 @@ public class Lifestyle {
   public int getNuyenCost() {
     return level.getMonthlyCost() * months;
   }
+
+  /**
+   * Bezahlt einen weiteren Monat (Karrieremodus, GRW S. 310). Gebucht wird beim Aufrufer; versäumte Zahlungen (Wurf,
+   * Abstieg, Schulden) sind nicht modelliert (Nutzerentscheidung 2026-11-15, später als Einstellung).
+   */
+  public void payMonth() {
+    months++;
+  }
+
+  /** Wechselt im Karrieremodus auf eine andere Stufe; der erste Monat der neuen Stufe ist bezahlt (Monate = 1). */
+  public void changeLevel(@NonNull LifestyleLevel newLevel) {
+    level = newLevel;
+    months = MIN_MONTHS;
+  }
 }

@@ -208,7 +208,8 @@
 |-------------------------------------------|--------|-----------|
 | Lebensstil (6 GRW-Stufen, Monate im Voraus) | ✅      | GRW S. 111; Kosten zählen gegen das Ressourcengeld; Tab "Straßenausrüstung" → "Lebensstil" (2026-09-27) |
 | Lebensstil-Ausbaustufen, weitere Lebensstile | ❌      | Zusatzband, zurückgestellt |
-| Lebensstilzahlungen im Karrieremodus      | ❌      | Zurückgestellt, manuell über das Nuyen-Log |
+| Lebensstilzahlungen im Karrieremodus      | ✅      | 2026-11-15 (ADR-058): „Monat bezahlen“ und „Stufe wechseln“ (erster Monat) buchen Nuyen als Lebensstil (S. 310) |
+| Versäumte Lebensstilzahlungen (GRW S. 310: W6 gegen ausgesetzte Monate, Abstieg, Schulden) | ❌ | Später als Einstellung (Nutzerwunsch 2026-11-15, mit den übrigen Einstellungsmöglichkeiten) |
 
 ---
 
@@ -278,14 +279,14 @@
 |-----------------------------------------------------------------------|--------|---------------------------------------------------------------|
 | Übergang Creation → Career (Startkapital nach Lebensstil)             | ✅      | GRW S. 114: `Character.finalizeCreation()` bucht (Würfel + Restgeld-Bonus) × Multiplikator, Restgeld verfällt; Abschlussdialog würfelt, Wurf editierbar (2026-09-27, ersetzt die frühere Umrechnung des vollen Budgets) |
 | Nuyen-Käufe im Karrieremodus (Cyberware, Rüstung)                     | ✅      | Guthabenprüfung + Bestätigung + negativer Log-Eintrag; Entfernen ohne Erstattung |
-| Verkauf von Ausrüstung im Karrieremodus                               | ❌      | Zurückgestellt (keine GRW-Verkaufsregel gesucht) |
+| Verkauf von Ausrüstung im Karrieremodus                               | ✅      | 2026-11-15 (ADR-058): Waffen, Rüstung, Ausrüstung, Fahrzeuge; Erlös mit 30 % vorbelegt und änderbar (S. 358), Gutschrift als Verkauf; keine Cyberware |
 | ESS-Penalty-Korrektur bei Übergang (MAG/RES += EssenzPenalty)         | ❌      | Abhängig von fehlenden Sonderattributen                       |
 | Karma-Ausgaben für Attribute (neue Stufe × 5 Karma)                   | ✅      |                                                               |
 | Karma-Ausgaben für Fertigkeiten (neue Stufe × 2, erste Stufe 4 Karma) | ✅      | Korrigiert in `Skill.getKarmaCost()`                          |
 | Karma-Ausgaben für Qualities (2× GP-Kosten, Gabe/Handicap)            | ✅      | `Character.getQualityKarmaCost()`, 2026-08-04                 |
 | Karma/Nuyen-Log mit Datum                                             | ✅      |                                                               |
-| Undo für Log-Einträge                                                 | ❌      |                                                               |
-| Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ❌      | Alle Log-Einträge sind freie Texte, keine Typisierung         |
+| Undo für Log-Einträge                                                 | ✅      | 2026-11-15 (ADR-058): letzter Schritt, beliebig oft, über den gemerkten Stand vor der Buchung; nur in der laufenden Sitzung |
+| Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ✅      | 2026-11-15 (ADR-058): zehn Arten (`LogCategory`, auch „Kontakt“) als Spalte „Art“, gespeichert; alte Einträge „Manuell“ |
 
 ---
 
@@ -387,7 +388,7 @@ README-Roadmap sind erledigt; es folgen:
    Würfelpools für Rigger und Drohnen, Fahrzeugschaden am Zustandsmonitor (Abschnitt 14).
 9. ✅ **Status-Panel leicht überarbeiten (2026-11-15, ADR-057):** Modus im Kopf nur bei der Erschaffung, Trenner „|“
    an jeder Stufe des Verletzungsmodifikators im Zustandsmonitor, Edgepunkte und Edge verheizen.
-10. **Karrieremodus ausbauen:** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
+10. ✅ **Karrieremodus ausbauen (2026-11-15, ADR-058):** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
    von Ausrüstung (GRW-Beleg noch suchen, Abschnitt 15).
 11. **Restliche GRW-Inhalte:** Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für Wissensfertigkeiten
     (ADR-032), Portrait.

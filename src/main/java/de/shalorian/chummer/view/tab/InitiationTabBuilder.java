@@ -15,6 +15,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.initiation.Initiation;
 import de.shalorian.chummer.model.character.initiation.TechniqueData;
 import de.shalorian.chummer.model.character.initiation.TechniqueKind;
@@ -174,7 +175,8 @@ public final class InitiationTabBuilder {
       return;
     }
     String label = "%s %d".formatted(kind.getGradeName(), initiation.getGrade() + 1);
-    if (host.services().karmaChargeFailed(ch, label, initiation.getNextGradeKarmaCost())) {
+    if (host.services().karmaChargeFailed(ch, LogCategory.MAGIC_RESONANCE, label,
+        initiation.getNextGradeKarmaCost())) {
       return;
     }
     initiation.raiseGrade();

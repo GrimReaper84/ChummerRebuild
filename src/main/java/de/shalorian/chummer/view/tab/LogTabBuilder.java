@@ -47,6 +47,10 @@ public final class LogTabBuilder {
 
   @SuppressWarnings("unchecked")
   private void buildLogTable(@NonNull TableView<LogEntry> table) {
+    TableColumn<LogEntry, String> categoryCol = new TableColumn<>("Art");
+    categoryCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().category().getDisplayName()));
+    categoryCol.setPrefWidth(110);
+
     TableColumn<LogEntry, String> dateCol = new TableColumn<>("Datum");
     dateCol.setCellValueFactory(c ->
         new SimpleStringProperty(c.getValue().date().format(DATE_FMT)));
@@ -64,7 +68,7 @@ public final class LogTabBuilder {
     descCol.setCellValueFactory(c ->
         new SimpleStringProperty(c.getValue().description()));
 
-    table.getColumns().addAll(dateCol, amountCol, descCol);
+    table.getColumns().addAll(dateCol, categoryCol, amountCol, descCol);
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     table.setPlaceholder(new Label("Keine Einträge"));
   }

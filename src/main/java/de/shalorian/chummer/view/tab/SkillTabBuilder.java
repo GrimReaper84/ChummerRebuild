@@ -16,14 +16,12 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.LogEntry;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.view.grid.RowControls;
 import de.shalorian.chummer.view.grid.RowModel;
 import de.shalorian.chummer.view.grid.SkillSortMode;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -357,7 +355,7 @@ public final class SkillTabBuilder {
             public @NonNull String actionLabel(int from, int to) {
               return groupName + " " + from + " → " + to;
             }
-          }, character);
+          }, character, LogCategory.SKILL);
 
       preventShrink(minus);
       preventShrink(ratingLabel);
@@ -509,7 +507,7 @@ public final class SkillTabBuilder {
             public @NonNull String actionLabel(int from, int to) {
               return skill.getName() + " " + from + " → " + to;
             }
-          }, character);
+          }, character, LogCategory.SKILL);
     }
 
     addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, poolLabel, specLabel,
@@ -579,14 +577,13 @@ public final class SkillTabBuilder {
         : null;
     String label = skill.getName() + ": Spezialisierung \"" + (newSpec == null ? "–" : newSpec) + "\"";
     if (host.services().confirmKarmaSpend(label, karmaCost, character, warning)) {
-      character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+      host.services().bookKarma(character, LogCategory.SKILL, label, -karmaCost);
       character.setSkillSpecialization(skill, newSpec);
       // rebuildSkillsTab() statt host.refreshRows(): eine Gruppenauflösung ändert, wie die
       // betroffenen Zeilen verdrahtet sind (gekoppelt = deaktivierte Rating-Buttons, entkoppelt =
       // einzeln steigerbar) — das lässt sich nicht über die reinen Refresh-Callbacks nachziehen,
       // die Zeilen müssen neu gebaut werden.
       rebuildSkillsTab();
-      host.onLogChanged();
     }
   }
 

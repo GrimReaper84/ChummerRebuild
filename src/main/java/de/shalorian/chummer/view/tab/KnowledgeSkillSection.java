@@ -16,15 +16,13 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.LogEntry;
+import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.KnowledgeSkillAddDialogController;
 import de.shalorian.chummer.view.grid.RowControls;
 import de.shalorian.chummer.view.grid.RowModel;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Insets;
@@ -277,7 +275,7 @@ final class KnowledgeSkillSection {
           public @NonNull String actionLabel(int from, int to) {
             return skill.getName() + " " + from + " → " + to;
           }
-        }, character);
+        }, character, LogCategory.SKILL);
 
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(_ -> {
@@ -345,10 +343,9 @@ final class KnowledgeSkillSection {
     }
     String label = skill.getName() + ": Spezialisierung \"" + (newSpec == null ? "–" : newSpec) + "\"";
     if (host.services().confirmKarmaSpend(label, karmaCost, character)) {
-      character.addKarmaEntry(new LogEntry(label, -karmaCost, LocalDate.now(ZoneId.systemDefault())));
+      host.services().bookKarma(character, LogCategory.SKILL, label, -karmaCost);
       character.setKnowledgeSkillSpecialization(skill, newSpec);
       host.refreshRows();
-      host.onLogChanged();
     }
   }
 
