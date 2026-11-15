@@ -294,7 +294,8 @@ Auslieferung als „Chummer SR4 Reborn“ (Paketname `chummer-sr4-reborn`, Start
 Start mit Version 1.0.0 (statt wie zuerst geplant 0.x: der macOS-Installer lehnt eine führende 0 ab;
 Nutzerentscheidung 2026-11-11), einzige Versionsquelle `gradle.properties`. Das Icon ist der
 Font-Awesome-Drache in Neon-Cyan `#00E5FF` auf `#0D0F12`, gezeichnet von `GenerateIcons` (Test-Quellen, Task
-`generateIcons`) und eingecheckt. Das Laufzeit-Image (`org.beryx.runtime`) linkt JavaFX als **Module aus der JDK**:
+`generateIcons`) und eingecheckt. Nachtrag 2026-11-15 (Nutzerwunsch): oben rechts eine „4“ in Chakra Petch für die vierte
+Edition, der Drache dafür etwas kleiner und nach links unten gerückt. Das Laufzeit-Image (`org.beryx.runtime`) linkt JavaFX als **Module aus der JDK**:
 lokal Liberica Full, im CI `setup-java` mit `liberica`/`jdk+fx`. Die feste Modulliste lässt jlink abbrechen, wenn die
 JDK kein JavaFX hat; die JavaFX-JARs aus Maven fallen aus dem Image heraus.
 **Warum:** `App` erbt direkt von `Application`; ohne JPMS startet JavaFX vom Classpath so nicht (ADR-039). JavaFX als

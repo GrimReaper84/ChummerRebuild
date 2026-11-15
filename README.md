@@ -144,7 +144,7 @@ Vorbild ist das Open-Source-Programm Chummer, dessen Verhalten für diesen Neuau
 
 Das Anwendungs-Icon ist das Symbol „dragon“ aus [Font Awesome Free](https://fontawesome.com) von Fonticons, Inc.,
 lizenziert unter [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); es wurde umgefärbt und auf einen
-petrolfarbenen Hintergrund gesetzt. Die Schaltflächen des Programms nutzen die Icon-Schrift von Font Awesome Free (Schriftdateien
+petrolfarbenen Hintergrund gesetzt, dazu eine „4“ in der Schrift Chakra Petch (SIL OFL 1.1). Die Schaltflächen des Programms nutzen die Icon-Schrift von Font Awesome Free (Schriftdateien
 unter [SIL OFL 1.1](https://openfontlicense.org/), Icons unter CC BY 4.0) über [Ikonli](https://kordamp.org/ikonli/).
 
 Die Oberfläche nutzt die Schriften [Inter](https://rsms.me/inter/) (The Inter Project Authors) und
