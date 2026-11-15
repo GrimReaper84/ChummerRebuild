@@ -711,6 +711,8 @@
 /* ── TableView ───────────────────────────────────────── */
 
 .table-view {
+    /* Feste Zeilenhöhe: Zellen füllen die ganze Zeile, so steht Text und Zahl in allen Spalten auf derselben Mitte. */
+    -fx-fixed-cell-size: 30;
     -fx-background-color: -cr-surface;
     -fx-border-color: -cr-border;
     -fx-border-width: 1;
@@ -742,7 +744,6 @@
     -fx-background-color: -cr-surface;
     -fx-border-color: transparent transparent -cr-border transparent;
     -fx-border-width: 0 0 1 0;
-    -fx-cell-size: 30px;
 }
 
 .table-row-cell:odd {
@@ -758,6 +759,12 @@
     -fx-font-size: 13px;
     -fx-padding: 0 6 0 6;
     -fx-border-color: transparent;
+    -fx-alignment: CENTER-LEFT;
+}
+
+/* Zahlenspalten rechtsbündig, vertikal wie alle Zellen in der Mitte. */
+.table-row-cell .table-cell.number-cell {
+    -fx-alignment: CENTER-RIGHT;
 }
 
 .table-view .placeholder .label {

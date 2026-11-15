@@ -62,7 +62,7 @@ public final class LogTabBuilder {
       return new SimpleStringProperty(a > 0 ? "+" + a : String.valueOf(a));
     });
     amountCol.setPrefWidth(70);
-    amountCol.setStyle("-fx-alignment: CENTER-RIGHT;");
+    amountCol.getStyleClass().add("number-cell");
 
     TableColumn<LogEntry, String> descCol = new TableColumn<>("Bezeichnung");
     descCol.setCellValueFactory(c ->
