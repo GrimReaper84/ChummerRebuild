@@ -48,6 +48,7 @@
 | Nur 1 Attribut auf Rassenmaximum steigerbar (Erstellung)                    | ✅      | GRW S. 106 verifiziert, s.o., 2026-08-04       |
 | Augmentiertes Maximum anzeigen (⌊1,5 × Max⌋)                                | ✅      | GRW S. 91, `Character.getAugmentedMaximum()`, Klammerwert im Bereich, 2026-11-12 |
 | Sonderattribute: EDG (Edge)                                                 | ✅      | `SpecialAttribute`/`SpecialAttributeType`, BP/Karma-Kosten, UI-Sektion, Persistenz; immer sichtbar |
+| Edgepunkte ausgeben/zurückgewinnen/auffrischen, Edge verheizen | ✅ | 2026-11-15 (ADR-057): im Status-Panel, nur Karrieremodus, gespeichert; Verheizen senkt das Attribut dauerhaft, auch unter das Metatyp-Minimum bis 0 (S. 98/99), Rückkauf über normale Steigerung |
 | Sonderattribute: MAG (Magie)                                                | ✅      | Wie EDG, aber nur sichtbar/freigeschaltet wenn Quality mit `GRANTS_MAGIC` vorhanden (`Character.hasMagic()`) |
 | Sonderattribute: RES (Resonanz)                                             | ✅      | Analog MAG, über `GRANTS_RESONANCE` (`Character.hasResonance()`)                              |
 | Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ✅      | Tab „Zustand“, siehe Abschnitt 16              |
@@ -384,8 +385,8 @@ README-Roadmap sind erledigt; es folgen:
    (bisher nur Freitext an der Gabe), situative Adeptenkräfte als Rechnung.
 8. ✅ **Kampfwerte vervollständigen (2026-11-15, ADR-056):** Munitionswirkung auf Waffenwerte (Abschnitt 13), Smartlink-Bonus auf den Pool (aus Punkt 6 verschoben, Nutzerentscheidung 2026-11-13),
    Würfelpools für Rigger und Drohnen, Fahrzeugschaden am Zustandsmonitor (Abschnitt 14).
-9. **Status-Panel leicht überarbeiten (Nutzerwunsch 2026-11-15):** Anpassungen, die dem Nutzer aufgefallen sind
-   (Liste folgt); nach den Kampfwerten, damit deren neue Werte gleich mit eingeordnet werden.
+9. ✅ **Status-Panel leicht überarbeiten (2026-11-15, ADR-057):** Modus im Kopf nur bei der Erschaffung, Trenner „|“
+   an jeder Stufe des Verletzungsmodifikators im Zustandsmonitor, Edgepunkte und Edge verheizen.
 10. **Karrieremodus ausbauen:** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
    von Ausrüstung (GRW-Beleg noch suchen, Abschnitt 15).
 11. **Restliche GRW-Inhalte:** Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für Wissensfertigkeiten

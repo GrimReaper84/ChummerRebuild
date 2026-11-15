@@ -205,6 +205,15 @@ nicht, die Sperren der Fertigkeit (Inkompetenz, ahnungslos) schon. Die Fahrzeugf
 Karrieremodus, ohne Verletzungsmodifikator.
 **Warum:** Nutzerentscheidungen 2026-11-15; `docs/plaene/archiv/kampfwerte_plan.md`.
 
+### ADR-057: Status-Panel: Edgepunkte und Edge verheizen (2026-11-15)
+Edgepunkte werden im Status-Panel ausgegeben (−), zurückgewonnen (+) und aufgefrischt (S. 98/99), nur im Karrieremodus;
+gespeichert werden die ausgegebenen Punkte. Edge verheizen senkt das Attribut dauerhaft um 1, auch unter das
+Metatyp-Minimum bis 0; die verheizten Punkte senken die Untergrenze und werden gespeichert, ein Rückkauf läuft über die
+normale Karma-Steigerung. Kein Log-Eintrag. Der Kopf nennt den Modus nur bei der Erschaffung; der Zustandsmonitor im
+Panel trennt die Kästchen dort, wo der Verletzungsmodifikator steigt (S. 193; je drei, mit Schmerztoleranz u.Ä.
+verschoben).
+**Warum:** Nutzerwünsche und -entscheidungen 2026-11-15; `docs/plaene/archiv/status_panel_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

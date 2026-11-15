@@ -14,6 +14,8 @@ public class SpecialAttribute {
   private final boolean racialMaxBonusApplies;
   private int maxBonus;
   private int value;
+  /** Verheizte Punkte (Edge, GRW S. 99); senken die Untergrenze des Werts. */
+  private int burned;
 
   /**
    * @param racialMaxBonusApplies ob das Erreichen des Maximalwerts einen Kostenaufschlag von {@value #RACIAL_MAX_BONUS} BP auslöst (gilt für
@@ -55,11 +57,40 @@ public class SpecialAttribute {
   }
 
   public void setValue(int newValue) {
-    if (newValue < min || newValue > getMax()) {
+    if (newValue < getLowerBound() || newValue > getMax()) {
       throw new IllegalArgumentException(
-          "%s: Wert %d liegt außerhalb [%d/%d]".formatted(type, newValue, min, getMax()));
+          "%s: Wert %d liegt außerhalb [%d/%d]".formatted(type, newValue, getLowerBound(), getMax()));
     }
     this.value = newValue;
+  }
+
+  /** Untergrenze des Werts: Minimum, gesenkt um verheizte Punkte (Edge, S. 99), nicht unter 0. */
+  public int getLowerBound() {
+    return Math.max(0, min - burned);
+  }
+
+  /**
+   * Senkt den Wert dauerhaft um 1 (Edge verheizen, GRW S. 99), auch unter das Metatyp-Minimum bis 0 (Nutzerentscheidung
+   * 2026-11-15). Später lässt sich der Wert wie jede Steigerung mit Karma wieder erhöhen.
+   *
+   * @throws IllegalStateException beim Wert 0
+   */
+  public void burn() {
+    if (value == 0) {
+      throw new IllegalStateException(type + ": nichts mehr zu verheizen");
+    }
+    value--;
+    burned++;
+  }
+
+  public int getBurned() {
+    return burned;
+  }
+
+  /** Stellt Wert und verheizte Punkte beim Laden her; die Untergrenze gilt schon gesenkt. */
+  public void load(int value, int burned) {
+    this.burned = Math.max(0, burned);
+    setValue(value);
   }
 
   public int getBpCost() {
@@ -67,7 +98,7 @@ public class SpecialAttribute {
   }
 
   public int getBpCostForValue(int hypotheticalValue) {
-    int cost = (hypotheticalValue - min) * BP_PER_POINT;
+    int cost = Math.max(0, hypotheticalValue - min) * BP_PER_POINT;
     if (racialMaxBonusApplies && hypotheticalValue == getMax() && min != getMax()) {
       cost += RACIAL_MAX_BONUS;
     }

@@ -1,5 +1,8 @@
 package de.shalorian.chummer.view.tab;
 
+import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.MatrixAccess;
 import de.shalorian.chummer.model.character.armor.SpecialProtection;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -25,6 +29,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 /**
  * Status-Übersicht des Charakters als Karten: Kopf (Name, Metatyp, Modus), Initiative, Zustandsmonitor, Panzerung,
@@ -40,6 +45,7 @@ public final class StatusOverviewBuilder {
   /** Bevorzugte Breite der Übersicht; das Slide-Panel misst sie und ist mindestens so breit. */
   private static final double WIDTH = 400;
   private static final String CREATION_HINT = "Schaden erst im Karrieremodus eintragbar";
+  private static final String EDGE_CREATION_HINT = "Edgepunkte erst im Karrieremodus nutzbar";
 
   private StatusOverviewBuilder() {
   }
@@ -47,14 +53,16 @@ public final class StatusOverviewBuilder {
   /**
    * Baut die Übersicht für {@code character}.
    *
-   * @param onDamageChanged nach einem Klick auf ein Kästchen bzw. nach der Wahl des aktiven Kommlinks aufgerufen, damit
-   *                        alle Anzeigen nachziehen
+   * @param services        Rückfragen (Edge verheizen)
+   * @param onDamageChanged nach einem Klick auf ein Kästchen, auf die Edge-Knöpfe bzw. nach der Wahl des aktiven
+   *                        Kommlinks aufgerufen, damit alle Anzeigen nachziehen
    */
-  public static @NonNull Node build(@NonNull Character character, @NonNull Runnable onDamageChanged) {
+  public static @NonNull Node build(@NonNull Character character, @NonNull TabServices services,
+      @NonNull Runnable onDamageChanged) {
     VBox root = new VBox(CARD_GAP);
     root.setPrefWidth(WIDTH);
     root.getChildren().addAll(header(character), initiative(character, onDamageChanged), conditionMonitor(character, onDamageChanged),
-        protectionAndEssence(character), specialAttributes(character));
+        protectionAndEssence(character), specialAttributes(character, services, onDamageChanged));
     List<SituationalPool> pools = character.getSituationalPools();
     if (!pools.isEmpty()) {
       root.getChildren().add(situationalPools(pools));
@@ -84,8 +92,8 @@ public final class StatusOverviewBuilder {
 
   private static @NonNull Node header(@NonNull Character c) {
     Label name = styled(new Label(c.getName()), "page-title");
-    Label meta = styled(new Label(c.getMetatype().name() + " · " + (c.isCreated() ? "Karrieremodus" : "Erschaffung")),
-        "key-caption");
+    // Der Modus steht nur bei der Erschaffung dabei; im Spiel ist die Karriere der Normalfall.
+    Label meta = styled(new Label(c.getMetatype().name() + (c.isCreated() ? "" : " · Erschaffung")), "key-caption");
     return card(new VBox(2, name, meta));
   }
 
@@ -198,6 +206,10 @@ public final class StatusOverviewBuilder {
         onDamageChanged.run();
       });
       row.getChildren().add(button);
+      if (box < boxes && c.getColumnWoundModifier(box) != c.getColumnWoundModifier(box - 1)) {
+        // Trenner hinter dem Kästchen, mit dem der Verletzungsmodifikator steigt (S. 193, mit Schmerztoleranz u.Ä.)
+        row.getChildren().add(styled(new Label("|"), "key-caption"));
+      }
     }
     if (!c.isCreated()) {
       // Deaktivierte Knöpfe zeigen keinen Tooltip, deshalb trägt ihn die Zeile.
@@ -239,9 +251,59 @@ public final class StatusOverviewBuilder {
     return lines;
   }
 
-  private static @NonNull Node specialAttributes(@NonNull Character c) {
+  /**
+   * Edge mit Edgepunkten im Spiel (GRW S. 98/99): groß „verfügbar / Attribut“, direkt darunter ausgeben (−),
+   * zurückgewinnen (+), auffrischen und Edge verheizen mit Rückfrage. Knöpfe nur im Karrieremodus; bei der Erschaffung
+   * gesperrt, der Tooltip sitzt an der Knopfzeile.
+   */
+  private static @NonNull Node edgeControls(@NonNull Character c, @NonNull TabServices services,
+      @NonNull Runnable onChanged) {
+    boolean career = c.isCreated();
+    int points = c.getEdgePoints();
+    int edge = c.getEdge().getValue();
+    Button spend = edgeButton("Edgepunkt ausgeben", FontAwesomeSolid.MINUS, !career || points == 0, () -> {
+      c.spendEdge();
+      onChanged.run();
+    });
+    Button regain = edgeButton("Edgepunkt zurückgewinnen", FontAwesomeSolid.PLUS, !career || points == edge, () -> {
+      c.regainEdge();
+      onChanged.run();
+    });
+    Button refresh = edgeButton("Edge auffrischen (auf vollen Wert)", FontAwesomeSolid.UNDO, !career || points == edge,
+        () -> {
+          c.refreshEdge();
+          onChanged.run();
+        });
+    Button burn = edgeButton("Edge verheizen (S. 99): Edge dauerhaft −1", FontAwesomeSolid.FIRE, !career || edge == 0,
+        () -> {
+          if (services.confirmYesNo("Edge verheizen", "Edge dauerhaft um 1 senken?",
+              "Das Edgeattribut sinkt von %d auf %d (GRW S. 99).".formatted(edge, edge - 1))) {
+            c.burnEdge();
+            onChanged.run();
+          }
+        });
+    HBox buttons = new HBox(4, spend, regain, refresh, burn);
+    buttons.setAlignment(Pos.CENTER_LEFT);
+    if (!career) {
+      Tooltip.install(buttons, new Tooltip(EDGE_CREATION_HINT));
+    }
+    return new VBox(6, figure("%d / %d".formatted(points, edge), "Edge", false), buttons);
+  }
+
+  private static @NonNull Button edgeButton(@NonNull String text, @NonNull FontAwesomeSolid icon, boolean disabled,
+      @NonNull Runnable action) {
+    Button button = new Button(text);
+    button.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(button, icon);
+    button.setDisable(disabled);
+    button.setOnAction(_ -> action.run());
+    return button;
+  }
+
+  private static @NonNull Node specialAttributes(@NonNull Character c, @NonNull TabServices services,
+      @NonNull Runnable onChanged) {
     GridPane grid = columns(2);
-    grid.add(figure(String.valueOf(c.getEdge().getValue()), "Edge", false), 0, 0);
+    grid.add(edgeControls(c, services, onChanged), 0, 0);
     SpecialAttribute magicOrResonance = c.getMagicOrResonance();
     if (magicOrResonance == null) {
       grid.add(figure("–", "Magie / Resonanz", false), 1, 0);
@@ -249,6 +311,8 @@ public final class StatusOverviewBuilder {
       grid.add(figure(String.valueOf(c.getEffectiveMagicOrResonanceValue()),
           magicOrResonance.getType().getDisplayName(), false), 1, 0);
     }
+    // Edge ist mit den Knöpfen höher; Magie/Resonanz bleibt oben bündig
+    grid.getChildren().forEach(n -> GridPane.setValignment(n, VPos.TOP));
     VBox box = titled("SONDERATTRIBUTE", grid);
     if (!c.getImplants().getAttachedLimbs().isEmpty()) {
       Label limbs = styled(new Label("Cybergliedmaßen, Durchschnitt: "

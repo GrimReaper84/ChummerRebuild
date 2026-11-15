@@ -292,7 +292,7 @@ public class CharacterViewController implements CharacterTabHost {
     }
     footerLabel.setText(FooterText.of(character));
     setWarnStyle(footerLabel, character.isCreationOverspent());
-    Node overview = StatusOverviewBuilder.build(character, this::refreshRows);
+    Node overview = StatusOverviewBuilder.build(character, services(), this::refreshRows);
     if (statusStatic) {
       statusPage.setContent(overview);
     } else {

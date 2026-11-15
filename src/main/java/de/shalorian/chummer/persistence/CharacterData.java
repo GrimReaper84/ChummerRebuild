@@ -19,6 +19,10 @@ public class CharacterData {
   public @NonNull List<SelectedQualityEntry> selectedQualities = new ArrayList<>();
   public @NonNull Map<String, Integer> attributes = new HashMap<>();
   public int edge = 0;
+  /** Verheizte Edgepunkte (GRW S. 99); fehlt in Dateien vor ADR-057. */
+  public int edgeBurned = 0;
+  /** Ausgegebene Edgepunkte seit dem letzten Auffrischen; fehlt in Dateien vor ADR-057. */
+  public int edgeSpent = 0;
   /**
    * Wert des freigeschalteten Magic- oder Resonance-Attributs, oder null wenn nicht freigeschaltet.
    */

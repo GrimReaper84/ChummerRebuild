@@ -42,7 +42,7 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 7. ✅ **Magie abrunden**: Foki binden und ihre Wirkung, Schutzpatrone mit ihren Boni, situative Adeptenkräfte.
 8. ✅ **Kampfwerte vervollständigen**: Munitionswirkung auf Waffenwerte, Smartlink-Bonus, Würfelpools für Rigger und
    Drohnen, Fahrzeugschaden.
-9. **Status-Panel überarbeiten**: kleinere Anpassungen an Inhalt und Darstellung.
+9. ✅ **Status-Panel überarbeiten**: Zustandsmonitor mit Verletzungsstufen, Edgepunkte und Edge verheizen.
 10. **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
 11. **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für
     Wissensfertigkeiten, Portrait.

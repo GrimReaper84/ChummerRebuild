@@ -131,6 +131,8 @@ public class Character {
   private int nuyenBP = 0;
   /** Eingetragener Schaden im Zustandsmonitor (Kästchen), siehe {@link #getPhysicalDamage()}. */
   private int physicalDamage = 0;
+  /** Ausgegebene Edgepunkte seit dem letzten Auffrischen (GRW S. 98/99). */
+  private int edgeSpent = 0;
   private int stunDamage = 0;
 
   public Character(@NonNull String name, @NonNull MetatypeData metatype) {
@@ -307,6 +309,65 @@ public class Character {
 
   public @NonNull SpecialAttribute getEdge() {
     return edge;
+  }
+
+  // --- Edgepunkte (nur Karrieremodus) ---
+
+  /** Verfügbare Edgepunkte: Edgeattribut minus ausgegebene (GRW S. 98/99). */
+  public int getEdgePoints() {
+    return edge.getValue() - getEdgeSpent();
+  }
+
+  /**
+   * Ausgegebene Edgepunkte, höchstens das Attribut: die einzige Stelle der Grenze, weil das Attribut auch von außen
+   * sinken kann (Verheizen, Gabe Glück entfernt).
+   */
+  public int getEdgeSpent() {
+    return Math.min(edgeSpent, edge.getValue());
+  }
+
+  /** Gibt einen Edgepunkt aus (S. 98). */
+  public void spendEdge() {
+    requireCareer("Edge ausgeben");
+    if (getEdgePoints() == 0) {
+      throw new IllegalStateException("Keine Edgepunkte mehr");
+    }
+    edgeSpent = getEdgeSpent() + 1;
+  }
+
+  /** Gewinnt einen Edgepunkt zurück, höchstens bis zum vollen Attribut (S. 99). */
+  public void regainEdge() {
+    requireCareer("Edge zurückgewinnen");
+    if (getEdgeSpent() == 0) {
+      throw new IllegalStateException("Edgepunkte schon voll");
+    }
+    edgeSpent = getEdgeSpent() - 1;
+  }
+
+  /** Füllt die Edgepunkte auf das volle Attribut auf (S. 99, z.B. zu Beginn eines Spielabends). */
+  public void refreshEdge() {
+    requireCareer("Edge auffrischen");
+    edgeSpent = 0;
+  }
+
+  /**
+   * Verheizt einen Punkt Edge: das Attribut sinkt dauerhaft um 1 (S. 99), siehe {@link SpecialAttribute#burn()};
+   * ausgegebene Punkte bleiben ausgegeben, soweit das neue Attribut reicht.
+   */
+  public void burnEdge() {
+    requireCareer("Edge verheizen");
+    edge.burn();
+  }
+
+  /** Setzt die ausgegebenen Edgepunkte beim Laden. */
+  public void loadEdgeSpent(int spent) {
+    edgeSpent = Math.max(0, spent);
+  }
+
+  private void requireCareer(@NonNull String action) {
+    if (!created) {
+      throw new IllegalStateException(action + " geht nur im Karrieremodus");
+    }
   }
 
   /**

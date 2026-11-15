@@ -94,6 +94,8 @@ public class CharacterStore {
       data.attributes.put(type.name(), character.getAttribute(type).getValue());
     }
     data.edge = character.getEdge().getValue();
+    data.edgeBurned = character.getEdge().getBurned();
+    data.edgeSpent = character.getEdgeSpent();
     if (character.hasMagic()) {
       data.magic = Objects.requireNonNull(character.getMagicOrResonance()).getValue();
     } else if (character.hasResonance()) {
@@ -746,9 +748,10 @@ public class CharacterStore {
     for (Map.Entry<String, Integer> e : data.attributes.entrySet()) {
       character.getAttribute(AttributeType.valueOf(e.getKey())).setValue(e.getValue());
     }
-    if (data.edge > 0) {
-      character.getEdge().setValue(data.edge);
+    if (data.edge > 0 || data.edgeBurned > 0) { // 0 nur, wenn alles verheizt ist
+      character.getEdge().load(data.edge, data.edgeBurned);
     }
+    character.loadEdgeSpent(data.edgeSpent);
   }
 
   private static void applySkills(@NonNull Character character, @NonNull CharacterData data) {

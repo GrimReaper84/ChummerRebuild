@@ -162,7 +162,7 @@ public final class AttributeTabBuilder {
     boolean reducedByEssence = type != SpecialAttributeType.EDGE;
     int displayMax = reducedByEssence ? character.getEffectiveMagicOrResonanceMax() : attr.getMax();
     addAttributeGridRow(grid, row, specialAttrRefreshers,
-        new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getMin(),
+        new AttributeRowLabel(type.getDisplayName(), type.getAbbreviation(), attr.getLowerBound(),
             displayMax, ""), null, new RowModel() {
           @Override
           public int value() {
@@ -178,7 +178,7 @@ public final class AttributeTabBuilder {
 
           @Override
           public int min() {
-            return attr.getMin();
+            return attr.getLowerBound();
           }
 
           @Override
