@@ -17,6 +17,7 @@ import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.gear.MatrixStats;
+import de.shalorian.chummer.model.character.magic.Foci;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import java.io.IOException;
@@ -274,6 +275,9 @@ final class GearTabBuilder {
           detailKey("System"), detailValue(d.system()));
       addRowCells(grid, row++, detailKey("Programme"), detailValue(d.processorLimit()));
     }
+    if (gear.isFocus() && character.getEquipment().getGear().contains(gear)) {
+      addRowCells(grid, row++, detailKey("Bindung"), focusControls(gear, character, host, onChanged));
+    }
     Gear device = deviceOf(gear, character);
     MatrixStats deviceStats = device == null ? null : device.getMatrixStats();
     if (gear.isProgram() && deviceStats != null) {
@@ -292,6 +296,58 @@ final class GearTabBuilder {
       note.setWrapText(true);
       details.getChildren().add(note);
     }
+  }
+
+  /**
+   * Binden bzw. Lösen und Aktivieren eines Fokus (GRW S. 233/234): Binden kostet bei der Erschaffung BP (über die
+   * BP-Summe, Lösen gibt sie wieder frei), im Karrieremodus Karma mit Bestätigung (Lösen erstattet nichts). Prüfung im
+   * Klick-Handler mit Warnung. {@code onChanged} baut den Tab neu und lässt Magie-Tab und Status nachziehen.
+   */
+  private static @NonNull HBox focusControls(@NonNull Gear focus, @NonNull Character character,
+      @NonNull CharacterTabHost host, @NonNull Runnable onChanged) {
+    Foci foci = character.getFoci();
+    Label state = detailValue(focus.isBound() ? "gebunden" : "ungebunden");
+    Button bindBtn = new Button(focus.isBound() ? "Lösen" : "Binden");
+    bindBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    bindBtn.setOnAction(_ -> {
+      if (focus.isBound()) {
+        if (host.services().confirmYesNo("Fokus lösen", focus.getDisplayName() + " lösen?",
+            character.isCreated() ? "Gezahltes Karma wird nicht erstattet." : "Die BP werden wieder frei.")) {
+          foci.unbind(focus);
+          onChanged.run();
+        }
+        return;
+      }
+      String problem = foci.getBindProblem(focus);
+      if (problem != null) {
+        host.services().warn("Fokus binden", problem);
+        return;
+      }
+      if (character.isCreated() && host.services().karmaChargeFailed(character,
+          "Fokus binden: " + focus.getDisplayName(), foci.getBindingKarma(focus))) {
+        return;
+      }
+      foci.bind(focus);
+      onChanged.run();
+    });
+    HBox box = new HBox(8, state, bindBtn);
+    box.setAlignment(Pos.CENTER_LEFT);
+    if (focus.isBound()) {
+      CheckBox active = new CheckBox("aktiv");
+      active.setSelected(focus.isFocusActive());
+      active.setOnAction(_ -> {
+        String problem = active.isSelected() ? foci.getActivateProblem(focus) : null;
+        if (problem != null) {
+          active.setSelected(false);
+          host.services().warn("Fokus aktivieren", problem);
+          return;
+        }
+        foci.setActive(focus, active.isSelected());
+        onChanged.run();
+      });
+      box.getChildren().add(active);
+    }
+    return box;
   }
 
   /** Das Kommlink, in dem {@code part} eingebaut ist (auch Kommlink-Headware), oder {@code null}. */
@@ -356,8 +412,10 @@ final class GearTabBuilder {
     }
   }
 
+  /** Baut den Tab neu; Foki und situative Pools im Magie- und Adepten-Tab sowie der Status ziehen nach. */
   private void onGearChanged(@NonNull Character character, @Nullable Gear selected) {
     build(character, selected);
     host.onNuyenSpentChanged();
+    host.refreshRows();
   }
 }

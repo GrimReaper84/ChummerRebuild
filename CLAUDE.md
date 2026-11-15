@@ -31,7 +31,7 @@ Package überschaubar bleibt:
 - `model.character` (Wurzel): `Character` (Aggregatwurzel), `CharacterBiography`, `Contact`, `LogEntry`,
   `CatalogEntry`, `DataPaths`
 - `model.character.attribute`, `.skill`, `.quality`, `.magic`, `.technomancer`, `.initiation`, `.spirit`, `.cyberware`, `.metatype`, `.armor`,
-  `.weapon`, `.gear`, `.vehicle`, `.lifestyle`, `.equipment`: Modellklassen des jeweiligen Bereichs (z.B.
+  `.weapon`, `.gear`, `.vehicle`, `.lifestyle`, `.equipment`, `.situation` (situative Würfelpools): Modellklassen des jeweiligen Bereichs (z.B.
   `Skill`/`SkillDataLoader` in `.skill`, `SpellData`/`Tradition` in `.magic`); alle Kaufkategorien liegen in
   `equipment.Equipment` (`character.getEquipment()`)
 - `view` (Wurzel): `MainWindowController`, `CharacterViewController`, `ViewPreferences` (Einstellungen der

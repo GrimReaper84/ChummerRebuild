@@ -107,7 +107,7 @@ class CharacterQualityRulesTest {
     Character c = of("Mensch");
     assertNotNull(c.getQualityBlockReason(q("Schutzpatron"), false));
     c.addQuality(q("Zauberer"), false);
-    c.addQuality(q("Schutzpatron"), false, "Drache");
+    c.addQuality(q("Schutzpatron"), false, "Bär");
     c.removeQuality(selected(c, "Zauberer"));
     assertTrue(c.getSelectedQualities().isEmpty());
   }
@@ -179,8 +179,8 @@ class CharacterQualityRulesTest {
   void removalConsequencesNameDependentsAndLoweredValues() {
     Character c = of("Mensch");
     c.addQuality(q("Zauberer"), false);
-    c.addQuality(q("Schutzpatron"), false, "Drache");
-    assertEquals(List.of("Schutzpatron (Drache) wird mit entfernt"),
+    c.addQuality(q("Schutzpatron"), false, "Bär");
+    assertEquals(List.of("Schutzpatron (Bär) wird mit entfernt"),
         c.getQualityRemovalConsequences(selected(c, "Zauberer")));
 
     c.addQuality(q("Talentiert"), true, "Pistolen");

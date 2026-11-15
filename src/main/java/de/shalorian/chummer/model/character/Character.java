@@ -16,6 +16,10 @@ import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.MatrixFlag;
 import de.shalorian.chummer.model.character.initiation.Initiation;
+import de.shalorian.chummer.model.character.magic.Foci;
+import de.shalorian.chummer.model.character.magic.FocusType;
+import de.shalorian.chummer.model.character.magic.MentorData;
+import de.shalorian.chummer.model.character.magic.MentorDataLoader;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
@@ -24,8 +28,13 @@ import de.shalorian.chummer.model.character.quality.QualityBonusType;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityRules;
+import de.shalorian.chummer.model.character.quality.QualitySelection;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.quality.QualityType;
+import de.shalorian.chummer.model.character.situation.SituationKind;
+import de.shalorian.chummer.model.character.situation.SituationalBonus;
+import de.shalorian.chummer.model.character.situation.SituationalPool;
+import de.shalorian.chummer.model.character.situation.SituationalPools;
 import de.shalorian.chummer.model.character.skill.DicePool;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
@@ -107,6 +116,7 @@ public class Character {
   private final @NonNull AdeptPowers adeptPowers = new AdeptPowers(this);
   private final @NonNull Initiation initiation = new Initiation(this);
   private final @NonNull Spirits spirits = new Spirits(this);
+  private final @NonNull Foci foci = new Foci(this);
   private final @NonNull Implants implants = new Implants(this);
   private final @NonNull Equipment equipment = new Equipment(this);
   private final List<LogEntry> karmaLog = new ArrayList<>();
@@ -482,6 +492,54 @@ public class Character {
       magicOrResonance = null;
       initiation.clear();
     }
+  }
+
+  /**
+   * Boni, die nur in bestimmten Lagen gelten: aktive Foki (Würfel = Kraft, S. 233/234), Schutzpatron (S. 234–237) und
+   * die situativen Adeptenkräfte (S. 230/231).
+   */
+  public @NonNull List<SituationalBonus> getSituationalBonuses() {
+    List<SituationalBonus> bonuses = new ArrayList<>();
+    for (Gear focus : foci.getActive()) {
+      FocusType type = Objects.requireNonNull(focus.getData().focusType());
+      SituationKind kind = type.getSituation();
+      if (kind != null) {
+        bonuses.add(new SituationalBonus(focus.getName(), kind, focus.getExtra(), focus.getRating(), true));
+      }
+    }
+    addMentorBonuses(bonuses);
+    for (AdeptPower power : adeptPowers.getPowers()) {
+      SituationKind kind = power.getData().effect().getSituation();
+      if (kind != null && power.getLevel() > 0) {
+        bonuses.add(new SituationalBonus(power.getData().name(), kind, "", power.getLevel(), false));
+      }
+    }
+    return bonuses;
+  }
+
+  /**
+   * Boni des Schutzpatrons aus der Gabe (GRW S. 117, 234–237); nichts ohne die Gabe oder bei einer Auswahl, die nicht
+   * (mehr) im Katalog steht.
+   */
+  private void addMentorBonuses(@NonNull List<SituationalBonus> bonuses) {
+    CharacterQuality gift = qualities.stream().filter(q -> q.data().selection() == QualitySelection.MENTOR)
+        .findFirst().orElse(null);
+    MentorData mentor = gift == null ? null : MentorDataLoader.findByChoice(gift.choice());
+    if (gift == null || mentor == null) {
+      return;
+    }
+    mentor.bonusesFor(gift.choice()).forEach(b ->
+        bonuses.add(new SituationalBonus(mentor.name(), b.kind(), b.detail(), b.dice(), false)));
+  }
+
+  /** Situative Würfelpools je Anlass ({@link SituationalPools}). */
+  public @NonNull List<SituationalPool> getSituationalPools() {
+    return SituationalPools.of(this, getSituationalBonuses());
+  }
+
+  /** Foki: Bindung und Aktivierung (GRW S. 112, 233/234). */
+  public @NonNull Foci getFoci() {
+    return foci;
   }
 
   /** Gebundene und herbeigerufene Geister, registrierte und kompilierte Sprites (GRW S. 112/113, 222, 281). */
@@ -896,6 +954,7 @@ public class Character {
     return switch (data.selection()) {
       case NONE -> null;
       case TEXT -> choice.isBlank() ? data.selectLabel() + " angeben" : null;
+      case MENTOR -> MentorDataLoader.findByChoice(choice) == null ? "Schutzpatron wählen" : null;
       case ATTRIBUTE -> Arrays.stream(AttributeType.values()).anyMatch(t -> t.name().equals(choice))
           ? null : "Attribut wählen";
       case SKILL -> {
@@ -2090,7 +2149,7 @@ public class Character {
     return metatype.bpCost() + attrBP + skillBP + nuyenBP + qualityBP
         + getKnowledgeSkillOverflowBP() + getSpecialAttributeBP()
         + getActiveSkillSpecializationBP() + getContactBP() + getSpellBP() + getComplexFormBP()
-        + spirits.getBpCost();
+        + spirits.getBpCost() + foci.getBpCost();
   }
 
   /**

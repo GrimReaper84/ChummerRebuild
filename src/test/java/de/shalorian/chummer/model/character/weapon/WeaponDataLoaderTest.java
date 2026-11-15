@@ -28,9 +28,10 @@ class WeaponDataLoaderTest {
 
   @Test
   void loadsSixtyThreeWeaponsInAllCategories() {
-    // 63 kaufbare GRW-Waffen; dazu eingebaute aus Rüstung (S. 373) und Implantaten (S. 391), die nicht gekauft werden
+    // 63 kaufbare GRW-Waffen; dazu nicht kaufbare: aus Rüstung (S. 373), der waffenlose Grundangriff (S. 188) und
+    // Implantate (S. 391)
     assertEquals(63, all().stream().filter(w -> !w.builtIn()).count());
-    assertEquals(List.of("Schutzschild", "Taserschild", "Handklinge", "Nagelmesser", "Schockhand", "Sporn",
+    assertEquals(List.of("Schutzschild", "Taserschild", "Waffenloser Angriff", "Handklinge", "Nagelmesser", "Schockhand", "Sporn",
         "Schockstreifen"),
         all().stream().filter(WeaponData::builtIn).map(WeaponData::name).toList());
     Set<WeaponCategory> used = all().stream().map(WeaponData::category).collect(Collectors.toSet());

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Schutzpatrone des SR4-Grundregelwerks (S. 234-237), Vorteile und Nachteile am Seitenbild geprüft (2026-11-13).
+  Hinweise in eigenen Worten; Patrone aus Zusatzbänden (C#: 43) bleiben draußen (ADR-047).
+
+  <bonus kind dice detail>  rechnender Vorteil (dice > 0) bzw. Nachteil (dice < 0); kind = SituationKind:
+                            SPELL_CATEGORY (detail = Zauberkategorie), SPIRIT_TYPE (detail = Geisterart), SPIRIT_BIND,
+                            SKILL (detail = Fertigkeit), DAMAGE_RESISTANCE, TOXIN_RESISTANCE
+  <choice kind dice>        Vorteil nach Wahl des Spielers (S. 234: Wahl bleibt bestehen), je <option> eine Möglichkeit
+  <drawback>                Nachteil ohne Rechnung (Rollenspiel), eigene Worte
+-->
+<mentors>
+    <mentor>
+        <name>Adler</name>
+        <bonus kind="SPELL_CATEGORY" detail="Wahrnehmung" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Luftgeist" dice="2"/>
+        <drawback>Bekommt das Handicap Allergie (Schadstoffe, leicht, S. 119) ohne Generierungspunkte dafür.</drawback>
+        <source>SR4</source>
+        <page>235</page>
+    </mentor>
+    <mentor>
+        <name>Bär</name>
+        <bonus kind="SPELL_CATEGORY" detail="Heilung" dice="2"/>
+        <bonus kind="DAMAGE_RESISTANCE" dice="2"/>
+        <drawback>Kann bei Verwundung im Kampf in Berserkerwut geraten; Probe auf Willenskraft + Charisma verkürzt oder verhindert sie.</drawback>
+        <source>SR4</source>
+        <page>235</page>
+    </mentor>
+    <mentor>
+        <name>Berg</name>
+        <bonus kind="SKILL" detail="Antimagie" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Erdgeist" dice="2"/>
+        <drawback>Hält stur an einem einmal gefassten Plan fest, außer eine Probe auf Willenskraft + Charisma (3) gelingt.</drawback>
+        <source>SR4</source>
+        <page>235</page>
+    </mentor>
+    <mentor>
+        <name>Donnervogel</name>
+        <bonus kind="SKILL" detail="Einschüchtern" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Luftgeist" dice="2"/>
+        <drawback>Muss eine Probe auf Willenskraft + Charisma (3) schaffen, um eine Beleidigung zu übergehen.</drawback>
+        <source>SR4</source>
+        <page>235</page>
+    </mentor>
+    <mentor>
+        <name>Drachentöter</name>
+        <bonus kind="SPELL_CATEGORY" detail="Kampf" dice="2"/>
+        <choice kind="SKILL" dice="2">
+            <option>Einschüchtern</option>
+            <option>Führung</option>
+            <option>Gebräuche</option>
+            <option>Überreden</option>
+            <option>Unterricht</option>
+            <option>Verhandlung</option>
+        </choice>
+        <drawback>Ein gebrochenes Versprechen kostet einen Würfel auf alle Handlungen, bis es wiedergutgemacht ist.</drawback>
+        <source>SR4</source>
+        <page>235</page>
+    </mentor>
+    <mentor>
+        <name>Feuerbringer</name>
+        <bonus kind="SPELL_CATEGORY" detail="Manipulation" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Feuergeist" dice="2"/>
+        <bonus kind="SPELL_CATEGORY" detail="Illusion" dice="-1"/>
+        <source>SR4</source>
+        <page>236</page>
+    </mentor>
+    <mentor>
+        <name>Finsterer König</name>
+        <bonus kind="SKILL" detail="Wahrnehmung" dice="2"/>
+        <bonus kind="SKILL" detail="Askennen" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Geist des Menschen" dice="2"/>
+        <bonus kind="DAMAGE_RESISTANCE" dice="-1"/>
+        <source>SR4</source>
+        <page>236</page>
+    </mentor>
+    <mentor>
+        <name>Hai</name>
+        <bonus kind="SPELL_CATEGORY" detail="Kampf" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Wassergeist" dice="2"/>
+        <drawback>Kann wie ein Bärzauberer in Blutrausch geraten, wenn er verwundet wird oder selbst verwundet.</drawback>
+        <source>SR4</source>
+        <page>236</page>
+    </mentor>
+    <mentor>
+        <name>Hund</name>
+        <bonus kind="SPELL_CATEGORY" detail="Wahrnehmung" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Geist des Menschen" dice="2"/>
+        <drawback>Lässt Freunde nicht im Stich, außer eine Probe auf Willenskraft + Charisma (3) gelingt.</drawback>
+        <source>SR4</source>
+        <page>236</page>
+    </mentor>
+    <mentor>
+        <name>Katze</name>
+        <bonus kind="SPELL_CATEGORY" detail="Illusion" dice="2"/>
+        <choice kind="SKILL" dice="2">
+            <option>Akrobatik</option>
+            <option>Infiltration</option>
+        </choice>
+        <drawback>Spielt mit der Beute: ohne gelungene Probe auf Willenskraft + Charisma (3) kein Angriff, der den Gegner sofort ausschaltet.</drawback>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Meer</name>
+        <bonus kind="SKILL" detail="Schwimmen" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Wassergeist" dice="2"/>
+        <bonus kind="SKILL" detail="Verhandlung" dice="-1"/>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Mondin</name>
+        <bonus kind="SPELL_CATEGORY" detail="Illusion" dice="2"/>
+        <bonus kind="SKILL" detail="Verhandlung" dice="2"/>
+        <bonus kind="SPELL_CATEGORY" detail="Kampf" dice="-1"/>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Rabe</name>
+        <bonus kind="SPELL_CATEGORY" detail="Manipulation" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Luftgeist" dice="2"/>
+        <drawback>Muss eine Probe auf Willenskraft + Charisma (3) schaffen, um das Unglück anderer nicht auszunutzen.</drawback>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Ratte</name>
+        <bonus kind="SKILL" detail="Infiltration" dice="2"/>
+        <bonus kind="TOXIN_RESISTANCE" dice="2"/>
+        <drawback>Flieht oder sucht Deckung, wenn ein Kampf beginnt, außer eine Probe auf Willenskraft + Charisma (3) gelingt.</drawback>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Schlange</name>
+        <bonus kind="SPELL_CATEGORY" detail="Wahrnehmung" dice="2"/>
+        <bonus kind="SPIRIT_BIND" dice="2"/>
+        <bonus kind="SPELL_CATEGORY" detail="Kampf" dice="-1"/>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Schwindler</name>
+        <bonus kind="SPELL_CATEGORY" detail="Illusion" dice="2"/>
+        <bonus kind="SKILL" detail="Überreden" dice="2"/>
+        <drawback>Kann einem Streich kaum widerstehen; dafür braucht es eine Probe auf Willenskraft + Charisma (3).</drawback>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Verführerin</name>
+        <bonus kind="SPELL_CATEGORY" detail="Illusion" dice="2"/>
+        <bonus kind="SKILL" detail="Überreden" dice="2"/>
+        <drawback>Gibt Lastern und Süchten nach, wenn sich die Gelegenheit bietet, außer eine Probe auf Willenskraft + Charisma (3) gelingt.</drawback>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Weiser Krieger</name>
+        <bonus kind="SPELL_CATEGORY" detail="Kampf" dice="2"/>
+        <bonus kind="SPELL_CATEGORY" detail="Wahrnehmung" dice="2"/>
+        <drawback>Nach unehrenhaftem Verhalten ein Würfel weniger auf alle Proben, bis es wiedergutgemacht ist.</drawback>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+    <mentor>
+        <name>Wolf</name>
+        <bonus kind="SPELL_CATEGORY" detail="Kampf" dice="2"/>
+        <bonus kind="SPIRIT_TYPE" detail="Geist des Tieres" dice="2"/>
+        <drawback>Kann sich nur mit einer gelungenen Probe auf Willenskraft + Charisma (3) aus einem Kampf zurückziehen.</drawback>
+        <source>SR4</source>
+        <page>237</page>
+    </mentor>
+</mentors>

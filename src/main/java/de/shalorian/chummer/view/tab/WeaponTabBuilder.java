@@ -130,7 +130,8 @@ final class WeaponTabBuilder {
    * Füllt den Baum: je belegter Kategorie ein aufgeklappter Knoten in GRW-Tabellenreihenfolge
    * ({@link WeaponCategory}), darunter die Waffen in Kaufreihenfolge und unter jeder Waffe ihr
    * mitgeliefertes und gekauftes Zubehör sowie beim Bogen seine Pfeile. Waffen aus angelegter Rüstung (Schilde,
-   * Schockstreifen, GRW S. 373) stehen mit dem Zusatz „(aus Rüstung)“ dabei und sind nur lesbar.
+   * Schockstreifen, GRW S. 373) stehen mit dem Zusatz „(aus Rüstung)“ dabei und sind nur lesbar, ebenso der
+   * waffenlose Grundangriff (S. 188), der immer vorne in der Gruppe Waffenlos steht.
    *
    * @return der Knoten der gewünschten Auswahl, oder {@code null}
    */
@@ -140,7 +141,8 @@ final class WeaponTabBuilder {
       @Nullable Object selectedChild) {
     Map<WeaponCategory, TreeItem<WeaponTreeEntry>> groups = new EnumMap<>(WeaponCategory.class);
     TreeItem<WeaponTreeEntry> selectedItem = null;
-    List<Weapon> weapons = new ArrayList<>(character.getEquipment().getWeapons());
+    List<Weapon> weapons = new ArrayList<>(List.of(character.getEquipment().getUnarmedAttack()));
+    weapons.addAll(character.getEquipment().getWeapons());
     weapons.addAll(character.getEquipment().getArmorWeapons());
     weapons.addAll(character.getEquipment().getImplantWeapons());
     for (Weapon weapon : weapons) {

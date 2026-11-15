@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character.equipment;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.Contact;
+import de.shalorian.chummer.model.character.adept.AdeptPowerEffect;
 import de.shalorian.chummer.model.character.armor.Armor;
 import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.armor.ArmorModData;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.ToIntFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -57,6 +60,11 @@ public class Equipment {
   private static final String ARMOR_WEAPON_SOURCE = "aus Rüstung";
   /** Herkunft der Waffen aus Implantaten im Waffenbereich. */
   private static final String IMPLANT_WEAPON_SOURCE = "Implantat";
+  /** Katalogname des waffenlosen Grundangriffs (GRW S. 188). */
+  private static final String UNARMED_ATTACK = "Waffenloser Angriff";
+
+  /** Schadenswert am Anfang eines Schadenscodes, z.B. „4“ in „4K“. */
+  private static final Pattern LEADING_NUMBER = Pattern.compile("(\\d+)(.*)");
 
   private final @NonNull Character owner;
 
@@ -283,6 +291,15 @@ public class Equipment {
   }
 
   /**
+   * Waffenloser Grundangriff, den jeder Charakter hat (GRW S. 188: halbe Stärke als Geistiger Schaden); zeigt im
+   * Waffen-Tab u.a. Kritischer Schlag (S. 231). Jeder Aufruf liefert eine neue Instanz.
+   */
+  public @NonNull Weapon getUnarmedAttack() {
+    return new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName(UNARMED_ATTACK), UNARMED_ATTACK),
+        "immer vorhanden", null);
+  }
+
+  /**
    * Waffen aus Implantaten (Cyber-Nahkampfwaffen, S. 391/392): natürlich implantierte mit der Stärke des Charakters,
    * eingebaute in angeschlossenen Gliedern mit der Stärke des Glieds (S. 389/390). Jeder Aufruf liefert neue Instanzen.
    */
@@ -381,7 +398,14 @@ public class Equipment {
    * da es noch keine Stärkemodifikatoren gibt.
    */
   public @NonNull String getWeaponDamageText(@NonNull Weapon weapon) {
-    return weapon.getDamageText(owner.getAugmentedAttributeValue(AttributeType.STR));
+    String damage = weapon.getDamageText(owner.getAugmentedAttributeValue(AttributeType.STR));
+    int strike = owner.getAdeptPowers().level(AdeptPowerEffect.CRITICAL_STRIKE);
+    if (strike == 0 || weapon.getData().category() != WeaponCategory.UNARMED) {
+      return damage;
+    }
+    // Kritischer Schlag (GRW S. 231): je Stufe +1 Schaden waffenlos
+    Matcher m = LEADING_NUMBER.matcher(damage);
+    return m.matches() ? (Integer.parseInt(m.group(1)) + strike) + m.group(2) : damage + " +" + strike;
   }
 
   /**

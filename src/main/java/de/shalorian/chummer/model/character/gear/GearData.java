@@ -3,6 +3,7 @@ package de.shalorian.chummer.model.character.gear;
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.cyberware.RatingFormula;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.magic.FocusType;
 import java.math.RoundingMode;
 import java.util.Set;
 import org.jspecify.annotations.NonNull;
@@ -58,6 +59,7 @@ import org.jspecify.annotations.Nullable;
  * @param extraKind    ob und wie ein Zusatztext beim Kauf anzugeben ist
  * @param matrixFlags  Merkmale für den Matrixzugang (Neuralinterface, Sim-Modul, Kommlink-Einbau), sonst leer
  * @param matrixAttribute Attribut, das ein Hardware-Modul oder Softwarepaket aufrüstet (S. 260), sonst {@code null}
+ * @param focusType    Fokusart (Bindung und Wirkung, S. 233/234), sonst {@code null}
  * @param extraLabel   Feldbezeichnung des Zusatztexts (z.B. "Fertigkeit"), leer ohne Zusatztext
  * @param note         Hinweis aus Tabelle oder Text (z.B. Waffenwerte, Monatsbeitrag), sonst leer
  */
@@ -86,6 +88,7 @@ public record GearData(
     @NonNull ExtraKind extraKind,
     @NonNull Set<MatrixFlag> matrixFlags,
     @Nullable MatrixAttribute matrixAttribute,
+    @Nullable FocusType focusType,
     @NonNull String extraLabel,
     @NonNull String note,
     @NonNull String source,

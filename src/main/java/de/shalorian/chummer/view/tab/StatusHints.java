@@ -10,7 +10,8 @@ import org.jspecify.annotations.NonNull;
  * Hinweise der Status-Übersicht: was am Charakter gerade nicht stimmt. Bei der Erschaffung überzogene BP oder
  * überzogenes Ressourcengeld und Essenz auf 0 oder darunter (GRW S. 111), in beiden Modi überzogene Kraftpunkte und ein
  * Initiations- bzw. Wandlungsgrad über dem wirksamen Magie- bzw. Resonanzwert sowie Geister und Sprites, die nicht mehr
- * den Regeln entsprechen ({@code Spirits#getProblems}).
+ * den Regeln entsprechen ({@code Spirits#getProblems}), und Foki über den Grenzen von Magie bzw. Logik
+ * ({@code Foci#getProblems}).
  */
 public final class StatusHints {
 
@@ -36,6 +37,7 @@ public final class StatusHints {
     if (adeptProblem != null) {
       hints.add(adeptProblem);
     }
+    hints.addAll(character.getFoci().getProblems());
     for (SpiritKind kind : SpiritKind.values()) {
       hints.addAll(character.getSpirits().getProblems(kind));
     }

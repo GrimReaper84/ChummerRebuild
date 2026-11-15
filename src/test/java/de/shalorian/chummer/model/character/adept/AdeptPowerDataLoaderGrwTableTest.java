@@ -72,10 +72,13 @@ class AdeptPowerDataLoaderGrwTableTest {
   }
 
   @Test
-  void sevenPowersHaveCalculatedEffects() {
+  void fourteenPowersHaveCalculatedEffects() {
+    // sieben feste Wirkungen (ADR-046) und sieben situative (Magie abrunden, ADR-055)
     long calculated = AdeptPowerDataLoader.getAllPowers().values().stream()
         .filter(p -> p.effect() != AdeptPowerEffect.NONE)
         .count();
-    assertEquals(7, calculated);
+    assertEquals(14, calculated);
+    assertEquals(AdeptPowerEffect.COMBAT_SENSE, power("Kampfsinn").effect());
+    assertEquals(AdeptPowerEffect.CRITICAL_STRIKE, power("Kritischer Schlag").effect());
   }
 }

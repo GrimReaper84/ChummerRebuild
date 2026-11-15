@@ -51,6 +51,7 @@ import org.tbee.javafx.scene.layout.MigPane;
 public final class AdeptTabBuilder {
 
   private final @NonNull VBox adeptContainer;
+  private final @NonNull SituationalPoolSection poolSection = new SituationalPoolSection();
   private final @NonNull CharacterTabHost host;
   private final @NonNull IncrementWiring wiring;
   private final @NonNull List<Runnable> refreshers = new ArrayList<>();
@@ -68,9 +69,15 @@ public final class AdeptTabBuilder {
     this.character = character;
   }
 
-  /** Kraftpunkte, Stufen und Kosten neu bewerten (z.B. nach geänderter Magie oder geändertem Attribut). */
+  /**
+   * Kraftpunkte, Stufen und Kosten neu bewerten (z.B. nach geänderter Magie oder geändertem Attribut) und die
+   * situativen Pools neu bauen.
+   */
   public void refresh() {
     refreshers.forEach(Runnable::run);
+    if (character != null) {
+      poolSection.build(character);
+    }
   }
 
   public void build() {
@@ -118,6 +125,7 @@ public final class AdeptTabBuilder {
     for (AdeptPower power : ch.getAdeptPowers().getPowers()) {
       addPowerRow(grid, row++, power, ch);
     }
+    adeptContainer.getChildren().add(poolSection.build(ch));
     refresh();
   }
 

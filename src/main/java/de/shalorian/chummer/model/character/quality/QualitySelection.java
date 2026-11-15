@@ -9,5 +9,7 @@ public enum QualitySelection {
   /** Ein Körperliches oder Geistiges Attribut (Außergewöhnliches Attribut). */
   ATTRIBUTE,
   /** Freitext (z.B. Substanz einer Allergie, Geisterart, Gebiet). */
-  TEXT
+  TEXT,
+  /** Schutzpatron aus {@code mentors.xml}, ggf. mit Vorteil nach Wahl (GRW S. 117, 234–237). */
+  MENTOR
 }

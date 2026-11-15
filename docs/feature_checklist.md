@@ -140,11 +140,13 @@
 | Zauber hinzufügen (3 BP / 5 Karma)                     | ✅      | Fixpreis pro Zauber in beiden Modi, Karrieremodus mit Karma-Bestätigungsdialog                                                                                                                                                                                       |
 | Zauber-Cap bei Erstellung (2×höchstes Spellcasting-Rating) | ✅  | `Character.canAddSpellAtCreation()`, kein Cap im Karrieremodus                                                                                                                                                                                                       |
 | Geister (gebunden/herbeigerufen)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Magie, 6 Geisterarten mit Werten (S. 347/348), fünf je Tradition (S. 213); Erschaffung 1 BP je Dienst, Kraft = Magie, Dienste ≤ Herbeirufen, gebundene ≤ Charisma (S. 112); Karriere nur eintragen |
+| Schutzpatrone | ✅ | 2026-11-13 (ADR-055): 19 Patrone (S. 234–237, am Bild) als Auswahl der Gabe, beide Vorteile, „nach Wahl“ beim Kauf (Katze, Drachentöter), rechnende Nachteile; Rollenspiel-Nachteile als Text; Vorteile/Nachteile im Detail des Auswahldialogs |
+| Situative Würfelpools | ✅ | 2026-11-13 (ADR-055): Foki (stärkster je Probe, S. 233), Patrone und sieben Adeptenkräfte (Kampfsinn, Magieresistenz, Natürliche Immunität, Beschleunigte Heilung, Großer Sprung, Körpersprache, Kritischer Schlag auf waffenlosen Schaden, sichtbar an der festen Zeile „Waffenloser Angriff“ im Waffen-Tab, S. 188) als Liste im Magie-/Adepten-Tab und Status |
 | Magische Aktionsfertigkeiten (Spruchzauberei/Ritualzauberei) | ✅ | Neu in `skills.xml`, eigene `SkillCategory.MAGICAL`, immer im Skills-Tab sichtbar (für alle Charaktere), aber nur für Magier steigerbar — `+`-Button deaktiviert ohne Gabe "Magier" (`Character.canRaiseSkill()`, GRW S. 208), gilt in Erstellung **und** Karrieremodus |
 | Magier/Adept/Mystischer-Adept-Exklusivität             | ✅      | `Character.addQuality()` verhindert gleichzeitige Wahl mehrerer `GRANTS_MAGIC`-Qualities                                                                                                                                                                            |
 | Magier-Quality-Kosten (Bug-Fix)                        | ✅      | `qualities.xml` von 5 auf 15 BP korrigiert (GRW S. 118)                                                                                                                                                                                                              |
 | Adept-Tab (Adeptenkräfte, Power Points = MAG)          | ✅      | 2026-11-12 (ADR-046): Tab „Adeptenkräfte“ nur für Adept/Magieradept, Kraftpunkte = wirksame Magie mit Bruchteilen, Warnung bei überzogenen Punkten |
-| Adeptenkräfte mit PP-Kosten                            | ✅      | 19 GRW-Kräfte (S. 229–232), Auswahldialog; rechnend: Gesteigerte Reflexe, Gesteigertes körperliches Attribut, Verbesserte Fertigkeit, Verbesserte Wahrnehmung, Schmerzresistenz, Mystischer Panzer, Astrale Wahrnehmung. Offen: Adrenalinkick als Rechnung, Kritischer Schlag/Todeskralle im waffenlosen Schaden, Geschärfte Sinne als Liste. Initiation/Metamagie ✅ (ADR-052) |
+| Adeptenkräfte mit PP-Kosten                            | ✅      | 19 GRW-Kräfte (S. 229–232), Auswahldialog; rechnend: Gesteigerte Reflexe, Gesteigertes körperliches Attribut, Verbesserte Fertigkeit, Verbesserte Wahrnehmung, Schmerzresistenz, Mystischer Panzer, Astrale Wahrnehmung. Kritischer Schlag im waffenlosen Schaden ✅ (ADR-055). Offen: Adrenalinkick als Rechnung, Todeskralle im waffenlosen Schaden, Geschärfte Sinne als Liste. Initiation/Metamagie ✅ (ADR-052) |
 | Mystic-Adept-MAG-Split                                 | ✅      | Im Tab Adeptenkräfte (S. 229); Zauberpools mit Rest-Magie, Höchststufe nach voller Magie |
 | Initiationsgrade                                       | ✅      | 2026-11-12 (ADR-052): Bereich „Initiation“, nur Karrieremodus (S. 112), 10 + Grad × 3 Karma, Grad ≤ wirksame Magie, Maximum 6 + Grad, sechs Metamagien (S. 232/233) mit Adepten-Beschränkung, Wirkung als Hinweis. Offen: Gruppeninitiation/Prüfungen (Zusatzband), Intensivierung als Karma-Verwaltung |
 | Restliche magische Aktionsfertigkeiten (Antimagie, Beschwören-Gruppe, Arcana, Verzaubern, Askennen, Astralkampf) | ✅ | **Umgesetzt 2026-10-09** (GRW S. 148–150): Gruppen Hexerei (Antimagie, Ritualzauberei, Spruchzauberei) und Beschwören (Binden, Herbeirufen, Verbannen), dazu Arcana, Askennen, Astralkampf, Verzaubern. Zugang über `Character.isSkillAccessible()`/`canRaiseGroup()`: nur Magier, Ausnahme Arcana (auch Mundane, GRW S. 148). Beim Entfernen der Gabe Magier/Technomant: Ja/Nein-Abfrage, bestätigt werden die gesperrten Fertigkeiten samt Spezialisierung auf 0 gesetzt (`Character.getSkillsLockedByRemovingQuality()`). Seit 2026-11-12: Askennen/Astralkampf nur mit astraler Wahrnehmung (Zauberer oder Kraft Astrale Wahrnehmung, S. 108/149). Hexerei/Beschwören als Wissensfertigkeit für Nicht-Magier (GRW S. 109) nicht gesondert abgebildet |
@@ -237,7 +239,7 @@
 | Mage-Sight-Brille/Periskop "[1]" als Einbau | ❌ | GRW nennt keinen Einbauort; nur als eigenständiges Gerät |
 | Orte/Lager-Kategorien        | ❌      | Zurückgestellt (später gemeinsam für Gear, Waffen, Rüstung) |
 | Holster, Versteckte Armhalterung, Smart-Feuerplattform | ✅ | Als Gear in Teil A (Tabelle Feuerwaffenzubehör, GRW S. 368); Smart-Feuerplattform ohne Waffenbezug, Werte als Hinweis |
-| Foki kaufen | ✅ | Nur Kauf (Stufe = Kraft 1–6); Bindung (GP/Karma) und Wirkung folgen mit dem Magie-Feature |
+| Foki kaufen, binden, aktivieren | ✅ | 2026-11-13 (ADR-055): Fokusart und Zusatz als Auswahl (Zauberkategorie, Geisterart, Nahkampffertigkeit); Bindung im Detail des Fokus (Erschaffung 1 BP je Kraft, Karriere Kraft × Faktor Karma, S. 112/234), höchstens Magie Foki und Kraft 5 × Magie, aktiv höchstens Logik (S. 233/234). Zauberspeicher ohne Mechanik |
 | Munition, Pfeile/Bolzen, Granaten/Raketen | ✅ | Gear Teil D (2026-10-08, GRW S. 361, 369–371 am Bild): 11 Munitionssorten pro 10 Schuss mit Waffenklasse (Auswahl, GRW S. 368/369; Taserpfeil, Sturmkanonen-Geschosse, Injektionspfeile mit fester Waffe), Bolzen/Injektionsbolzen als normale Ausrüstung; Pfeile (Stufe 1–8, Preis fest) im Waffen-Tab am Bogen mit Schaden nach min(Pfeil, Bogen) und Mengen-Stepper; 7 Granaten (Standard/Minigranate), 3 Raketen, 3 Lenkraketen (Sensorstufe 1–6), 3 Sprengstoffe pro kg, Sprengkapsel; Kampfwerte nur als Anzeige. UI vom Nutzer noch nicht angesehen |
 | Munitionswirkung auf Waffenwerte, Granaten/Sprengstoff im Kampf | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
 | DIY/Hacked/Gratis/Aufschlag/Schwarzmarkt, Verkauf, "ausgerüstet" | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
@@ -373,7 +375,7 @@ README-Roadmap sind erledigt; es folgen:
 6. ✅ **Matrix und Kommlinks (2026-11-13, ADR-054):** Hardware-Aufrüstungen (S. 260/261) und Firewall/System (S. 376), Programme einem
    Kommlink zuordnen, Matrix-Initiative (S. 265/276/279, Abschnitt 16) mit Sim-Modul (Abschnitt 10), Lebende
    Persona, Matrix-Upgrades für Fahrzeuge (Abschnitt 14). Plan: `docs/plaene/archiv/matrix_kommlinks_plan.md`.
-7. **Magie abrunden:** Foki binden (Karma) und ihre Wirkung (Abschnitt 13), Katalog der Schutzpatrone mit Boni
+7. ✅ **Magie abrunden (2026-11-13, ADR-055):** Foki binden (Karma) und ihre Wirkung (Abschnitt 13), Katalog der Schutzpatrone mit Boni
    (bisher nur Freitext an der Gabe), situative Adeptenkräfte als Rechnung.
 8. **Kampfwerte vervollständigen:** Munitionswirkung auf Waffenwerte (Abschnitt 13), Smartlink-Bonus auf den Pool (aus Punkt 6 verschoben, Nutzerentscheidung 2026-11-13),
    Würfelpools für Rigger und Drohnen, Fahrzeugschaden am Zustandsmonitor (Abschnitt 14).
@@ -419,7 +421,7 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
 4. ✅ **Qualities vervollständigt (2026-11-12, ADR-044)**; ursprünglich: mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
    siehe Abschnitt 6).
 5. ✅ **Adepten (2026-11-12, ADR-046)**: Tab Adeptenkräfte, 19 GRW-Kräfte, Magieradept-Aufteilung, sieben Kräfte
-   rechnen. Initiation/Metamagie ✅ (ADR-052). Offen: situative Kräfte als Rechnung.
+   rechnen. Initiation/Metamagie ✅ (ADR-052). Situative Kräfte ✅ (ADR-055).
 6. ✅ **Würfelpools, Zustandsmonitor, Initiative (2026-11-12, ADR-045)**: Pool-Spalte, Tab „Zustand“, augmentiertes
    Maximum, Attributproben, Obergrenze Komplexe Formen. Offen: Matrix-Initiative, situative Quality-Boni.
 7. ✅ **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035), umgesetzt 2026-11-12 (ADR-050).
@@ -433,7 +435,7 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
    - ✅ Metamagie (6) und Echos (5) mit Initiation/Wandlung (2026-11-12, ADR-052)
    - ✅ Geister (6) und Sprites (5) mit Werten (2026-11-12, ADR-053)
-   - Noch ohne Katalog: Schutzpatrone
+   - ✅ Schutzpatrone (19) als Katalog (2026-11-13, ADR-055)
 9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
 10. ✅ **Grundlegende Überarbeitung der UI** (umgesetzt 2026-11-12, ADR-049; Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
     gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,

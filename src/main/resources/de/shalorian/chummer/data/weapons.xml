@@ -245,6 +245,21 @@
         <page>361</page>
     </item>
 
+    <!-- Grundangriff ohne Waffe (S. 188): nicht kaufbar, jeder Charakter hat ihn -->
+
+    <item>
+        <name>Waffenloser Angriff</name>
+        <category>Waffenlos</category>
+        <reach>–</reach>
+        <damage>(STR÷2)G</damage>
+        <ap>–</ap>
+        <cost>0</cost>
+        <builtin/>
+        <note>Schlag oder Tritt ohne Waffe mit Waffenlosem Kampf; Kritischer Schlag erhöht den Schaden (S. 231).</note>
+        <source>SR4</source>
+        <page>188</page>
+    </item>
+
     <!-- Waffen aus Rüstung (S. 373) und Implantaten (S. 391): nicht kaufbar, erscheinen solange das Teil angelegt
          bzw. das Implantat vorhanden ist (<builtin/>) -->
 

@@ -6,6 +6,7 @@ import static de.shalorian.chummer.utils.XmlUtils.firstChild;
 
 import de.shalorian.chummer.model.character.DataPaths;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.magic.FocusType;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -84,6 +85,7 @@ public class GearDataLoader {
     String avail = childText(el, "avail");
     Element extra = firstChild(el, "extra");
     String matrixAttribute = childText(el, "matrixattribute");
+    String focusType = childText(el, "focustype");
     return new GearData(
         childText(el, "name"),
         GearCategory.fromDisplayName(childText(el, "category")),
@@ -110,6 +112,7 @@ public class GearDataLoader {
         extraKind(extra),
         childTexts(el, "matrix").stream().map(MatrixFlag::fromCode).collect(Collectors.toSet()),
         matrixAttribute.isEmpty() ? null : MatrixAttribute.valueOf(matrixAttribute),
+        focusType.isEmpty() ? null : FocusType.valueOf(focusType),
         extra == null ? "" : extra.getTextContent().trim(),
         childText(el, "note"),
         childText(el, "source"),

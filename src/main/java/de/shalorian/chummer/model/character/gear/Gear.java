@@ -41,6 +41,8 @@ public class Gear {
   private final @Nullable Integer chosenPackPrice;
   private int quantity;
   private boolean running;
+  private boolean bound;
+  private boolean focusActive;
   private final List<Gear> installed = new ArrayList<>();
 
   /**
@@ -271,6 +273,35 @@ public class Gear {
   public @Nullable Gear getOperatingSystem() {
     return installed.stream().filter(g -> g.data.category() == GearCategory.OPERATING_SYSTEMS).findFirst()
         .orElse(null);
+  }
+
+  /** Ob dies ein Fokus ist (GRW S. 233). */
+  public boolean isFocus() {
+    return data.focusType() != null;
+  }
+
+  /** Ob der Fokus an den Charakter gebunden ist; die Regeln prüft {@code Foci}. */
+  public boolean isBound() {
+    return bound;
+  }
+
+  /** Ob der Fokus aktiv ist; nur gebundene Foki können aktiv sein. */
+  public boolean isFocusActive() {
+    return focusActive;
+  }
+
+  /**
+   * Setzt Bindung und Aktivierung eines Fokus; ein ungebundener Fokus ist nie aktiv. Die Grenzen (Magie, Logik, Kraft)
+   * prüft {@code Foci}, das allein diese Methode aufrufen soll.
+   *
+   * @throws IllegalStateException wenn dies kein Fokus ist
+   */
+  public void setFocusState(boolean bound, boolean active) {
+    if (!isFocus()) {
+      throw new IllegalStateException(data.name() + " ist kein Fokus");
+    }
+    this.bound = bound;
+    this.focusActive = bound && active;
   }
 
   /** Ob dies ein Matrixprogramm ist, das auf einem Gerät laufen kann. */

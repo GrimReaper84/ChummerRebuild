@@ -42,6 +42,8 @@ public final class MagicTabBuilder {
   private final @NonNull VBox magicContainer;
   private final @NonNull CharacterTabHost host;
   private final @NonNull SpiritSection spiritSection;
+  private final @NonNull FociSection fociSection = new FociSection();
+  private final @NonNull SituationalPoolSection poolSection = new SituationalPoolSection();
   private @Nullable Character character;
 
   public MagicTabBuilder(@NonNull VBox magicContainer, @NonNull CharacterTabHost host) {
@@ -55,10 +57,15 @@ public final class MagicTabBuilder {
     this.character = character;
   }
 
-  /** Baut den Abschnitt Geister neu, damit Charisma, Magie und Hinweise nach Attributänderungen stimmen. */
+  /**
+   * Baut die Abschnitte Geister, Foki und situative Pools neu, damit Charisma, Magie, Fertigkeiten und Hinweise nach
+   * Änderungen stimmen.
+   */
   public void refresh() {
     if (character != null) {
       spiritSection.build(character);
+      fociSection.build(character);
+      poolSection.build(character);
     }
   }
 
@@ -101,7 +108,7 @@ public final class MagicTabBuilder {
     for (SpellData spell : ch.getSpells()) {
       addSpellRow(grid, row++, spell, ch);
     }
-    magicContainer.getChildren().add(spiritSection.build(ch));
+    magicContainer.getChildren().addAll(spiritSection.build(ch), fociSection.build(ch), poolSection.build(ch));
   }
 
   /**

@@ -2,6 +2,8 @@ package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.magic.MentorData;
+import de.shalorian.chummer.model.character.magic.MentorDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySelection;
@@ -91,8 +93,11 @@ public class QualitySelectDialogController
   }
 
   @Override
-  protected @NonNull String details(@NonNull QualityData q) {
-    return (q.page() > 0 ? "GRW S. %d. ".formatted(q.page()) : "") + q.note();
+  protected @NonNull String details(@NonNull QualityData q, @NonNull String choice) {
+    String text = (q.page() > 0 ? "GRW S. %d. ".formatted(q.page()) : "") + q.note();
+    MentorData mentor = q.selection() == QualitySelection.MENTOR ? MentorDataLoader.findByChoice(choice) : null;
+    return mentor == null ? text : text + "\n" + mentor.name() + " (S. " + mentor.page() + "): "
+        + mentor.describe(choice);
   }
 
   @Override

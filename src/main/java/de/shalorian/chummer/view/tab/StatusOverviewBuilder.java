@@ -6,10 +6,12 @@ import de.shalorian.chummer.model.character.armor.SpecialProtection;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.situation.SituationalPool;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -53,11 +55,31 @@ public final class StatusOverviewBuilder {
     root.setPrefWidth(WIDTH);
     root.getChildren().addAll(header(character), initiative(character, onDamageChanged), conditionMonitor(character, onDamageChanged),
         protectionAndEssence(character), specialAttributes(character));
+    List<SituationalPool> pools = character.getSituationalPools();
+    if (!pools.isEmpty()) {
+      root.getChildren().add(situationalPools(pools));
+    }
     List<String> hints = StatusHints.of(character);
     if (!hints.isEmpty()) {
       root.getChildren().add(hintCard(hints));
     }
     return root;
+  }
+
+  /** Situative Würfelpools kompakt: Anlass und Würfel, Aufschlüsselung im Tooltip (Plan Magie abrunden). */
+  private static @NonNull Node situationalPools(@NonNull List<SituationalPool> pools) {
+    VBox rows = new VBox(4);
+    for (SituationalPool pool : pools) {
+      Label label = styled(new Label(pool.label()), "key-caption");
+      Region spacer = new Region();
+      HBox.setHgrow(spacer, Priority.ALWAYS);
+      Label dice = styled(new Label(pool.diceText()), "key-figure");
+      HBox row = new HBox(8, label, spacer, dice);
+      row.setAlignment(Pos.CENTER_LEFT);
+      Tooltip.install(row, new Tooltip(pool.breakdown()));
+      rows.getChildren().add(row);
+    }
+    return card(titled("SITUATIVE POOLS", rows));
   }
 
   private static @NonNull Node header(@NonNull Character c) {

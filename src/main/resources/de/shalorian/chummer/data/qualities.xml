@@ -336,7 +336,7 @@
         <source>SR4</source>
         <page>117</page>
         <note>Ein Schutzpatron leitet die Magie des Charakters an, mit eigenen Vor- und Nachteilen.</note>
-        <select label="Schutzpatron">text</select>
+        <select label="Schutzpatron">mentor</select>
         <requires><quality>Zauberer</quality><quality>Magieradept</quality></requires>
         <bonus/>
     </quality>

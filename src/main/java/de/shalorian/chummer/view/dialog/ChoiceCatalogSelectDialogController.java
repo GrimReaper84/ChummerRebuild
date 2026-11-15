@@ -3,6 +3,7 @@ package de.shalorian.chummer.view.dialog;
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.magic.MentorDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySelection;
 import de.shalorian.chummer.model.character.skill.Skill;
 import java.text.Collator;
@@ -93,8 +94,8 @@ public abstract class ChoiceCatalogSelectDialogController<T extends CatalogEntry
   protected abstract @NonNull String costText(@NonNull Character character, @NonNull T entry,
       @NonNull String choice);
 
-  /** Seite und Kurzwirkung für den Detailbereich. */
-  protected abstract @NonNull String details(@NonNull T entry);
+  /** Seite und Kurzwirkung für den Detailbereich, ggf. abhängig von der aktuellen Auswahl. */
+  protected abstract @NonNull String details(@NonNull T entry, @NonNull String choice);
 
   protected abstract @NonNull R createResult(@NonNull T entry, @NonNull String choice, boolean addAnother);
 
@@ -128,13 +129,15 @@ public abstract class ChoiceCatalogSelectDialogController<T extends CatalogEntry
           : character.getSkills().stream().map(Skill::getName).sorted(collator).toList());
       case ATTRIBUTE -> choiceBox.getItems().setAll(
           attributeOptions().stream().map(AttributeType::getDisplayName).toList());
+      case MENTOR -> choiceBox.getItems().setAll(MentorDataLoader.choiceLabels());
       default -> choiceBox.getItems().clear();
     }
     choiceBox.setValue(null);
   }
 
   private void showChoiceControls(@NonNull QualitySelection selection) {
-    boolean list = selection == QualitySelection.SKILL || selection == QualitySelection.ATTRIBUTE;
+    boolean list = selection == QualitySelection.SKILL || selection == QualitySelection.ATTRIBUTE
+        || selection == QualitySelection.MENTOR;
     boolean text = selection == QualitySelection.TEXT;
     choiceLabel.setVisible(list || text);
     choiceBox.setVisible(list);
@@ -148,7 +151,7 @@ public abstract class ChoiceCatalogSelectDialogController<T extends CatalogEntry
     return switch (selection(entry)) {
       case NONE -> "";
       case TEXT -> choiceField.getText().trim();
-      case SKILL -> Optional.ofNullable(choiceBox.getValue()).orElse("");
+      case SKILL, MENTOR -> Optional.ofNullable(choiceBox.getValue()).orElse("");
       case ATTRIBUTE -> Arrays.stream(AttributeType.values())
           .filter(t -> t.getDisplayName().equals(choiceBox.getValue()))
           .map(AttributeType::name)
@@ -170,7 +173,7 @@ public abstract class ChoiceCatalogSelectDialogController<T extends CatalogEntry
         problem = problem(character, selected, choice);
         costLabel.setText(costText(character, selected, choice));
       }
-      detailLabel.setText(details(selected) + (problem == null ? "" : "\n→ " + problem));
+      detailLabel.setText(details(selected, choice) + (problem == null ? "" : "\n→ " + problem));
     }
     boolean disabled = selected == null || problem != null;
     okButton.setDisable(disabled);

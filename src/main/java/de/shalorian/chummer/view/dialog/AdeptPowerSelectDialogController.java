@@ -70,7 +70,7 @@ public class AdeptPowerSelectDialogController
   }
 
   @Override
-  protected @NonNull String details(@NonNull AdeptPowerData power) {
+  protected @NonNull String details(@NonNull AdeptPowerData power, @NonNull String choice) {
     return "GRW S. %d. %s".formatted(power.page(), power.note());
   }
 

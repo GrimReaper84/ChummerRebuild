@@ -33,6 +33,7 @@
         <page>230</page>
         <cost>0.25</cost>
         <levels/>
+        <effect>rapidhealing</effect>
         <note>Je Stufe ein Würfel mehr auf Heilungsproben.</note>
     </power>
     <power>
@@ -73,6 +74,7 @@
         <page>230</page>
         <cost>0.25</cost>
         <levels/>
+        <effect>greatleap</effect>
         <note>Je Stufe ein Würfel mehr auf Sprungproben und weitere Sprünge.</note>
     </power>
     <power>
@@ -80,6 +82,7 @@
         <page>230</page>
         <cost>0.5</cost>
         <levels/>
+        <effect>combatsense</effect>
         <note>Je Stufe ein Würfel mehr auf Überraschungsproben und auf die Verteidigung gegen Nah- und Fernkampf.</note>
     </power>
     <power>
@@ -87,6 +90,7 @@
         <page>231</page>
         <cost>0.5</cost>
         <levels max="3"/>
+        <effect>bodylanguage</effect>
         <note>Je Stufe +1 auf soziale Proben und gegen das Durchschauen der eigenen Gefühle.</note>
     </power>
     <power>
@@ -94,6 +98,7 @@
         <page>231</page>
         <cost>0.25</cost>
         <levels/>
+        <effect>criticalstrike</effect>
         <note>Je Stufe +1 Schaden im waffenlosen Kampf, auch astral.</note>
     </power>
     <power>
@@ -101,6 +106,7 @@
         <page>231</page>
         <cost>0.5</cost>
         <levels/>
+        <effect>spellresistance</effect>
         <note>Je Stufe ein Würfel mehr, um Zaubern zu widerstehen.</note>
     </power>
     <power>
@@ -116,6 +122,7 @@
         <page>231</page>
         <cost>0.25</cost>
         <levels/>
+        <effect>naturalimmunity</effect>
         <note>Je Stufe ein Würfel mehr gegen Gifte und Krankheiten.</note>
     </power>
     <power>

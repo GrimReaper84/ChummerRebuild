@@ -23,14 +23,21 @@ import org.w3c.dom.NodeList;
 /** Lädt {@code adept_powers.xml} beim ersten Zugriff und cacht den Katalog. */
 public final class AdeptPowerDataLoader {
 
-  private static final @NonNull Map<String, AdeptPowerEffect> EFFECT_TAGS = Map.of(
-      "improvedreflexes", AdeptPowerEffect.IMPROVED_REFLEXES,
-      "improvedattribute", AdeptPowerEffect.IMPROVED_ATTRIBUTE,
-      "improvedskill", AdeptPowerEffect.IMPROVED_SKILL,
-      "improvedperception", AdeptPowerEffect.IMPROVED_PERCEPTION,
-      "painresistance", AdeptPowerEffect.PAIN_RESISTANCE,
-      "mysticarmor", AdeptPowerEffect.MYSTIC_ARMOR,
-      "astralperception", AdeptPowerEffect.ASTRAL_PERCEPTION);
+  private static final @NonNull Map<String, AdeptPowerEffect> EFFECT_TAGS = Map.ofEntries(
+      Map.entry("improvedreflexes", AdeptPowerEffect.IMPROVED_REFLEXES),
+      Map.entry("improvedattribute", AdeptPowerEffect.IMPROVED_ATTRIBUTE),
+      Map.entry("improvedskill", AdeptPowerEffect.IMPROVED_SKILL),
+      Map.entry("improvedperception", AdeptPowerEffect.IMPROVED_PERCEPTION),
+      Map.entry("painresistance", AdeptPowerEffect.PAIN_RESISTANCE),
+      Map.entry("mysticarmor", AdeptPowerEffect.MYSTIC_ARMOR),
+      Map.entry("astralperception", AdeptPowerEffect.ASTRAL_PERCEPTION),
+      Map.entry("combatsense", AdeptPowerEffect.COMBAT_SENSE),
+      Map.entry("spellresistance", AdeptPowerEffect.SPELL_RESISTANCE),
+      Map.entry("naturalimmunity", AdeptPowerEffect.NATURAL_IMMUNITY),
+      Map.entry("rapidhealing", AdeptPowerEffect.RAPID_HEALING),
+      Map.entry("greatleap", AdeptPowerEffect.GREAT_LEAP),
+      Map.entry("bodylanguage", AdeptPowerEffect.BODY_LANGUAGE),
+      Map.entry("criticalstrike", AdeptPowerEffect.CRITICAL_STRIKE));
 
   private static @Nullable Map<String, AdeptPowerData> cache;
 
@@ -96,6 +103,9 @@ public final class AdeptPowerDataLoader {
     Element select = firstChild(el, "select");
     if (select != null) {
       selection = QualitySelection.valueOf(select.getTextContent().trim().toUpperCase(Locale.ROOT));
+      if (selection == QualitySelection.MENTOR) {
+        throw new IllegalArgumentException("Adeptenkräfte wählen keinen Schutzpatron: " + childText(el, "name"));
+      }
       selectLabel = select.getAttribute("label");
     }
 

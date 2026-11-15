@@ -244,6 +244,8 @@ public class CharacterStore {
         gear.getExtra(), gear.getChosenPackPrice());
     entry.installed = gear.getInstalled().stream().map(CharacterStore::toGearEntry).toList();
     entry.running = gear.isRunning();
+    entry.bound = gear.isBound();
+    entry.focusActive = gear.isFocusActive();
     return entry;
   }
 
@@ -645,6 +647,9 @@ public class CharacterStore {
     installChildren(gear, entry.installed);
     if (entry.running && gear.isProgram()) {
       gear.setRunning(true);
+    }
+    if (entry.bound && gear.isFocus()) {
+      gear.setFocusState(true, entry.focusActive); // ohne Grenzprüfung wie beim Laden der Geister; Hinweis über Foci
     }
     return gear;
   }

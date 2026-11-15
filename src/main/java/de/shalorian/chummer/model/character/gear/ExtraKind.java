@@ -1,5 +1,8 @@
 package de.shalorian.chummer.model.character.gear;
 
+import de.shalorian.chummer.model.character.spirit.SpiritData;
+import de.shalorian.chummer.model.character.spirit.SpiritDataLoader;
+import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import java.util.Arrays;
 import java.util.List;
@@ -40,13 +43,22 @@ public enum ExtraKind {
    * (Waffentyp)". Auswahl, kein Freitext; den Fahrzeug- bzw. Waffentyp erfasst die Auswahl nicht
    * (Nutzerentscheidung 2026-10-09).
    */
-  AUTOSOFT;
+  AUTOSOFT,
+  /** Zauberkategorie eines Zauberfokus (GRW S. 234): Heilung, Illusion, Kampf, Manipulation, Wahrnehmung. */
+  SPELL_CATEGORY,
+  /** Geisterart eines Geisterfokus (GRW S. 234), eine der sechs Geisterarten aus {@code spirits.xml}. */
+  SPIRIT_TYPE,
+  /** Nahkampffertigkeit eines Waffenfokus (GRW S. 234; Zuordnung über die Fertigkeit, Plan-Annahme A2). */
+  MELEE_SKILL;
 
   private static final List<String> LICENSE_SUGGESTIONS = List.of("Waffenlizenz",
       "Verdecktes Tragen", "Jagdlizenz", "Zauberlizenz", "Detektivlizenz", "Führerschein");
   private static final List<String> GRENADE_FORMS = List.of("Standard", "Minigranate");
   private static final List<String> AUTOSOFTS = List.of("Abwehr", "Clearsight",
       "Elektronische Kriegsführung", "Steuerung", "Zielerfassung");
+  private static final List<String> SPELL_CATEGORIES = List.of("Heilung", "Illusion", "Kampf", "Manipulation",
+      "Wahrnehmung");
+  private static final List<String> MELEE_SKILLS = List.of("Klingenwaffen", "Knüppel", "Exotische Nahkampfwaffe");
 
   /** Vorschläge bzw. Auswahl für den Zusatztext; leer, wenn nur Freitext vorgesehen ist. */
   public @NonNull List<String> suggestions() {
@@ -56,12 +68,16 @@ public enum ExtraKind {
           .filter(WeaponCategory::usesAmmunition).map(WeaponCategory::getDisplayName).toList();
       case GRENADE_FORM -> GRENADE_FORMS;
       case AUTOSOFT -> AUTOSOFTS;
+      case SPELL_CATEGORY -> SPELL_CATEGORIES;
+      case SPIRIT_TYPE -> SpiritDataLoader.getAll().values().stream()
+          .filter(d -> d.kind() == SpiritKind.SPIRIT).map(SpiritData::name).toList();
+      case MELEE_SKILL -> MELEE_SKILLS;
       default -> List.of();
     };
   }
 
   /** Ob der Zusatztext eine der {@link #suggestions()} sein muss (Auswahl statt Freitext). */
   public boolean isChoice() {
-    return this == WEAPON_CLASS || this == GRENADE_FORM || this == AUTOSOFT;
+    return this != NONE && this != TEXT && this != LICENSE;
   }
 }

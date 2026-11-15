@@ -252,7 +252,7 @@ public class AdeptPowers {
       return "Mit dieser Auswahl bereits gekauft";
     }
     String choiceProblem = switch (data.selection()) {
-      case NONE -> null;
+      case NONE, MENTOR -> null; // MENTOR lehnt schon der Loader ab
       case TEXT -> choice.isBlank() ? data.selectLabel() + " angeben" : null;
       case ATTRIBUTE -> physicalAttribute(choice) == null ? "Körperliches Attribut wählen" : null;
       case SKILL -> {

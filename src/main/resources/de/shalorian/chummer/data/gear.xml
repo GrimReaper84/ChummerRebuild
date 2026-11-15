@@ -2529,7 +2529,7 @@
         <page>385</page>
     </item>
 
-    <!-- ── Foki (Stufe = Kraft) (S. 395) ── -->
+    <!-- ── Foki (Stufe = Kraft) (S. 395); <focustype> = Fokusart für Bindung und Wirkung (S. 233/234) ── -->
     <item>
         <name>Bindungsfokus</name>
         <category>Foki</category>
@@ -2537,8 +2537,8 @@
         <avail>Rating * 4</avail>
         <legality>E</legality>
         <cost>Rating * 10000</cost>
-        <extra>Geisterart</extra>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <extra kind="SPIRIT_TYPE">Geisterart</extra>
+        <focustype>BINDING</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>
@@ -2549,8 +2549,8 @@
         <avail>Rating * 4</avail>
         <legality>E</legality>
         <cost>Rating * 15000</cost>
-        <extra>Geisterart</extra>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <extra kind="SPIRIT_TYPE">Geisterart</extra>
+        <focustype>SUMMONING</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>
@@ -2561,7 +2561,7 @@
         <avail>Rating * 5</avail>
         <legality>E</legality>
         <cost>Rating * 25000</cost>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <focustype>POWER</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>
@@ -2572,8 +2572,8 @@
         <avail>Rating * 4</avail>
         <legality>E</legality>
         <cost>Rating * 5000</cost>
-        <extra>Zauberkategorie</extra>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <extra kind="SPELL_CATEGORY">Zauberkategorie</extra>
+        <focustype>COUNTERSPELLING</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>
@@ -2584,8 +2584,8 @@
         <avail>Rating * 4</avail>
         <legality>E</legality>
         <cost>Rating * 5000</cost>
-        <extra>Geisterart</extra>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <extra kind="SPIRIT_TYPE">Geisterart</extra>
+        <focustype>BANISHING</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>
@@ -2596,8 +2596,8 @@
         <avail>Rating * 5</avail>
         <legality>E</legality>
         <cost>Rating * 10000</cost>
-        <extra>Waffe</extra>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <extra kind="MELEE_SKILL">Nahkampffertigkeit</extra>
+        <focustype>WEAPON</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>
@@ -2608,8 +2608,8 @@
         <avail>Rating * 4</avail>
         <legality>E</legality>
         <cost>Rating * 10000</cost>
-        <extra>Zauberkategorie</extra>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <extra kind="SPELL_CATEGORY">Zauberkategorie</extra>
+        <focustype>SPELL_STORING</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>
@@ -2620,8 +2620,8 @@
         <avail>Rating * 4</avail>
         <legality>E</legality>
         <cost>Rating * 15000</cost>
-        <extra>Zauberkategorie</extra>
-        <note>Bindung und Wirkung folgen mit dem Magie-Feature (GRW S. 233/234). Kraft wie bei Foki üblich 1 bis 6 (GRW S. 208).</note>
+        <extra kind="SPELL_CATEGORY">Zauberkategorie</extra>
+        <focustype>SPELLCASTING</focustype>
         <source>SR4</source>
         <page>395</page>
     </item>

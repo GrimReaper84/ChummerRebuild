@@ -22,6 +22,9 @@ class GearEntry {
   public boolean running;
   /** Ob dies das ausdrücklich gewählte aktive Kommlink ist; fehlt in Dateien vor ADR-054. */
   public boolean active;
+  /** Ob ein Fokus gebunden bzw. aktiv ist; fehlt in Dateien vor ADR-055. */
+  public boolean bound;
+  public boolean focusActive;
 
   public GearEntry() {
   }

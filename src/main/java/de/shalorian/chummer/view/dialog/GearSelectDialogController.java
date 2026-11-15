@@ -9,6 +9,7 @@ import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
+import de.shalorian.chummer.model.character.magic.FocusType;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import java.util.Arrays;
 import java.util.List;
@@ -357,14 +358,20 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     okButton.setDisable(selection == null);
   }
 
-  /** Tabellenhinweis, bei Preisspannen ergänzt um die Preisregel. */
+  /** Tabellenhinweis, bei Preisspannen ergänzt um die Preisregel, bei Foki um die Bindungskosten. */
   private static @NonNull String noteText(@NonNull GearData data) {
-    if (!data.variableCost()) {
+    String rule;
+    FocusType focusType = data.focusType();
+    if (data.variableCost()) {
+      rule = "Preisspanne laut GRW: Preis frei wählbar, mindestens "
+          + data.packCostFor(data.lowestRating()) + " ¥ (höchstens " + Gear.MAX_CHOSEN_PACK_PRICE
+          + " ¥).";
+    } else if (focusType != null) {
+      // GRW S. 112 und Tabelle S. 234
+      rule = "Binden: bei der Erschaffung 1 BP je Kraft, danach Kraft × " + focusType.getKarmaFactor() + " Karma.";
+    } else {
       return data.note();
     }
-    String rule = "Preisspanne laut GRW: Preis frei wählbar, mindestens "
-        + data.packCostFor(data.lowestRating()) + " ¥ (höchstens " + Gear.MAX_CHOSEN_PACK_PRICE
-        + " ¥).";
     return data.note().isEmpty() ? rule : data.note() + " " + rule;
   }
 
@@ -389,7 +396,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
       case NONE -> "";
       case TEXT -> extraField.getText();
       case LICENSE -> extraBox.getEditor().getText();
-      case WEAPON_CLASS, GRENADE_FORM, AUTOSOFT -> Objects.requireNonNullElse(extraBox.getValue(), "");
+      default -> Objects.requireNonNullElse(extraBox.getValue(), ""); // Auswahlarten (ExtraKind#isChoice)
     };
   }
 

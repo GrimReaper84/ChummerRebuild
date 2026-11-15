@@ -178,6 +178,20 @@ Matrixinitiative: AR körperlich, VR nur mit Sim-Modul und Direktem Neuralinterf
 Agenten zählen als gewöhnliche Programme (kein eigenes Merkmal). Smartlink-Bonus und Programmpakete bleiben draußen.
 **Warum:** Nutzerentscheidungen 2026-11-13; `docs/plaene/archiv/matrix_kommlinks_plan.md`.
 
+### ADR-055: Foki, Schutzpatrone, situative Würfelpools (2026-11-13)
+Foki werden im Detail des Gegenstands gebunden (Erschaffung 1 BP je Kraft, Karriere Kraft × Faktor der Tabelle S. 234
+Karma; Lösen gibt bei der Erschaffung die BP frei, erstattet im Karrieremodus kein Karma) und aktiviert; höchstens Magie gebundene Foki mit zusammen Kraft 5 × Magie, höchstens
+Logik aktive (S. 233/234), Überschreitungen nach späteren Änderungen nur als Hinweis. Zauberkategorie, Geisterart und
+Nahkampffertigkeit (statt einer bestimmten Waffe) sind Auswahl statt Freitext. Die Gabe Schutzpatron wählt aus 19
+GRW-Patronen; „nach Wahl“-Vorteile stehen als „Katze (Infiltration)“ in der Auswahl. Situative Boni (aktive Foki,
+Patron, sieben Adeptenkräfte) bilden eine eigene Liste „Situative Würfelpools“ (`model.character.situation`); die festen
+Pools bleiben unverändert. Je Probe zählt nur der stärkste Fokus; Patron-Zauberboni gelten für Spruch- und
+Ritualzauberei, Geisterboni für Herbeirufen, Binden und Verbannen; der Kraftfokus für alle Magiefertigkeiten außer
+Antimagie. Grundpools ohne Fertigkeit nach GRW (Verteidigung, Schadens-, Toxin-, Zauberwiderstand, Heilung). Der
+Anlass einer situativen Adeptenkraft steht an ihrer Wirkung (`AdeptPowerEffect.getSituation()`). Jeder Charakter hat im
+Waffen-Tab die feste, nicht kaufbare Zeile „Waffenloser Angriff“ ((STR÷2)G, S. 188), an der Kritischer Schlag sichtbar wird.
+**Warum:** Nutzerentscheidungen 2026-11-13 und 2026-11-15 (Review-Befund 5, Option a); `docs/plaene/archiv/magie_abrunden_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)
