@@ -11,10 +11,15 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.Contact;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
+import de.shalorian.chummer.model.character.reputation.Reputation;
+import de.shalorian.chummer.model.character.reputation.ReputationScore;
 import de.shalorian.chummer.view.dialog.ContactEditDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.grid.RowControls;
@@ -22,6 +27,10 @@ import de.shalorian.chummer.view.grid.RowModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -40,6 +49,9 @@ import org.tbee.javafx.scene.layout.MigPane;
  * die Stufen BP, im Karrieremodus sind sie frei änderbar (SR4-Grundregelwerk kennt keinen Karma-Kauf für Connections).
  */
 public final class ContactTabBuilder {
+
+  /** Obergrenze der Spielleiter-Eingaben je Wert; eine reine Bediengrenze, das GRW nennt keine. */
+  private static final int GM_POINTS_LIMIT = 30;
 
   private final @NonNull VBox contactsContainer;
   private final @NonNull CharacterTabHost host;
@@ -93,6 +105,136 @@ public final class ContactTabBuilder {
     for (Contact contact : ch.getContacts()) {
       addContactRow(grid, row++, contact, ch);
     }
+
+    Label reputationTitle = new Label("Ruf");
+    reputationTitle.getStyleClass().add(STYLE_SECTION_TITLE);
+    VBox.setMargin(reputationTitle, new Insets(16, 0, 6, 0));
+    contactsContainer.getChildren().addAll(reputationTitle, withRightFiller(buildReputationGrid(ch)));
+    Label hint = new Label();
+    hint.getStyleClass().add(STYLE_DETAIL_HINT);
+    // Als Refresher, weil sich Charisma ändern kann, ohne dass dieser Tab neu gebaut wird.
+    Runnable hintRefresh = () -> hint.setText(("Straßenruf zählt als Würfelbonus höchstens bis Charisma (%d). Der"
+        + " Schlechte Ruf wird bei Vertrauensproben abgezogen, beim Einschüchtern addiert (GRW S. 308/309).")
+        .formatted(ch.getAugmentedAttributeValue(AttributeType.CHA)));
+    contactRefreshers.add(hintRefresh);
+    hintRefresh.run();
+    hint.setWrapText(true);
+    contactsContainer.getChildren().add(hint);
+  }
+
+  /**
+   * Straßenruf, Schlechter Ruf und Prominenz (GRW S. 308/309) mit Rechenweg; im Karrieremodus dazu die Punkte des
+   * Spielleiters und das Opfern von Straßenruf. Die Werte laufen über die Refresh-Liste, weil sie an Karma-Log,
+   * Gaben und Handicaps hängen.
+   */
+  private @NonNull MigPane buildReputationGrid(@NonNull Character ch) {
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][center]16[][center][][]");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
+    boolean career = ch.isCreated();
+    addHeaderRow(grid, "", "Wert", "", career ? "Spielleiter" : "", "", "");
+    Reputation reputation = ch.getReputation();
+    addReputationRow(grid, 1, "Straßenruf", ch::getStreetCred, career
+        ? gmModel(reputation::getStreetCredBonus, reputation::setStreetCredBonus, 0) : null);
+    addReputationRow(grid, 2, "Schlechter Ruf", ch::getNotoriety, career
+        ? gmModel(reputation::getNotorietyBonus, reputation::setNotorietyBonus, 0) : null);
+    addReputationRow(grid, 3, "Prominenz", ch::getPublicAwareness, career
+        ? gmModel(reputation::getAwarenessAdjustment, reputation::setAwarenessAdjustment, -GM_POINTS_LIMIT) : null);
+    if (career) {
+      Button burn = new Button("2 Straßenruf opfern");
+      burn.getStyleClass().add(STYLE_BTN_SECONDARY);
+      useIcon(burn, FontAwesomeSolid.FIRE);
+      burn.setOnAction(_ -> {
+        if (ch.canBurnStreetCred() && host.services().confirmYesNo("Straßenruf opfern",
+            "2 Punkte Straßenruf dauerhaft opfern?", "Der Schlechte Ruf sinkt dafür um 1 (S. 308).")) {
+          ch.burnStreetCred();
+          host.refreshRows();
+        }
+      });
+      Runnable burnRefresh = () -> burn.setDisable(!ch.canBurnStreetCred());
+      contactRefreshers.add(burnRefresh);
+      burnRefresh.run();
+      grid.add(burn, "cell 0 4, span, gaptop 6");
+    }
+    return grid;
+  }
+
+  private void addReputationRow(@NonNull MigPane grid, int row, @NonNull String name,
+      @NonNull Supplier<ReputationScore> score, @Nullable RowModel gm) {
+    Label nameLabel = new Label(name);
+    nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    Label value = new Label();
+    value.getStyleClass().add(STYLE_ATTR_VALUE);
+    Label breakdown = new Label();
+    breakdown.getStyleClass().add(STYLE_DETAIL_HINT);
+    Runnable refresh = () -> {
+      ReputationScore current = score.get();
+      value.setText(String.valueOf(current.value()));
+      breakdown.setText(current.breakdown());
+    };
+    contactRefreshers.add(refresh);
+    refresh.run();
+    if (gm == null) {
+      addRowCells(grid, row, nameLabel, value, new Label(), new Label(), new Label(), breakdown);
+      return;
+    }
+    Button minus = new Button("−");
+    Label gmValue = new Label();
+    Button plus = new Button("+");
+    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    gmValue.getStyleClass().add(STYLE_ATTR_VALUE);
+    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    wiring.wireFree(contactRefreshers, new RowControls(gmValue, new Label(), minus, plus), gm);
+    addRowCells(grid, row, nameLabel, value, minus, gmValue, plus, breakdown);
+  }
+
+  /** +/−-Modell für Spielleiter-Punkte; keine Buchung, kein Log (Plan-Annahme A1). */
+  private static @NonNull RowModel gmModel(@NonNull IntSupplier getter, @NonNull IntConsumer setter, int min) {
+    return new RowModel() {
+      @Override
+      public int value() {
+        return getter.getAsInt();
+      }
+
+      @Override
+      public int min() {
+        return min;
+      }
+
+      @Override
+      public int max() {
+        return GM_POINTS_LIMIT;
+      }
+
+      @Override
+      public int bpStepCost() {
+        return 0;
+      }
+
+      @Override
+      public @NonNull String bpDisplayText() {
+        return "";
+      }
+
+      @Override
+      public int karmaStepCost() {
+        return 0;
+      }
+
+      @Override
+      public void increment() {
+        setter.accept(getter.getAsInt() + 1);
+      }
+
+      @Override
+      public void decrement() {
+        setter.accept(getter.getAsInt() - 1);
+      }
+
+      @Override
+      public @NonNull String actionLabel(int from, int to) {
+        return "Spielleiter " + from + " → " + to;
+      }
+    };
   }
 
   /**

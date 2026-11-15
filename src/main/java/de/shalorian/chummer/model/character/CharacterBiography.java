@@ -1,13 +1,14 @@
 package de.shalorian.chummer.model.character;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Rein deskriptive Rollenspiel-Metadaten eines Charakters ohne jede BP-/Karma-/Fachregel-Bedeutung
  * (SR4-Grundregelwerk kennt für diese Felder keine Mechanik, siehe {@code
  * docs/charakter_biografie_analyse.md}). Reiner Datencontainer: 15 Freitextfelder, alle defaulten
- * auf {@code ""}, nie {@code null}, ohne Validierung oder Trimmen. Mugshot/Portrait ist bewusst
- * nicht Teil dieser Klasse (separater Feature-Checklisten-Punkt).
+ * auf {@code ""}, nie {@code null}, ohne Validierung oder Trimmen. Dazu ein optionales Portrait als PNG, aufbereitet
+ * von {@link PortraitImage} (ADR-059).
  */
 public class CharacterBiography {
 
@@ -25,6 +26,17 @@ public class CharacterBiography {
   private @NonNull String notes = "";
   private @NonNull String playerName = "";
   private @NonNull String gameNotes = "";
+  private byte @Nullable [] portrait;
+
+  /** Portrait als PNG (Kopie), oder {@code null} ohne Bild. */
+  public byte @Nullable [] getPortrait() {
+    return portrait == null ? null : portrait.clone();
+  }
+
+  /** Setzt das Portrait; erwartet ein mit {@link PortraitImage#toStoredPng} aufbereitetes PNG, {@code null} entfernt. */
+  public void setPortrait(byte @Nullable [] png) {
+    this.portrait = png == null ? null : png.clone();
+  }
 
   public @NonNull String getAlias() {
     return alias;

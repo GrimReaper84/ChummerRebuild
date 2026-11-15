@@ -32,7 +32,7 @@ public record MatrixStats(int processor, int signal, int firewall, int system, i
     int hardwareProcessor = upgraded(base, installed, MatrixAttribute.PROCESSOR);
     int nominalSystem = upgraded(base, installed, MatrixAttribute.SYSTEM);
     int system = Math.min(nominalSystem, hardwareProcessor);
-    int running = (int) installed.stream().filter(Gear::isRunning).count();
+    int running = (int) installed.stream().filter(g -> g.isProgram() && g.isRunning()).count();
     int penalty = system == 0 ? 0 : running / system;
     return new MatrixStats(Math.max(0, hardwareProcessor - penalty), upgraded(base, installed, MatrixAttribute.SIGNAL),
         upgraded(base, installed, MatrixAttribute.FIREWALL), system, nominalSystem, hardwareProcessor, running);

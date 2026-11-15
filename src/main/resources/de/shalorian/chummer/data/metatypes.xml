@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     SR4-Metatypen mit Rassenattributgrenzen [min/max] und GP-Kosten laut Tabelle Metatyp-Attribute (GRW S. 105,
-    am Seitenbild geprüft). Metavarianten stehen nicht im GRW (Runner-Kompendium) und sind daher entfernt
+    am Seitenbild geprüft), Bewegungsweiten Gehen/Laufen in m je Kampfrunde laut Tabelle
+    Bewegungsweiten (GRW S. 177, am Seitenbild geprüft). Metavarianten stehen nicht im GRW (Runner-Kompendium) und sind daher entfernt
     (Nutzerentscheidung 2026-11-12); der Loader liest <variant> weiterhin, falls sie mit einem Zusatzband zurückkommen.
 -->
 <metatypes>
@@ -18,6 +19,7 @@
         <attribute name="WIL" min="1" max="6"/>
         <!-- GRW S. 105: Menschen erhalten als einzigen Metatyp-Bonus einen Punkt Edge mehr -->
         <edge min="2" max="7"/>
+        <movement walk="10" run="25"/>
 
     </metatype>
 
@@ -32,6 +34,7 @@
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="1" max="6"/>
         <edge min="1" max="6"/>
+        <movement walk="10" run="25"/>
         <qualities>
             <positive>
                 <quality>Restlichtverstärkung</quality>
@@ -51,6 +54,7 @@
         <attribute name="LOG" min="1" max="6"/>
         <attribute name="WIL" min="2" max="7"/>
         <edge min="1" max="6"/>
+        <movement walk="8" run="20"/>
         <qualities>
             <positive>
                 <quality>Infrarotsicht</quality>
@@ -70,6 +74,7 @@
         <attribute name="LOG" min="1" max="5"/>
         <attribute name="WIL" min="1" max="6"/>
         <edge min="1" max="6"/>
+        <movement walk="10" run="25"/>
         <qualities>
             <positive>
                 <quality>Restlichtverstärkung</quality>
@@ -89,6 +94,7 @@
         <attribute name="LOG" min="1" max="5"/>
         <attribute name="WIL" min="1" max="6"/>
         <edge min="1" max="6"/>
+        <movement walk="15" run="35"/>
         <qualities>
             <positive>
                 <quality>Infrarotsicht</quality>

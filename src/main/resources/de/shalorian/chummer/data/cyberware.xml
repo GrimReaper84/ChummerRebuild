@@ -622,6 +622,7 @@
         <rating>5</rating>
         <avail>Rating * 4</avail>
         <note>Nutzt Aktionssofts bis zur eigenen Stufe (S. 376), zusammen höchstens bis zur doppelten Stufe.</note>
+        <effect type="skillwires">Rating</effect>
         <source>SR4</source>
         <page>389</page>
     </item>

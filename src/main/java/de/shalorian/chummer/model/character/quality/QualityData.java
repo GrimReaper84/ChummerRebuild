@@ -13,6 +13,7 @@ import org.jspecify.annotations.NonNull;
  * @param selection   was beim Kauf gewählt werden muss
  * @param selectLabel Bezeichnung des Auswahlfelds (z.B. "Substanz"), leer ohne Auswahl
  * @param level       Stufe bei Qualities mit Stufen (z.B. Hohe Schmerztoleranz 2), sonst 1; Stärke der Wirkung
+ * @param notoriety   Beitrag zum Schlechten Ruf (GRW S. 308: +1 je genanntem Handicap, −1 je genannter Gabe), sonst 0
  */
 public record QualityData(
     @NonNull String name,
@@ -24,5 +25,6 @@ public record QualityData(
     @NonNull QualitySelection selection,
     @NonNull String selectLabel,
     @NonNull QualityRules rules,
-    int level
+    int level,
+    int notoriety
 ) implements CatalogEntry {}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.shalorian.chummer.view.dialog.ExoticSkillAddDialogController"
+      spacing="14" styleClass="dialog-pane" prefWidth="420">
+    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+    <GridPane hgap="14" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints minWidth="80" prefWidth="110"/>
+            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label text="Fertigkeit:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="baseLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label fx:id="targetCaption" text="Waffe:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="targetBox" editable="true" maxWidth="Infinity"
+               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </GridPane>
+
+    <Label fx:id="hintLabel" styleClass="detail-hint" wrapText="true"/>
+    <Label fx:id="errorLabel" styleClass="bp-value-warn" wrapText="true"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Abbrechen" onAction="#onCancel" styleClass="btn-secondary"/>
+        <Button text="OK" onAction="#onOk"
+                defaultButton="true" styleClass="btn-primary"/>
+    </HBox>
+</VBox>

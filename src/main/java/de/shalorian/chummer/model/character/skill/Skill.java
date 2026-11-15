@@ -13,6 +13,10 @@ public class Skill {
   private final @NonNull SkillCategory category;
   private final @Nullable String groupName; // null wenn keine Gruppe
   private final boolean defaultable;
+  /** Waffe bzw. Fahrzeug einer Exotischen Fertigkeit (GRW S. 148, 155), sonst {@code null}. */
+  private final @Nullable String exoticTarget;
+  /** Name der Grundfertigkeit; bei Exotik-Instanzen z.B. „Exotische Nahkampfwaffe“, sonst der eigene Name. */
+  private final @NonNull String baseName;
 
   private int maxRating = MAX_RATING;
   private int rating = 0;
@@ -40,10 +44,52 @@ public class Skill {
     this.category = category;
     this.groupName = groupName;
     this.defaultable = defaultable;
+    this.exoticTarget = null;
+    this.baseName = name;
+  }
+
+  /**
+   * Instanz einer Exotischen Fertigkeit für genau eine Waffe bzw. ein Fahrzeug (GRW S. 148, 155): übernimmt Attribut,
+   * Kategorie und die Ohne-Wert-Regel der Grundfertigkeit, heißt „Grundfertigkeit (Ziel)“ und startet mit Wert 0.
+   *
+   * @throws IllegalArgumentException wenn {@code template} keine exotische Grundfertigkeit ist oder das Ziel leer ist
+   */
+  public Skill(@NonNull Skill template, @NonNull String target) {
+    if (!template.isExoticTemplate() || target.isBlank()) {
+      throw new IllegalArgumentException("Keine exotische Grundfertigkeit oder leeres Ziel: " + template.getName());
+    }
+    String trimmed = target.trim();
+    this.name = ExoticSkills.instanceName(template.getName(), trimmed);
+    this.linkedAttribute = template.linkedAttribute;
+    this.category = template.category;
+    this.groupName = template.groupName;
+    this.defaultable = template.defaultable;
+    this.exoticTarget = trimmed;
+    this.baseName = template.getName();
   }
 
   public @NonNull String getName() {
     return name;
+  }
+
+  /** Grundfertigkeit: bei Exotik-Instanzen die exotische Grundfertigkeit, sonst der eigene Name. */
+  public @NonNull String getBaseName() {
+    return baseName;
+  }
+
+  /** Waffe bzw. Fahrzeug einer Exotik-Instanz, sonst {@code null}. */
+  public @Nullable String getExoticTarget() {
+    return exoticTarget;
+  }
+
+  /** Eine der drei exotischen Grundfertigkeiten, die selbst keinen Wert bekommt (Platzhalter für die Instanzen). */
+  public boolean isExoticTemplate() {
+    return exoticTarget == null && ExoticSkills.isBase(name);
+  }
+
+  /** Exotische Fertigkeit, Grundzeile oder Instanz; beide haben keine Spezialisierung (GRW S. 148). */
+  public boolean isExotic() {
+    return ExoticSkills.isBase(baseName);
   }
 
   public @NonNull String getLinkedAttribute() {

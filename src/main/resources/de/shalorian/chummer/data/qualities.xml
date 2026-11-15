@@ -7,7 +7,8 @@
     Tags: <page> gedruckte Seite; <group> nur ein Eintrag je Gruppe (Stufen, Varianten); <select> verlangt beim Kauf
     eine Fertigkeit, ein Attribut oder einen Text; <multiple/> mehrfach wählbar (mit verschiedener Auswahl);
     <requires> mindestens eine der Gaben; <excludes> nicht zusammen mit diesen Gaben; <metatypes> nur für diese
-    Metatypen (Varianten zählen zu ihrem Grundmetatyp); <metatype/> nur durch den Metatyp, nicht wählbar.
+    Metatypen (Varianten zählen zu ihrem Grundmetatyp); <metatype/> nur durch den Metatyp, nicht wählbar;
+    <notoriety> Beitrag zum Schlechten Ruf, +1 je Handicap bzw. −1 je Gabe der Liste S. 308.
 -->
 <qualities>
 
@@ -120,6 +121,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>115</page>
+        <notoriety>-1</notoriety>
         <note>Edge-Maximum +1; die Steigerung selbst kostet normal. Nur einmal wählbar.</note>
         <bonus><lucky/></bonus>
     </quality>
@@ -346,6 +348,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>117</page>
+        <notoriety>-1</notoriety>
         <note>Beim ersten Treffen in einer neuen Umgebung +2 Würfel auf soziale Proben.</note>
         <bonus/>
     </quality>
@@ -417,6 +420,7 @@
         <category>Positive</category>
         <source>SR4</source>
         <page>117</page>
+        <notoriety>-1</notoriety>
         <note>Wer den Charakter in einer Menge erkennen oder beschatten will, hat −2 Würfel (nicht magisch oder in der Matrix).</note>
         <bonus/>
     </quality>
@@ -457,6 +461,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>118</page>
+        <notoriety>1</notoriety>
         <note>Tägliches Verlangen, nach außen kaum sichtbar.</note>
         <select label="Substanz">text</select>
         <bonus/>
@@ -467,6 +472,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>118</page>
+        <notoriety>1</notoriety>
         <note>Mindestens tägliches Verlangen; −4 auf Proben, ihm zu widerstehen.</note>
         <select label="Substanz">text</select>
         <bonus/>
@@ -477,6 +483,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>118</page>
+        <notoriety>1</notoriety>
         <note>Ständiges Verlangen; −6 auf Proben, ihm zu widerstehen.</note>
         <select label="Substanz">text</select>
         <bonus/>
@@ -487,6 +494,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>118</page>
+        <notoriety>1</notoriety>
         <note>Wie schwer, dazu sichtbare Spuren und Essenz −1.</note>
         <select label="Substanz">text</select>
         <bonus><burnoutessence/></bonus>
@@ -567,6 +575,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>119</page>
+        <notoriety>1</notoriety>
         <note>Ein Mensch, der als Elf durchgehen will; auffliegen schadet dem Ruf bei Elfen und Menschen.</note>
         <metatypes><metatype>Mensch</metatype></metatypes>
         <bonus/>
@@ -597,6 +606,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>119</page>
+        <notoriety>1</notoriety>
         <note>Eine Geisterart ist dem Charakter feindlich gesonnen und belästigt ihn.</note>
         <select label="Geisterart">text</select>
         <bonus/>
@@ -607,6 +617,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>119</page>
+        <notoriety>1</notoriety>
         <note>Nach schlechten Erfahrungen −2 Würfel auf Willenskraftproben gegen Schwarzes IC und BTLs.</note>
         <group>Gezeichnet</group>
         <bonus/>
@@ -617,6 +628,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>119</page>
+        <notoriety>1</notoriety>
         <note>Nach schlechten Erfahrungen −2 Würfel auf Willenskraftproben gegen Schwarzes IC und BTLs; höherer Bonus für Hacker und Technomancer.</note>
         <group>Gezeichnet</group>
         <bonus/>
@@ -627,6 +639,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 1 Einsen weniger ein.</note>
         <group>Gremlins</group>
         <bonus/>
@@ -637,6 +650,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 2 Einsen weniger ein.</note>
         <group>Gremlins</group>
         <bonus/>
@@ -647,6 +661,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 3 Einsen weniger ein.</note>
         <group>Gremlins</group>
         <bonus/>
@@ -657,6 +672,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Technik versagt beim Charakter: Ein Patzer tritt schon mit 4 Einsen weniger ein.</note>
         <group>Gremlins</group>
         <bonus/>
@@ -676,6 +692,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Eine Aktionsfertigkeit kann nicht erlernt werden und gilt als ahnungslos. Mehrfach wählbar.</note>
         <select label="Fertigkeit">skill</select>
         <multiple/>
@@ -687,6 +704,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Erste Initiativeprobe im Kampf nur mit halber Initiative; −3 auf Überraschungsproben.</note>
         <bonus/>
     </quality>
@@ -696,6 +714,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Körperliche Fertigkeiten kosten doppelt, keine Körperlichen Fertigkeitsgruppen.</note>
         <bonus><infirm/></bonus>
     </quality>
@@ -714,6 +733,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>120</page>
+        <notoriety>1</notoriety>
         <note>Will als Ork durchgehen; auffliegen schadet dem Ruf bei Orks.</note>
         <metatypes><metatype>Mensch</metatype><metatype>Elf</metatype></metatypes>
         <bonus/>
@@ -793,6 +813,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>121</page>
+        <notoriety>1</notoriety>
         <note>Kriminelle SIN mit Strafregister; bei Straftaten leichter zu identifizieren.</note>
         <group>SIN-Mensch</group>
         <bonus/>
@@ -803,6 +824,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>121</page>
+        <notoriety>1</notoriety>
         <note>Technische Fertigkeiten sowie akademische und berufliche Wissensfertigkeiten kosten doppelt, keine Technischen Fertigkeitsgruppen.</note>
         <bonus><uneducated/></bonus>
     </quality>
@@ -812,6 +834,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>122</page>
+        <notoriety>1</notoriety>
         <note>Soziale Fertigkeiten kosten doppelt, keine Sozialen Fertigkeitsgruppen.</note>
         <bonus><uncouth/></bonus>
     </quality>
@@ -821,6 +844,7 @@
         <category>Negative</category>
         <source>SR4</source>
         <page>122</page>
+        <notoriety>1</notoriety>
         <note>Bei jedem Edge-Einsatz kehrt sich der Effekt bei einer 1 auf 1W6 ins Gegenteil.</note>
         <bonus/>
     </quality>

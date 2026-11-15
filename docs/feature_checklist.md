@@ -18,7 +18,7 @@
 | BP-Restanzeige mit Farbwechsel bei Überschreitung                                                                               | ✅      |                                                                                                 |
 | Nuyen-Budget in der Erstellung (max. 50 BP × 5.000 ¥)                                                                           | ✅      | `getResourceNuyen/getSpentNuyen/getRemainingNuyen()` (GRW S. 110/111): Cyberware, Rüstung und Lebensstil zählen gegen das Budget, Kopfzeile "Ressourcen" + "Übrig" (rot bei < 0), Abschluss mit Restgeld < 0 gesperrt (2026-09-27) |
 | Charakter-Biografie (Alias, Geschlecht, Alter, Augen, Größe, Gewicht, Haut, Haare, Beschreibung, Hintergrund, Konzept, Notizen, Spielername, Spielnotizen) | ✅      | `CharacterBiography` (Value-Object, 15 Freitextfelder), eigener Tab "Biografie" (vor "Attribute"), Live-Text-Binding über `bindTextControl()`, Persistenz via `BiographyData`-DTO; Spielnotizen nur im Karrieremodus sichtbar |
-| Mugshot / Portrait                                                                                                              | ❌      |                                                                                                 |
+| Mugshot / Portrait | ✅ | 2026-11-15 (ADR-059): Biografie, auf 512 px verkleinert, als PNG im Charakter gespeichert |
 
 ---
 
@@ -30,7 +30,7 @@
 | Metavarianten                                          | ❌      | Entfernt 2026-11-12: nicht im GRW (Runner-Kompendium), samt ihrer 5 RC-Qualities; `<variant>` bleibt im Loader |
 | Metatyp-BP-Kosten fließen in BP-Bilanz                 | ✅      | Alle 5 Grundrassen (0/20/25/30/40) gegen GRW-Tabelle S. 105 verifiziert, 2026-08-04 |
 | Rassen-Attributspannen korrekt (alle 5 Grundrassen)    | ✅      | Zwerg BOD (2-7) und Ork INT (1-6) am 2026-08-04 korrigiert, Rest stimmte bereits |
-| Bewegungsrate (Walking/Running)                        | ❌      | Nicht gespeichert, nicht angezeigt                                      |
+| Bewegungsrate (Walking/Running) | ✅ | 2026-11-15 (ADR-059): Gehen/Laufen je Metatyp (S. 177) und Sprinten im Tab Zustand |
 | Metatyp-Kategorie (Metahuman, Shapeshifter, Critter …) | ❌      | Nicht modelliert                                                        |
 
 ---
@@ -75,7 +75,7 @@
 | Spezialisierungen (+2 BP / +2 Karma)                             | ✅      | `Skill.specialization`, `Character.getActiveSkillSpecializationBP()`/`getSpecializationKarmaCost()`, Mindestrating 1, Gruppenauflösung im Karrieremodus, 2026-08-06 |
 | Default-Flag (erlaubt Würfeln ohne Rating: Attribut − 1)         | ✅      | `default="false"` an den 27 kursiven Fertigkeiten (GRW S. 146, am Bild); Ahnungslos durch Ungebildet/Ungehobelt/Körperliche Schwäche/Inkompetenz (S. 120/122), 2026-11-12 |
 | Würfelpool-Anzeige (Rating + Attribut + Modifikatoren)           | ✅      | Spalte „Pool“ (GRW S. 146/147), Spezialisierung „8 (10)“, Verletzungsmodifikator eingerechnet, Tooltip mit Aufschlüsselung; auch Wissensfertigkeiten (ohne Wert Attribut − 1, nicht bei Sprachen, S. 146), 2026-11-12. Fertigkeits-Cap 1,5× (S. 91) zurückgestellt |
-| Exotische Fertigkeiten (Spez = Gegenstand, kein eigener Rating)  | ❌      |                                                                                              |
+| Exotische Fertigkeiten (je Waffe bzw. Fahrzeug) | ✅ | 2026-11-15 (ADR-059): Instanz je Ziel, ohne Spezialisierung, Waffenpool nutzt die passende Instanz (S. 148, 155, 365) |
 | Kampf-Aktionsfertigkeiten nach GRW                               | ✅      | **Korrigiert 2026-09-28** (GRW S. 147/148, am Bild geprüft): Gruppen Nahkampf (Klingenwaffen, Knüppel, Waffenloser Kampf) und Feuerwaffen (Gewehre, Pistolen, Schnellfeuerwaffen), dazu Ausweichen (REA), Exotische Fern-/Nahkampfwaffe, Projektilwaffen, Schwere Waffen, Wurfwaffen. Entfernt: Klingen, Automatikwaffen, Langwaffen, Schrotflinten (keine GRW-Fertigkeit), Bogenschießen, Gruppe "Schusswaffen". "Sprengstoff" → technische Fertigkeit "Sprengstoffe" (GRW S. 154). Alte Speicherdateien: Werte umbenannter Fertigkeiten werden beim Laden übersprungen |
 | Übrige Fertigkeitsbereiche nach GRW (Körperlich, Sozial, Technisch, Fahrzeug, Resonanz) | ✅ | **Korrigiert 2026-10-09** (GRW S. 146–154, Tabellen und Kategorien am Bild geprüft): `skills.xml` enthält jetzt exakt die 73 Aktionsfertigkeiten der GRW-Tabelle "Fertigkeiten und damit verbundene Attribute" mit den 13 GRW-Gruppen (Athletik, Beschwören, Biotech, Cracken, Einfluss, Elektronik, Feuerwaffen, Heimlichkeit, Hexerei, Mechanik, Nahkampf, Natur, Tasken). Fahrzeugfertigkeiten ohne Gruppe (GRW: "Fertigkeitsgruppe: Keine"; alte Gruppe "Pilotieren" entfernt), Geschütze GES statt LOG. Neue Kategorie Resonanz (Gruppe Tasken, nur Technomancer, GRW S. 151). Abgesichert durch `SkillDataLoaderTest.matchesGrwSkillTableExactly`. Alte Speicherdateien: Werte umbenannter Fertigkeiten werden beim Laden übersprungen |
 
@@ -86,7 +86,7 @@
 | Feature                                                       | Status | Anmerkung        |
 |---------------------------------------------------------------|--------|------------------|
 | Wissensfertigkeiten-Pool ((INT + LOG) × 3 freie Punkte)       | ✅      | Korrigierte Formel (nicht INT×2, siehe `docs/analysen/archiv/wissensfertigkeiten_analyse.md`) |
-| Hinzufügen/Entfernen von Wissensfertigkeiten                  | ✅      | Freitext-Name, Dialog mit Kategorie-Auswahl, Duplikat-Prüfung |
+| Hinzufügen/Entfernen von Wissensfertigkeiten                  | ✅      | Dialog mit Kategorie und Vorschlagsliste (GRW S. 110/155/156 und Sprachen, ADR-059), Freitext möglich, Duplikat-Prüfung |
 | Kategorie (Akademisch, Hobby, Beruflich, Straße + Sprache)    | ✅      | `KnowledgeSkillCategory`-Enum, GRW-Terminologie: INTEREST→HOBBY umbenannt, 2026-08-04 (kein Migrationspfad für alte Speicherdateien) |
 | BP-Kosten: 2 BP/Punkt (nur wenn Pool überschritten)           | ✅      | Gemeinsamer Pool über alle Wissensfertigkeiten, Uneducated verdoppelt Poolverbrauch |
 | Karrieremodus-Karma-Kosten                                    | ✅      | Neue Fertigkeit 2 Karma, Steigerung Rating×1 Karma; Uneducated verdoppelt Endpreis |
@@ -185,7 +185,7 @@
 | Cybergliedmaßen, Cyberwaffen                                  | ✅      | 2026-11-12 (ADR-051): 14 Glieder mit Stelle, An-/Abnehmen, Maßanfertigung, Verbesserungen, 5 Zubehörteile, 4 Cyber-Nahkampfwaffen, Head-/Bodyware mit Gliedkapazität, Durchschnitt über fünf Körperteile, Monitor +1 je Glied, Gliedpanzerung (Summe wie C#), Waffen mit Glied-STR. Offen: Cyberguns (GRW ohne Kosten), Einstellung Gliedpanzerung als Durchschnitt, Schockhand-Ladungen |
 | Datenbuchse, Kommlink, Sim-Modul, Simrig für VR | ✅ | 2026-11-13 (ADR-054): Neuralinterface bzw. Sim-Modul (kalt/heiß) als Implantat-Wirkung, zählen für den Matrixzugang (S. 258, 386) |
 | Smartlink-Bonus auf den Waffenpool | ✅ | 2026-11-15 (ADR-056) |
-| Talentleitungen mit Aktionssofts, Wissens- und Linguasofts | ❌ | Software steht im Katalog, wirkt aber nicht auf Fertigkeiten; Roadmap 11 |
+| Talentleitungen mit Aktionssofts, Wissens- und Linguasofts | ✅ | 2026-11-15 (ADR-059): Schalter „geladen“, Leitungsstufe und Doppelte-Limit, Neuralinterface für Lingua-/Wissenssoft (S. 377, 389) |
 
 ---
 
@@ -289,8 +289,8 @@
 | Karma/Nuyen-Log mit Datum                                             | ✅      |                                                               |
 | Undo für Log-Einträge                                                 | ✅      | 2026-11-15 (ADR-058): letzter Schritt, beliebig oft, über den gemerkten Stand vor der Buchung; nur in der laufenden Sitzung |
 | Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ✅      | 2026-11-15 (ADR-058): zehn Arten (`LogCategory`, auch „Kontakt“) als Spalte „Art“, gespeichert; alte Einträge „Manuell“ |
-| Ruf: Straßenruf, Schlechter Ruf, Prominenz (ca. S. 308) | ❌ | Straßenruf = verdientes Karma ÷ 10, Prominenz aus beiden; Roadmap 11 |
-| Adept, Zauberer, Magieradept, Technomancer nicht nachträglich wählbar (S. 313) | ❌ | Roadmap 11; per Einstellung aufhebbar für latente Charaktere (Nutzerwunsch 2026-11-15, Roadmap 13) |
+| Ruf: Straßenruf, Schlechter Ruf, Prominenz | ✅ | 2026-11-15 (ADR-059): im Tab Kontakte, Spielleiter-Punkte und Opfern im Karrieremodus (S. 308/309) |
+| Adept, Zauberer, Magieradept, Technomancer nicht nachträglich wählbar (S. 313) | ✅ | 2026-11-15 (ADR-059); per Einstellung aufhebbar für latente Charaktere (Nutzerwunsch, Roadmap 13) |
 
 ---
 
@@ -396,7 +396,7 @@ README-Roadmap sind erledigt; es folgen:
    an jeder Stufe des Verletzungsmodifikators im Zustandsmonitor, Edgepunkte und Edge verheizen.
 10. ✅ **Karrieremodus ausbauen (2026-11-15, ADR-058):** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
    von Ausrüstung (GRW-Beleg noch suchen, Abschnitt 15).
-11. **Restliche GRW-Inhalte:** Exotische Fertigkeiten (Abschnitt 4), Bewegungsrate (Abschnitt 2), Ruf mit Straßenruf,
+11. ✅ **Restliche GRW-Inhalte (2026-11-15, ADR-059):** Exotische Fertigkeiten (Abschnitt 4), Bewegungsrate (Abschnitt 2), Ruf mit Straßenruf,
     Schlechtem Ruf und Prominenz (ca. S. 308, Straßenruf aus dem verdienten Karma, Abschnitt 15), Talentleitungen mit
     Aktions-, Wissens- und Linguasofts (Abschnitt 10), Sperre für Adept/Zauberer/Magieradept/Technomancer im
     Karrieremodus (S. 313, Abschnitt 15; aufhebbar über Punkt 13), Vorschlagsliste für Wissensfertigkeiten (ADR-032),
@@ -460,7 +460,7 @@ Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038)
    - ✅ Metamagie (6) und Echos (5) mit Initiation/Wandlung (2026-11-12, ADR-052)
    - ✅ Geister (6) und Sprites (5) mit Werten (2026-11-12, ADR-053)
    - ✅ Schutzpatrone (19) als Katalog (2026-11-13, ADR-055)
-9. **Wissensfertigkeiten-Vorschlagsliste** zurückholen (ADR-032).
+9. ✅ **Wissensfertigkeiten-Vorschlagsliste** zurückgeholt (ADR-032, umgesetzt mit ADR-059).
 10. ✅ **Grundlegende Überarbeitung der UI** (umgesetzt 2026-11-12, ADR-049; Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
     gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,
     Darstellung der Werte, einheitliche Bausteine) vor der Planung mit dem Nutzer klären.

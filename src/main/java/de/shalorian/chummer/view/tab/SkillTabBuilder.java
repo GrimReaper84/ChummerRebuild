@@ -13,15 +13,22 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogCategory;
+import de.shalorian.chummer.model.character.gear.Gear;
+import de.shalorian.chummer.model.character.gear.SkillsoftStatus;
+import de.shalorian.chummer.model.character.skill.ExoticSkills;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
+import de.shalorian.chummer.view.dialog.DialogHandle;
+import de.shalorian.chummer.view.dialog.ExoticSkillAddDialogController;
 import de.shalorian.chummer.view.grid.RowControls;
 import de.shalorian.chummer.view.grid.RowModel;
 import de.shalorian.chummer.view.grid.SkillSortMode;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,6 +44,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -61,6 +69,8 @@ public final class SkillTabBuilder {
   private static final int SKILL_GRID_GROUP_BP_COLUMN = 6;
   /** Spalte der Gruppen-BP im schmalen Gruppen-Grid des Alphabet-Modus. */
   private static final int GROUP_ONLY_BP_COLUMN = 5;
+  /** Einrückung der Exotik-Instanzen unter ihrer Grundzeile, in Pixeln. */
+  private static final int EXOTIC_INDENT = 16;
 
   private final @NonNull ScrollPane skillsScroll;
   private final @NonNull VBox skillsContainer;
@@ -128,6 +138,7 @@ public final class SkillTabBuilder {
     skillsScroll.setFitToHeight(alphabetical);
     skillsScroll.setVbarPolicy(alphabetical ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
     skillsScroll.setVvalue(0);
+    skillsContainer.getChildren().add(buildSkillsoftSection(ch));
     if (alphabetical) {
       buildAlphabeticalSkillsSection(ch);
     } else {
@@ -403,6 +414,10 @@ public final class SkillTabBuilder {
 
   private void addSkillRow(@NonNull MigPane grid, int row, @NonNull Skill skill, boolean coupled,
       @NonNull Character character) {
+    if (skill.isExoticTemplate()) {
+      addExoticTemplateRow(grid, row, skill, character);
+      return;
+    }
     Label skillNameLabel = new Label(skill.getName());
     Label attrLabel = new Label(skill.getLinkedAttribute());
     Button minus = new Button("−");
@@ -438,7 +453,7 @@ public final class SkillTabBuilder {
     specBtn.setOnAction(_ -> onEditSkillSpecialization(skill, character));
 
     Runnable poolRefresh = () -> DicePoolLabel.show(poolLabel, character.getSkillDicePool(skill),
-        skill.getRating(), skill.getSpecialization());
+        character.getEffectiveSkillRating(skill), skill.getSpecialization());
     skillRefreshers.add(poolRefresh);
     poolRefresh.run();
 
@@ -510,8 +525,139 @@ public final class SkillTabBuilder {
           }, character, LogCategory.SKILL);
     }
 
+    if (skill.getExoticTarget() != null) {
+      // Exotische Fertigkeiten haben keine Spezialisierung (GRW S. 148); an ihrer Stelle das Entfernen, nur bei der
+      // Erschaffung (im Karrieremodus deaktiviert, dort wird nur gesteigert).
+      skillNameLabel.setPadding(new Insets(0, 0, 0, EXOTIC_INDENT));
+      Button removeBtn = new Button("Entfernen");
+      removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+      useIcon(removeBtn, FontAwesomeSolid.TRASH);
+      removeBtn.setDisable(career);
+      if (career) {
+        removeBtn.setTooltip(new Tooltip("Im Karrieremodus wird nur gesteigert"));
+      }
+      removeBtn.setOnAction(_ -> {
+        String problem = character.getExoticSkillRemovalProblem(skill);
+        if (problem != null) {
+          host.services().warn("Exotische Fertigkeit", problem);
+          return;
+        }
+        character.removeExoticSkill(skill);
+        build();
+        host.onBpChanged();
+        host.refreshRows();
+      });
+      addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, poolLabel, new Label(),
+          removeBtn, bpLabel);
+      return;
+    }
     addRowCells(grid, row, skillNameLabel, attrLabel, minus, ratingLabel, plus, poolLabel, specLabel,
         specBtn, bpLabel);
+  }
+
+  /**
+   * Übersicht der Talentsofts (GRW S. 377, 389): je Soft Fertigkeit, Stufe, Wirkung bzw. Grund und Pool, dazu die
+   * Auslastung der Talentleitungen. Der Inhalt wird in jedem Refresh neu gefüllt, weil Kauf und Laden von Softs im Tab
+   * Ausrüstung passieren; ohne Softs bleibt der Abschnitt unsichtbar.
+   */
+  private @NonNull VBox buildSkillsoftSection(@NonNull Character character) {
+    VBox section = new VBox(4);
+    VBox.setMargin(section, new Insets(0, 0, 12, 0));
+    Runnable refresh = () -> {
+      section.getChildren().clear();
+      List<Gear> softs = character.getSkillsofts();
+      section.setVisible(!softs.isEmpty());
+      section.setManaged(!softs.isEmpty());
+      if (softs.isEmpty()) {
+        return;
+      }
+      Label title = new Label("Talentsofts");
+      title.getStyleClass().add(STYLE_SECTION_TITLE);
+      Label wires = new Label(character.getSkillwireRating() == 0
+          ? "Keine Talentleitungen: Aktionssofts wirken nicht (S. 389)."
+          : "Talentleitungen Stufe %d, Aktionssofts geladen %d von %d Stufen (S. 389). Laden im Tab Ausrüstung."
+              .formatted(character.getSkillwireRating(), character.getLoadedActivesoftRating(),
+                  character.getActivesoftCapacity()));
+      wires.getStyleClass().add(STYLE_DETAIL_HINT);
+      MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][center]");
+      grid.getStyleClass().add(STYLE_ATTR_GRID);
+      addHeaderRow(grid, "Talentsoft", "Für", "Stufe", "Wirkung", "Pool");
+      int row = 1;
+      for (Gear soft : softs) {
+        SkillsoftStatus status = character.getSkillsoftStatus(soft);
+        String problem = status.problem();
+        Label pool = DicePoolLabel.create();
+        DicePoolLabel.show(pool, character.getSkillsoftPool(soft), status.rating(), null);
+        addRowCells(grid, row++, styled(soft.getName(), STYLE_ATTR_NAME), styled(soft.getExtra(), STYLE_ATTR_NAME),
+            styled(String.valueOf(soft.getRating()), STYLE_ATTR_VALUE),
+            styled(problem != null ? problem : "wirkt", STYLE_DETAIL_HINT), pool);
+      }
+      section.getChildren().addAll(title, wires, withRightFiller(grid));
+    };
+    skillRefreshers.add(refresh);
+    refresh.run();
+    return section;
+  }
+
+  private static @NonNull Label styled(@NonNull String text, @NonNull String styleClass) {
+    Label label = new Label(text);
+    label.getStyleClass().add(styleClass);
+    return label;
+  }
+
+  /**
+   * Grundzeile einer Exotischen Fertigkeit: kein eigener Wert (gelernt wird je Waffe bzw. Fahrzeug, GRW S. 148, 155),
+   * Pool für Waffen ohne gelernte Instanz und ein Knopf zum Anlegen einer Instanz.
+   */
+  private void addExoticTemplateRow(@NonNull MigPane grid, int row, @NonNull Skill template,
+      @NonNull Character character) {
+    Label nameLabel = new Label(template.getName());
+    nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
+    Label attrLabel = new Label(template.getLinkedAttribute());
+    attrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
+    Label poolLabel = DicePoolLabel.create();
+    Runnable poolRefresh = () -> DicePoolLabel.show(poolLabel, character.getSkillDicePool(template), 0, null);
+    skillRefreshers.add(poolRefresh);
+    poolRefresh.run();
+    Button addBtn = new Button("Hinzufügen");
+    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    addBtn.setTooltip(new Tooltip(ExoticSkills.VEHICLE.equals(template.getName())
+        ? "Exotische Fertigkeit für ein Fahrzeug lernen" : "Exotische Fertigkeit für eine Waffe lernen"));
+    addBtn.setOnAction(_ -> onAddExoticSkill(template, character));
+    addRowCells(grid, row, nameLabel, attrLabel, new Label(), new Label(), new Label(), poolLabel, new Label(),
+        addBtn, new Label());
+  }
+
+  /**
+   * Legt eine Exotik-Instanz an. Im Karrieremodus ist das eine neue Fertigkeit: 4 Karma, Start mit Wert 1 (GRW S. 313,
+   * Plan-Annahme A7); die Buchung kommt vor dem Anlegen, damit Rückgängig den Stand ohne Instanz wiederherstellt.
+   */
+  private void onAddExoticSkill(@NonNull Skill template, @NonNull Character character) {
+    try {
+      DialogHandle dialog = host.services().openDialog("ExoticSkillAddDialog.fxml", "Exotische Fertigkeit hinzufügen");
+      ExoticSkillAddDialogController ctrl = dialog.loader().getController();
+      ctrl.setStage(dialog.stage());
+      ctrl.setup(character, template.getName());
+      dialog.stage().showAndWait();
+      ctrl.getResult().ifPresent(r -> {
+        String name = ExoticSkills.instanceName(r.base(), r.target());
+        if (character.isCreated()) {
+          int cost = template.getKarmaCost(character.isSkillCostDoubled(template.getCategory()));
+          if (host.services().karmaChargeFailed(character, LogCategory.SKILL, name + " 0 → 1", cost)) {
+            return;
+          }
+          character.addExoticSkill(r.base(), r.target()).setRating(1);
+        } else {
+          character.addExoticSkill(r.base(), r.target());
+        }
+        build();
+        host.onBpChanged();
+        host.refreshRows();
+      });
+    } catch (IOException _) {
+      host.services().showDialogLoadError();
+    }
   }
 
   @SuppressWarnings("ReferenceEquality") // Identität gewollt: welcher der beiden Buttons gewählt ist

@@ -23,6 +23,10 @@ import de.shalorian.chummer.model.character.magic.MentorDataLoader;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
+import de.shalorian.chummer.model.character.metatype.Movement;
+import de.shalorian.chummer.model.character.gear.SkillsoftStatus;
+import de.shalorian.chummer.model.character.reputation.Reputation;
+import de.shalorian.chummer.model.character.reputation.ReputationScore;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
 import de.shalorian.chummer.model.character.quality.QualityBonusType;
 import de.shalorian.chummer.model.character.quality.QualityData;
@@ -62,6 +66,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -90,6 +95,12 @@ public class Character {
   private static final String RITUAL_SPELLCASTING_SKILL = "Ritualzauberei";
   private static final String ARCANA_SKILL = "Arcana";
   private static final String PERCEPTION_SKILL = "Wahrnehmung";
+  /** Talentsofts (GRW S. 377). */
+  private static final String ACTIVESOFT = "Aktionssoft";
+  private static final String LINGUASOFT = "Linguasoft";
+  private static final String KNOWSOFT = "Wissenssoft";
+  /** Fertigkeit für das Sprinten (GRW S. 177). */
+  private static final String RUNNING_SKILL = "Laufen";
   private static final String ASSENSING_SKILL = "Askennen";
   private static final String ASTRAL_COMBAT_SKILL = "Astralkampf";
 
@@ -119,6 +130,7 @@ public class Character {
   private final @NonNull Foci foci = new Foci(this);
   private final @NonNull Implants implants = new Implants(this);
   private final @NonNull Equipment equipment = new Equipment(this);
+  private final @NonNull Reputation reputation = new Reputation();
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private final @NonNull CharacterBiography biography = new CharacterBiography();
@@ -190,6 +202,19 @@ public class Character {
 
   public @NonNull MetatypeData getMetatype() {
     return metatype;
+  }
+
+  /** Bewegungsweiten Gehen/Laufen des Metatyps (GRW S. 177). */
+  public @NonNull Movement getMovement() {
+    return metatype.movement();
+  }
+
+  /**
+   * Pool zum Sprinten: Laufen + Stärke mit den üblichen Regeln einer Fertigkeitsprobe; jeder Erfolg verlängert die
+   * Laufen-Weite um 2 m (GRW S. 177). Leer, wenn die Probe nicht erlaubt ist.
+   */
+  public @NonNull Optional<DicePool> getSprintPool() {
+    return getSkillDicePool(Objects.requireNonNull(getSkill(RUNNING_SKILL), RUNNING_SKILL));
   }
 
   /**
@@ -623,6 +648,92 @@ public class Character {
     return skills.get(name);
   }
 
+  /** Gelernte Instanz einer exotischen Grundfertigkeit für dieses Ziel (Groß-/Kleinschreibung egal), sonst null. */
+  public @Nullable Skill getExoticSkill(@NonNull String base, @NonNull String target) {
+    return skills.values().stream()
+        .filter(s -> s.getBaseName().equals(base) && target.trim().equalsIgnoreCase(s.getExoticTarget()))
+        .findFirst().orElse(null);
+  }
+
+  /** Warum für {@code base} kein Ziel {@code target} angelegt werden kann, oder {@code null}. */
+  public @Nullable String getExoticSkillProblem(@NonNull String base, @NonNull String target) {
+    Skill template = skills.get(base);
+    if (template == null || !template.isExoticTemplate()) {
+      return "Keine exotische Grundfertigkeit: " + base;
+    }
+    if (target.isBlank()) {
+      return "Waffe bzw. Fahrzeug fehlt";
+    }
+    return getExoticSkill(base, target) != null ? "Für „%s“ schon vorhanden".formatted(target.trim()) : null;
+  }
+
+  /**
+   * Legt eine Exotische Fertigkeit für eine Waffe bzw. ein Fahrzeug an (GRW S. 148, 155), mit Wert 0. Sie steht
+   * direkt hinter ihrer Grundfertigkeit; GP- bzw. Karmakosten entstehen erst mit dem Wert.
+   *
+   * @throws IllegalArgumentException mit dem Grund aus {@link #getExoticSkillProblem}
+   */
+  public @NonNull Skill addExoticSkill(@NonNull String base, @NonNull String target) {
+    String problem = getExoticSkillProblem(base, target);
+    if (problem != null) {
+      throw new IllegalArgumentException(problem);
+    }
+    Skill instance = new Skill(Objects.requireNonNull(skills.get(base)), target);
+    insertAfterBase(instance);
+    // Beim Laden stehen die Qualities schon fest: Talentiert auf dieser Instanz muss das Maximum sofort heben.
+    applyQualityLimits(instance);
+    return instance;
+  }
+
+  /** Stellt eine gespeicherte Exotik-Instanz wieder her; unbekannte Grundfertigkeiten oder doppelte Ziele: null. */
+  public @Nullable Skill loadExoticSkill(@NonNull String base, @NonNull String target) {
+    return getExoticSkillProblem(base, target) == null ? addExoticSkill(base, target) : null;
+  }
+
+  /**
+   * Warum die Exotik-Instanz nicht entfernt werden kann, oder {@code null}: im Karrieremodus wird nur gesteigert, und
+   * eine Gabe bzw. ein Handicap mit ihr als Wahl (Talentiert, Inkompetenz) würde sonst ins Leere zeigen.
+   */
+  public @Nullable String getExoticSkillRemovalProblem(@NonNull Skill skill) {
+    if (skill.getExoticTarget() == null) {
+      return "Keine Exotik-Instanz: " + skill.getName();
+    }
+    if (created) {
+      return "Im Karrieremodus wird nur gesteigert";
+    }
+    return getSelectedQualities().stream()
+        .filter(q -> q.choice().equals(skill.getName()))
+        .findFirst()
+        .map(q -> "Zuerst „%s“ entfernen, es bezieht sich auf diese Fertigkeit".formatted(q.data().name()))
+        .orElse(null);
+  }
+
+  /**
+   * Entfernt eine Exotik-Instanz samt Wert.
+   *
+   * @throws IllegalStateException mit dem Grund aus {@link #getExoticSkillRemovalProblem}
+   */
+  public void removeExoticSkill(@NonNull Skill skill) {
+    String problem = getExoticSkillRemovalProblem(skill);
+    if (problem != null) {
+      throw new IllegalStateException(problem);
+    }
+    skills.remove(skill.getName());
+  }
+
+  /** Ordnet die Fertigkeiten so, dass die Instanz alphabetisch hinter ihrer Grundfertigkeit steht. */
+  private void insertAfterBase(@NonNull Skill instance) {
+    List<Skill> ordered = new ArrayList<>(skills.values());
+    int index = ordered.indexOf(skills.get(instance.getBaseName())) + 1;
+    while (index < ordered.size() && ordered.get(index).getBaseName().equals(instance.getBaseName())
+        && ordered.get(index).getName().compareTo(instance.getName()) < 0) {
+      index++;
+    }
+    ordered.add(index, instance);
+    skills.clear();
+    ordered.forEach(sk -> skills.put(sk.getName(), sk));
+  }
+
   /**
    * Prüft, ob eine Steigerung dieser aktiven Fertigkeit um 1 während der Charaktererschaffung
    * regelkonform wäre: entweder maximal eine Fertigkeit auf Wert 6, oder maximal zwei
@@ -703,12 +814,13 @@ public class Character {
   }
 
   /**
-   * Vollständige Steigerungs-Prüfung für eine aktive Fertigkeit: kombiniert den Erstellungs-Cap
+   * Vollständige Steigerungs-Prüfung für eine aktive Fertigkeit: exotische Grundfertigkeiten nie (gelernt wird je
+   * Waffe bzw. Fahrzeug, GRW S. 148), sonst kombiniert sie den Erstellungs-Cap
    * aus {@link #canRaiseSkillAtCreation(Skill)} mit der Zugangsvoraussetzung aus
    * {@link #isSkillAccessible(Skill)}.
    */
   public boolean canRaiseSkill(@NonNull Skill skill) {
-    return isSkillAccessible(skill) && canRaiseSkillAtCreation(skill);
+    return !skill.isExoticTemplate() && isSkillAccessible(skill) && canRaiseSkillAtCreation(skill);
   }
 
   private boolean isCoupledGroupMember(@NonNull Skill s) {
@@ -743,10 +855,11 @@ public class Character {
    * die Fertigkeit nicht Teil einer noch gekoppelten Fertigkeitsgruppe sein (Fertigkeitsgruppen
    * selbst sind nicht spezialisierbar). Im Karrieremodus ist eine gekoppelte Fertigkeit dagegen
    * spezialisierbar — das bricht die Gruppe auf (siehe {@link #setSkillSpecialization(Skill,
-   * String)}).
+   * String)}). Exotische Fertigkeiten sind schon auf ihre Waffe bzw. ihr Fahrzeug festgelegt und haben keine
+   * Spezialisierung (GRW S. 148).
    */
   public boolean canSpecializeSkill(@NonNull Skill skill) {
-    return skill.getRating() >= MIN_RATING_FOR_SPECIALIZATION
+    return !skill.isExotic() && skill.getRating() >= MIN_RATING_FOR_SPECIALIZATION
         && (created || !isCoupledGroupMember(skill));
   }
 
@@ -972,6 +1085,9 @@ public class Character {
         }
       }
     }
+    if (created && isAwakeningQuality(data)) {
+      return "Nur bei der Erschaffung wählbar (S. 313)";
+    }
     if (!created && !gratis) {
       if (data.type() == QualityType.POSITIVE
           && getPositiveQualityBP() + data.bp() > MAX_POSITIVE_QUALITY_BP) {
@@ -983,6 +1099,15 @@ public class Character {
       }
     }
     return null;
+  }
+
+  /**
+   * Adept, Zauberer, Magieradept und Technomancer: Gaben, die Magie bzw. Resonanz verleihen und laut GRW S. 313 nur
+   * bei der Erschaffung gewählt werden dürfen. Die Aufhebung für latente Charaktere kommt als Einstellung.
+   */
+  private static boolean isAwakeningQuality(@NonNull QualityData data) {
+    return data.bonuses().contains(QualityBonusType.GRANTS_MAGIC)
+        || data.bonuses().contains(QualityBonusType.GRANTS_RESONANCE);
   }
 
   private boolean fitsMetatype(@NonNull QualityRules rules) {
@@ -1085,11 +1210,16 @@ public class Character {
     }
     edge.setMaxBonus(hasQualityBonus(QualityBonusType.LUCKY) ? 1 : 0);
     for (Skill skill : skills.values()) {
-      skill.setMaxRating(hasQualityChoice(QualityBonusType.APTITUDE, skill.getName())
-          ? Skill.MAX_RATING + 1 : Skill.MAX_RATING);
-      if (hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())) {
-        resetLockedSkill(skill);
-      }
+      applyQualityLimits(skill);
+    }
+  }
+
+  /** Höchstwert durch Talentiert (S. 117) und Sperre durch Inkompetenz (S. 120) für eine Fertigkeit. */
+  private void applyQualityLimits(@NonNull Skill skill) {
+    skill.setMaxRating(hasQualityChoice(QualityBonusType.APTITUDE, skill.getName())
+        ? Skill.MAX_RATING + 1 : Skill.MAX_RATING);
+    if (hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())) {
+      resetLockedSkill(skill);
     }
   }
 
@@ -1494,9 +1624,10 @@ public class Character {
         + (implantDice == 0 ? "" : " + Implantate " + implantDice)
         + shieldText(shield);
     int bonus = powers + implantDice + shield;
-    if (skill.getRating() > 0) {
-      return Optional.of(dicePool(skill.getRating() + attribute + bonus,
-          ratingBreakdown(skill.getName(), skill.getRating(), attributeName, attribute) + bonusText));
+    int rating = getEffectiveSkillRating(skill);
+    if (rating > 0) {
+      return Optional.of(dicePool(rating + attribute + bonus,
+          ratingBreakdown(ratingName(skill), rating, attributeName, attribute) + bonusText + softSuffix(skill)));
     }
     if (!skill.isDefaultable() || isSkillCostDoubled(skill.getCategory())) {
       return Optional.empty();
@@ -1553,10 +1684,14 @@ public class Character {
     int attribute = getAugmentedAttributeValue(type);
     int implantDice = implants.level(ImplantEffectType.KNOWLEDGE_SKILL_DICE);
     String bonusText = implantDice == 0 ? "" : " + Implantate " + implantDice;
-    if (knowledgeSkill.getRating() > 0) {
-      return Optional.of(dicePool(knowledgeSkill.getRating() + attribute + implantDice,
-          ratingBreakdown(knowledgeSkill.getName(), knowledgeSkill.getRating(), type.getDisplayName(), attribute)
-              + bonusText));
+    int rating = getEffectiveKnowledgeSkillRating(knowledgeSkill);
+    if (rating > 0) {
+      boolean bySoft = rating > knowledgeSkill.getRating();
+      String name = !bySoft ? knowledgeSkill.getName()
+          : category == KnowledgeSkillCategory.LANGUAGE ? LINGUASOFT : KNOWSOFT;
+      return Optional.of(dicePool(rating + attribute + implantDice,
+          ratingBreakdown(name, rating, type.getDisplayName(), attribute) + bonusText
+              + (bySoft ? SKILLSOFT_NO_EDGE : "")));
     }
     if (category == KnowledgeSkillCategory.LANGUAGE || isKnowledgeSkillCostDoubled(category)) {
       return Optional.empty();
@@ -1575,9 +1710,10 @@ public class Character {
     if (!isSkillAccessible(skill)) {
       return Optional.empty();
     }
-    if (skill.getRating() > 0) {
-      return Optional.of(dicePool(value + skill.getRating(),
-          ratingBreakdown(valueName, value, skill.getName(), skill.getRating())));
+    int rating = getEffectiveSkillRating(skill);
+    if (rating > 0) {
+      return Optional.of(dicePool(value + rating,
+          ratingBreakdown(valueName, value, ratingName(skill), rating) + softSuffix(skill)));
     }
     if (!skill.isDefaultable() || isSkillCostDoubled(skill.getCategory())) {
       return Optional.empty();
@@ -1703,6 +1839,162 @@ public class Character {
    */
   public int getAstralInitiative() {
     return Math.max(0, getAugmentedAttributeValue(AttributeType.INT) * 2 + getWoundModifier());
+  }
+
+  // --- Talentsofts ---
+
+  private static final String SKILLSOFT_NO_EDGE = "; Talentsoft: kein Edge";
+
+  /** Stufe der Talentleitungen, 0 ohne (GRW S. 389). */
+  public int getSkillwireRating() {
+    return implants.maxLevel(ImplantEffectType.SKILLWIRES);
+  }
+
+  /**
+   * Alle Talentsofts des Charakters: lose, in Geräten eingebaut (z.B. Kommlink) oder im Kommlink der Headware; nicht
+   * in Fahrzeugen.
+   */
+  public @NonNull List<Gear> getSkillsofts() {
+    return Stream.concat(equipment.getGear().stream(), implants.getCommlinks().stream())
+        .flatMap(g -> Stream.concat(Stream.of(g), g.getInstalled().stream()))
+        .filter(Gear::isSkillsoft)
+        .distinct()
+        .toList();
+  }
+
+  /** Summe der Stufen aller geladenen Aktionssofts. */
+  public int getLoadedActivesoftRating() {
+    return getSkillsofts().stream().filter(g -> isActivesoft(g) && g.isRunning()).mapToInt(Gear::getRating).sum();
+  }
+
+  /** Wie viele Aktionssoft-Stufen die Talentleitungen gleichzeitig verarbeiten: das Doppelte ihrer Stufe (S. 389). */
+  public int getActivesoftCapacity() {
+    return getSkillwireRating() * 2;
+  }
+
+  /**
+   * Warum die Talentsoft nicht geladen werden kann, oder {@code null}: Aktionssofts nur mit Talentleitungen und nur,
+   * solange die geladenen zusammen das Doppelte der Leitungsstufe nicht übersteigen (S. 389). Lingua- und Wissenssofts
+   * lassen sich immer laden; ob sie wirken, sagt {@link #getSkillsoftStatus}.
+   */
+  public @Nullable String getSkillsoftLoadProblem(@NonNull Gear soft) {
+    if (!isActivesoft(soft) || soft.isRunning()) {
+      return null;
+    }
+    if (getSkillwireRating() == 0) {
+      return "Aktionssofts brauchen Talentleitungen (S. 389)";
+    }
+    int loaded = getLoadedActivesoftRating();
+    if (loaded + soft.getRating() > getActivesoftCapacity()) {
+      return "Talentleitungen ausgelastet: %d von %d Stufen geladen (S. 389)".formatted(loaded, getActivesoftCapacity());
+    }
+    return null;
+  }
+
+  /**
+   * Ob und mit welcher Stufe die Talentsoft wirkt (S. 377, 389): nur geladen; Aktionssofts nur mit Talentleitungen,
+   * höchstens bis zu deren Stufe (eine höhere Soft wirkt gar nicht, anders als im C#-Original, das deckelt) und nur,
+   * solange die geladenen zusammen das Doppelte der Leitungsstufe nicht übersteigen; Lingua-
+   * und Wissenssofts nur über ein Direktes Neuralinterface (Datenbuchse, Sim-Modul).
+   */
+  public @NonNull SkillsoftStatus getSkillsoftStatus(@NonNull Gear soft) {
+    if (!soft.isRunning()) {
+      return new SkillsoftStatus(0, "nicht geladen");
+    }
+    if (isActivesoft(soft)) {
+      int wires = getSkillwireRating();
+      if (wires == 0) {
+        return new SkillsoftStatus(0, "keine Talentleitungen");
+      }
+      if (soft.getRating() > wires) {
+        return new SkillsoftStatus(0, "Stufe über den Talentleitungen (%d)".formatted(wires));
+      }
+      int loaded = getLoadedActivesoftRating();
+      if (loaded > getActivesoftCapacity()) {
+        // z.B. nach dem Senken der Leitungsstufe oder aus einer Datei: überlastet wirkt keine Aktionssoft (S. 389)
+        return new SkillsoftStatus(0, "Talentleitungen überlastet: %d von %d Stufen geladen"
+            .formatted(loaded, getActivesoftCapacity()));
+      }
+      return new SkillsoftStatus(soft.getRating(), null);
+    }
+    if (!hasNeuralInterface()) {
+      return new SkillsoftStatus(0, "kein Neuralinterface (Datenbuchse oder Sim-Modul)");
+    }
+    return new SkillsoftStatus(soft.getRating(), null);
+  }
+
+  /**
+   * Pool, mit dem die Talentsoft gewürfelt wird: Aktionssoft über ihre Fertigkeit, Lingua- bzw. Wissenssoft über eine
+   * gleichnamige eigene Sprache bzw. Wissensfertigkeit; eine Linguasoft ohne eigene Sprache mit Intuition wie jede
+   * Sprache (S. 110). Eine Wissenssoft ohne eigene Fertigkeit hat keinen Pool, weil ihre Kategorie und damit das
+   * Attribut offen ist (Plan-Annahme A4). Leer auch, wenn die Soft nicht wirkt.
+   */
+  public @NonNull Optional<DicePool> getSkillsoftPool(@NonNull Gear soft) {
+    SkillsoftStatus status = getSkillsoftStatus(soft);
+    if (status.rating() == 0) {
+      return Optional.empty();
+    }
+    if (isActivesoft(soft)) {
+      Skill skill = getSkill(soft.getExtra());
+      return skill == null ? Optional.empty() : getSkillDicePool(skill);
+    }
+    Optional<KnowledgeSkill> own = knowledgeSkills.stream()
+        .filter(k -> k.getName().equalsIgnoreCase(soft.getExtra()))
+        .findFirst();
+    if (own.isPresent()) {
+      return getKnowledgeSkillDicePool(own.get());
+    }
+    if (!LINGUASOFT.equals(soft.getName())) {
+      return Optional.empty();
+    }
+    int intuition = getAugmentedAttributeValue(AttributeType.INT);
+    return Optional.of(dicePool(status.rating() + intuition,
+        ratingBreakdown(LINGUASOFT, status.rating(), AttributeType.INT.getDisplayName(), intuition) + SKILLSOFT_NO_EDGE));
+  }
+
+  /**
+   * Wirksamer Wert einer aktiven Fertigkeit: der eigene Wert oder, wenn höher, die Stufe einer wirksamen Aktionssoft
+   * (S. 377). Einzige Stelle für diese Regel; Pools und Anzeige nutzen sie.
+   */
+  public int getEffectiveSkillRating(@NonNull Skill skill) {
+    return Math.max(skill.getRating(), activesoftRating(skill));
+  }
+
+  /** Wie {@link #getEffectiveSkillRating} für Wissens- und Sprachfertigkeiten mit Wissens- bzw. Linguasoft. */
+  public int getEffectiveKnowledgeSkillRating(@NonNull KnowledgeSkill skill) {
+    return Math.max(skill.getRating(),
+        knowledgesoftRating(skill.getName(), skill.getCategory() == KnowledgeSkillCategory.LANGUAGE));
+  }
+
+  /** Bezeichnung des wirksamen Werts für die Aufschlüsselung: die Fertigkeit oder „Aktionssoft“. */
+  private @NonNull String ratingName(@NonNull Skill skill) {
+    return activesoftRating(skill) > skill.getRating() ? ACTIVESOFT : skill.getName();
+  }
+
+  /** Hinweis „kein Edge“, wenn die Aktionssoft den Wert stellt (S. 377). */
+  private @NonNull String softSuffix(@NonNull Skill skill) {
+    return activesoftRating(skill) > skill.getRating() ? SKILLSOFT_NO_EDGE : "";
+  }
+
+  /** Höchste wirksame Stufe einer Aktionssoft für diese Fertigkeit, 0 ohne. */
+  private int activesoftRating(@NonNull Skill skill) {
+    return getSkillsofts().stream()
+        .filter(g -> isActivesoft(g) && g.getExtra().equals(skill.getName()))
+        .mapToInt(g -> getSkillsoftStatus(g).rating())
+        .max().orElse(0);
+  }
+
+  /** Höchste wirksame Stufe einer Lingua- ({@code language}) bzw. Wissenssoft mit diesem Namen, 0 ohne. */
+  private int knowledgesoftRating(@NonNull String name, boolean language) {
+    String softName = language ? LINGUASOFT : KNOWSOFT;
+    return getSkillsofts().stream()
+        .filter(g -> g.getName().equals(softName) && g.getExtra().equalsIgnoreCase(name))
+        .mapToInt(g -> getSkillsoftStatus(g).rating())
+        .max().orElse(0);
+  }
+
+  private static boolean isActivesoft(@NonNull Gear soft) {
+    return ACTIVESOFT.equals(soft.getName());
   }
 
   // --- Matrix ---
@@ -2283,5 +2575,95 @@ public class Character {
 
   public int getNuyenTotal() {
     return nuyenLog.stream().mapToInt(LogEntry::amount).sum();
+  }
+
+  // --- Reputation ---
+
+  /** Eingaben des Spielleiters zur Reputation (S. 308/309). */
+  public @NonNull Reputation getReputation() {
+    return reputation;
+  }
+
+  /**
+   * Insgesamt verdientes Karma: Summe aller Gutschriften im Karma-Log; Ausgaben zählen nicht (wie im C#-Original,
+   * GRW S. 308 verweist auf das verdiente Karma).
+   */
+  public int getEarnedKarma() {
+    return karmaLog.stream().mapToInt(LogEntry::amount).filter(a -> a > 0).sum();
+  }
+
+  /**
+   * Straßenruf (S. 308): verdientes Karma ÷ 10, kaufmännisch gerundet, plus Punkte vom Spielleiter, minus geopferter
+   * Straßenruf; nie unter 0. Als Würfelbonus höchstens Charisma (Anzeige).
+   */
+  public @NonNull ReputationScore getStreetCred() {
+    int earned = getEarnedKarma();
+    int fromKarma = (earned + 5) / 10;
+    StringBuilder text = new StringBuilder("verdientes Karma %d ÷ 10 = %d".formatted(earned, fromKarma));
+    if (reputation.getStreetCredBonus() > 0) {
+      text.append(" + Spielleiter ").append(reputation.getStreetCredBonus());
+    }
+    if (reputation.getBurnedStreetCred() > 0) {
+      text.append(" − geopfert ").append(reputation.getBurnedStreetCred());
+    }
+    return new ReputationScore(
+        Math.max(0, fromKarma + reputation.getStreetCredBonus() - reputation.getBurnedStreetCred()), text.toString());
+  }
+
+  /**
+   * Schlechter Ruf (S. 308): Start 0, +1 je Handicap und −1 je Gabe der Liste (Wert in {@link QualityData#notoriety()}),
+   * plus Punkte vom Spielleiter, minus 1 je 2 geopfertem Straßenruf. Kann durch Gaben negativ werden (Plan-Annahme A2).
+   */
+  public @NonNull ReputationScore getNotoriety() {
+    List<String> parts = new ArrayList<>();
+    int value = 0;
+    for (CharacterQuality q : qualities) {
+      int n = q.data().notoriety();
+      if (n != 0) {
+        value += n;
+        parts.add("%s %s%d".formatted(q.data().name(), n > 0 ? "+" : "−", Math.abs(n)));
+      }
+    }
+    if (reputation.getNotorietyBonus() > 0) {
+      value += reputation.getNotorietyBonus();
+      parts.add("Spielleiter +" + reputation.getNotorietyBonus());
+    }
+    int burned = reputation.getBurnedStreetCred() / Reputation.STREET_CRED_PER_NOTORIETY;
+    if (burned > 0) {
+      value -= burned;
+      parts.add("geopferter Straßenruf −" + burned);
+    }
+    return new ReputationScore(value, parts.isEmpty() ? "keine Gaben oder Handicaps mit Einfluss" : String.join(", ",
+        parts));
+  }
+
+  /**
+   * Prominenz (S. 309): (Straßenruf + Schlechter Ruf) ÷ 3, abgerundet, plus Anpassung des Spielleiters; nie unter 0.
+   */
+  public @NonNull ReputationScore getPublicAwareness() {
+    int streetCred = getStreetCred().value();
+    int notoriety = getNotoriety().value();
+    int base = Math.floorDiv(streetCred + notoriety, 3);
+    int adjustment = reputation.getAwarenessAdjustment();
+    String text = "(%d + %d) ÷ 3 = %d".formatted(streetCred, notoriety, base)
+        + (adjustment == 0 ? "" : (adjustment > 0 ? " + Spielleiter " : " − Spielleiter ") + Math.abs(adjustment));
+    return new ReputationScore(Math.max(0, base + adjustment), text);
+  }
+
+  /** Ob 2 Straßenruf geopfert werden können: genug Straßenruf und Schlechter Ruf über 0 (S. 308). */
+  public boolean canBurnStreetCred() {
+    return getStreetCred().value() >= Reputation.STREET_CRED_PER_NOTORIETY && getNotoriety().value() > 0;
+  }
+
+  /**
+   * Opfert dauerhaft 2 Straßenruf für 1 Punkt weniger Schlechten Ruf (S. 308).
+   *
+   * @throws IllegalStateException wenn {@link #canBurnStreetCred()} nicht gilt
+   */
+  public void burnStreetCred() {
+    if (!canBurnStreetCred()) {
+      throw new IllegalStateException("Zu wenig Straßenruf oder kein Schlechter Ruf zum Abbauen");
+    }
+    reputation.burn();
   }
 }

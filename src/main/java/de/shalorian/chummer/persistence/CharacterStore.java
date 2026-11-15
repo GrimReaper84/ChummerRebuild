@@ -39,6 +39,7 @@ import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySource;
+import de.shalorian.chummer.model.character.reputation.Reputation;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.spirit.Spirit;
@@ -122,8 +123,8 @@ public class CharacterStore {
       data.resonance = Objects.requireNonNull(character.getMagicOrResonance()).getValue();
     }
     data.skills = character.getSkills().stream()
-        .filter(s -> s.getRating() > 0 || s.getSpecialization() != null)
-        .map(s -> new SkillEntry(s.getName(), s.getRating(), s.getSpecialization()))
+        .filter(s -> s.getRating() > 0 || s.getSpecialization() != null || s.getExoticTarget() != null)
+        .map(s -> new SkillEntry(s.getBaseName(), s.getRating(), s.getSpecialization(), s.getExoticTarget()))
         .toList();
     data.created = character.isCreated();
     data.nuyenBP = character.getNuyenBP();
@@ -161,6 +162,9 @@ public class CharacterStore {
     data.spirits = character.getSpirits().getAll().stream()
         .map(s -> new SpiritEntry(s.getName(), s.getForce(), s.getServices(), s.isBound()))
         .toList();
+    Reputation reputation = character.getReputation();
+    data.reputation = new ReputationData(reputation.getStreetCredBonus(), reputation.getNotorietyBonus(),
+        reputation.getBurnedStreetCred(), reputation.getAwarenessAdjustment());
     data.initiation = new InitiationEntry(character.getInitiation().getGrade(),
         character.getInitiation().getTechniques().stream().map(TechniqueData::name).toList());
     IdentityHashMap<Cyberware, Integer> pairIds = pairIds(character);
@@ -291,6 +295,7 @@ public class CharacterStore {
     data.notes = biography.getNotes();
     data.playerName = biography.getPlayerName();
     data.gameNotes = biography.getGameNotes();
+    data.portrait = biography.getPortrait();
     return data;
   }
 
@@ -316,6 +321,8 @@ public class CharacterStore {
     data.decoupledGroups.forEach(character::decoupleGroup);
     applyLog(data.karmaLog, character::addKarmaEntry);
     applyLog(data.nuyenLog, character::addNuyenEntry);
+    character.getReputation().restore(data.reputation.streetCredBonus, data.reputation.notorietyBonus,
+        data.reputation.burnedStreetCred, data.reputation.awarenessAdjustment);
     applyBiography(character, data);
     applyTradition(character, data);
     applySpells(character, data);
@@ -762,6 +769,7 @@ public class CharacterStore {
     biography.setNotes(data.biography.notes);
     biography.setPlayerName(data.biography.playerName);
     biography.setGameNotes(data.biography.gameNotes);
+    biography.setPortrait(data.biography.portrait);
   }
 
   private static void applyAttributes(@NonNull Character character, @NonNull CharacterData data) {
@@ -776,7 +784,8 @@ public class CharacterStore {
 
   private static void applySkills(@NonNull Character character, @NonNull CharacterData data) {
     for (SkillEntry entry : data.skills) {
-      Skill skill = character.getSkill(entry.name);
+      Skill skill = entry.exoticTarget == null ? character.getSkill(entry.name)
+          : character.loadExoticSkill(entry.name, entry.exoticTarget);
       if (skill != null) {
         skill.setRating(entry.rating);
         skill.setSpecialization(entry.specialization);

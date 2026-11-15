@@ -84,6 +84,7 @@ public class MetatypeDataLoader {
     List<String> positiveQualities = new ArrayList<>();
     List<String> negativeQualities = new ArrayList<>();
     AttributeRange edgeRange = null;
+    Movement movement = null;
 
     NodeList children = el.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
@@ -103,6 +104,8 @@ public class MetatypeDataLoader {
           int max = Integer.parseInt(childEl.getAttribute("max"));
           edgeRange = new AttributeRange(min, max);
         }
+        case "movement" -> movement = new Movement(Integer.parseInt(childEl.getAttribute("walk")),
+            Integer.parseInt(childEl.getAttribute("run")));
         case "qualities" -> {
           positiveQualities.addAll(extractQualityNames(childEl, "positive"));
           negativeQualities.addAll(extractQualityNames(childEl, "negative"));
@@ -115,11 +118,16 @@ public class MetatypeDataLoader {
       throw new IllegalStateException("Kein <edge>-Bereich für Metatyp \"" + name + "\"");
     }
 
+    if (movement == null) {
+      throw new IllegalStateException("Keine <movement>-Angabe für Metatyp \"" + name + "\"");
+    }
+
     return new MetatypeData(name, bp, isVariant, baseName,
         Collections.unmodifiableMap(ranges),
         edgeRange,
         Collections.unmodifiableList(positiveQualities),
-        Collections.unmodifiableList(negativeQualities));
+        Collections.unmodifiableList(negativeQualities),
+        movement);
   }
 
   private static @NonNull List<String> extractQualityNames(@NonNull Element qualitiesEl,

@@ -10,6 +10,7 @@ import org.jspecify.annotations.NonNull;
  * Metatyp oder Metavariante aus {@code metatypes.xml}.
  *
  * @param baseName Grundmetatyp (bei Varianten der übergeordnete Metatyp, sonst der eigene Name)
+ * @param movement Bewegungsweiten Gehen/Laufen (GRW S. 177)
  */
 public record MetatypeData(
     @NonNull String name,
@@ -19,7 +20,8 @@ public record MetatypeData(
     @NonNull Map<AttributeType, AttributeRange> ranges,
     @NonNull AttributeRange edgeRange,
     @NonNull List<String> grantedPositiveQualityNames,
-    @NonNull List<String> grantedNegativeQualityNames
+    @NonNull List<String> grantedNegativeQualityNames,
+    @NonNull Movement movement
 ) {
 
   public @NonNull AttributeRange getRangeFor(@NonNull AttributeType type) {

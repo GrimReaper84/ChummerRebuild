@@ -1,6 +1,7 @@
 package de.shalorian.chummer.persistence;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Flaches Persistenz-DTO, 1:1-Spiegel von {@link de.shalorian.chummer.model.character.CharacterBiography}.
@@ -21,6 +22,8 @@ class BiographyData {
   public @NonNull String notes = "";
   public @NonNull String playerName = "";
   public @NonNull String gameNotes = "";
+  /** Portrait als PNG (in JSON Base64), fehlt ohne Bild und in Dateien vor ADR-059. */
+  public byte @Nullable [] portrait;
 
   public BiographyData() {
   }

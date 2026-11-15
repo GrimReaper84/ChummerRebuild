@@ -1,18 +1,24 @@
 package de.shalorian.chummer.model.character.gear;
 
+import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
+import de.shalorian.chummer.model.character.skill.KnowledgeSuggestionLoader;
+import de.shalorian.chummer.model.character.skill.SkillDataLoader;
 import de.shalorian.chummer.model.character.spirit.SpiritData;
 import de.shalorian.chummer.model.character.spirit.SpiritDataLoader;
 import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import org.jspecify.annotations.NonNull;
 
 /**
  * Art des Zusatztexts, den ein Gegenstand beim Kauf braucht (Fertigkeit eines Werkzeugs, Thema einer
  * Datasoft, Name einer gefälschten SIN …). Die Feldbezeichnung steht je Eintrag in {@link
  * GearData#extraLabel()}. Ist ein Zusatztext vorgesehen, ist er Pflicht. Arten mit Vorschlägen
- * bieten eine Auswahl; nur {@link #LICENSE} erlaubt darüber hinaus Freitext.
+ * bieten eine Auswahl; {@link #LICENSE}, {@link #LANGUAGE} und {@link #KNOWLEDGE_SKILL} erlauben darüber hinaus
+ * Freitext.
  */
 public enum ExtraKind {
   /** Kein Zusatztext. */
@@ -49,7 +55,16 @@ public enum ExtraKind {
   /** Geisterart eines Geisterfokus (GRW S. 234), eine der sechs Geisterarten aus {@code spirits.xml}. */
   SPIRIT_TYPE,
   /** Nahkampffertigkeit eines Waffenfokus (GRW S. 234; Zuordnung über die Fertigkeit, Plan-Annahme A2). */
-  MELEE_SKILL;
+  MELEE_SKILL,
+  /**
+   * Fertigkeit einer Aktionssoft (GRW S. 377): Kampf-, Körperliche, Soziale, Technische und Fahrzeugfertigkeiten, nicht
+   * Magie oder Resonanz; ohne die exotischen Grundfertigkeiten (Plan-Annahme A6). Auswahl, kein Freitext.
+   */
+  ACTIVE_SKILL,
+  /** Sprache einer Linguasoft (S. 377): Vorschläge aus der Sprachliste, Freitext erlaubt. */
+  LANGUAGE,
+  /** Wissensfertigkeit einer Wissenssoft (S. 377): Vorschläge aus der Wissensliste, Freitext erlaubt. */
+  KNOWLEDGE_SKILL;
 
   private static final List<String> LICENSE_SUGGESTIONS = List.of("Waffenlizenz",
       "Verdecktes Tragen", "Jagdlizenz", "Zauberlizenz", "Detektivlizenz", "Führerschein");
@@ -72,12 +87,20 @@ public enum ExtraKind {
       case SPIRIT_TYPE -> SpiritDataLoader.getAll().values().stream()
           .filter(d -> d.kind() == SpiritKind.SPIRIT).map(SpiritData::name).toList();
       case MELEE_SKILL -> MELEE_SKILLS;
+      case ACTIVE_SKILL -> SkillDataLoader.skillsoftSkillNames();
+      case LANGUAGE -> KnowledgeSuggestionLoader.names(KnowledgeSkillCategory.LANGUAGE);
+      case KNOWLEDGE_SKILL -> Arrays.stream(KnowledgeSkillCategory.values())
+          .filter(c -> c != KnowledgeSkillCategory.LANGUAGE)
+          .flatMap(c -> KnowledgeSuggestionLoader.names(c).stream())
+          .distinct()
+          .sorted(Collator.getInstance(Locale.GERMAN))
+          .toList();
       default -> List.of();
     };
   }
 
   /** Ob der Zusatztext eine der {@link #suggestions()} sein muss (Auswahl statt Freitext). */
   public boolean isChoice() {
-    return this != NONE && this != TEXT && this != LICENSE;
+    return this != NONE && this != TEXT && this != LICENSE && this != LANGUAGE && this != KNOWLEDGE_SKILL;
   }
 }

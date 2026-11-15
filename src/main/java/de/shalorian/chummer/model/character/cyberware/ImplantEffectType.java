@@ -31,7 +31,9 @@ public enum ImplantEffectType {
   /** Direktes Neuralinterface für VR: Datenbuchse, Kommlink, Sim-Modul (S. 386), Simrig (S. 389); siehe GRW S. 258. */
   DNI("dni"),
   /** Implantiertes Sim-Modul: 1 = kaltes Sim, 2 = auch heißes Sim (S. 374, 386). */
-  SIM_MODULE("simmodule");
+  SIM_MODULE("simmodule"),
+  /** Talentleitungen: Stufe, bis zu der Aktionssofts genutzt werden können (S. 389). */
+  SKILLWIRES("skillwires");
 
   private final @NonNull String code;
 

@@ -534,6 +534,7 @@ public final class CyberwareTabBuilder {
         case WOUND_BOXES_IGNORED -> value + " Kästchen ignoriert";
         case DNI -> "Neuralinterface";
         case SIM_MODULE -> value > 1 ? "heißes Sim" : "kaltes Sim";
+        case SKILLWIRES -> "Aktionssofts bis Stufe " + value;
       });
     }
     return String.join(", ", parts);

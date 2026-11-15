@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Vorschläge für Wissens- und Sprachfertigkeiten (ADR-032, ADR-059): nur Namen, keine Regeltexte.
+    Straße, Akademisch, Beruflich, Hobby: Beispiel-Fertigkeiten und Beispiel-Spezialisierungen aus den Tabellen
+    GRW S. 155 (am Bild geprüft), dazu die Beispiele der Tabelle S. 110 und aus den Erschaffungsbeispielen S. 110/111.
+    Sprachen: die Sprachen aus GRW S. 156 und die Sprachliste des alten Chummer (übersetzt, Nutzerentscheidung
+    2026-11-15); Spezialisierungen laut S. 156 Lesen/Schreiben, Sprechen und die dort genannten Lingos.
+    <spec> direkt in <category> gilt für alle Fertigkeiten der Kategorie ohne eigene Spezialisierungen.
+    Alles bleibt Vorschlag: Freitext ist überall möglich.
+-->
+<knowledgeskills>
+    <category name="STREET">
+        <skill name="Seattler Straßengangs">
+            <spec>Halloweeners</spec>
+            <spec>Ancients</spec>
+            <spec>Brain Eaters</spec>
+            <spec>405 Hellhounds</spec>
+        </skill>
+        <skill name="UCAS-Politiker">
+            <spec>Kongress</spec>
+            <spec>Präsidenten</spec>
+            <spec>Lobbyistengruppe</spec>
+            <spec>Politische Partei</spec>
+        </skill>
+        <skill name="Ares Macrotechnology">
+            <spec>Damien Knight</spec>
+            <spec>AresSpace</spec>
+            <spec>Ares Arms</spec>
+            <spec>Unternehmungen in Seattle</spec>
+        </skill>
+        <skill name="Hongkong-Triaden">
+            <spec>Gelber Lotus</spec>
+            <spec>Rote Drachen</spec>
+            <spec>Schwarze Chrysanthemen</spec>
+        </skill>
+        <skill name="Sicherheitsfirmen">
+            <spec>Lone Star</spec>
+            <spec>Knight Errant</spec>
+            <spec>Hard Corps</spec>
+            <spec>Seattle Sec Corps</spec>
+        </skill>
+        <skill name="Gang-Identifikation"/>
+        <skill name="Kriminelle Organisationen"/>
+        <skill name="Schmuggelrouten"/>
+        <skill name="Kulte"/>
+        <skill name="Seattler Taliskrämer"/>
+        <skill name="Seattler Unterschlupfe"/>
+        <skill name="Seattler Syndikate"/>
+        <skill name="Nordamerikanische Waffenhändler"/>
+    </category>
+    <category name="ACADEMIC">
+        <skill name="Geschichte">
+            <spec>Amerika</spec>
+            <spec>Europa</spec>
+            <spec>Asien</spec>
+            <spec>Antike</spec>
+            <spec>Mittelalter</spec>
+            <spec>Moderne</spec>
+        </skill>
+        <skill name="Literatur">
+            <spec>Sci-Fi</spec>
+            <spec>Poesie</spec>
+            <spec>Belletristik</spec>
+            <spec>Liebesromane</spec>
+        </skill>
+        <skill name="Ökonomie">
+            <spec>Mikroökonomie</spec>
+            <spec>Makroökonomie</spec>
+        </skill>
+        <skill name="Biologie">
+            <spec>Anatomie</spec>
+            <spec>Mikrobiologie</spec>
+            <spec>Parazoologie</spec>
+            <spec>Physiologie</spec>
+        </skill>
+        <skill name="Chemie">
+            <spec>Anorganische Chemie</spec>
+            <spec>Industriechemie</spec>
+            <spec>Organische Chemie</spec>
+            <spec>Pharmazeutik</spec>
+        </skill>
+        <skill name="Medizin"/>
+        <skill name="Magietheorie"/>
+        <skill name="Politikwissenschaften"/>
+        <skill name="Philosophie"/>
+        <skill name="Lyrik"/>
+        <skill name="Musik"/>
+        <skill name="Altägyptische Magie"/>
+        <skill name="Militärgeschichte"/>
+    </category>
+    <category name="PROFESSIONAL">
+        <skill name="Architektur">
+            <spec>Kommerziell</spec>
+            <spec>Wohnhäuser</spec>
+            <spec>Barock</spec>
+            <spec>Bauhaus</spec>
+            <spec>Deutsche Gotik</spec>
+        </skill>
+        <skill name="Betriebswirtschaft">
+            <spec>Finanzen</spec>
+            <spec>Distribution</spec>
+            <spec>Herstellung</spec>
+            <spec>Megakonzern</spec>
+            <spec>Vertrieb</spec>
+            <spec>Kleinbetrieb</spec>
+        </skill>
+        <skill name="Maschinenbau">
+            <spec>Chemisch</spec>
+            <spec>Elektrisch</spec>
+            <spec>Mechanisch</spec>
+            <spec>Atomenergie</spec>
+        </skill>
+        <skill name="Militär">
+            <spec>Armee</spec>
+            <spec>Marine</spec>
+            <spec>Luftwaffe</spec>
+            <spec>UCAS-Marines</spec>
+            <spec>Küstenwache</spec>
+            <spec>Spezialeinheiten</spec>
+            <spec>Sicherheitsprozeduren</spec>
+            <spec>Ares</spec>
+            <spec>Aztechnology</spec>
+            <spec>Wuxing</spec>
+            <spec>Regierung</spec>
+        </skill>
+        <skill name="Sicherheitsdesign">
+            <spec>Konzern</spec>
+            <spec>Magisch</spec>
+            <spec>Matrix</spec>
+            <spec>Militär</spec>
+            <spec>Physisch</spec>
+            <spec>Privathäuser</spec>
+        </skill>
+        <skill name="Journalismus"/>
+        <skill name="Militärdienst"/>
+        <skill name="Waffenhersteller"/>
+        <skill name="UCAS-Militär"/>
+    </category>
+    <category name="HOBBY">
+        <skill name="Club-Musik">
+            <spec>Goblin Rock</spec>
+            <spec>Powernoize</spec>
+            <spec>Rockabilly</spec>
+            <spec>Sinthcore</spec>
+            <spec>WizPunk</spec>
+        </skill>
+        <skill name="Matrixspiele">
+            <spec>Dawn of Atlantis</spec>
+            <spec>Dark Eye</spec>
+            <spec>Grand Larceny</spec>
+            <spec>Killing Floor</spec>
+            <spec>Paranormal Crisis</spec>
+        </skill>
+        <skill name="Sport">
+            <spec>Combat Biking</spec>
+            <spec>Football</spec>
+            <spec>Fußball</spec>
+            <spec>Hockey</spec>
+            <spec>Tennis</spec>
+            <spec>Urban Brawl</spec>
+            <spec>Wrestling</spec>
+        </skill>
+        <skill name="Straßendrogen">
+            <spec>BTLs</spec>
+            <spec>Cram</spec>
+            <spec>Deepweed</spec>
+            <spec>Novacoke</spec>
+            <spec>Spike</spec>
+        </skill>
+        <skill name="Weine">
+            <spec>Elfenweine</spec>
+            <spec>Französische Weine</spec>
+            <spec>Kalifornische Weine</spec>
+            <spec>Weingüter</spec>
+        </skill>
+        <skill name="Holzarbeiten"/>
+        <skill name="Stadtkrieg-Teams"/>
+        <skill name="Science-Fiction-Filme"/>
+        <skill name="Elfenweine"/>
+        <skill name="Antike Mythologien"/>
+        <skill name="Globale Konflikte"/>
+    </category>
+    <category name="LANGUAGE">
+        <spec>Lesen/Schreiben</spec>
+        <spec>Sprechen</spec>
+        <spec>Stadtsprache</spec>
+        <spec>Juristensprech</spec>
+        <spec>l33t-Sprache</spec>
+        <spec>Wiz</spec>
+        <spec>Trog</spec>
+        <spec>Militärjargon</spec>
+        <spec>Techie</spec>
+        <spec>Orbital</spec>
+        <skill name="Arabisch"/>
+        <skill name="Bengalisch"/>
+        <skill name="Bulgarisch"/>
+        <skill name="Dänisch"/>
+        <skill name="Deutsch"/>
+        <skill name="Englisch"/>
+        <skill name="Französisch"/>
+        <skill name="Hebräisch"/>
+        <skill name="Hindi"/>
+        <skill name="Indonesisch"/>
+        <skill name="Italienisch"/>
+        <skill name="Japanisch"/>
+        <skill name="Kantonesisch"/>
+        <skill name="Koreanisch"/>
+        <skill name="Kroatisch"/>
+        <skill name="Latein"/>
+        <skill name="Mandarin"/>
+        <skill name="Or'zet"/>
+        <skill name="Persisch"/>
+        <skill name="Polnisch"/>
+        <skill name="Portugiesisch"/>
+        <skill name="Punjabi"/>
+        <skill name="Russisch"/>
+        <skill name="Sioux"/>
+        <skill name="Spanisch"/>
+        <skill name="Sperethiel"/>
+        <skill name="Thai"/>
+        <skill name="Türkisch"/>
+        <skill name="Wu"/>
+        <skill name="Xiang"/>
+    </category>
+</knowledgeskills>

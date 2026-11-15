@@ -1,12 +1,26 @@
 package de.shalorian.chummer.view.tab;
 
+import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.CharacterBiography;
+import de.shalorian.chummer.model.character.PortraitImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -17,12 +31,16 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 /**
  * Biografie-Tab: Aussehen, Hintergrund, Spieler-Metadaten und (im Karrieremodus) Spielnotizen als
  * Freitextfelder, live an {@link de.shalorian.chummer.model.character.CharacterBiography} gebunden.
  */
 public final class BiographyTabBuilder {
+
+  /** Kantenlänge der Portrait-Vorschau in Pixeln. */
+  private static final int PORTRAIT_PREVIEW = 200;
 
   private final @NonNull VBox biographyContainer;
   private final @NonNull CharacterTabHost host;
@@ -46,6 +64,8 @@ public final class BiographyTabBuilder {
     biographyContainer.getChildren().clear();
     CharacterBiography bio = ch.getBiography();
 
+    biographyContainer.getChildren().add(biographySectionTitle("Portrait"));
+    biographyContainer.getChildren().add(buildPortrait(bio));
     biographyContainer.getChildren().add(biographySectionTitle("Aussehen"));
     biographyContainer.getChildren().add(buildAppearanceGrid(bio));
 
@@ -59,6 +79,60 @@ public final class BiographyTabBuilder {
       biographyContainer.getChildren().add(biographySectionTitle("Spielnotizen"));
       biographyContainer.getChildren().add(buildGameNotesGrid(bio));
     }
+  }
+
+  /**
+   * Portrait mit „Bild wählen …“ und „Entfernen“ (ADR-059): das Bild wird beim Einlesen auf {@value
+   * PortraitImage#MAX_SIDE} Pixel verkleinert und als PNG im Charakter gespeichert.
+   */
+  private @NonNull HBox buildPortrait(@NonNull CharacterBiography bio) {
+    ImageView view = new ImageView();
+    view.setFitWidth(PORTRAIT_PREVIEW);
+    view.setFitHeight(PORTRAIT_PREVIEW);
+    view.setPreserveRatio(true);
+    view.setSmooth(true);
+    Label empty = new Label("Kein Portrait");
+    empty.getStyleClass().add(STYLE_DETAIL_HINT);
+    Button choose = new Button("Bild wählen …");
+    choose.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(choose, FontAwesomeSolid.IMAGE);
+    Button remove = new Button("Entfernen");
+    remove.getStyleClass().add(STYLE_BTN_SECONDARY);
+    useIcon(remove, FontAwesomeSolid.TRASH);
+    Runnable show = () -> {
+      byte[] png = bio.getPortrait();
+      view.setImage(png == null ? null : new Image(new ByteArrayInputStream(png)));
+      view.setVisible(png != null);
+      view.setManaged(png != null);
+      empty.setVisible(png == null);
+      empty.setManaged(png == null);
+      remove.setDisable(png == null);
+    };
+    choose.setOnAction(_ -> {
+      FileChooser chooser = new FileChooser();
+      chooser.setTitle("Portrait wählen");
+      chooser.getExtensionFilters().add(
+          new FileChooser.ExtensionFilter("Bilder", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"));
+      File file = chooser.showOpenDialog(biographyContainer.getScene().getWindow());
+      if (file == null) {
+        return;
+      }
+      try {
+        bio.setPortrait(PortraitImage.toStoredPng(Files.readAllBytes(file.toPath())));
+        show.run();
+      } catch (IOException e) {
+        host.services().warn("Portrait", "Das Bild ließ sich nicht lesen: " + e.getMessage());
+      }
+    });
+    remove.setOnAction(_ -> {
+      bio.setPortrait(null);
+      show.run();
+    });
+    show.run();
+    VBox buttons = new VBox(8, choose, remove);
+    HBox box = new HBox(16, view, empty, buttons);
+    box.setAlignment(Pos.CENTER_LEFT);
+    return box;
   }
 
   private @NonNull Label biographySectionTitle(@NonNull String text) {

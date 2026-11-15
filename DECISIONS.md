@@ -227,6 +227,23 @@ vorbelegt und änderbar (S. 358), keine Cyberware.
 **Warum:** Nutzerentscheidungen 2026-11-15; `docs/plaene/archiv/karrieremodus_plan.md`. Ein Stand je Buchung ersetzt die
 rund 40 Umkehr-Fälle des C#-Originals und kann keine Abhängigkeiten späterer Schritte übersehen.
 
+### ADR-059: Restliche GRW-Inhalte (2026-11-15)
+Bewegungsweiten am Metatyp (S. 177) mit Sprint-Pool im Tab Zustand. Im Karrieremodus sind Adept, Zauberer,
+Magieradept und Technomancer gesperrt (S. 313, zentral in `getQualityBlockReason`; die Aufhebung für latente
+Charaktere kommt als Einstellung), Beidhändigkeit bleibt frei. Ruf im Tab Kontakte: Straßenruf aus dem verdienten
+Karma (Summe der Gutschriften) ÷ 10 gerundet, Schlechter Ruf aus `<notoriety>` an 23 Gaben/Handicaps, Prominenz daraus
+÷ 3; Spielleiter-Punkte, Opfern und Prominenz-Anpassung sind keine Buchungen. Exotische Fertigkeiten als Instanzen
+„Grundfertigkeit (Ziel)“ in der normalen Fertigkeitsliste (gleiche Kosten- und Sperrregeln), die Grundzeile bleibt
+ohne Wert; keine Spezialisierung; im Karrieremodus 4 Karma für Wert 1. Talentsofts mit Schalter „geladen“:
+Aktionssofts nur mit Talentleitungen, Stufe höchstens die der Leitungen (sonst wirkungslos, das C# deckelte),
+geladen zusammen höchstens das Doppelte (bei Überlast, etwa nach dem Senken der Leitungsstufe, wirkt keine);
+Lingua-/Wissenssofts brauchen ein Neuralinterface; der höhere Wert aus Fertigkeit und Soft zählt
+(`getEffectiveSkillRating`). Eine Exotik-Instanz lässt sich nur bei der Erschaffung und nur ohne Gabe/Handicap mit
+ihr als Wahl entfernen. Vorschläge für Wissensfertigkeiten und ihre Spezialisierungen in `knowledge_skills.xml`
+(GRW S. 110/155/156 plus die C#-Sprachen). Portrait in der Biografie, auf 512 px verkleinert als PNG.
+**Warum:** Nutzerentscheidungen 2026-11-15 (Ruf im Tab Kontakte, Schalter „geladen“, nur die vier Gaben, Vorschläge
+GRW + Sprachen); `docs/plaene/archiv/grw_reste_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)
@@ -432,7 +449,7 @@ Technomant Ja/Nein-Abfrage, gesperrte Fertigkeiten fallen auf 0.
 
 ### ADR-032: Wissensfertigkeiten: Vorschlagsliste zurückholen (2026-08-06)
 Die Namensvorschläge (Sprachen, Lingos) sollen wiederkommen, aus C#-Liste und GRW S. 156, ohne Zusatzband-Begriffe.
-Noch offen.
+Umgesetzt mit ADR-059 (`knowledge_skills.xml`).
 **Warum:** Nicht alle Spieler haben SR-spezifische Begriffe im Kopf.
 
 ## Benutzeroberfläche

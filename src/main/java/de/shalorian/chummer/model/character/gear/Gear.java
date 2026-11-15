@@ -309,19 +309,28 @@ public class Gear {
     return data.category() == GearCategory.MATRIX_PROGRAMS;
   }
 
-  /** Ob das Programm läuft; zählt nur, solange es in einem Gerät eingebaut ist (Prozessorlimit, GRW S. 261). */
+  /** Ob dies eine Talentsoft ist (Aktions-, Lingua- oder Wissenssoft, GRW S. 377). */
+  public boolean isSkillsoft() {
+    return data.category() == GearCategory.SKILLSOFTS;
+  }
+
+  /**
+   * Ob das Programm läuft (zählt nur, solange es in einem Gerät eingebaut ist: Prozessorlimit, GRW S. 261) bzw. ob die
+   * Talentsoft geladen ist und damit genutzt werden kann (S. 377, 389).
+   */
   public boolean isRunning() {
     return running;
   }
 
   /**
-   * Startet bzw. beendet das Programm.
+   * Startet bzw. beendet das Programm, lädt bzw. entlädt die Talentsoft. Ob die Talentleitungen eine Aktionssoft noch
+   * aufnehmen, prüft {@code Character#getSkillsoftLoadProblem}.
    *
-   * @throws IllegalStateException wenn dies kein Programm ist
+   * @throws IllegalStateException wenn dies weder Programm noch Talentsoft ist
    */
   public void setRunning(boolean running) {
-    if (!isProgram()) {
-      throw new IllegalStateException(data.name() + " ist kein Programm");
+    if (!isProgram() && !isSkillsoft()) {
+      throw new IllegalStateException(data.name() + " ist weder Programm noch Talentsoft");
     }
     this.running = running;
   }

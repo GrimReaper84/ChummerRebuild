@@ -126,7 +126,8 @@ public abstract class ChoiceCatalogSelectDialogController<T extends CatalogEntry
     Collator collator = Collator.getInstance(Locale.GERMAN);
     switch (selection) {
       case SKILL -> choiceBox.getItems().setAll(character == null ? List.of()
-          : character.getSkills().stream().map(Skill::getName).sorted(collator).toList());
+          : character.getSkills().stream().filter(sk -> !sk.isExoticTemplate()).map(Skill::getName)
+              .sorted(collator).toList());
       case ATTRIBUTE -> choiceBox.getItems().setAll(
           attributeOptions().stream().map(AttributeType::getDisplayName).toList());
       case MENTOR -> choiceBox.getItems().setAll(MentorDataLoader.choiceLabels());

@@ -455,6 +455,7 @@ public class CharacterViewController implements CharacterTabHost {
   @Override
   public void onLogChanged() {
     logTab.update();
+    contactTab.refresh(); // Straßenruf hängt am verdienten Karma
     updateSummary();
     updateUndoButton();
   }

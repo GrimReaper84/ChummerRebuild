@@ -3,7 +3,8 @@
      den Tabellen "Fertigkeiten und damit verbundene Attribute" / "Fertigkeitsgruppen" (S. 146), die
      Kategorie aus den Beschreibungsabschnitten S. 147–154 (alles gegen das PDF-Bild geprüft).
      Exotische Fern-/Nahkampfwaffe und Exotisches Fahrzeug müssen laut GRW je Waffe bzw. Fahrzeug
-     einzeln erlernt werden; hier vorerst als je ein Eintrag (siehe feature_checklist.md §4).
+     einzeln erlernt werden; der Eintrag hier ist die Grundzeile ohne Wert, gelernt wird je Ziel eine Instanz
+     „Grundfertigkeit (Ziel)“ (ADR-059).
      default="false": keine Probe ohne Fertigkeitswert (in der Tabelle S. 146 kursiv, am Bild geprüft). -->
 <skills>
 

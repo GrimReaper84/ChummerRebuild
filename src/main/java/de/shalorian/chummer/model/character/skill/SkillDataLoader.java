@@ -2,9 +2,11 @@ package de.shalorian.chummer.model.character.skill;
 
 import de.shalorian.chummer.model.character.DataPaths;
 import java.io.InputStream;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -19,6 +21,23 @@ public class SkillDataLoader {
   }
 
   private static @Nullable List<Skill> cache;
+  private static @Nullable List<String> skillsoftSkillNames;
+
+  /**
+   * Fertigkeiten, die eine Aktionssoft nachahmen kann (GRW S. 377): alle außer Magie- und Resonanzfertigkeiten, ohne
+   * die exotischen Grundzeilen (Plan-Annahme A6), alphabetisch. Einmal berechnet, weil die Gear-Prüfung sie oft fragt.
+   */
+  public static synchronized @NonNull List<String> skillsoftSkillNames() {
+    if (skillsoftSkillNames == null) {
+      skillsoftSkillNames = createFreshSkills().stream()
+          .filter(s -> s.getCategory() != SkillCategory.MAGICAL && s.getCategory() != SkillCategory.RESONANCE
+              && !s.isExoticTemplate())
+          .map(Skill::getName)
+          .sorted(Collator.getInstance(Locale.GERMAN))
+          .toList();
+    }
+    return skillsoftSkillNames;
+  }
 
   public static synchronized @NonNull List<Skill> createFreshSkills() {
     if (cache == null) {

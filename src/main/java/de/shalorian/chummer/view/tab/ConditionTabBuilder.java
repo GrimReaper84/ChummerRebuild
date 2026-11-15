@@ -10,10 +10,12 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.metatype.Movement;
 import de.shalorian.chummer.model.character.condition.AttributeTest;
 import de.shalorian.chummer.model.character.skill.DicePool;
 import de.shalorian.chummer.view.grid.ConditionBoxes;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.IntConsumer;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -67,6 +69,8 @@ public final class ConditionTabBuilder {
     container.getChildren().add(woundLabel(character));
     container.getChildren().add(sectionTitle("Initiative", 16));
     container.getChildren().add(withRightFiller(buildInitiativeGrid(character)));
+    container.getChildren().add(sectionTitle("Bewegung", 16));
+    container.getChildren().add(withRightFiller(buildMovementGrid(character)));
     container.getChildren().add(sectionTitle("Attributproben", 16));
     container.getChildren().add(withRightFiller(buildAttributeTestGrid(character)));
   }
@@ -137,6 +141,22 @@ public final class ConditionTabBuilder {
           poolLabel(String.valueOf(ch.getAstralInitiative()), null),
           hintLabel("Intuition × 2; %d Durchgänge".formatted(Character.ASTRAL_INITIATIVE_PASSES)));
     }
+    return grid;
+  }
+
+  /** Bewegungsweiten und Sprinten (GRW S. 177). */
+  private static @NonNull MigPane buildMovementGrid(@NonNull Character ch) {
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][center][]");
+    grid.getStyleClass().add(STYLE_ATTR_GRID);
+    Movement movement = ch.getMovement();
+    addRowCells(grid, 0, nameLabel("Gehen"), poolLabel(movement.walk() + " m", null),
+        hintLabel("je Kampfrunde, auf die Initiativedurchgänge verteilt (GRW S. 177)"));
+    addRowCells(grid, 1, nameLabel("Laufen"), poolLabel(movement.run() + " m", null),
+        hintLabel("je Kampfrunde; laufend −2 auf Proben außer Sturmangriff und Verteidigung"));
+    Optional<DicePool> sprint = ch.getSprintPool();
+    addRowCells(grid, 2, nameLabel("Sprinten"),
+        poolLabel(sprint.map(p -> String.valueOf(p.dice())).orElse("–"), sprint.map(DicePool::breakdown).orElse(null)),
+        hintLabel("Einfache Handlung, Laufen + Stärke; +2 m Laufen je Erfolg"));
     return grid;
   }
 

@@ -2,11 +2,12 @@ package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
+import de.shalorian.chummer.model.character.skill.KnowledgeSuggestionLoader;
+import java.util.List;
 import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.jspecify.annotations.NonNull;
@@ -15,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 public class KnowledgeSkillAddDialogController {
 
   @FXML
-  private TextField nameField;
+  private ComboBox<String> nameBox;
   @FXML
   private ComboBox<KnowledgeSkillCategory> categoryBox;
   @FXML
@@ -41,7 +42,16 @@ public class KnowledgeSkillAddDialogController {
       }
     });
 
-    nameField.textProperty().addListener((_, _, _) -> clearError());
+    nameBox.getEditor().textProperty().addListener((_, _, _) -> clearError());
+    // Vorschläge je Kategorie (GRW S. 110, 155, 156; ADR-032), Freitext bleibt möglich.
+    categoryBox.valueProperty().addListener((_, _, category) -> fillSuggestions(category));
+    fillSuggestions(categoryBox.getValue());
+  }
+
+  private void fillSuggestions(@Nullable KnowledgeSkillCategory category) {
+    String typed = nameBox.getEditor().getText();
+    nameBox.getItems().setAll(category == null ? List.of() : KnowledgeSuggestionLoader.names(category));
+    nameBox.getEditor().setText(typed);
   }
 
   public void setStage(@NonNull Stage stage) {
@@ -58,7 +68,7 @@ public class KnowledgeSkillAddDialogController {
 
   @FXML
   private void onOk() {
-    String name = nameField.getText() == null ? "" : nameField.getText().trim();
+    String name = nameBox.getEditor().getText() == null ? "" : nameBox.getEditor().getText().trim();
     if (name.isEmpty()) {
       errorLabel.setText("Name darf nicht leer sein");
       return;

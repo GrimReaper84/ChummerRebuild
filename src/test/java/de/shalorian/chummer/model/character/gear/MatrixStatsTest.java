@@ -46,6 +46,16 @@ class MatrixStatsTest {
   }
 
   @Test
+  void loadedSkillsoftsAreNoRunningPrograms() {
+    // Talentsofts im Kommlink zählen nicht zum Prozessorlimit, nur Programme (S. 261, 377)
+    List<Gear> installed = new ArrayList<>(runningPrograms(4));
+    Gear soft = new Gear(find("Linguasoft"), 2, 1, "Japanisch", null);
+    soft.setRunning(true);
+    installed.add(soft);
+    assertEquals(5, MatrixStats.of(new MatrixBase(5, 3, 3, 5), installed).processor());
+  }
+
+  @Test
   void stoppedProgramsDoNotCount() {
     List<Gear> programs = runningPrograms(5);
     programs.getFirst().setRunning(false);

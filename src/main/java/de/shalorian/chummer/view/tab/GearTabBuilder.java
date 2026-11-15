@@ -18,6 +18,7 @@ import de.shalorian.chummer.model.character.gear.GearArea;
 import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.gear.MatrixStats;
+import de.shalorian.chummer.model.character.gear.SkillsoftStatus;
 import de.shalorian.chummer.model.character.magic.Foci;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
@@ -301,6 +302,10 @@ final class GearTabBuilder {
       addRowCells(grid, row, detailKey("Läuft mit Stufe"),
           detailValue(String.valueOf(deviceStats.programRating(gear.getRating()))), detailKey("Zustand"), running);
     }
+    if (gear.isSkillsoft() && ownsSkillsoft(character, gear)) {
+      addRowCells(grid, row, detailKey("Wirkung"), detailValue(skillsoftEffect(character, gear)), detailKey("Zustand"),
+          skillsoftToggle(gear, character, host, onChanged));
+    }
     details.getChildren().addAll(title, grid);
     if (!d.note().isEmpty()) {
       Label note = detailHint(d.note());
@@ -359,6 +364,43 @@ final class GearTabBuilder {
       box.getChildren().add(active);
     }
     return box;
+  }
+
+  /** Ob die Talentsoft dem Charakter gehört (nicht in einem Fahrzeug liegt). */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: genau dieser Gegenstand
+  private static boolean ownsSkillsoft(@NonNull Character character, @NonNull Gear soft) {
+    return character.getSkillsofts().stream().anyMatch(g -> g == soft);
+  }
+
+  /** „Stufe 3“ bzw. der Grund, warum die Talentsoft nicht wirkt (GRW S. 377, 389). */
+  private static @NonNull String skillsoftEffect(@NonNull Character character, @NonNull Gear soft) {
+    SkillsoftStatus status = character.getSkillsoftStatus(soft);
+    String problem = status.problem();
+    return problem != null ? problem : "Stufe " + status.rating();
+  }
+
+  /**
+   * Schalter „geladen“ einer Talentsoft. Aktionssofts prüft der Klick-Handler gegen die Talentleitungen (Stufe und
+   * doppelte Stufe gesamt, S. 389) und warnt statt zu laden.
+   */
+  private static @NonNull CheckBox skillsoftToggle(@NonNull Gear soft, @NonNull Character character,
+      @NonNull CharacterTabHost host, @NonNull Runnable onChanged) {
+    CheckBox loaded = new CheckBox("geladen");
+    loaded.setSelected(soft.isRunning());
+    loaded.selectedProperty().addListener((_, _, value) -> {
+      if (value == soft.isRunning()) {
+        return;
+      }
+      String problem = value ? character.getSkillsoftLoadProblem(soft) : null;
+      if (problem != null) {
+        host.services().warn("Talentsoft", problem);
+        loaded.setSelected(false);
+        return;
+      }
+      soft.setRunning(value);
+      onChanged.run();
+    });
+    return loaded;
   }
 
   /** Das Kommlink, in dem {@code part} eingebaut ist (auch Kommlink-Headware), oder {@code null}. */

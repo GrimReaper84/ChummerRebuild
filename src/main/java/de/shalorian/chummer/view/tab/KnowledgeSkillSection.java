@@ -18,6 +18,8 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
+import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
+import de.shalorian.chummer.model.character.skill.KnowledgeSuggestionLoader;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.KnowledgeSkillAddDialogController;
 import de.shalorian.chummer.view.grid.RowControls;
@@ -25,11 +27,14 @@ import de.shalorian.chummer.view.grid.RowModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -148,12 +153,8 @@ final class KnowledgeSkillSection {
 
     editBtn.setOnAction(_ -> {
       KnowledgeSkill current = ch.getNativeLanguage();
-      TextInputDialog dialog = new TextInputDialog(current != null ? current.getName() : "");
-      TabServices.applyDialogStyle(dialog);
-      dialog.setTitle("Muttersprache");
-      dialog.setHeaderText("Muttersprache des Charakters");
-      dialog.setContentText("Sprache:");
-      dialog.showAndWait()
+      suggestionDialog("Muttersprache", "Muttersprache des Charakters", "Sprache:",
+          current != null ? current.getName() : "", KnowledgeSuggestionLoader.names(KnowledgeSkillCategory.LANGUAGE))
           .map(String::trim)
           .filter(s -> !s.isEmpty())
           .ifPresent(name -> {
@@ -216,7 +217,7 @@ final class KnowledgeSkillSection {
     specBtn.setOnAction(_ -> onEditKnowledgeSkillSpecialization(skill, character));
 
     Runnable poolRefresh = () -> DicePoolLabel.show(poolLabel, character.getKnowledgeSkillDicePool(skill),
-        skill.getRating(), skill.getSpecialization());
+        character.getEffectiveKnowledgeSkillRating(skill), skill.getSpecialization());
     knowledgeSkillRefreshers.add(poolRefresh);
     poolRefresh.run();
 
@@ -324,15 +325,33 @@ final class KnowledgeSkillSection {
     if (!character.canSpecializeKnowledgeSkill(skill)) {
       return;
     }
-    TextInputDialog dialog = new TextInputDialog(
-        skill.getSpecialization() != null ? skill.getSpecialization() : "");
-    TabServices.applyDialogStyle(dialog);
-    dialog.setTitle("Spezialisierung");
-    dialog.setHeaderText(skill.getName() + " – Spezialisierung");
-    dialog.setContentText("Spezialisierung:");
-    dialog.showAndWait().map(String::trim)
+    suggestionDialog("Spezialisierung", skill.getName() + " – Spezialisierung", "Spezialisierung:",
+        skill.getSpecialization() != null ? skill.getSpecialization() : "",
+        KnowledgeSuggestionLoader.specializations(skill.getName(), skill.getCategory()))
+        .map(String::trim)
         .ifPresent(value -> applyKnowledgeSkillSpecialization(skill, character,
             value.isBlank() ? null : value));
+  }
+
+  /**
+   * Eingabedialog mit editierbarer Vorschlagsliste (GRW S. 155/156, ADR-059); Freitext bleibt möglich. Leer bei
+   * Abbruch.
+   */
+  private static @NonNull Optional<String> suggestionDialog(@NonNull String title, @NonNull String header,
+      @NonNull String caption, @NonNull String current, @NonNull List<String> suggestions) {
+    ComboBox<String> box = new ComboBox<>();
+    box.setEditable(true);
+    box.getItems().setAll(suggestions);
+    box.getEditor().setText(current);
+    box.setPrefWidth(260);
+    Dialog<String> dialog = new Dialog<>();
+    dialog.getDialogPane().setContent(new HBox(10, new Label(caption), box));
+    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+    dialog.setResultConverter(button -> button == ButtonType.OK ? box.getEditor().getText() : null);
+    TabServices.applyDialogStyle(dialog);
+    dialog.setTitle(title);
+    dialog.setHeaderText(header);
+    return dialog.showAndWait();
   }
 
   private void applyKnowledgeSkillSpecializationInCareerMode(@NonNull KnowledgeSkill skill,

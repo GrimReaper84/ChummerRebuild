@@ -19,6 +19,7 @@ import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.skill.DicePool;
+import de.shalorian.chummer.model.character.skill.ExoticSkills;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.weapon.AmmoEffect;
@@ -404,10 +405,15 @@ public class Equipment {
   /**
    * Aktive Fertigkeit, mit der die Waffe geführt bzw. abgefeuert wird ({@link
    * WeaponCategory#skillName()}, GRW S. 147/148, 360–366). Der Wert einer noch gekoppelten
-   * Fertigkeitsgruppe steht bereits auf jeder Einzelfertigkeit, z.B. Gruppe Feuerwaffen 3 → Gewehre 3.
+   * Fertigkeitsgruppe steht bereits auf jeder Einzelfertigkeit, z.B. Gruppe Feuerwaffen 3 → Gewehre 3. Exotische
+   * Waffen nutzen die für genau diese Waffe gelernte Instanz (GRW S. 148, 365), ohne sie die Grundfertigkeit mit Wert 0.
    */
   public @NonNull Skill getWeaponSkill(@NonNull Weapon weapon) {
     String skillName = weapon.getData().category().skillName();
+    Skill exotic = ExoticSkills.isBase(skillName) ? owner.getExoticSkill(skillName, weapon.getName()) : null;
+    if (exotic != null) {
+      return exotic;
+    }
     return Objects.requireNonNull(owner.getSkill(skillName), () -> "Kampffertigkeit fehlt: " + skillName);
   }
 

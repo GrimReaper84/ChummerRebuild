@@ -11,7 +11,7 @@
   <processor>/<signal> = Kommlink-Werte, <firewall>/<system> = Betriebssystem-Werte (S. 374).
   <costhigh> = zweites Preisband ab Stufe 4 ("Preis (bis Stufe 6)", Matrixprogramme S. 376).
   <variablecost>true</variablecost> = Preisspanne ("5-200+ ¥", "100+ ¥"): <cost> ist der Mindestpreis.
-  <extra> = Pflicht-Zusatztext beim Kauf mit Feldbezeichnung; kind="LICENSE" = Lizenz-Vorauswahl.
+  <extra> = Pflicht-Zusatztext beim Kauf mit Feldbezeichnung; kind = Art (ExtraKind), z.B. "LICENSE" = Lizenz-Vorauswahl.
 
   Gear Teil B: Kommlinks, Betriebssysteme, Matrixprogramme (S. 374/376), ebenfalls vom PDF-Bild.
   Matrix und Kommlinks (docs/plaene/archiv/matrix_kommlinks_plan.md): Programme einzeln (S. 271-273), Softwarepakete
@@ -1279,7 +1279,7 @@
         <rating>1-4</rating>
         <avail>8</avail>
         <cost>Rating * 10000</cost>
-        <extra>Fertigkeit</extra>
+        <extra kind="ACTIVE_SKILL">Fertigkeit</extra>
         <source>SR4</source>
         <page>377</page>
     </item>
@@ -1289,7 +1289,7 @@
         <rating>1-5</rating>
         <avail>2</avail>
         <cost>Rating * 500</cost>
-        <extra>Sprache</extra>
+        <extra kind="LANGUAGE">Sprache</extra>
         <source>SR4</source>
         <page>377</page>
     </item>
@@ -1299,7 +1299,7 @@
         <rating>1-5</rating>
         <avail>4</avail>
         <cost>Rating * 2000</cost>
-        <extra>Fertigkeit</extra>
+        <extra kind="KNOWLEDGE_SKILL">Wissensfertigkeit</extra>
         <source>SR4</source>
         <page>377</page>
     </item>

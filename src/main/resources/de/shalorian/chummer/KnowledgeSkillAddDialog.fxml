@@ -15,7 +15,7 @@
         </columnConstraints>
         <Label text="Name:" styleClass="field-label"
                GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="nameField" promptText="z.B. Straßenkultur"
+        <ComboBox fx:id="nameBox" editable="true" maxWidth="Infinity" promptText="Vorschlag wählen oder eintippen"
                GridPane.columnIndex="1" GridPane.rowIndex="0"/>
         <Label text="Kategorie:" styleClass="field-label"
                GridPane.columnIndex="0" GridPane.rowIndex="1"/>
