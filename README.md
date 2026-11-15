@@ -44,10 +44,15 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
    Drohnen, Fahrzeugschaden.
 9. ✅ **Status-Panel überarbeiten**: Zustandsmonitor mit Verletzungsstufen, Edgepunkte und Edge verheizen.
 10. ✅ **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
-11. **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für
-    Wissensfertigkeiten, Portrait.
-12. **Charakterbogen**: Drucken und Exportieren.
-13. **NSCs**: Vorgefertigte NSCs wie sie in den Regelbüchern beschrieben sind und die Möglichkeit eigene NSCs zu erstellen.
+11. **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Ruf (Straßenruf, Schlechter Ruf,
+    Prominenz), Talentleitungen mit Aktions-, Wissens- und Linguasofts, keine spätere Wahl von Adept, Zauberer,
+    Magieradept oder Technomancer im Karrieremodus, Vorschlagsliste für Wissensfertigkeiten, Portrait.
+12. **Drogen, Toxine und Granaten** (optional): ihre Wirkung statt nur Katalogeinträge.
+13. **Einstellungen**: gesammelte Wahlmöglichkeiten, z.B. Zahlenformat, Gliedpanzerung als Durchschnitt, häufige Proben
+    im Status, versäumte Lebensstilzahlungen und das spätere Erwachen latenter Charaktere.
+14. **Charakterbogen**: Drucken und Exportieren.
+15. **NSCs**: Vorgefertigte NSCs wie sie in den Regelbüchern beschrieben sind und die Möglichkeit eigene NSCs zu erstellen,
+    dazu Critter mit ihren Kräften.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in
 [`docs/feature_checklist.md`](docs/feature_checklist.md).

@@ -184,7 +184,8 @@
 | Kommlink-Headware                                             | ✅      | Kommlink-Modell aus dem Ausrüstungskatalog wird eingebaut, samt Betriebssystem (S. 386) |
 | Cybergliedmaßen, Cyberwaffen                                  | ✅      | 2026-11-12 (ADR-051): 14 Glieder mit Stelle, An-/Abnehmen, Maßanfertigung, Verbesserungen, 5 Zubehörteile, 4 Cyber-Nahkampfwaffen, Head-/Bodyware mit Gliedkapazität, Durchschnitt über fünf Körperteile, Monitor +1 je Glied, Gliedpanzerung (Summe wie C#), Waffen mit Glied-STR. Offen: Cyberguns (GRW ohne Kosten), Einstellung Gliedpanzerung als Durchschnitt, Schockhand-Ladungen |
 | Datenbuchse, Kommlink, Sim-Modul, Simrig für VR | ✅ | 2026-11-13 (ADR-054): Neuralinterface bzw. Sim-Modul (kalt/heiß) als Implantat-Wirkung, zählen für den Matrixzugang (S. 258, 386) |
-| Smartlink-Bonus, Talentleitungen mit Aktionssofts | ❌ | Nur Hinweis, bis Waffen-Pools (Roadmap 8) bzw. Aktionssofts kommen |
+| Smartlink-Bonus auf den Waffenpool | ✅ | 2026-11-15 (ADR-056) |
+| Talentleitungen mit Aktionssofts, Wissens- und Linguasofts | ❌ | Software steht im Katalog, wirkt aber nicht auf Fertigkeiten; Roadmap 11 |
 
 ---
 
@@ -209,7 +210,7 @@
 | Lebensstil (6 GRW-Stufen, Monate im Voraus) | ✅      | GRW S. 111; Kosten zählen gegen das Ressourcengeld; Tab "Straßenausrüstung" → "Lebensstil" (2026-09-27) |
 | Lebensstil-Ausbaustufen, weitere Lebensstile | ❌      | Zusatzband, zurückgestellt |
 | Lebensstilzahlungen im Karrieremodus      | ✅      | 2026-11-15 (ADR-058): „Monat bezahlen“ und „Stufe wechseln“ (erster Monat) buchen Nuyen als Lebensstil (S. 310) |
-| Versäumte Lebensstilzahlungen (GRW S. 310: W6 gegen ausgesetzte Monate, Abstieg, Schulden) | ❌ | Später als Einstellung (Nutzerwunsch 2026-11-15, mit den übrigen Einstellungsmöglichkeiten) |
+| Versäumte Lebensstilzahlungen (GRW S. 310: W6 gegen ausgesetzte Monate, Abstieg, Schulden) | ❌ | Später als Einstellung (Nutzerwunsch 2026-11-15, mit den übrigen Einstellungsmöglichkeiten, Roadmap 13) |
 
 ---
 
@@ -246,7 +247,8 @@
 | Foki kaufen, binden, aktivieren | ✅ | 2026-11-13 (ADR-055): Fokusart und Zusatz als Auswahl (Zauberkategorie, Geisterart, Nahkampffertigkeit); Bindung im Detail des Fokus (Erschaffung 1 BP je Kraft, Karriere Kraft × Faktor Karma, S. 112/234), höchstens Magie Foki und Kraft 5 × Magie, aktiv höchstens Logik (S. 233/234). Zauberspeicher ohne Mechanik |
 | Munition, Pfeile/Bolzen, Granaten/Raketen | ✅ | Gear Teil D (2026-10-08, GRW S. 361, 369–371 am Bild): 11 Munitionssorten pro 10 Schuss mit Waffenklasse (Auswahl, GRW S. 368/369; Taserpfeil, Sturmkanonen-Geschosse, Injektionspfeile mit fester Waffe), Bolzen/Injektionsbolzen als normale Ausrüstung; Pfeile (Stufe 1–8, Preis fest) im Waffen-Tab am Bogen mit Schaden nach min(Pfeil, Bogen) und Mengen-Stepper; 7 Granaten (Standard/Minigranate), 3 Raketen, 3 Lenkraketen (Sensorstufe 1–6), 3 Sprengstoffe pro kg, Sprengkapsel; Kampfwerte nur als Anzeige. UI vom Nutzer noch nicht angesehen |
 | Munitionswirkung auf Waffenwerte | ✅ | 2026-11-15 (ADR-056), siehe Abschnitt 12 |
-| Granaten/Sprengstoff im Kampf | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
+| Granaten/Sprengstoff im Kampf | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13); Roadmap 12 (optional) |
+| Wirkung von Drogen und Toxinen, Sucht | ❌ | Nur Katalogeinträge; Roadmap 12 (optional) |
 | DIY/Hacked/Gratis/Aufschlag/Schwarzmarkt, Verkauf, "ausgerüstet" | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
 
 ---
@@ -287,6 +289,8 @@
 | Karma/Nuyen-Log mit Datum                                             | ✅      |                                                               |
 | Undo für Log-Einträge                                                 | ✅      | 2026-11-15 (ADR-058): letzter Schritt, beliebig oft, über den gemerkten Stand vor der Buchung; nur in der laufenden Sitzung |
 | Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ✅      | 2026-11-15 (ADR-058): zehn Arten (`LogCategory`, auch „Kontakt“) als Spalte „Art“, gespeichert; alte Einträge „Manuell“ |
+| Ruf: Straßenruf, Schlechter Ruf, Prominenz (ca. S. 308) | ❌ | Straßenruf = verdientes Karma ÷ 10, Prominenz aus beiden; Roadmap 11 |
+| Adept, Zauberer, Magieradept, Technomancer nicht nachträglich wählbar (S. 313) | ❌ | Roadmap 11; per Einstellung aufhebbar für latente Charaktere (Nutzerwunsch 2026-11-15, Roadmap 13) |
 
 ---
 
@@ -335,7 +339,8 @@
 | Tastaturkürzel (Ctrl+N/O/S/Shift+S/Q)                                | ✅      |           |
 | Seitenleiste, Kopf- und Fußzeile, Status-Panel (statisch umschaltbar) | ✅      | UI-Rework 2026-11-12, ADR-049 |
 | Einheitliche Optik (Farbvariablen, Schriften, Kartenstil, Icon)      | ✅      | UI-Rework 2026-11-12, ADR-049 |
-| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ❌      | Nutzerwunsch 2026-11-12, später über die Einstellungen |
+| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ❌      | Nutzerwunsch 2026-11-12, Einstellungen (Roadmap 13) |
+| Einstellung: spätes Erwachen erlauben (latente Charaktere)          | ❌      | Nutzerwunsch 2026-11-15: hebt die Sperre aus Abschnitt 15 (S. 313) auf; Roadmap 13 |
 | Einstellung für Regelauslegungen: Gliedpanzerung als Durchschnitt statt Summe | ❌      | Nutzerwunsch 2026-11-12 (ADR-051): Standard ist die Summe wie im C#, der Durchschnitt über fünf Körperteile auf Wunsch; Berechnung liegt nur in `Implants#getLimbArmor` |
 | Bestätigungsdialog bei Karma-Ausgaben                                | ✅      |           |
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
@@ -376,7 +381,8 @@
 
 ## Prioritisierte Reihenfolge für nächste Schritte
 
-**Roadmap bis zum ersten Release (Nutzerentscheidung 2026-11-13, Reihenfolge fest; Punkt 9 ergänzt 2026-11-15):** Die Punkte 1–5 der
+**Roadmap bis zum ersten Release (Nutzerentscheidung 2026-11-13, Reihenfolge fest; Punkt 9 ergänzt 2026-11-15, ab Punkt 11
+angepasst nach der GRW-Bestandsaufnahme 2026-11-15):** Die Punkte 1–5 der
 README-Roadmap sind erledigt; es folgen:
 
 6. ✅ **Matrix und Kommlinks (2026-11-13, ADR-054):** Hardware-Aufrüstungen (S. 260/261) und Firewall/System (S. 376), Programme einem
@@ -390,9 +396,18 @@ README-Roadmap sind erledigt; es folgen:
    an jeder Stufe des Verletzungsmodifikators im Zustandsmonitor, Edgepunkte und Edge verheizen.
 10. ✅ **Karrieremodus ausbauen (2026-11-15, ADR-058):** typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen (Abschnitt 11a), Verkauf
    von Ausrüstung (GRW-Beleg noch suchen, Abschnitt 15).
-11. **Restliche GRW-Inhalte:** Exotische Fertigkeiten, Bewegungsrate, Vorschlagsliste für Wissensfertigkeiten
-    (ADR-032), Portrait.
-12. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
+11. **Restliche GRW-Inhalte:** Exotische Fertigkeiten (Abschnitt 4), Bewegungsrate (Abschnitt 2), Ruf mit Straßenruf,
+    Schlechtem Ruf und Prominenz (ca. S. 308, Straßenruf aus dem verdienten Karma, Abschnitt 15), Talentleitungen mit
+    Aktions-, Wissens- und Linguasofts (Abschnitt 10), Sperre für Adept/Zauberer/Magieradept/Technomancer im
+    Karrieremodus (S. 313, Abschnitt 15; aufhebbar über Punkt 13), Vorschlagsliste für Wissensfertigkeiten (ADR-032),
+    Portrait.
+12. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge
+    (Abschnitt 13); nur, wenn das Werkzeug das abbilden soll.
+13. **Einstellungen:** die gesammelten Wahlmöglichkeiten gebündelt (Abschnitte 11a, 15, 19): Zahlenformat,
+    Gliedpanzerung als Durchschnitt, häufige Proben im Status, versäumte Lebensstilzahlungen, Sperre für spätes
+    Erwachen aufheben (latente Charaktere, Nutzerwunsch 2026-11-15).
+14. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
+15. **NSCs:** vorgefertigte und eigene NSCs, dazu Critter mit ihren Kräften (Critter-Kapitel des GRW).
 
 **Als Nächstes (Stand 2026-11-11):**
 
