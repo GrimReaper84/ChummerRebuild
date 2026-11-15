@@ -244,6 +244,18 @@ ihr als Wahl entfernen. Vorschläge für Wissensfertigkeiten und ihre Spezialisi
 **Warum:** Nutzerentscheidungen 2026-11-15 (Ruf im Tab Kontakte, Schalter „geladen“, nur die vier Gaben, Vorschläge
 GRW + Sprachen); `docs/plaene/archiv/grw_reste_plan.md`.
 
+### ADR-060: Spielleiter-Modus (2026-11-15)
+Menü Einstellungen → „Spielleiter-Modus“ (Rückfrage beim Einschalten, Banner im Kopf, nie gespeichert, bleibt bei
+Rückgängig an). Käufe und Steigerungen kosten nichts und werden nicht gebucht (`TabServices.chargeFailed`, die
++/−-Zeilen in beide Richtungen über `IncrementWiring.wireGm`); Regelsperren entfallen an ihrer Stelle im Modell
+(`Character.isGmMode`: Erschaffungsgrenzen, nur steigern, Zugang, Gaben-Voraussetzungen, Erwachen, Verfügbarkeit).
+Es bleiben die GRW-Obergrenzen, strukturelle Regeln (Gaben nur durch den Metatyp, schon gewählt, Stapelregeln wie
+Hohe Schmerztoleranz mit Schmerzresistenz, Gruppen bei doppelten Kosten durch Ungebildet usw., Gruppen auflösen und
+gekoppelte Mitglieder spezialisieren bei der Erschaffung, S. 109) und der einseitige Abschluss der Erschaffung. Verkauf,
+Lebensstil-Zahlungen und manuelle Einträge bleiben echte Buchungen.
+**Warum:** Nutzerwunsch 2026-11-15 nach Vorbild des Fallout-Builders (dort „GM free edit“); Korrekturen am Tisch
+sollen nicht an Regelsperren oder Guthaben scheitern. `docs/plaene/archiv/gm_modus_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

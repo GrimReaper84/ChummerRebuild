@@ -443,9 +443,7 @@ public final class SkillTabBuilder {
       String spec = skill.getSpecialization();
       specLabel.setText(spec != null ? spec : "–");
       boolean eligible = character.canSpecializeSkill(skill);
-      boolean affordable = career
-          ? character.getKarmaTotal() >= character.getSpecializationKarmaCost()
-          : spec != null || character.getRemainingBP() >= character.getActiveSkillSpecializationBpCost();
+      boolean affordable = character.canAffordSkillSpecialization(spec);
       specBtn.setDisable(!eligible || !affordable);
     };
     skillRefreshers.add(specRefresh);
@@ -527,14 +525,16 @@ public final class SkillTabBuilder {
 
     if (skill.getExoticTarget() != null) {
       // Exotische Fertigkeiten haben keine Spezialisierung (GRW S. 148); an ihrer Stelle das Entfernen, nur bei der
-      // Erschaffung (im Karrieremodus deaktiviert, dort wird nur gesteigert).
+      // Erschaffung bzw. im Spielleiter-Modus (sonst deaktiviert mit Grund).
       skillNameLabel.setPadding(new Insets(0, 0, 0, EXOTIC_INDENT));
       Button removeBtn = new Button("Entfernen");
       removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
       useIcon(removeBtn, FontAwesomeSolid.TRASH);
-      removeBtn.setDisable(career);
-      if (career) {
-        removeBtn.setTooltip(new Tooltip("Im Karrieremodus wird nur gesteigert"));
+      // Der Tab wird bei Quality- und Moduswechsel neu gebaut, daher darf der Grund den Knopf hier sperren.
+      String removalProblem = character.getExoticSkillRemovalProblem(skill);
+      removeBtn.setDisable(removalProblem != null);
+      if (removalProblem != null) {
+        removeBtn.setTooltip(new Tooltip(removalProblem));
       }
       removeBtn.setOnAction(_ -> {
         String problem = character.getExoticSkillRemovalProblem(skill);
@@ -713,17 +713,13 @@ public final class SkillTabBuilder {
   private void applySkillSpecializationInCareerMode(@NonNull Skill skill,
       @NonNull Character character, @Nullable String newSpec) {
     int karmaCost = character.getSpecializationKarmaCost();
-    if (character.getKarmaTotal() < karmaCost) {
-      return;
-    }
     String groupName = skill.getGroupName();
     String warning = groupName != null && character.isGroupCoupled(groupName)
         ? "Dies löst die Fertigkeitsgruppe \"" + groupName + "\" auf. Die Mitglieder "
         + "behalten ihr aktuelles Rating, können danach aber einzeln gesteigert werden."
         : null;
     String label = skill.getName() + ": Spezialisierung \"" + (newSpec == null ? "–" : newSpec) + "\"";
-    if (host.services().confirmKarmaSpend(label, karmaCost, character, warning)) {
-      host.services().bookKarma(character, LogCategory.SKILL, label, -karmaCost);
+    if (!host.services().karmaChargeFailed(character, LogCategory.SKILL, label, karmaCost, warning)) {
       character.setSkillSpecialization(skill, newSpec);
       // rebuildSkillsTab() statt host.refreshRows(): eine Gruppenauflösung ändert, wie die
       // betroffenen Zeilen verdrahtet sind (gekoppelt = deaktivierte Rating-Buttons, entkoppelt =
@@ -739,8 +735,7 @@ public final class SkillTabBuilder {
    */
   private void applySkillSpecializationInCreationMode(@NonNull Skill skill,
       @NonNull Character character, @Nullable String newSpec) {
-    boolean affordable = newSpec == null || skill.getSpecialization() != null
-        || character.getRemainingBP() >= character.getActiveSkillSpecializationBpCost();
+    boolean affordable = newSpec == null || character.canAffordSkillSpecialization(skill.getSpecialization());
     if (!affordable) {
       return;
     }

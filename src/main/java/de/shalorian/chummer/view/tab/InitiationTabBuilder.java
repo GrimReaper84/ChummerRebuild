@@ -93,9 +93,10 @@ public final class InitiationTabBuilder {
     useIcon(raiseBtn, FontAwesomeSolid.ARROW_UP);
     raiseBtn.setOnAction(_ -> onRaise(ch, initiation, kind));
     // Der Bereich wird beim Moduswechsel neu gebaut, daher darf der Modus den Knopf sperren.
-    raiseBtn.setDisable(!ch.isCreated());
-    if (!ch.isCreated()) {
-      raiseBtn.setTooltip(new Tooltip(kind.getProcessName() + " erst im Karrieremodus (S. 112)"));
+    String modeProblem = initiation.getModeProblem();
+    raiseBtn.setDisable(modeProblem != null);
+    if (modeProblem != null) {
+      raiseBtn.setTooltip(new Tooltip(modeProblem));
     }
 
     Region spacer = new Region();

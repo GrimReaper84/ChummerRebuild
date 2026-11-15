@@ -21,6 +21,8 @@
             </Menu>
             <Menu text="Einstellungen">
                 <CheckMenuItem fx:id="statusStaticItem" text="Status statisch anzeigen" onAction="#onStatusStaticChanged"/>
+                <SeparatorMenuItem/>
+                <CheckMenuItem fx:id="gmModeItem" text="Spielleiter-Modus" onAction="#onGmMode" disable="true"/>
             </Menu>
         </MenuBar>
     </top>

@@ -131,6 +131,8 @@ public class Character {
   private final @NonNull Implants implants = new Implants(this);
   private final @NonNull Equipment equipment = new Equipment(this);
   private final @NonNull Reputation reputation = new Reputation();
+  /** Spielleiter-Modus, siehe {@link #isGmMode()}; bewusst nicht in der Speicherdatei. */
+  private boolean gmMode;
   private final List<LogEntry> karmaLog = new ArrayList<>();
   private final List<LogEntry> nuyenLog = new ArrayList<>();
   private final @NonNull CharacterBiography biography = new CharacterBiography();
@@ -274,10 +276,10 @@ public class Character {
    * Prüft, ob eine Steigerung des angegebenen Attributs um 1 während der Charaktererschaffung
    * regelkonform wäre: max. {@link #MAX_ATTRIBUTE_BP} (die Hälfte des Gesamtbudgets) für
    * Körperliche/Geistige Attribute in Summe, und höchstens ein Attribut darf auf das natürliche
-   * Maximum gesteigert werden. Im Karrieremodus gelten diese Erstellungs-Caps nicht.
+   * Maximum gesteigert werden. Im Karrieremodus und im Spielleiter-Modus gelten diese Erstellungs-Caps nicht.
    */
   public boolean canRaiseAttributeAtCreation(@NonNull AttributeType type) {
-    if (created) {
+    if (created || gmMode) {
       return true;
     }
     CharacterAttribute attr = getAttribute(type);
@@ -698,7 +700,7 @@ public class Character {
     if (skill.getExoticTarget() == null) {
       return "Keine Exotik-Instanz: " + skill.getName();
     }
-    if (created) {
+    if (created && !gmMode) {
       return "Im Karrieremodus wird nur gesteigert";
     }
     return getSelectedQualities().stream()
@@ -740,11 +742,11 @@ public class Character {
    * Fertigkeiten auf Wert 5 — alle übrigen Fertigkeiten bleiben auf maximal 4 begrenzt, und
    * beide Sonderfälle schließen sich gegenseitig aus. Gekoppelte Gruppen-Skills (die gemeinsam
    * über {@link #raiseGroup(String)} gesteigert werden) zählen dabei nicht mit, da für Gruppen
-   * ein eigener Cap gilt. Im Karrieremodus gilt dieser Erstellungs-Cap nicht.
+   * ein eigener Cap gilt. Im Karrieremodus und im Spielleiter-Modus gilt dieser Erstellungs-Cap nicht.
    */
   @SuppressWarnings("ReferenceEquality") // Identität gewollt: "eine andere Fertigkeit als diese"
   public boolean canRaiseSkillAtCreation(@NonNull Skill skill) {
-    if (created) {
+    if (created || gmMode) {
       return true;
     }
     int newValue = skill.getRating() + 1;
@@ -815,12 +817,12 @@ public class Character {
 
   /**
    * Vollständige Steigerungs-Prüfung für eine aktive Fertigkeit: exotische Grundfertigkeiten nie (gelernt wird je
-   * Waffe bzw. Fahrzeug, GRW S. 148), sonst kombiniert sie den Erstellungs-Cap
+   * Waffe bzw. Fahrzeug, GRW S. 148); im Spielleiter-Modus sonst immer; ansonsten kombiniert sie den Erstellungs-Cap
    * aus {@link #canRaiseSkillAtCreation(Skill)} mit der Zugangsvoraussetzung aus
    * {@link #isSkillAccessible(Skill)}.
    */
   public boolean canRaiseSkill(@NonNull Skill skill) {
-    return !skill.isExoticTemplate() && isSkillAccessible(skill) && canRaiseSkillAtCreation(skill);
+    return !skill.isExoticTemplate() && (gmMode || (isSkillAccessible(skill) && canRaiseSkillAtCreation(skill)));
   }
 
   private boolean isCoupledGroupMember(@NonNull Skill s) {
@@ -913,11 +915,11 @@ public class Character {
   /**
    * Prüft, ob eine Steigerung dieser Fertigkeitsgruppe um 1 während der Charaktererschaffung
    * regelkonform wäre: Bei der Erschaffung sind Fertigkeitsgruppen auf Stufe 4 begrenzt (GRW S. 109).
-   * Im Karrieremodus gilt dieser Erstellungs-Cap nicht (dort bis
+   * Im Karrieremodus und im Spielleiter-Modus gilt dieser Erstellungs-Cap nicht (dort bis
    * {@link Skill#MAX_RATING}).
    */
   public boolean canRaiseGroupAtCreation(@NonNull String groupName) {
-    return created || getGroupRating(groupName) < MAX_GROUP_RATING_AT_CREATION;
+    return created || gmMode || getGroupRating(groupName) < MAX_GROUP_RATING_AT_CREATION;
   }
 
   /**
@@ -931,9 +933,9 @@ public class Character {
     List<Skill> members = skills.values().stream()
         .filter(s -> groupName.equals(s.getGroupName()))
         .toList();
-    return members.stream().allMatch(this::isSkillAccessible)
-        && members.stream().noneMatch(s -> isSkillCostDoubled(s.getCategory()))
-        && canRaiseGroupAtCreation(groupName);
+    // Doppelte Kosten (Ungebildet usw.) sperren Gruppen auch im Spielleiter-Modus: die BP-Rechnung bildet sie nicht ab.
+    return members.stream().noneMatch(s -> isSkillCostDoubled(s.getCategory()))
+        && (gmMode || (members.stream().allMatch(this::isSkillAccessible) && canRaiseGroupAtCreation(groupName)));
   }
 
   /**
@@ -1054,10 +1056,12 @@ public class Character {
     if (group != null && selected.stream().anyMatch(q -> group.equals(q.data().rules().group()))) {
       return "Nur eine Stufe bzw. Variante von „%s“".formatted(group);
     }
-    if (!fitsMetatype(rules)) {
+    // Spielleiter-Modus: Metatyp, Voraussetzungen, Ausschlüsse, Erwachen und BP-Grenzen entfallen; Stapelregeln
+    // (Schmerz) und belegte Gruppen bei doppelten Kosten bleiben, weil die Rechnung sie sonst nicht abbildet.
+    if (!gmMode && !fitsMetatype(rules)) {
       return "Nur für " + String.join(", ", rules.metatypes());
     }
-    if (!rules.requires().isEmpty()
+    if (!gmMode && !rules.requires().isEmpty()
         && selected.stream().noneMatch(q -> rules.requires().contains(q.data().name()))) {
       return "Erfordert " + String.join(" oder ", rules.requires());
     }
@@ -1065,7 +1069,7 @@ public class Character {
         .filter(q -> rules.excludes().contains(q.data().name())
             || q.data().rules().excludes().contains(data.name()))
         .findFirst();
-    if (conflict.isPresent()) {
+    if (!gmMode && conflict.isPresent()) {
       return "Nicht zusammen mit " + conflict.get().data().name();
     }
     if (data.bonuses().contains(QualityBonusType.HIGH_PAIN_TOLERANCE)
@@ -1084,6 +1088,9 @@ public class Character {
           return "Fertigkeitsgruppe %s hat bereits einen Wert".formatted(g);
         }
       }
+    }
+    if (gmMode) {
+      return null;
     }
     if (created && isAwakeningQuality(data)) {
       return "Nur bei der Erschaffung wählbar (S. 313)";
@@ -1500,11 +1507,11 @@ public class Character {
    * regelkonform wäre: die Gesamtpunktzahl (Pool + Zusatzpunkte) darf den freien Pool höchstens
    * verdoppeln (GRW S. 109), und wie bei aktiven Fertigkeiten gilt entweder maximal eine
    * Wissensfertigkeit auf Wert 6 oder maximal zwei auf Wert 5 (übrige max. 4). Die Muttersprache
-   * ist von beiden Regeln ausgenommen. Im Karrieremodus gilt dieser Erstellungs-Cap nicht.
+   * ist von beiden Regeln ausgenommen. Im Karrieremodus und im Spielleiter-Modus gilt dieser Erstellungs-Cap nicht.
    */
   @SuppressWarnings("ReferenceEquality") // Identität gewollt: "eine andere Fertigkeit als diese"
   public boolean canRaiseKnowledgeSkillAtCreation(@NonNull KnowledgeSkill skill) {
-    if (created || skill.isNativeLanguage()) {
+    if (created || gmMode || skill.isNativeLanguage()) {
       return true;
     }
     int newValue = skill.getRating() + 1;
@@ -1560,7 +1567,7 @@ public class Character {
     if (skill.isNativeLanguage() || skill.getRating() < MIN_RATING_FOR_SPECIALIZATION) {
       return false;
     }
-    if (created) {
+    if (created || gmMode) {
       return true;
     }
     return getKnowledgeSkillPointsUsed() + 1 <= getKnowledgeSkillPointPool() * 2;
@@ -1573,6 +1580,29 @@ public class Character {
   public void setKnowledgeSkillSpecialization(@NonNull KnowledgeSkill skill,
       @Nullable String specialization) {
     skill.setSpecialization(specialization);
+  }
+
+  /**
+   * Ob eine (neue) Spezialisierung einer aktiven Fertigkeit bezahlbar ist: im Karrieremodus genug Karma, bei der
+   * Erschaffung genug BP (Umbenennen einer schon gekauften kostet nichts); im Spielleiter-Modus immer.
+   *
+   * @param currentSpec die bisherige Spezialisierung, sonst {@code null}
+   */
+  public boolean canAffordSkillSpecialization(@Nullable String currentSpec) {
+    return canAffordSpecialization(currentSpec, getActiveSkillSpecializationBpCost());
+  }
+
+  /** Wie {@link #canAffordSkillSpecialization} für Wissensfertigkeiten (BP-Preis aus dem Wissenspool). */
+  public boolean canAffordKnowledgeSkillSpecialization(@Nullable String currentSpec) {
+    return canAffordSpecialization(currentSpec, getKnowledgeSkillSpecializationBP());
+  }
+
+  private boolean canAffordSpecialization(@Nullable String currentSpec, int bpCost) {
+    if (gmMode) {
+      return true;
+    }
+    return created ? getKarmaTotal() >= getSpecializationKarmaCost()
+        : currentSpec != null || getRemainingBP() >= bpCost;
   }
 
   /**
@@ -2267,11 +2297,11 @@ public class Character {
   /**
    * Prüft, ob ein weiterer Zauber während der Charaktererschaffung gelernt werden darf: die
    * Gesamtzahl gelernter Zauber darf das Doppelte des höchsten Ratings von Spruchzauberei/
-   * Ritualzauberei nicht überschreiten (SR4-Grundregelwerk). Im Karrieremodus gilt dieser
+   * Ritualzauberei nicht überschreiten (SR4-Grundregelwerk). Im Karrieremodus und im Spielleiter-Modus gilt dieser
    * Erstellungs-Cap nicht.
    */
   public boolean canAddSpellAtCreation() {
-    if (created) {
+    if (created || gmMode) {
       return true;
     }
     return spells.size() < SPELL_CAP_MULTIPLIER * highestSpellcastingRating();
@@ -2332,10 +2362,11 @@ public class Character {
 
   /**
    * Ob bei der Erschaffung noch eine Komplexe Form gelernt werden darf: zu Spielbeginn höchstens doppelt so viele wie
-   * der natürliche Logikwert, unabhängig von ihrer Stufe (SR4-Grundregelwerk S. 112). Im Karrieremodus ohne Grenze.
+   * der natürliche Logikwert, unabhängig von ihrer Stufe (SR4-Grundregelwerk S. 112). Im Karrieremodus und im
+   * Spielleiter-Modus ohne Grenze.
    */
   public boolean canAddComplexFormAtCreation() {
-    return created
+    return created || gmMode
         || complexForms.size() < COMPLEX_FORM_CAP_MULTIPLIER * getAttribute(AttributeType.LOG).getValue();
   }
 
@@ -2544,6 +2575,23 @@ public class Character {
   }
 
   // --- Karma & Nuyen Log ---
+
+  /**
+   * Spielleiter-Modus (ADR-060): Korrekturen ohne Kosten und ohne Regelsperren. Es entfallen die Erschaffungsgrenzen
+   * (Attribute, 6/5-Regel, Gruppen-Cap, Wissensfertigkeiten, Zauberzahl, 35 BP für Gaben und Handicaps, Grad und
+   * Verfügbarkeit, Geisterkraft), „nur steigern“ im Karrieremodus, Zugangs- und Gabensperren (magische Fertigkeiten,
+   * Metatyp, Voraussetzungen, Erwachen). Es bleiben die Obergrenzen aus dem GRW (Attribut-, Fertigkeits-, Magie-
+   * Maximum), strukturelle Regeln (Gaben nur durch den Metatyp, schon gewählt, exotische Grundzeile) und der einseitige
+   * Abschluss der Erschaffung. Kosten entfallen in der Oberfläche ({@code TabServices}). Nie gespeichert.
+   */
+  public boolean isGmMode() {
+    return gmMode;
+  }
+
+  /** Schaltet den Spielleiter-Modus; wird nicht gespeichert. */
+  public void setGmMode(boolean gmMode) {
+    this.gmMode = gmMode;
+  }
 
   public boolean isCreated() {
     return created;

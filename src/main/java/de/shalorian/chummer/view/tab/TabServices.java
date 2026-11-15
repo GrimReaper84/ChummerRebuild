@@ -273,7 +273,16 @@ public final class TabServices {
    */
   public boolean karmaChargeFailed(@NonNull Character c, @NonNull LogCategory category, @NonNull String label,
       int karmaCost) {
-    return chargeFailed(c, SpendCurrency.KARMA, category, label, karmaCost, c.getKarmaTotal());
+    return karmaChargeFailed(c, category, label, karmaCost, null);
+  }
+
+  /**
+   * Wie {@link #karmaChargeFailed(Character, LogCategory, String, int)} mit einem Zusatzhinweis (z.B. „löst die Gruppe
+   * auf“), der vor dem Kostentext steht; ein Dialog statt zweier.
+   */
+  public boolean karmaChargeFailed(@NonNull Character c, @NonNull LogCategory category, @NonNull String label,
+      int karmaCost, @Nullable String extraWarning) {
+    return chargeFailed(c, SpendCurrency.KARMA, category, label, karmaCost, c.getKarmaTotal(), extraWarning);
   }
 
   /**
@@ -289,42 +298,30 @@ public final class TabServices {
   /** Wie {@link #nuyenChargeFailed(Character, String, int)}, mit eigener Art (z.B. Lebensstil). */
   public boolean nuyenChargeFailed(@NonNull Character c, @NonNull LogCategory category, @NonNull String label,
       int nuyenCost) {
-    return chargeFailed(c, SpendCurrency.NUYEN, category, label, nuyenCost, c.getNuyenTotal());
+    return chargeFailed(c, SpendCurrency.NUYEN, category, label, nuyenCost, c.getNuyenTotal(), null);
   }
 
   /**
    * Gemeinsamer Ablauf aller Karrieremodus-Käufe: bei zu wenig Guthaben Hinweis und Abbruch, sonst Bestätigung
-   * einholen und einen negativen Log-Eintrag buchen.
+   * einholen und einen negativen Log-Eintrag buchen. Im Spielleiter-Modus (ADR-060) kostenlos und ohne Buchung; nur
+   * ein Zusatzhinweis wird noch bestätigt.
    *
-   * @return true, wenn NICHT gebucht wurde (zu wenig Guthaben oder abgebrochen)
+   * @return true, wenn NICHT gekauft werden soll (zu wenig Guthaben oder abgebrochen)
    */
   private boolean chargeFailed(@NonNull Character c, @NonNull SpendCurrency currency, @NonNull LogCategory category,
-      @NonNull String label, int cost, int available) {
+      @NonNull String label, int cost, int available, @Nullable String extraWarning) {
+    if (c.isGmMode()) {
+      return extraWarning != null && !confirmYesNo("Spielleiter-Modus", label, extraWarning);
+    }
     if (available < cost) {
       warn("Nicht genug " + currency.getDisplayName(), "Benötigt: " + currency.formatAmount(cost));
       return true;
     }
-    if (!confirmSpend(currency, label, cost, available, null)) {
+    if (!confirmSpend(currency, label, cost, available, extraWarning)) {
       return true;
     }
     book(c, currency, new LogEntry(label, -cost, LocalDate.now(ZoneId.systemDefault()), category));
     return false;
-  }
-
-  public boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
-      @NonNull Character character) {
-    return confirmKarmaSpend(label, karmaCost, character, null);
-  }
-
-  /**
-   * Wie {@link #confirmKarmaSpend(String, int, Character)}, aber mit einem optionalen Zusatzhinweis (z.B.
-   * Gruppenauflösungs-Warnung), der vor dem eigentlichen Kostentext eingeblendet wird — ein einziger kombinierter
-   * Dialog statt zweier verschachtelter Bestätigungen.
-   */
-  public boolean confirmKarmaSpend(@NonNull String label, int karmaCost,
-      @NonNull Character character, @Nullable String extraWarning) {
-    return confirmSpend(SpendCurrency.KARMA, label, karmaCost, character.getKarmaTotal(),
-        extraWarning);
   }
 
   /**

@@ -128,10 +128,10 @@ public class Equipment {
 
   /**
    * Ob Implantate dieser Kategorie aktuell gekauft werden dürfen: bei der Charaktererschaffung nur
-   * Standard- und Alphaware (SR4-Grundregelwerk S. 359), im Karrieremodus alle Kategorien.
+   * Standard- und Alphaware (SR4-Grundregelwerk S. 359), im Karrieremodus und im Spielleiter-Modus alle Kategorien.
    */
   public boolean isCyberwareGradeAvailable(@NonNull CyberwareGrade grade) {
-    return owner.isCreated() || grade.isAvailableAtCreation();
+    return owner.isCreated() || owner.isGmMode() || grade.isAvailableAtCreation();
   }
 
   /** Gesamtpreis aller eingebauten Implantate in Nuyen (inkl. Grade-Multiplikatoren). */
@@ -173,13 +173,13 @@ public class Equipment {
    * Ob ein Gegenstand mit dieser Verfügbarkeit in dieser Stufe aktuell gekauft werden darf: bei der
    * Charaktererschaffung nur bis Stufe {@value Availability#MAX_RATING_AT_CREATION} und
    * Verfügbarkeit {@value Availability#MAX_AVAILABILITY_AT_CREATION} (SR4-Grundregelwerk S. 111), im
-   * Karrieremodus immer. Gilt für alle
+   * Karrieremodus und im Spielleiter-Modus immer. Gilt für alle
    * Kaufkategorien mit Stufe; Gegenstände ohne Stufe übergeben {@code 0}. Wie bei {@link
    * #isCyberwareGradeAvailable(CyberwareGrade)} prüft die UI diese Regel, nicht {@code add…()}, damit
    * der Persistenz-Pfad unverändert laden kann.
    */
   public boolean isAvailableForPurchase(@NonNull Availability availability, int rating) {
-    return owner.isCreated()
+    return owner.isCreated() || owner.isGmMode()
         || (rating <= Availability.MAX_RATING_AT_CREATION
             && availability.isAllowedAtCreation(rating));
   }
@@ -199,7 +199,7 @@ public class Equipment {
 
   /** Wie {@link #isAvailableForPurchase(Availability, int)} für Rüstung, die keine Stufe hat. */
   public boolean isAvailableForPurchase(@NonNull ArmorData armorData) {
-    return owner.isCreated() || armorData.isAllowedAtCreation();
+    return owner.isCreated() || owner.isGmMode() || armorData.isAllowedAtCreation();
   }
 
   /**
@@ -208,7 +208,8 @@ public class Equipment {
    * mit der Verfügbarkeit des Teils (GRW S. 111, 373).
    */
   public boolean isAvailableForInstall(@NonNull Armor piece, @NonNull ArmorModData mod, int rating) {
-    return owner.isCreated() || piece.availabilityWith(mod, rating) <= Availability.MAX_AVAILABILITY_AT_CREATION;
+    return owner.isCreated() || owner.isGmMode()
+        || piece.availabilityWith(mod, rating) <= Availability.MAX_AVAILABILITY_AT_CREATION;
   }
 
   // --- Rüstung ---

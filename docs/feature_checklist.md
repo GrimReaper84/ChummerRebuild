@@ -210,7 +210,7 @@
 | Lebensstil (6 GRW-Stufen, Monate im Voraus) | ✅      | GRW S. 111; Kosten zählen gegen das Ressourcengeld; Tab "Straßenausrüstung" → "Lebensstil" (2026-09-27) |
 | Lebensstil-Ausbaustufen, weitere Lebensstile | ❌      | Zusatzband, zurückgestellt |
 | Lebensstilzahlungen im Karrieremodus      | ✅      | 2026-11-15 (ADR-058): „Monat bezahlen“ und „Stufe wechseln“ (erster Monat) buchen Nuyen als Lebensstil (S. 310) |
-| Versäumte Lebensstilzahlungen (GRW S. 310: W6 gegen ausgesetzte Monate, Abstieg, Schulden) | ❌ | Später als Einstellung (Nutzerwunsch 2026-11-15, mit den übrigen Einstellungsmöglichkeiten, Roadmap 13) |
+| Versäumte Lebensstilzahlungen (GRW S. 310: W6 gegen ausgesetzte Monate, Abstieg, Schulden) | ❌ | Später als Einstellung (Nutzerwunsch 2026-11-15, mit den übrigen Einstellungsmöglichkeiten, Roadmap 12) |
 
 ---
 
@@ -247,8 +247,8 @@
 | Foki kaufen, binden, aktivieren | ✅ | 2026-11-13 (ADR-055): Fokusart und Zusatz als Auswahl (Zauberkategorie, Geisterart, Nahkampffertigkeit); Bindung im Detail des Fokus (Erschaffung 1 BP je Kraft, Karriere Kraft × Faktor Karma, S. 112/234), höchstens Magie Foki und Kraft 5 × Magie, aktiv höchstens Logik (S. 233/234). Zauberspeicher ohne Mechanik |
 | Munition, Pfeile/Bolzen, Granaten/Raketen | ✅ | Gear Teil D (2026-10-08, GRW S. 361, 369–371 am Bild): 11 Munitionssorten pro 10 Schuss mit Waffenklasse (Auswahl, GRW S. 368/369; Taserpfeil, Sturmkanonen-Geschosse, Injektionspfeile mit fester Waffe), Bolzen/Injektionsbolzen als normale Ausrüstung; Pfeile (Stufe 1–8, Preis fest) im Waffen-Tab am Bogen mit Schaden nach min(Pfeil, Bogen) und Mengen-Stepper; 7 Granaten (Standard/Minigranate), 3 Raketen, 3 Lenkraketen (Sensorstufe 1–6), 3 Sprengstoffe pro kg, Sprengkapsel; Kampfwerte nur als Anzeige. UI vom Nutzer noch nicht angesehen |
 | Munitionswirkung auf Waffenwerte | ✅ | 2026-11-15 (ADR-056), siehe Abschnitt 12 |
-| Granaten/Sprengstoff im Kampf | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13); Roadmap 12 (optional) |
-| Wirkung von Drogen und Toxinen, Sucht | ❌ | Nur Katalogeinträge; Roadmap 12 (optional) |
+| Granaten/Sprengstoff im Kampf | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13); Roadmap 15 (optional) |
+| Wirkung von Drogen und Toxinen, Sucht | ❌ | Nur Katalogeinträge; Roadmap 15 (optional) |
 | DIY/Hacked/Gratis/Aufschlag/Schwarzmarkt, Verkauf, "ausgerüstet" | ❌ | Zurückgestellt (gear_plan.md Abschnitt 13) |
 
 ---
@@ -290,7 +290,7 @@
 | Undo für Log-Einträge                                                 | ✅      | 2026-11-15 (ADR-058): letzter Schritt, beliebig oft, über den gemerkten Stand vor der Buchung; nur in der laufenden Sitzung |
 | Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ✅      | 2026-11-15 (ADR-058): zehn Arten (`LogCategory`, auch „Kontakt“) als Spalte „Art“, gespeichert; alte Einträge „Manuell“ |
 | Ruf: Straßenruf, Schlechter Ruf, Prominenz | ✅ | 2026-11-15 (ADR-059): im Tab Kontakte, Spielleiter-Punkte und Opfern im Karrieremodus (S. 308/309) |
-| Adept, Zauberer, Magieradept, Technomancer nicht nachträglich wählbar (S. 313) | ✅ | 2026-11-15 (ADR-059); per Einstellung aufhebbar für latente Charaktere (Nutzerwunsch, Roadmap 13) |
+| Adept, Zauberer, Magieradept, Technomancer nicht nachträglich wählbar (S. 313) | ✅ | 2026-11-15 (ADR-059); per Einstellung aufhebbar für latente Charaktere (Nutzerwunsch, Roadmap 12) |
 
 ---
 
@@ -339,13 +339,14 @@
 | Tastaturkürzel (Ctrl+N/O/S/Shift+S/Q)                                | ✅      |           |
 | Seitenleiste, Kopf- und Fußzeile, Status-Panel (statisch umschaltbar) | ✅      | UI-Rework 2026-11-12, ADR-049 |
 | Einheitliche Optik (Farbvariablen, Schriften, Kartenstil, Icon)      | ✅      | UI-Rework 2026-11-12, ADR-049 |
-| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ❌      | Nutzerwunsch 2026-11-12, Einstellungen (Roadmap 13) |
-| Einstellung: spätes Erwachen erlauben (latente Charaktere)          | ❌      | Nutzerwunsch 2026-11-15: hebt die Sperre aus Abschnitt 15 (S. 313) auf; Roadmap 13 |
+| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ❌      | Nutzerwunsch 2026-11-12, Einstellungen (Roadmap 12) |
+| Einstellung: spätes Erwachen erlauben (latente Charaktere)          | ❌      | Nutzerwunsch 2026-11-15: hebt die Sperre aus Abschnitt 15 (S. 313) auf; Roadmap 12 |
 | Einstellung für Regelauslegungen: Gliedpanzerung als Durchschnitt statt Summe | ❌      | Nutzerwunsch 2026-11-12 (ADR-051): Standard ist die Summe wie im C#, der Durchschnitt über fünf Körperteile auf Wunsch; Berechnung liegt nur in `Implants#getLimbArmor` |
 | Bestätigungsdialog bei Karma-Ausgaben                                | ✅      |           |
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
 | Drucken / Export / Charakterbogen                                    | ❌      | **Niedrige Priorität** (2026-08-04): keine Charakterbogen-Vorlage/Formular im GRW-Text gefunden — reines Tool-Feature ohne Regelwerk-Bezug |
+| Spielleiter-Modus (Korrekturen ohne Kosten und Sperren) | ✅ | 2026-11-15 (ADR-060): Menü Einstellungen, nicht gespeichert, GRW-Obergrenzen bleiben |
 | Kategorie-Dropdowns alphabetisch                                     | ✅      | Nutzervorgabe 2026-10-08: zentral in `CatalogSelectDialogController.refreshCategoryOptions()` (deutsche Sortierung, "Alle" oben); ersetzt die GRW-Reihenfolge der Ausrüstungs-/Waffen-Pläne |
 | Icon für "Pfeile hinzufügen" (Waffen-Tab)                           | ❌      | **Notiz (Nutzerwunsch 2026-10-08):** das Bullseye-Icon passt nicht; ein anderes FontAwesome-Icon suchen oder den Button als Text-Button belassen |
 | Einstellbare Zahlendarstellung (QoL)                                 | ❌      | **Notiz (Nutzerwunsch 2026-09-30):** später umschaltbar machen, ob Tausender mit Punkt gruppiert werden ("1.500" wie im GRW vs. "1500") und ob Dezimalzahlen Komma oder Punkt nutzen (z.B. Essenz "5,8" vs. "5.8"). Derzeit überall ohne Tausenderpunkt (Preise, Reichweiten). Umsetzung dann zentral über eine Formatierungsstelle statt verstreuter String-Verkettung |
@@ -382,7 +383,7 @@
 ## Prioritisierte Reihenfolge für nächste Schritte
 
 **Roadmap bis zum ersten Release (Nutzerentscheidung 2026-11-13, Reihenfolge fest; Punkt 9 ergänzt 2026-11-15, ab Punkt 11
-angepasst nach der GRW-Bestandsaufnahme 2026-11-15):** Die Punkte 1–5 der
+angepasst nach der GRW-Bestandsaufnahme 2026-11-15; Drogen/Toxine/Granaten ans Ende gestellt):** Die Punkte 1–5 der
 README-Roadmap sind erledigt; es folgen:
 
 6. ✅ **Matrix und Kommlinks (2026-11-13, ADR-054):** Hardware-Aufrüstungen (S. 260/261) und Firewall/System (S. 376), Programme einem
@@ -399,15 +400,15 @@ README-Roadmap sind erledigt; es folgen:
 11. ✅ **Restliche GRW-Inhalte (2026-11-15, ADR-059):** Exotische Fertigkeiten (Abschnitt 4), Bewegungsrate (Abschnitt 2), Ruf mit Straßenruf,
     Schlechtem Ruf und Prominenz (ca. S. 308, Straßenruf aus dem verdienten Karma, Abschnitt 15), Talentleitungen mit
     Aktions-, Wissens- und Linguasofts (Abschnitt 10), Sperre für Adept/Zauberer/Magieradept/Technomancer im
-    Karrieremodus (S. 313, Abschnitt 15; aufhebbar über Punkt 13), Vorschlagsliste für Wissensfertigkeiten (ADR-032),
+    Karrieremodus (S. 313, Abschnitt 15; aufhebbar über Punkt 12), Vorschlagsliste für Wissensfertigkeiten (ADR-032),
     Portrait.
-12. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge
-    (Abschnitt 13); nur, wenn das Werkzeug das abbilden soll.
-13. **Einstellungen:** die gesammelten Wahlmöglichkeiten gebündelt (Abschnitte 11a, 15, 19): Zahlenformat,
+12. **Einstellungen:** die gesammelten Wahlmöglichkeiten gebündelt (Abschnitte 11a, 15, 19): Zahlenformat,
     Gliedpanzerung als Durchschnitt, häufige Proben im Status, versäumte Lebensstilzahlungen, Sperre für spätes
     Erwachen aufheben (latente Charaktere, Nutzerwunsch 2026-11-15).
-14. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
-15. **NSCs:** vorgefertigte und eigene NSCs, dazu Critter mit ihren Kräften (Critter-Kapitel des GRW).
+13. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
+14. **NSCs:** vorgefertigte und eigene NSCs, dazu Critter mit ihren Kräften (Critter-Kapitel des GRW).
+15. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge
+    (Abschnitt 13); nur, wenn das Werkzeug das abbilden soll.
 
 **Als Nächstes (Stand 2026-11-11):**
 

@@ -253,6 +253,8 @@
         <Label styleClass="bp-value" text="0 BP (0 ¥)" fx:id="nuyenBpValueLabel"/>
       </HBox>
       <Region HBox.hgrow="ALWAYS"/>
+      <Label managed="false" styleClass="warn-text" visible="false" fx:id="gmBanner"
+        text="Spielleiter-Modus: Änderungen ohne Kosten und Sperren"/>
       <Button onAction="#onFinalize" styleClass="btn-finalize" text="Charakter abschließen"
         fx:id="finalizeBtn"/>
       <padding>

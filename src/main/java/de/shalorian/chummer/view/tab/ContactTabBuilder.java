@@ -51,7 +51,7 @@ import org.tbee.javafx.scene.layout.MigPane;
 public final class ContactTabBuilder {
 
   /** Obergrenze der Spielleiter-Eingaben je Wert; eine reine Bediengrenze, das GRW nennt keine. */
-  private static final int GM_POINTS_LIMIT = 30;
+  private static final int ADJUSTMENT_LIMIT = 30;
 
   private final @NonNull VBox contactsContainer;
   private final @NonNull CharacterTabHost host;
@@ -134,11 +134,11 @@ public final class ContactTabBuilder {
     addHeaderRow(grid, "", "Wert", "", career ? "Spielleiter" : "", "", "");
     Reputation reputation = ch.getReputation();
     addReputationRow(grid, 1, "Straßenruf", ch::getStreetCred, career
-        ? gmModel(reputation::getStreetCredBonus, reputation::setStreetCredBonus, 0) : null);
+        ? adjustmentModel(reputation::getStreetCredBonus, reputation::setStreetCredBonus, 0) : null);
     addReputationRow(grid, 2, "Schlechter Ruf", ch::getNotoriety, career
-        ? gmModel(reputation::getNotorietyBonus, reputation::setNotorietyBonus, 0) : null);
+        ? adjustmentModel(reputation::getNotorietyBonus, reputation::setNotorietyBonus, 0) : null);
     addReputationRow(grid, 3, "Prominenz", ch::getPublicAwareness, career
-        ? gmModel(reputation::getAwarenessAdjustment, reputation::setAwarenessAdjustment, -GM_POINTS_LIMIT) : null);
+        ? adjustmentModel(reputation::getAwarenessAdjustment, reputation::setAwarenessAdjustment, -ADJUSTMENT_LIMIT) : null);
     if (career) {
       Button burn = new Button("2 Straßenruf opfern");
       burn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -187,8 +187,8 @@ public final class ContactTabBuilder {
     addRowCells(grid, row, nameLabel, value, minus, gmValue, plus, breakdown);
   }
 
-  /** +/−-Modell für Spielleiter-Punkte; keine Buchung, kein Log (Plan-Annahme A1). */
-  private static @NonNull RowModel gmModel(@NonNull IntSupplier getter, @NonNull IntConsumer setter, int min) {
+  /** +/−-Modell für die Ruf-Eingaben des Spielleiters; keine Buchung, kein Log (Plan-Annahme A1, ADR-059). */
+  private static @NonNull RowModel adjustmentModel(@NonNull IntSupplier getter, @NonNull IntConsumer setter, int min) {
     return new RowModel() {
       @Override
       public int value() {
@@ -202,7 +202,7 @@ public final class ContactTabBuilder {
 
       @Override
       public int max() {
-        return GM_POINTS_LIMIT;
+        return ADJUSTMENT_LIMIT;
       }
 
       @Override

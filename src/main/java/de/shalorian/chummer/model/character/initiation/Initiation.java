@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -54,15 +55,28 @@ public class Initiation {
     return BASE_KARMA + (grade + 1) * KARMA_PER_GRADE;
   }
 
-  /** Warum der Grad nicht gesteigert werden kann, oder {@code null}. Die Karmabuchung übernimmt die Oberfläche. */
-  public @Nullable String getRaiseProblem() {
+  /**
+   * Warum gerade gar nicht gesteigert werden kann (ohne Magie bzw. Resonanz oder bei der Erschaffung, außer im
+   * Spielleiter-Modus), oder {@code null}; sperrt den Knopf, anders als die Grenze Grad ≤ Attribut.
+   */
+  public @Nullable String getModeProblem() {
     TechniqueKind kind = getKind();
     if (kind == null) {
       return "Nur mit Magie oder Resonanz";
     }
-    if (!owner.isCreated()) {
+    if (!owner.isCreated() && !owner.isGmMode()) {
       return kind.getProcessName() + " erst im Karrieremodus (S. 112)";
     }
+    return null;
+  }
+
+  /** Warum der Grad nicht gesteigert werden kann, oder {@code null}. Die Karmabuchung übernimmt die Oberfläche. */
+  public @Nullable String getRaiseProblem() {
+    String modeProblem = getModeProblem();
+    if (modeProblem != null) {
+      return modeProblem;
+    }
+    TechniqueKind kind = Objects.requireNonNull(getKind());
     int attribute = owner.getEffectiveMagicOrResonanceValue();
     if (grade + 1 > attribute) {
       return "%s %d darf %s %d nicht übersteigen".formatted(kind.getGradeName(), grade + 1, kind.getAttributeName(),

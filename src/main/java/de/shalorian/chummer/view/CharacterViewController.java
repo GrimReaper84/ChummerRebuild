@@ -72,6 +72,8 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private Label nameLabel;
   @FXML
+  private Label gmBanner;
+  @FXML
   private ComboBox<MetatypeData> metatypeBox;
   @FXML
   private VBox attributeGridHost;
@@ -381,8 +383,21 @@ public class CharacterViewController implements CharacterTabHost {
       return;
     }
     Character restored = services.undoHistory().undo(current);
+    restored.setGmMode(current.isGmMode()); // nie gespeichert, also auch nicht im gemerkten Stand
     showCharacter(restored);
     onCharacterReplaced.accept(restored);
+  }
+
+  /**
+   * Schaltet den Spielleiter-Modus des angezeigten Charakters (ADR-060) und baut die Ansicht neu auf, weil die
+   * +/−-Zeilen beim Aufbau verdrahtet werden; der Verlauf für Rückgängig bleibt.
+   */
+  public void setGmMode(boolean on) {
+    if (character == null) {
+      return;
+    }
+    character.setGmMode(on);
+    showCharacter(character);
   }
 
   private void updateUndoButton() {
@@ -553,7 +568,7 @@ public class CharacterViewController implements CharacterTabHost {
     int bp = character.getNuyenBP();
     nuyenBpValueLabel.setText(bp + " BP (" + character.getResourceNuyen() + NUYEN_SUFFIX + ")");
     nuyenBpMinusBtn.setDisable(bp <= 0);
-    nuyenBpPlusBtn.setDisable(bp >= Character.MAX_NUYEN_BP || character.getRemainingBP() <= 0);
+    nuyenBpPlusBtn.setDisable(bp >= Character.MAX_NUYEN_BP || (character.getRemainingBP() <= 0 && !character.isGmMode()));
   }
 
   @FXML
@@ -617,6 +632,8 @@ public class CharacterViewController implements CharacterTabHost {
     boolean career = character.isCreated();
 
     updateSummary();
+    gmBanner.setVisible(character.isGmMode());
+    gmBanner.setManaged(character.isGmMode());
     finalizeBtn.setVisible(!career);
     finalizeBtn.setManaged(!career);
     undoBtn.setVisible(career);

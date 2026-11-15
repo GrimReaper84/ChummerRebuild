@@ -220,7 +220,7 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
 | Persistenz | DTO-Klasse `XEntry` in `persistence` (public Felder, Default-Konstruktor), Feld in `CharacterData`, Mapping in `CharacterStore` (`toData`/`applyX`) |
 | Auswahl-Dialog | Subklasse von `CatalogSelectDialogController<T>` + eigene FXML (Vorbild `ComplexFormSelectDialog`) |
 | Tab-Inhalt | eigener `XTabBuilder` in `view.tab` (Vorbild `ContactTabBuilder`): Konstruktor mit FXML-Container(n), `CharacterTabHost` und ggf. `IncrementWiring`; `setCharacter`, `build()` baut komplett neu auf, `refresh()` für Zeilen-Refresher. Wirkt eine Änderung auf andere Tabs, eine fachliche Rückmeldung in `CharacterTabHost` ergänzen (z.B. `onImplantsChanged`) und im `CharacterViewController` entscheiden, was neu gebaut wird; Tabs rufen sich nie gegenseitig auf |
-| Dialoge, Hinweise, Abbuchung | `host.services()` (`TabServices`): `openDialog`, `warn`, `confirmYesNo`, `karmaChargeFailed`/`nuyenChargeFailed`, `confirmKarmaSpend` |
+| Dialoge, Hinweise, Abbuchung | `host.services()` (`TabServices`): `openDialog`, `warn`, `confirmYesNo`, `karmaChargeFailed` (optional mit Zusatzhinweis)/`nuyenChargeFailed`, `bookKarma`/`bookNuyen` |
 | +/−-Zeile | `IncrementWiring.wire(...)` bzw. `wireFree(...)` mit einer `RowModel`-Implementierung |
 
 Vorhandene Muster bevorzugen und nur erweitern, wenn sie nicht passen. Erweiterungen der Basisklassen
@@ -244,7 +244,7 @@ klein halten und im Ergebnis erwähnen.
   Sperre, sofern die Regel nicht eindeutig ein Verbot ist.
 - `Alert`/`TextInputDialog` über `applyDialogStyle()` ans Dark-Theme hängen. Neue Control-Typen auf
   Styling in `style.css` prüfen (fehlende Regeln fallen auf das helle Modena-Theme zurück).
-- **Karrieremodus:** Käufe kosten Karma mit Bestätigung (`karmaChargeFailed()`/`confirmKarmaSpend()`),
+- **Karrieremodus:** Käufe kosten Karma mit Bestätigung (`karmaChargeFailed()`, im Spielleiter-Modus kostenlos, ADR-060),
   Erstellungsmodus rechnet in BP. Beide Modi bei jedem Feature mitdenken.
 
 ## 9. Verifikation

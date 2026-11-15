@@ -209,7 +209,7 @@ public class Spirits {
 
   /** Bei der Erschaffung: Kraft bzw. Stufe = wirksame Magie bzw. Resonanz (S. 112/113). */
   private @Nullable String creationForceProblem(@NonNull SpiritKind kind, int force) {
-    if (owner.isCreated() || force == getCreationForce()) {
+    if (owner.isCreated() || owner.isGmMode() || force == getCreationForce()) {
       return null;
     }
     return "%s bei der Erschaffung = %s (%d)".formatted(kind.getPowerName(), kind.getAttributeName(),
@@ -218,7 +218,7 @@ public class Spirits {
 
   /** Bei der Erschaffung: gebundene schulden 1 bis Herbeirufen- bzw. Kompilieren-Stufe Dienste. */
   private @Nullable String creationServicesProblem(@NonNull SpiritKind kind, int services) {
-    if (owner.isCreated()) {
+    if (owner.isCreated() || owner.isGmMode()) {
       return null;
     }
     int max = getCreationMaxServices(kind);

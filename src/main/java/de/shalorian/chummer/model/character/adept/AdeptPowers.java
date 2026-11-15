@@ -80,7 +80,8 @@ public class AdeptPowers {
    * und kennt kein Umverteilen; im Spiel kommen nur neue Magiepunkte hinzu, die wahlweise in Kräfte gehen.
    */
   public int getMinAdeptMagic() {
-    return owner.isCreated()
+    // Im Spielleiter-Modus darf der GM auch im Karrieremodus senken, bis zu den schon ausgegebenen Kraftpunkten.
+    return owner.isCreated() && !owner.isGmMode()
         ? getAdeptMagic() : getSpentPowerPoints().setScale(0, RoundingMode.CEILING).intValue();
   }
 

@@ -17,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
@@ -45,6 +46,8 @@ public class MainWindowController {
   private MenuItem menuExit;
   @FXML
   private CheckMenuItem statusStaticItem;
+  @FXML
+  private CheckMenuItem gmModeItem;
 
   /** Einstellung: Status als fester Bereich statt als Slide-Panel (Menü Einstellungen). */
   private static final String STATUS_STATIC_KEY = "character.statusStatic";
@@ -82,6 +85,34 @@ public class MainWindowController {
     if (currentView != null) {
       currentView.setStatusStatic(statusStaticItem.isSelected());
     }
+  }
+
+  /**
+   * Schaltet den Spielleiter-Modus des offenen Charakters (ADR-060): Einschalten nach Rückfrage, Ausschalten sofort.
+   * Wird nicht gespeichert; beim Laden oder Neuanlegen ist er aus.
+   */
+  @FXML
+  private void onGmMode() {
+    if (currentView == null) {
+      gmModeItem.setSelected(false);
+      return;
+    }
+    boolean on = gmModeItem.isSelected();
+    if (on) {
+      Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+          "Steigern, Senken, Kaufen und Entfernen kosten nichts und werden nicht gebucht. Regelsperren entfallen "
+              + "(Erschaffungsgrenzen, nur steigern im Karrieremodus, Voraussetzungen, Verfügbarkeit); die Obergrenzen "
+              + "aus dem Grundregelwerk bleiben. Der Modus wird nicht gespeichert.",
+          ButtonType.YES, ButtonType.NO);
+      TabServices.applyDialogStyle(confirm);
+      confirm.setTitle("Spielleiter-Modus");
+      confirm.setHeaderText("Spielleiter-Modus einschalten?");
+      if (confirm.showAndWait().filter(button -> button == ButtonType.YES).isEmpty()) {
+        gmModeItem.setSelected(false);
+        return;
+      }
+    }
+    currentView.setGmMode(on);
   }
 
   @FXML
@@ -181,6 +212,8 @@ public class MainWindowController {
     borderPane.setCenter(charCtrl.node());
     menuSave.setDisable(false);
     menuSaveAs.setDisable(false);
+    gmModeItem.setDisable(false);
+    gmModeItem.setSelected(false);
     updateTitle();
   }
 

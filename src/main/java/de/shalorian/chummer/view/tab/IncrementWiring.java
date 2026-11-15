@@ -34,7 +34,9 @@ public final class IncrementWiring {
   public void wire(@NonNull List<Runnable> refresherList,
       @NonNull RowControls controls, boolean career, @NonNull RowModel model,
       @NonNull Character character, @NonNull LogCategory category) {
-    if (career) {
+    if (character.isGmMode()) {
+      wireGm(refresherList, controls, model);
+    } else if (career) {
       wireCareerIncrementable(refresherList, controls, model, character, category);
     } else {
       wireCreationIncrementable(refresherList, controls, model, character);
@@ -65,14 +67,23 @@ public final class IncrementWiring {
       int karmaCost = model.karmaStepCost();
       String label = model.actionLabel(val, val + 1);
       if (val < model.max() && character.getKarmaTotal() >= karmaCost && model.canIncrement()
-          && host.services().confirmKarmaSpend(label, karmaCost, character)) {
-        host.services().bookKarma(character, category, label, -karmaCost);
+          && !host.services().karmaChargeFailed(character, category, label, karmaCost)) {
         model.increment();
         host.refreshRows();
       }
     });
 
     refresh.run();
+  }
+
+  /**
+   * Spielleiter-Modus (ADR-060): Steigern und Senken ohne Kosten, Bestätigung und Buchung, in beiden Modi; es gelten nur
+   * Höchstwert und {@link RowModel#canIncrement()} (die Sperren dort hebt der Charakter im Spielleiter-Modus auf).
+   * BP zählen bei der Erschaffung weiter, deshalb auch {@code onBpChanged}.
+   */
+  private void wireGm(@NonNull List<Runnable> refresherList, @NonNull RowControls controls,
+      @NonNull RowModel model) {
+    wireWithoutCost(refresherList, controls, model, "GM");
   }
 
   private void wireCreationIncrementable(@NonNull List<Runnable> refresherList,
@@ -119,17 +130,26 @@ public final class IncrementWiring {
    */
   public void wireFree(@NonNull List<Runnable> refresherList,
       @NonNull RowControls controls, @NonNull RowModel model) {
+    wireWithoutCost(refresherList, controls, model, "");
+  }
+
+  /**
+   * Gemeinsamer Baustein für {@link #wireFree} und den Spielleiter-Modus: beide Richtungen ohne Kosten, nur Höchstwert,
+   * Mindestwert und {@link RowModel#canIncrement()} gelten; {@code costText} steht in der Kostenspalte.
+   */
+  private void wireWithoutCost(@NonNull List<Runnable> refresherList, @NonNull RowControls controls,
+      @NonNull RowModel model, @NonNull String costText) {
     Label valueLabel = controls.valueLabel();
-    Label costLabel = controls.costLabel();
     Button minus = controls.minus();
     Button plus = controls.plus();
 
     Runnable refresh = () -> {
       int val = model.value();
       valueLabel.setText(model.valueDisplayText());
-      costLabel.setText("");
+      controls.costLabel().setText(costText);
+      minus.setVisible(true);
       minus.setDisable(val <= model.min());
-      plus.setDisable(val >= model.max());
+      plus.setDisable(val >= model.max() || !model.canIncrement());
     };
     refresherList.add(refresh);
 
@@ -137,12 +157,14 @@ public final class IncrementWiring {
       if (model.value() > model.min()) {
         model.decrement();
         host.refreshRows();
+        host.onBpChanged();
       }
     });
     plus.setOnAction(_ -> {
-      if (model.value() < model.max()) {
+      if (model.value() < model.max() && model.canIncrement()) {
         model.increment();
         host.refreshRows();
+        host.onBpChanged();
       }
     });
 

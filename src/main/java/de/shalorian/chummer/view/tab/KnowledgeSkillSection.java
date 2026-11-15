@@ -202,14 +202,11 @@ final class KnowledgeSkillSection {
     specBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
 
-    boolean careerMode = character.isCreated();
     Runnable specRefresh = () -> {
       String spec = skill.getSpecialization();
       specLabel.setText(spec != null ? spec : "–");
       boolean eligible = character.canSpecializeKnowledgeSkill(skill);
-      boolean affordable = careerMode
-          ? character.getKarmaTotal() >= character.getSpecializationKarmaCost()
-          : spec != null || character.getRemainingBP() >= character.getKnowledgeSkillSpecializationBP();
+      boolean affordable = character.canAffordKnowledgeSkillSpecialization(spec);
       specBtn.setDisable(!eligible || !affordable);
     };
     knowledgeSkillRefreshers.add(specRefresh);
@@ -357,12 +354,8 @@ final class KnowledgeSkillSection {
   private void applyKnowledgeSkillSpecializationInCareerMode(@NonNull KnowledgeSkill skill,
       @NonNull Character character, @Nullable String newSpec) {
     int karmaCost = character.getSpecializationKarmaCost();
-    if (character.getKarmaTotal() < karmaCost) {
-      return;
-    }
     String label = skill.getName() + ": Spezialisierung \"" + (newSpec == null ? "–" : newSpec) + "\"";
-    if (host.services().confirmKarmaSpend(label, karmaCost, character)) {
-      host.services().bookKarma(character, LogCategory.SKILL, label, -karmaCost);
+    if (!host.services().karmaChargeFailed(character, LogCategory.SKILL, label, karmaCost)) {
       character.setKnowledgeSkillSpecialization(skill, newSpec);
       host.refreshRows();
     }
@@ -375,8 +368,8 @@ final class KnowledgeSkillSection {
    */
   private void applyKnowledgeSkillSpecializationInCreationMode(@NonNull KnowledgeSkill skill,
       @NonNull Character character, @Nullable String newSpec) {
-    boolean affordable = newSpec == null || skill.getSpecialization() != null
-        || character.getRemainingBP() >= character.getKnowledgeSkillSpecializationBP();
+    boolean affordable = newSpec == null
+        || character.canAffordKnowledgeSkillSpecialization(skill.getSpecialization());
     if (!affordable) {
       return;
     }
