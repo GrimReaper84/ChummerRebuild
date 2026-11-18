@@ -2,8 +2,8 @@ package de.shalorian.chummer.model.character.armor;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.equipment.Availability;
-import java.text.NumberFormat;
-import java.util.Locale;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
+import de.shalorian.chummer.utils.Numbers;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -34,7 +34,7 @@ public record ArmorData(
     boolean shield,
     boolean acceptsMods,
     @NonNull String weapon
-) implements CatalogEntry {
+) implements CatalogEntry, Sourced {
 
   /** Rüstung mit festem Preis (alles außer Kleidung). */
   public ArmorData(@NonNull String name, @NonNull ArmorCategory category, int ballistic, int impact,
@@ -57,12 +57,11 @@ public record ArmorData(
 
   /** Preis wie im GRW, z.B. {@code "900 ¥"}, {@code "20–100.000 ¥"} oder {@code "20–100.000 ¥ + 500 ¥"}. */
   public @NonNull String priceText() {
-    NumberFormat format = NumberFormat.getIntegerInstance(Locale.GERMAN);
     if (!hasVariablePrice()) {
-      return format.format(cost) + " ¥";
+      return Numbers.nuyen(cost);
     }
-    String range = format.format(priceMin) + "–" + format.format(priceMax) + " ¥";
-    return cost == 0 ? range : range + " + " + format.format(cost) + " ¥";
+    String range = Numbers.integer(priceMin) + "–" + Numbers.nuyen(priceMax);
+    return cost == 0 ? range : range + " + " + Numbers.nuyen(cost);
   }
 
   /** Rüstung hat keine Stufe; Verfügbarkeitsformeln werden deshalb mit Stufe 0 ausgewertet. */

@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character.vehicle;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
 
@@ -44,7 +45,7 @@ public record VehicleData(
     @NonNull String note,
     @NonNull String source,
     @NonNull String page
-) implements CatalogEntry {
+) implements CatalogEntry, Sourced {
 
   public VehicleData {
     includedGear = List.copyOf(includedGear);

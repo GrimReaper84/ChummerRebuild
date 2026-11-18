@@ -98,7 +98,7 @@ public class QualityDataLoader {
     int notoriety = notorietyText.isEmpty() ? 0 : Integer.parseInt(notorietyText);
 
     return new QualityData(name, bp, type, Collections.unmodifiableSet(parseBonuses(el)), page,
-        childText(el, "note"), selection, selectLabel, rules, level, notoriety);
+        childText(el, "source"), childText(el, "note"), selection, selectLabel, rules, level, notoriety);
   }
 
   /** Texte aller Kind-Elemente des Listen-Elements {@code tag}, leer ohne Liste. */

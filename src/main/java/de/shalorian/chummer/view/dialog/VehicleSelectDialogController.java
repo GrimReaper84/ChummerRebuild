@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.vehicle.VehicleCategory;
 import de.shalorian.chummer.model.character.vehicle.VehicleData;
 import de.shalorian.chummer.model.character.vehicle.VehicleDataLoader;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -123,7 +124,7 @@ public class VehicleSelectDialogController extends CatalogSelectDialogController
       availability += " (bei Erschaffung max. " + Availability.MAX_AVAILABILITY_AT_CREATION + ")";
     }
     availabilityLabel.setText(availability);
-    costLabel.setText(selected.cost() + " ¥");
+    costLabel.setText(Numbers.nuyen(selected.cost()));
     sourceLabel.setText(selected.source() + " S. " + selected.page());
     okButton.setDisable(!isAvailable(selected));
   }

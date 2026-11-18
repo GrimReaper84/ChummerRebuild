@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
 import de.shalorian.chummer.model.character.weapon.Mount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.MountStringConverter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,7 +152,7 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
     mountsLabel.setText(selected.mountsText());
     recoilLabel.setText(selected.rcText());
     availabilityLabel.setText(selected.availability().displayText(0));
-    String cost = weapon.getAccessoryNuyenCost(selected) + " ¥";
+    String cost = Numbers.nuyen(weapon.getAccessoryNuyenCost(selected));
     String catalogCost = selected.costText();
     costLabel.setText(catalogCost.equals(cost) ? cost : cost + " (" + catalogCost + ")");
     sourceLabel.setText(selected.source() + " S. " + selected.page());

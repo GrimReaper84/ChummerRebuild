@@ -15,7 +15,10 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.lifestyle.Lifestyle;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
+import de.shalorian.chummer.model.character.lifestyle.MissedPaymentResult;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.LifestyleLevelStringConverter;
+import java.util.concurrent.ThreadLocalRandom;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -113,7 +116,8 @@ public final class StreetGearTabBuilder {
 
   /**
    * Karrieremodus (GRW S. 310): „Monat bezahlen“ bucht die Monatskosten und zählt einen Monat dazu; eine neue Stufe
-   * bucht ihren ersten Monat. Gebucht wird vor der Änderung (Rückgängig, ADR-058).
+   * bucht ihren ersten Monat. Gebucht wird vor der Änderung (Rückgängig, ADR-058). Mit der Regel-Einstellung für
+   * versäumte Zahlungen kommen „Monat aussetzen“, Rückstand und Schulden dazu (S. 312, ADR-061).
    */
   private void fillLifestyleInCareerMode(@NonNull MigPane grid, @NonNull Character character) {
     Lifestyle lifestyle = character.getEquipment().getLifestyle();
@@ -154,7 +158,56 @@ public final class StreetGearTabBuilder {
     monthsRow.setAlignment(Pos.CENTER_LEFT);
     addLifestyleRow(grid, 1, "Bezahlte Monate:", monthsRow);
     addLifestyleCostRows(grid, 2, lifestyle);
-    addLifestyleHint("Versäumte Zahlungen regelt der Spielleiter (GRW S. 310).");
+    if (!character.getRuleOptions().isMissedLifestylePayments()) {
+      addLifestyleHint("Versäumte Zahlungen regelt der Spielleiter (GRW S. 312).");
+      return;
+    }
+    Button skip = new Button("Monat aussetzen");
+    skip.getStyleClass().add(STYLE_BTN_SECONDARY);
+    skip.setDisable(current.getMonthlyCost() == 0);
+    skip.setOnAction(_ -> skipLifestyleMonth(character));
+    monthsRow.getChildren().add(skip);
+    int row = 4;
+    if (lifestyle.getMissedMonths() > 0) {
+      addLifestyleRow(grid, row++, "Rückstand:", new Label(lifestyle.getMissedMonths() + " Monat"
+          + (lifestyle.getMissedMonths() == 1 ? "" : "e") + " in Folge"));
+    }
+    if (lifestyle.getDebt() > 0) {
+      Button payDebt = new Button("Schulden tilgen");
+      payDebt.getStyleClass().add(STYLE_BTN_SECONDARY);
+      payDebt.setOnAction(_ -> {
+        if (!host.services().nuyenChargeFailed(character, LogCategory.LIFESTYLE, "Schulden aus Lebensstil getilgt",
+            lifestyle.getDebt())) {
+          lifestyle.payDebt();
+          onLifestyleChanged(character);
+        }
+      });
+      HBox debtRow = new HBox(8, new Label(Numbers.nuyen(lifestyle.getDebt())), payDebt);
+      debtRow.setAlignment(Pos.CENTER_LEFT);
+      addLifestyleRow(grid, row, "Schulden:", debtRow);
+    }
+    addLifestyleHint("„Monat aussetzen“ würfelt nach GRW S. 312: Ein Wurf bis zur Zahl der ausgesetzten Monate in "
+        + "Folge senkt den Lebensstil um eine Stufe, ein Monat der alten Stufe wird Schuld.");
+  }
+
+  /**
+   * Setzt einen Monat aus: würfelt einen W6, bucht einen Log-Eintrag ohne Betrag (damit Rückgängig greift, vor der
+   * Änderung wie jede Buchung) und meldet das Ergebnis.
+   */
+  private void skipLifestyleMonth(@NonNull Character character) {
+    Lifestyle lifestyle = character.getEquipment().getLifestyle();
+    int roll = ThreadLocalRandom.current().nextInt(1, 7);
+    LifestyleLevel before = lifestyle.getLevel();
+    MissedPaymentResult result = lifestyle.skipOutcome(roll);
+    String outcome = result.downgraded()
+        ? "Abstieg auf %s, Schulden +%s".formatted(result.level().getDisplayName(), Numbers.nuyen(result.debtAdded()))
+        : "kein Problem";
+    String text = "Monat ausgesetzt (%d. in Folge), Wurf %d: %s".formatted(result.missedMonths(), roll, outcome);
+    host.services().bookNuyen(character, LogCategory.LIFESTYLE, "Lebensstil " + before.getDisplayName() + ": " + text,
+        0);
+    lifestyle.skipMonth(roll);
+    host.services().warn("Lebensstil", text);
+    onLifestyleChanged(character);
   }
 
   private void addLifestyleCostRows(@NonNull MigPane grid, int row, @NonNull Lifestyle lifestyle) {

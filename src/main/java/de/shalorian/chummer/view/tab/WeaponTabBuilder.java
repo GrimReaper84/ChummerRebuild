@@ -21,6 +21,7 @@ import de.shalorian.chummer.model.character.weapon.Mount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.dialog.AccessorySelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
@@ -199,7 +200,7 @@ final class WeaponTabBuilder {
   }
 
   private @NonNull HBox buildHeader(@NonNull Character character) {
-    Label costLabel = new Label("Kosten: " + character.getEquipment().getWeaponNuyenCost() + " ¥");
+    Label costLabel = new Label("Kosten: " + Numbers.nuyen(character.getEquipment().getWeaponNuyenCost()));
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     HBox header = new HBox(12);
@@ -368,7 +369,7 @@ final class WeaponTabBuilder {
         detailKey("Halterung"), detailValue(mount == null ? "–" : mount.getDisplayName()),
         detailKey("RK"), detailValue(data.rcText()));
     addRowCells(grid, 1, detailKey("Verf."), detailValue(data.availability().displayText(0)),
-        detailKey("Preis"), detailValue(weapon.getAccessoryNuyenCost(data) + " ¥"),
+        detailKey("Preis"), detailValue(Numbers.nuyen(weapon.getAccessoryNuyenCost(data))),
         detailKey("Quelle"), detailValue(data.source() + " S. " + data.page()));
     details.getChildren().addAll(title, grid);
     if (data.isPermanent()) {

@@ -28,4 +28,14 @@ class QualityCareerTest {
     }
     assertNull(c.getQualityBlockReason(quality("Beidhändigkeit"), false));
   }
+
+  @Test
+  void lateAwakeningSettingLiftsBlock() {
+    Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    c.setCreated(true);
+    c.getRuleOptions().setLateAwakening(true);
+    for (String name : List.of("Adept", "Zauberer", "Magieradept", "Technomancer")) {
+      assertNull(c.getQualityBlockReason(quality(name), false), name);
+    }
+  }
 }

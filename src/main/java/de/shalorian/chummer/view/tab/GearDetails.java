@@ -6,6 +6,7 @@ import de.shalorian.chummer.model.character.gear.GearCombatStats;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearUnit;
 import de.shalorian.chummer.model.character.gear.MatrixStats;
+import de.shalorian.chummer.utils.Numbers;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -75,7 +76,7 @@ record GearDetails(
         data.unit().format(gear.getQuantity()),
         gear.getAvailabilityText(),
         packPriceText(gear),
-        gear.getNuyenCost() + " ¥",
+        Numbers.nuyen(gear.getNuyenCost()),
         data.source() + " S. " + data.page(),
         data.note(),
         capacityText(gear),
@@ -123,6 +124,6 @@ record GearDetails(
     GearData data = gear.getData();
     GearUnit unit = data.unit();
     String pack = data.packSize() == 1 ? unit.getSingular() : unit.format(data.packSize());
-    return gear.getPackPrice() + " ¥ pro " + pack;
+    return Numbers.nuyen(gear.getPackPrice()) + " pro " + pack;
   }
 }

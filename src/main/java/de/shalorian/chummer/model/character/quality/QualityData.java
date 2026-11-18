@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.quality;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import java.util.Set;
 import org.jspecify.annotations.NonNull;
 
@@ -9,6 +10,7 @@ import org.jspecify.annotations.NonNull;
  *
  * @param bp          GP-Kosten; bei Handicaps negativ
  * @param page        gedruckte GRW-Seite, {@code 0} ohne Angabe
+ * @param source      Kürzel des Regelwerks aus {@code books.xml}, z.B. {@code "SR4"}
  * @param note        Kurzwirkung in eigenen Worten, sonst leer
  * @param selection   was beim Kauf gewählt werden muss
  * @param selectLabel Bezeichnung des Auswahlfelds (z.B. "Substanz"), leer ohne Auswahl
@@ -21,10 +23,11 @@ public record QualityData(
     @NonNull QualityType type,
     @NonNull Set<QualityBonusType> bonuses,
     int page,
+    @NonNull String source,
     @NonNull String note,
     @NonNull QualitySelection selection,
     @NonNull String selectLabel,
     @NonNull QualityRules rules,
     int level,
     int notoriety
-) implements CatalogEntry {}
+) implements CatalogEntry, Sourced {}

@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.character.armor.ArmorData;
 import de.shalorian.chummer.model.character.armor.ArmorDataLoader;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.equipment.Equipment;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -118,7 +119,7 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
   /** Eingegebener Kleidungspreis, oder {@code null}, wenn er fehlt oder außerhalb der Spanne liegt. */
   private @Nullable Integer enteredPrice(@NonNull ArmorData data) {
     try {
-      int price = Integer.parseInt(priceField.getText().trim().replace(".", ""));
+      int price = Numbers.parseInteger(priceField.getText());
       return data.isValidPrice(price) ? price : null;
     } catch (NumberFormatException _) {
       return null;

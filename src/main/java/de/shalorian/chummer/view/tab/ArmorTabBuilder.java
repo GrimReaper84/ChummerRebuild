@@ -19,6 +19,7 @@ import de.shalorian.chummer.model.character.armor.ArmorCategory;
 import de.shalorian.chummer.model.character.armor.ArmorMod;
 import de.shalorian.chummer.model.character.armor.ArmorModData;
 import de.shalorian.chummer.model.character.armor.SpecialProtection;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.dialog.ArmorModSelectDialogController;
 import de.shalorian.chummer.view.dialog.ArmorSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
@@ -294,7 +295,7 @@ final class ArmorTabBuilder {
     addRowCells(grid, row++, detailKey("Wirkung"), detailValue(data.effectText(mod.getRating())));
     addRowCells(grid, row++, detailKey("Verfügbarkeit"),
         detailValue(armor.availabilityText(data, mod.getRating())));
-    addRowCells(grid, row++, detailKey("Preis"), detailValue(mod.getNuyenCost() + " ¥"));
+    addRowCells(grid, row++, detailKey("Preis"), detailValue(Numbers.nuyen(mod.getNuyenCost())));
     addRowCells(grid, row, detailKey("Quelle"), detailValue(data.source() + " S. " + data.page()));
     details.getChildren().addAll(title(mod.getDisplayName()), grid);
     if (!data.note().isEmpty()) {

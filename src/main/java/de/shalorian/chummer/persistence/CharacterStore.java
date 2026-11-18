@@ -36,6 +36,7 @@ import de.shalorian.chummer.model.character.magic.SpellDataLoader;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.option.RuleOptions;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
 import de.shalorian.chummer.model.character.quality.QualitySource;
@@ -182,7 +183,11 @@ public class CharacterStore {
         .map(CharacterStore::toVehicleEntry)
         .toList();
     Lifestyle lifestyle = character.getEquipment().getLifestyle();
-    data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths());
+    data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths(),
+        lifestyle.getMissedMonths(), lifestyle.getDebt());
+    RuleOptions rules = character.getRuleOptions();
+    data.rules = new RuleOptionsEntry(rules.isLimbArmorAverage(), rules.isLateAwakening(),
+        rules.isMissedLifestylePayments(), List.copyOf(rules.getExtraBooks()));
 
     return data;
   }
@@ -304,6 +309,8 @@ public class CharacterStore {
     String metatypeName = Objects.requireNonNull(data.metatype, "Metatyp fehlt in Speicherdatei");
     MetatypeData metatype = MetatypeDataLoader.find(metatypeName);
     Character character = new Character(charName, metatype);
+    // Regel-Einstellungen vor allem anderen, damit jede spätere Berechnung schon mit ihnen läuft.
+    applyRuleOptions(character, data);
 
     // Qualities zuerst: sie heben Maxima an (Außergewöhnliches Attribut, Glück, Talentiert).
     applySelectedQualities(character, data);
@@ -727,6 +734,15 @@ public class CharacterStore {
       }
     }
     lifestyle.setMonths(Math.max(Lifestyle.MIN_MONTHS, data.lifestyle.months));
+    lifestyle.restoreArrears(data.lifestyle.missedMonths, data.lifestyle.debt);
+  }
+
+  private static void applyRuleOptions(@NonNull Character character, @NonNull CharacterData data) {
+    RuleOptions rules = character.getRuleOptions();
+    rules.setLimbArmorAverage(data.rules.limbArmorAverage);
+    rules.setLateAwakening(data.rules.lateAwakening);
+    rules.setMissedLifestylePayments(data.rules.missedLifestylePayments);
+    data.rules.books.forEach(code -> rules.setBookEnabled(code, true));
   }
 
   /** Gespeicherte Körperstelle; fehlt sie oder passt sie nicht, die erste Stelle der Gliedart. */

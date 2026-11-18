@@ -11,6 +11,7 @@ import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.magic.FocusType;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -351,7 +352,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     availabilityLabel.setText(availability);
     // Preis nur für einen gültigen Gegenstand; Gear rechnet und prüft selbst.
     Gear selection = buildSelection();
-    costLabel.setText(selection == null ? NO_VALUE : selection.getNuyenCost() + " ¥");
+    costLabel.setText(selection == null ? NO_VALUE : Numbers.nuyen(selection.getNuyenCost()));
     sourceLabel.setText(selected.source() + " S. " + selected.page());
     String problem = purchaseProblem(selected, rating);
     noteLabel.setText(problem != null ? problem : noteText(selected));
@@ -364,8 +365,8 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     FocusType focusType = data.focusType();
     if (data.variableCost()) {
       rule = "Preisspanne laut GRW: Preis frei wählbar, mindestens "
-          + data.packCostFor(data.lowestRating()) + " ¥ (höchstens " + Gear.MAX_CHOSEN_PACK_PRICE
-          + " ¥).";
+          + Numbers.nuyen(data.packCostFor(data.lowestRating())) + " (höchstens "
+          + Numbers.nuyen(Gear.MAX_CHOSEN_PACK_PRICE) + ").";
     } else if (focusType != null) {
       // GRW S. 112 und Tabelle S. 234
       rule = "Binden: bei der Erschaffung 1 BP je Kraft, danach Kraft × " + focusType.getKarmaFactor() + " Karma.";

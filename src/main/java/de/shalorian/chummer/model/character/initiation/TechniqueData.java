@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.initiation;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -13,7 +14,7 @@ import org.jspecify.annotations.NonNull;
  */
 public record TechniqueData(@NonNull String name, @NonNull TechniqueKind kind, boolean noAdept, boolean adeptOnly,
                             int maxTimes, @NonNull String effect, @NonNull String source, @NonNull String page)
-    implements CatalogEntry {
+    implements CatalogEntry, Sourced {
 
   /** Platzhalter für den Initiations- bzw. Wandlungsgrad. */
   public static final String GRADE = "{grade}";

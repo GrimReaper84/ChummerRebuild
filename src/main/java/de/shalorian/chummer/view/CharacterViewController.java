@@ -4,10 +4,13 @@ import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogEntry;
+import de.shalorian.chummer.model.character.condition.StatusTest;
 import de.shalorian.chummer.model.character.initiation.TechniqueKind;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.character.option.RuleOptions;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.FinalizeDialogController;
@@ -40,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javafx.fxml.FXML;
@@ -68,7 +72,6 @@ import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
  */
 public class CharacterViewController implements CharacterTabHost {
 
-  private static final String NUYEN_SUFFIX = " ¥";
   @FXML
   private Label nameLabel;
   @FXML
@@ -173,9 +176,11 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private ToggleButton sortByAlphabetBtn;
   private @Nullable Character character;
+  /** Proben im Status-Panel (Anzeige-Einstellung, vom Hauptfenster gesetzt). */
+  private @NonNull Set<StatusTest> statusTests = Set.of();
   private @NonNull Consumer<Character> onCharacterReplaced = _ -> { };
   private final @NonNull TabServices services =
-      new TabServices(() -> nameLabel.getScene().getWindow(), this::onLogChanged);
+      new TabServices(() -> nameLabel.getScene().getWindow(), this::onLogChanged, this::currentRuleOptions);
   private final @NonNull IncrementWiring wiring = new IncrementWiring(this);
 
   // Tab-Builder: werden in initialize() erzeugt, sobald die FXML-Container injiziert sind.
@@ -276,6 +281,15 @@ public class CharacterViewController implements CharacterTabHost {
     return Objects.requireNonNull(slidePanel, "configureStatus wurde nicht aufgerufen");
   }
 
+  /** Proben, die das Status-Panel zeigt (Anzeige-Einstellung); wirkt beim nächsten Aufbau der Übersicht. */
+  public void setStatusTests(@NonNull Set<StatusTest> statusTests) {
+    this.statusTests = Set.copyOf(statusTests);
+  }
+
+  public boolean isStatusStatic() {
+    return statusStatic;
+  }
+
   /** Zeigt den Status sofort als festen Bereich oder im Slide-Panel. */
   public void setStatusStatic(boolean statusStatic) {
     this.statusStatic = statusStatic;
@@ -298,7 +312,7 @@ public class CharacterViewController implements CharacterTabHost {
     }
     footerLabel.setText(FooterText.of(character));
     setWarnStyle(footerLabel, character.isCreationOverspent());
-    Node overview = StatusOverviewBuilder.build(character, services(), this::refreshRows);
+    Node overview = StatusOverviewBuilder.build(character, services(), statusTests, this::refreshRows);
     if (statusStatic) {
       statusPage.setContent(overview);
     } else {
@@ -384,8 +398,18 @@ public class CharacterViewController implements CharacterTabHost {
     }
     Character restored = services.undoHistory().undo(current);
     restored.setGmMode(current.isGmMode()); // nie gespeichert, also auch nicht im gemerkten Stand
+    // Einstellungen sind keine Buchung: die aktuellen Regeln bleiben, auch wenn der gemerkte Stand ältere hat
+    restored.getRuleOptions().copyFrom(current.getRuleOptions());
     showCharacter(restored);
     onCharacterReplaced.accept(restored);
+  }
+
+  /** Baut den ganzen Charakterbogen neu auf, z.B. nach geänderten Einstellungen (Zahlenformat, Regeln). */
+  public void rebuild() {
+    if (character == null) {
+      return;
+    }
+    showCharacter(character);
   }
 
   /**
@@ -465,6 +489,14 @@ public class CharacterViewController implements CharacterTabHost {
   @Override
   public void onBpChanged() {
     updateSummary();
+  }
+
+  /** Regel-Einstellungen des offenen Charakters für die Auswahldialoge, {@code null} ohne Charakter. */
+  private @Nullable RuleOptions currentRuleOptions() {
+    if (character == null) {
+      return null;
+    }
+    return character.getRuleOptions();
   }
 
   @Override
@@ -566,7 +598,7 @@ public class CharacterViewController implements CharacterTabHost {
       return;
     }
     int bp = character.getNuyenBP();
-    nuyenBpValueLabel.setText(bp + " BP (" + character.getResourceNuyen() + NUYEN_SUFFIX + ")");
+    nuyenBpValueLabel.setText(bp + " BP (" + Numbers.nuyen(character.getResourceNuyen()) + ")");
     nuyenBpMinusBtn.setDisable(bp <= 0);
     nuyenBpPlusBtn.setDisable(bp >= Character.MAX_NUYEN_BP || (character.getRemainingBP() <= 0 && !character.isGmMode()));
   }

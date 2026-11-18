@@ -213,6 +213,40 @@ class CharacterCyberlimbTest {
   }
 
   @Test
+  void limbArmorAverageOverFiveParts() {
+    // Einstellung: Durchschnitt über Arme, Beine, Torso; natürliche Teile 0, Hand/Fuß zählt nicht, abgerundet
+    Character c = mensch();
+    c.getRuleOptions().setLimbArmorAverage(true);
+    Cyberware left = addLimb(c, "Ganzer Arm (offensichtlich)", BodyLocation.ARM_LEFT, LimbAttributes.STANDARD);
+    Cyberware right = addLimb(c, "Ganzer Arm (offensichtlich)", BodyLocation.ARM_RIGHT, LimbAttributes.STANDARD);
+    Cyberware foot = addLimb(c, "Hand/Fuß (offensichtlich)", BodyLocation.LEG_LEFT, LimbAttributes.STANDARD);
+    c.getImplants().installInLimb(left, part("Panzerungsverbesserung", 2));
+    c.getImplants().installInLimb(right, part("Panzerungsverbesserung", 3));
+    c.getImplants().installInLimb(foot, part("Panzerungsverbesserung", 1));
+    assertEquals(1, c.getImplants().getLimbArmor());
+    assertEquals(1, c.getArmorBallistic());
+    c.getRuleOptions().setLimbArmorAverage(false);
+    assertEquals(6, c.getImplants().getLimbArmor());
+  }
+
+  @Test
+  void limbArmorAverageWithFullBody() {
+    Character c = mensch();
+    c.getRuleOptions().setLimbArmorAverage(true);
+    for (BodyLocation location : List.of(BodyLocation.ARM_LEFT, BodyLocation.ARM_RIGHT)) {
+      c.getImplants().installInLimb(addLimb(c, "Ganzer Arm (offensichtlich)", location, LimbAttributes.STANDARD),
+          part("Panzerungsverbesserung", 3));
+    }
+    for (BodyLocation location : List.of(BodyLocation.LEG_LEFT, BodyLocation.LEG_RIGHT)) {
+      c.getImplants().installInLimb(addLimb(c, "Ganzes Bein (offensichtlich)", location, LimbAttributes.STANDARD),
+          part("Panzerungsverbesserung", 3));
+    }
+    c.getImplants().installInLimb(addLimb(c, "Torso (offensichtlich)", BodyLocation.TORSO, LimbAttributes.STANDARD),
+        part("Panzerungsverbesserung", 3));
+    assertEquals(3, c.getImplants().getLimbArmor());
+  }
+
+  @Test
   void jumpHydraulicsGoIntoBothLegs() {
     Character c = mensch();
     Cyberware left = addLimb(c, "Ganzes Bein (offensichtlich)", BodyLocation.LEG_LEFT, LimbAttributes.STANDARD);

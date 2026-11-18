@@ -13,13 +13,12 @@ import de.shalorian.chummer.model.character.cyberware.LimbAttributes;
 import de.shalorian.chummer.model.character.cyberware.LimbPart;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.equipment.Equipment;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.BodyLocationStringConverter;
 import de.shalorian.chummer.view.converter.CyberwareGradeStringConverter;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javafx.fxml.FXML;
@@ -353,14 +352,13 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
   }
 
   private static @NonNull String priceRange(@NonNull CyberwareData data) {
-    NumberFormat format = NumberFormat.getIntegerInstance(Locale.GERMAN);
-    return format.format(data.priceMin()) + "–" + format.format(data.priceMax()) + " ¥";
+    return Numbers.integer(data.priceMin()) + "–" + Numbers.nuyen(data.priceMax());
   }
 
   /** Eingegebener Preis, oder {@code null}, solange er fehlt oder außerhalb der Spanne liegt. */
   private @Nullable Integer enteredPrice(@NonNull CyberwareData data) {
     try {
-      int price = Integer.parseInt(priceField.getText().trim().replace(".", ""));
+      int price = Numbers.parseInteger(priceField.getText());
       return data.isValidPrice(price) ? price : null;
     } catch (NumberFormatException _) {
       return null;
@@ -383,7 +381,7 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
         ? String.valueOf(installTarget.capacityNeed(preview.getData(), preview.getRating()))
         : ESSENCE_FORMAT.toString(preview.getEssenceCost().doubleValue()));
 
-    costLabel.setText(preview.getNuyenCost() + " ¥");
+    costLabel.setText(Numbers.nuyen(preview.getNuyenCost()));
     okButton.setDisable(false);
   }
 

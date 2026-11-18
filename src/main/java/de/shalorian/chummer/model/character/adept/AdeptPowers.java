@@ -6,6 +6,7 @@ import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.quality.QualityBonusType;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
+import de.shalorian.chummer.utils.Numbers;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -171,10 +172,9 @@ public class AdeptPowers {
         .orElse(null);
   }
 
-  /** Kraftpunkte in deutscher Schreibweise ohne überflüssige Nullen, z.B. "1,25" oder "4". */
+  /** Kraftpunkte ohne überflüssige Nullen, z.B. "1,25" oder "4" ({@link Numbers#decimal}). */
   public static @NonNull String formatPoints(@NonNull BigDecimal points) {
-    BigDecimal stripped = points.stripTrailingZeros();
-    return (stripped.scale() < 0 ? stripped.setScale(0) : stripped).toPlainString().replace('.', ',');
+    return Numbers.decimal(points);
   }
 
   // --- Stufen und Prüfungen ---

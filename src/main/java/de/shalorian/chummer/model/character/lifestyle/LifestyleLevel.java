@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character.lifestyle;
 
+import java.util.List;
 import java.util.random.RandomGenerator;
 import org.jspecify.annotations.NonNull;
 
@@ -35,6 +36,20 @@ public enum LifestyleLevel {
 
   public @NonNull String getDisplayName() {
     return displayName;
+  }
+
+  /**
+   * Die nächstniedrigere Stufe (Abstieg nach einer versäumten Zahlung, GRW S. 312).
+   *
+   * @throws IllegalStateException auf der untersten Stufe Straße
+   */
+  public @NonNull LifestyleLevel lower() {
+    List<LifestyleLevel> levels = List.of(values());
+    int index = levels.indexOf(this);
+    if (index == 0) {
+      throw new IllegalStateException("Unter Straße gibt es keinen Lebensstil");
+    }
+    return levels.get(index - 1);
   }
 
   /** Kosten pro Monat in Nuyen (GRW S. 111). */

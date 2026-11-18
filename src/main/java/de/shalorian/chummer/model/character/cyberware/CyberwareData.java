@@ -3,6 +3,7 @@ package de.shalorian.chummer.model.character.cyberware;
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.gear.GearCategory;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -54,7 +55,7 @@ public record CyberwareData(
     @NonNull String note,
     @NonNull LimbSpec limb,
     @NonNull String weapon
-) implements CatalogEntry {
+) implements CatalogEntry, Sourced {
 
   /** Niedrigste Stufe eines stufenbehafteten Implantats (alle GRW-Tabellen beginnen bei Stufe 1). */
   public static final int MIN_RATING = 1;

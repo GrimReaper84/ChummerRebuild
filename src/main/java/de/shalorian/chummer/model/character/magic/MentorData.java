@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.magic;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import de.shalorian.chummer.model.character.situation.SituationKind;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import org.jspecify.annotations.Nullable;
  */
 public record MentorData(@NonNull String name, @NonNull List<MentorBonus> bonuses, @Nullable SituationKind choiceKind,
                          int choiceDice, @NonNull List<String> choiceOptions, @NonNull String drawback,
-                         @NonNull String source, @NonNull String page) implements CatalogEntry {
+                         @NonNull String source, @NonNull String page) implements CatalogEntry, Sourced {
 
   /** Trennt in der gespeicherten Auswahl Patron und gewählten Vorteil: „Katze (Infiltration)“. */
   private static final String OPEN = " (";

@@ -93,7 +93,7 @@ Der Charakterbogen hat statt Tabs eine gruppierte Seitenleiste (Charakter, Magie
 Protokoll; die Ebene Straßenausrüstung entfällt), eine schmale Kopfzeile (Name, Metatyp, Ressourcen-BP, Abschließen)
 und eine Fußzeile `BP | Nuyen | Essenz` bei der Erschaffung bzw. `Karma | Nuyen | Essenz` in der Karriere. Die
 Status-Übersicht liegt wie im Fallout2d20-Projekt in einem Slide-Panel mit verschiebbarem Knopf; Einstellungen ›
-„Status statisch anzeigen“ macht sie zum obersten Bereich unter „Charakter“ (Java-Preferences, gilt für alle
+„Status statisch anzeigen“ (seit ADR-061 im Einstellungsdialog) macht sie zum obersten Bereich unter „Charakter“ (Java-Preferences, gilt für alle
 Charaktere). Magie, Adeptenkräfte und Technomancer bleiben ohne Gabe sichtbar und deaktiviert (ADR-033). Optik dunkel
 mit Grau-Blau-Tönen, Türkis als Akzent, dunklem Petrol als Akzent-Hintergrund, alle Farben als CSS-Variablen; Schriften
 Inter und Chakra Petch (SIL OFL) im Projekt. Das App-Icon nutzt dieselben Farben. Zahlen ohne Tausenderpunkt wie bisher.
@@ -130,7 +130,7 @@ darüber Verbesserungen bis zum augmentierten Maximum, über Stufe 3 nur mit ang
 Werte je Glied; Waffen in einem Glied rechnen mit seiner STR. Der Durchschnitt über die fünf Körperteile (zwei Arme,
 zwei Beine, Torso; das Rechenbeispiel S. 390 geht nur so auf) wird angezeigt, Pools und Monitor rechnen weiter mit
 den Charakterattributen. Gliedpanzerung zählt als Summe aller angeschlossenen Glieder wie im C# (das GRW regelt
-mehrere gepanzerte Glieder nicht; später per Einstellung umschaltbar auf den Durchschnitt über die fünf Teile) und
+mehrere gepanzerte Glieder nicht; später per Einstellung umschaltbar auf den Durchschnitt über die fünf Teile, umgesetzt in ADR-061) und
 nicht zur Behinderung. Jedes angeschlossene Glied gibt ein Kästchen im Körperlichen Monitor (S. 390, Archetyp S. 135).
 Verbesserungen, Zubehör, Cyber-Nahkampfwaffen und Head-/Bodyware mit eckigem Kapazitätswert (S. 385, 388) werden
 gegen Kapazität eingebaut; Head- und Bodyware in Gliedern zählt bei Doppelkauf und Unverträglichkeiten mit; die Sprunghydraulik geht mit einem Kauf (Stufe × 2.000 ¥) in beide Cyberbeine, ohne
@@ -222,7 +222,7 @@ laufen über `TabServices.book`, die vor dem Eintrag den Stand des Charakters me
 dabei auch Änderungen ohne Buchung seitdem zurück (die Rückfrage sagt das). Der Abschluss der Erschaffung samt
 Startkapital ist nicht rückgängig zu machen. Lebensstil im Karrieremodus: Monat bezahlen und Stufe wechseln buchen Nuyen (S. 310), eine kostenlose Stufe
 wechselt ohne Buchung; versäumte Zahlungen sind
-für spätere Einstellungen vorgemerkt. Verkauf von Waffen, Rüstung, Ausrüstung und Fahrzeugen über ein Zahlenfeld, mit 30 %
+für spätere Einstellungen vorgemerkt (umgesetzt in ADR-061). Verkauf von Waffen, Rüstung, Ausrüstung und Fahrzeugen über ein Zahlenfeld, mit 30 %
 vorbelegt und änderbar (S. 358), keine Cyberware.
 **Warum:** Nutzerentscheidungen 2026-11-15; `docs/plaene/archiv/karrieremodus_plan.md`. Ein Stand je Buchung ersetzt die
 rund 40 Umkehr-Fälle des C#-Originals und kann keine Abhängigkeiten späterer Schritte übersehen.
@@ -230,7 +230,7 @@ rund 40 Umkehr-Fälle des C#-Originals und kann keine Abhängigkeiten späterer 
 ### ADR-059: Restliche GRW-Inhalte (2026-11-15)
 Bewegungsweiten am Metatyp (S. 177) mit Sprint-Pool im Tab Zustand. Im Karrieremodus sind Adept, Zauberer,
 Magieradept und Technomancer gesperrt (S. 313, zentral in `getQualityBlockReason`; die Aufhebung für latente
-Charaktere kommt als Einstellung), Beidhändigkeit bleibt frei. Ruf im Tab Kontakte: Straßenruf aus dem verdienten
+Charaktere kommt als Einstellung, umgesetzt in ADR-061), Beidhändigkeit bleibt frei. Ruf im Tab Kontakte: Straßenruf aus dem verdienten
 Karma (Summe der Gutschriften) ÷ 10 gerundet, Schlechter Ruf aus `<notoriety>` an 23 Gaben/Handicaps, Prominenz daraus
 ÷ 3; Spielleiter-Punkte, Opfern und Prominenz-Anpassung sind keine Buchungen. Exotische Fertigkeiten als Instanzen
 „Grundfertigkeit (Ziel)“ in der normalen Fertigkeitsliste (gleiche Kosten- und Sperrregeln), die Grundzeile bleibt
@@ -255,6 +255,30 @@ gekoppelte Mitglieder spezialisieren bei der Erschaffung, S. 109) und der einsei
 Lebensstil-Zahlungen und manuelle Einträge bleiben echte Buchungen.
 **Warum:** Nutzerwunsch 2026-11-15 nach Vorbild des Fallout-Builders (dort „GM free edit“); Korrekturen am Tisch
 sollen nicht an Regelsperren oder Guthaben scheitern. `docs/plaene/archiv/gm_modus_plan.md`.
+
+### ADR-061: Einstellungen und Regelwerke (2026-11-18)
+Menü Einstellungen → „Einstellungen…“ öffnet einen Dialog mit zwei Bereichen. **Anzeige** gilt für alle Charaktere
+(Java-Preferences): Tausender gruppieren an/aus, Dezimalkomma oder -punkt (das jeweils andere Zeichen gruppiert die Tausender),
+„Status statisch anzeigen“ (zieht aus dem Menü in den Dialog, ADR-049) und sieben Proben für eine Karte „PROBEN“ im
+Status (vier Attributproben, Sprinten, Wahrnehmung, Ausweichen; anfangs keine). Alle Zahlen der Anzeige laufen über
+`utils.Numbers` mit statischem Stil, weil auch das Modell Anzeigetexte baut; der Standard ist das bisherige Format, nur
+die Preisspannen von Kleidung und Cyberware, die bisher fest gruppiert waren, folgen jetzt ebenfalls der Einstellung.
+**Regeln** stehen im Charakter (`RuleOptions`, in der Datei unter `rules`), anfangs alle aus: Gliedpanzerung als
+Durchschnitt der fünf Körperteile statt Summe (Auslegung zu S. 390, natürliche Teile 0, abgerundet), spätes Erwachen
+(hebt die Sperre aus S. 313 auf), versäumte Lebensstilzahlungen. Diese führen im Karrieremodus zu „Monat aussetzen“:
+die App würfelt 1W6; ist der Wurf höchstens die Zahl der ausgesetzten Monate in Folge, sinkt der Lebensstil um eine
+Stufe und ein Monat der alten Stufe wird Schuld (S. 312). Danach beginnt der Rückstand neu, die bezahlten Monate bleiben;
+eine Zahlung oder ein Stufenwechsel hebt den Rückstand auf, „Schulden tilgen“ bucht die Schuld. Aussetzen steht als
+Log-Eintrag ohne Betrag im Log und ist rückgängig zu machen. Regeländerungen werden nicht gebucht.
+**Regelwerke:** `books.xml` nach Vorbild des C#, zunächst nur SR4 (Grundregelwerk, immer aktiv). Katalogeinträge mit
+Quelle implementieren `Sourced`; Einträge ohne Quelle (Adeptenkräfte, Metatypen, Fertigkeiten) gelten als GRW. Je
+Charakter sind Zusatzbände zuschaltbar, neue Charaktere haben nur das GRW. Die Auswahldialoge **blenden** Einträge
+abgeschalteter Regelwerke **aus** (bewusste Ausnahme von ADR-033, die innerhalb aktiver Regelwerke weiter gilt); der
+Filter sitzt einmal in `CatalogSelectDialogController` und wird in `TabServices#openDialog` gesetzt. Vorhandener
+Bestand aus abgeschalteten Regelwerken bleibt und wirkt, der Status zeigt dazu einen Hinweis. Jedes `<source>`-Kürzel
+der Kataloge muss in `books.xml` stehen (Test). Setzt den Regelwerk-Schalter aus ADR-002 um.
+**Warum:** Nutzerentscheidungen 2026-11-18 (drei Fragerunden); Regeln reisen mit der Datei, damit ein weitergegebener
+Charakter überall dieselben Werte zeigt. `docs/plaene/archiv/einstellungen_plan.md`.
 
 ## Architektur und Code
 

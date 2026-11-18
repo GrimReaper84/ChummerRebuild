@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.magic;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -21,4 +22,4 @@ public record SpellData(
     @NonNull String dv,
     @NonNull String source,
     @NonNull String page
-) implements CatalogEntry {}
+) implements CatalogEntry, Sourced {}

@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character.spirit;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.magic.Tradition;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import java.util.List;
 import java.util.Map;
 import org.jspecify.annotations.NonNull;
@@ -21,7 +22,7 @@ public record SpiritData(@NonNull String name, @NonNull SpiritKind kind, @NonNul
                          @NonNull List<SpiritStat> stats, @NonNull String movement, @NonNull List<String> skills,
                          @NonNull List<String> complexForms, @NonNull List<String> powers,
                          @NonNull List<String> optional, @NonNull List<String> weaknesses, @NonNull String source,
-                         @NonNull String page) implements CatalogEntry {
+                         @NonNull String page) implements CatalogEntry, Sourced {
 
   /** Punkte Kraft bzw. Stufe je optionaler Kraft bzw. Komplexer Form. */
   private static final int POINTS_PER_OPTION = 3;

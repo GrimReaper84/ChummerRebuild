@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearData;
 import de.shalorian.chummer.model.character.weapon.WeaponDamage;
+import de.shalorian.chummer.utils.Numbers;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -119,7 +120,7 @@ public class Cyberware {
       return data.hasVariablePrice() ? "Preis fehlt" : "Preis nicht wählbar";
     }
     if (chosenPrice != null && !data.isValidPrice(chosenPrice)) {
-      return "Preis %d ¥ liegt außerhalb von %d–%d ¥".formatted(chosenPrice, data.priceMin(), data.priceMax());
+      return "Preis %s liegt außerhalb von %s–%s".formatted(Numbers.nuyen(chosenPrice), Numbers.integer(data.priceMin()), Numbers.nuyen(data.priceMax()));
     }
     return limbProblem();
   }

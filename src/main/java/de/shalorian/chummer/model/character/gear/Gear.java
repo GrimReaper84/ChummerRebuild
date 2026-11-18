@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character.gear;
 
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.equipment.Legality;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -86,10 +87,10 @@ public class Gear {
       return data.variableCost() ? "Preis fehlt" : "Preis ist fest";
     }
     if (chosenPackPrice != null && chosenPackPrice < data.packCostFor(rating)) {
-      return "Preis liegt unter dem Mindestpreis " + data.packCostFor(rating) + " ¥";
+      return "Preis liegt unter dem Mindestpreis " + Numbers.nuyen(data.packCostFor(rating));
     }
     if (chosenPackPrice != null && chosenPackPrice > MAX_CHOSEN_PACK_PRICE) {
-      return "Preis liegt über " + MAX_CHOSEN_PACK_PRICE + " ¥";
+      return "Preis liegt über " + Numbers.nuyen(MAX_CHOSEN_PACK_PRICE);
     }
     return quantityProblem(quantity);
   }

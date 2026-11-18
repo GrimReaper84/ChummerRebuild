@@ -8,6 +8,7 @@ import de.shalorian.chummer.model.character.weapon.RangeBands;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponRange;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -127,10 +128,10 @@ record WeaponDetails(
 
   /** z.B. "350 ¥" bzw. mit Zubehör oder Pfeilen "350 ¥ (gesamt 750 ¥)". */
   private static @NonNull String costText(@NonNull Weapon weapon) {
-    String text = weapon.getNuyenCost() + " ¥";
+    String text = Numbers.nuyen(weapon.getNuyenCost());
     return weapon.getTotalNuyenCost() == weapon.getNuyenCost()
         ? text
-        : text + " (gesamt " + weapon.getTotalNuyenCost() + " ¥)";
+        : text + " (gesamt " + Numbers.nuyen(weapon.getTotalNuyenCost()) + ")";
   }
 
   private static @NonNull String orDash(@NonNull String text) {

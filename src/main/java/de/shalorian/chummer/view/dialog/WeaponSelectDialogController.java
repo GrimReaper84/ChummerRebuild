@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponCategory;
 import de.shalorian.chummer.model.character.weapon.WeaponData;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -177,7 +178,7 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
       availability += " (bei Erschaffung max. " + Availability.MAX_AVAILABILITY_AT_CREATION + ")";
     }
     availabilityLabel.setText(availability);
-    costLabel.setText(selected.costFor(rating) + " ¥");
+    costLabel.setText(Numbers.nuyen(selected.costFor(rating)));
     sourceLabel.setText(selected.source() + " S. " + selected.page());
     okButton.setDisable(buildSelection() == null);
   }

@@ -3,6 +3,7 @@ package de.shalorian.chummer.model.character.weapon;
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.cyberware.RatingFormula;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import java.math.RoundingMode;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
@@ -51,7 +52,7 @@ public record WeaponData(
     @NonNull String source,
     @NonNull String page,
     boolean builtIn
-) implements CatalogEntry {
+) implements CatalogEntry, Sourced {
 
   /** Niedrigste Stufe einer Waffe mit Stufe (Bogen: Mindeststärke 1). */
   public static final int MIN_RATING = 1;

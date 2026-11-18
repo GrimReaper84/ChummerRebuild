@@ -8,11 +8,15 @@ import de.shalorian.chummer.model.character.MatrixAccess;
 import de.shalorian.chummer.model.character.armor.SpecialProtection;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
+import de.shalorian.chummer.model.character.condition.StatusTest;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.situation.SituationalPool;
+import de.shalorian.chummer.model.character.skill.DicePool;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.IntConsumer;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -29,6 +33,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 /**
@@ -54,11 +59,12 @@ public final class StatusOverviewBuilder {
    * Baut die Übersicht für {@code character}.
    *
    * @param services        Rückfragen (Edge verheizen)
+   * @param tests           Proben, die als Karte „PROBEN“ erscheinen (Anzeige-Einstellung); leer = keine Karte
    * @param onDamageChanged nach einem Klick auf ein Kästchen, auf die Edge-Knöpfe bzw. nach der Wahl des aktiven
    *                        Kommlinks aufgerufen, damit alle Anzeigen nachziehen
    */
   public static @NonNull Node build(@NonNull Character character, @NonNull TabServices services,
-      @NonNull Runnable onDamageChanged) {
+      @NonNull Set<StatusTest> tests, @NonNull Runnable onDamageChanged) {
     VBox root = new VBox(CARD_GAP);
     root.setPrefWidth(WIDTH);
     root.getChildren().addAll(header(character), initiative(character, onDamageChanged), conditionMonitor(character, onDamageChanged),
@@ -66,6 +72,9 @@ public final class StatusOverviewBuilder {
     List<SituationalPool> pools = character.getSituationalPools();
     if (!pools.isEmpty()) {
       root.getChildren().add(situationalPools(pools));
+    }
+    if (!tests.isEmpty()) {
+      root.getChildren().add(statusTests(character, tests));
     }
     List<String> hints = StatusHints.of(character);
     if (!hints.isEmpty()) {
@@ -78,16 +87,35 @@ public final class StatusOverviewBuilder {
   private static @NonNull Node situationalPools(@NonNull List<SituationalPool> pools) {
     VBox rows = new VBox(4);
     for (SituationalPool pool : pools) {
-      Label label = styled(new Label(pool.label()), "key-caption");
-      Region spacer = new Region();
-      HBox.setHgrow(spacer, Priority.ALWAYS);
-      Label dice = styled(new Label(pool.diceText()), "key-figure");
-      HBox row = new HBox(8, label, spacer, dice);
-      row.setAlignment(Pos.CENTER_LEFT);
-      Tooltip.install(row, new Tooltip(pool.breakdown()));
-      rows.getChildren().add(row);
+      rows.getChildren().add(poolRow(pool.label(), pool.diceText(), pool.breakdown()));
     }
     return card(titled("SITUATIVE POOLS", rows));
+  }
+
+  /** Gewählte Proben in fester Reihenfolge, Aufschlüsselung im Tooltip; „–“, wenn die Probe nicht möglich ist. */
+  private static @NonNull Node statusTests(@NonNull Character c, @NonNull Set<StatusTest> tests) {
+    VBox rows = new VBox(4);
+    for (StatusTest test : StatusTest.values()) {
+      if (!tests.contains(test)) {
+        continue;
+      }
+      Optional<DicePool> pool = c.getStatusTestPool(test);
+      rows.getChildren().add(poolRow(test.getDisplayName(), pool.map(p -> String.valueOf(p.dice())).orElse("–"),
+          pool.map(DicePool::breakdown).orElse(null)));
+    }
+    return card(titled("PROBEN", rows));
+  }
+
+  /** Zeile „Anlass … Würfel“ der Pool-Karten, Aufschlüsselung im Tooltip. */
+  private static @NonNull HBox poolRow(@NonNull String caption, @NonNull String diceText, @Nullable String breakdown) {
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    HBox row = new HBox(8, styled(new Label(caption), "key-caption"), spacer, styled(new Label(diceText), "key-figure"));
+    row.setAlignment(Pos.CENTER_LEFT);
+    if (breakdown != null) {
+      Tooltip.install(row, new Tooltip(breakdown));
+    }
+    return row;
   }
 
   private static @NonNull Node header(@NonNull Character c) {

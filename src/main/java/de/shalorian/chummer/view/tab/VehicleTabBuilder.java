@@ -19,6 +19,7 @@ import de.shalorian.chummer.model.character.vehicle.VehicleCategory;
 import de.shalorian.chummer.model.character.vehicle.VehicleModification;
 import de.shalorian.chummer.model.character.vehicle.WeaponMount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import de.shalorian.chummer.view.dialog.VehicleSelectDialogController;
@@ -206,7 +207,7 @@ public final class VehicleTabBuilder {
   }
 
   private @NonNull HBox buildHeader(@NonNull Character character) {
-    Label costLabel = new Label("Kosten: " + character.getEquipment().getVehicleNuyenCost() + " ¥");
+    Label costLabel = new Label("Kosten: " + Numbers.nuyen(character.getEquipment().getVehicleNuyenCost()));
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     HBox header = new HBox(12);
@@ -339,7 +340,7 @@ public final class VehicleTabBuilder {
       showTextDetails(details, VehicleModification.RIGGER_ADAPTER.getDisplayName(),
           vehicle.isRiggerAdapterIncluded()
               ? "Bei Drohnen serienmäßig eingebaut (GRW S. 398)."
-              : "Nachgerüstet (" + VehicleModification.RIGGER_ADAPTER.cost() + " ¥). Damit kann ein"
+              : "Nachgerüstet (" + Numbers.nuyen(VehicleModification.RIGGER_ADAPTER.cost()) + "). Damit kann ein"
                   + " Charakter mit Riggerkontrolle das Fahrzeug riggen (GRW S. 395).");
     } else if (gear != null) {
       GearTabBuilder.showGearDetails(details, gear, character, host,

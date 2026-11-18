@@ -15,7 +15,7 @@ schiefgegangen sind.
 6. Code-Konventionen
 7. Bewährte Bausteine (nicht neu erfinden)
 8. UI-Konventionen
-9. Verifikation
+9. Verifikation und Fehlersuche
 10. Nacharbeiten nach einer Umsetzung
 
 ---
@@ -40,7 +40,9 @@ csharp-legacy-analyzer → java-analyzer → javafx-planner → java-developer �
 Der fünfte Schritt läuft **automatisch am Ende jeder Umsetzung** (Nutzervorgabe 2026-09-30):
 `java-developer` startet nach grünem Build einen eigenen Agenten mit frischem Kontext, der den Diff im
 Diff-Modus des Reviewers prüft, mit Schwerpunkt auf unnötiger Komplexität, Überabstraktion und
-Duplikaten. Frischer Kontext, weil der Autor des Codes die eigenen Entscheidungen kaum infrage stellt.
+Duplikaten. Vorher gleicht er den Diff gegen den Plan ab (Plantreue: Schritte, Akzeptanzkriterien,
+Nutzerentscheidungen; seit 2026-11-18). Frischer Kontext, weil der Autor des Codes die eigenen
+Entscheidungen kaum infrage stellt.
 Der Review-Agent ändert nichts; seine Befunde landen im Abschlussbericht, und der Nutzer gibt frei,
 welche umgesetzt werden. Das Abschluss-Review entfällt, wenn die Umsetzung selbst aus Review-Befunden
 bestand.
@@ -172,6 +174,9 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
   aber unbekannte Namen beim Laden überspringen statt abzustürzen. Formatänderungen im Ergebnis
   erwähnen.
 - Offene Folgeaufträge und Zurückgestelltes landen in `docs/feature_checklist.md`.
+- **Quelle ist Pflicht (ADR-061):** Jeder neue Katalogeintrag bekommt `<source>` mit einem Kürzel aus `books.xml`
+  (sonst blendet der Regelwerk-Filter ihn aus; ein Test prüft das). Inhalte eines Zusatzbands kommen erst mit dessen
+  Eintrag in `books.xml`. Neue Katalog-Records mit Quelle implementieren `Sourced`.
 
 ## 6. Code-Konventionen
 
@@ -244,10 +249,65 @@ klein halten und im Ergebnis erwähnen.
   Sperre, sofern die Regel nicht eindeutig ein Verbot ist.
 - `Alert`/`TextInputDialog` über `applyDialogStyle()` ans Dark-Theme hängen. Neue Control-Typen auf
   Styling in `style.css` prüfen (fehlende Regeln fallen auf das helle Modena-Theme zurück).
+- **Designsystem (ADR-049):** siehe unten; neue UI nutzt die vorhandenen Variablen und Klassen, statt
+  eigene Farben, Schriften oder Abstände einzuführen.
 - **Karrieremodus:** Käufe kosten Karma mit Bestätigung (`karmaChargeFailed()`, im Spielleiter-Modus kostenlos, ADR-060),
   Erstellungsmodus rechnet in BP. Beide Modi bei jedem Feature mitdenken.
 
-## 9. Verifikation
+### Designsystem
+
+Quelle ist `src/main/resources/de/shalorian/chummer/style.css`; diese Zusammenfassung beschreibt die Regeln,
+die Werte stehen nur dort. Ändert sich das Designsystem, beides nachziehen.
+
+**Grundsatz:** dunkle Oberfläche in Grau-Blau, **ein** Akzent (Türkis), Orange nur für Hinweise, Rot nur für
+Fehler/Überzug. Farbe trägt Bedeutung, nicht Dekoration.
+
+**Farben:** ausschließlich die Variablen `-cr-…` aus `.root` am Dateianfang, nie Hex-Werte in Regeln, FXML
+oder Java (`setStyle`).
+
+| Rolle | Variablen | Einsatz |
+|---|---|---|
+| Flächen | `-cr-bg` < `-cr-surface-alt` < `-cr-surface` < `-cr-raised` < `-cr-hover` | Fenstergrund, Karten, erhöhte Controls, Hover; Tiefe durch Helligkeit, nicht durch Schatten |
+| Linien | `-cr-border`, `-cr-border-strong` | Kartenrahmen, Trennlinien; „strong“ für Controls (Buttons, Eingaben) |
+| Text | `-cr-text` > `-cr-text-soft` > `-cr-muted` > `-cr-faint` | Werte/Titel, normaler Text, Beschriftungen, Nebensächliches |
+| Akzent | `-cr-accent`, `-cr-accent-bg`, `-cr-accent-bg-hover`, `-cr-accent-border` | verstärkte Werte, aktiver Eintrag, Gruppenüberschriften der Seitenleiste; Hintergrund für Primärbutton, Auswahl, gewählter Toggle |
+| Hinweis | `-cr-warn`, `-cr-warn-bg`, `-cr-warn-border`, `-cr-warn-text` | weiche Warnungen, Hinweiskarten |
+| Fehler | `-cr-danger` | BP/Karma überzogen, körperlicher Schaden |
+| Geistig | `-cr-stun` | geistiger Schaden im Zustandsmonitor |
+
+JavaFX-Standards sind daran gebunden (`-fx-accent`, `-fx-focus-color`); neue Control-Typen brauchen eigene
+Regeln, sonst erscheint das helle Modena-Theme.
+
+**Schriften** (liegen unter `resources/.../fonts/`, SIL OFL):
+- **Inter** (Regular/Medium/SemiBold) für allen Fließtext, Grundgröße 13px.
+- **Chakra Petch** (Medium/SemiBold) nur für Überschriften und große Zahlen: Seiten- und Dialogtitel,
+  Charaktername, Gruppen der Seitenleiste, Abschnittstitel, Kennzahlen, Attribut- und Poolwerte.
+- Größenstufen: 24 Seitentitel · 22 Kennzahl · 15–18 Abschnitt/Werte · 13–14 Text · 11–12 Beschriftungen und
+  Kartentitel. Keine neuen Zwischengrößen ohne Grund.
+- Zahlen in Anzeigetexten nur über `utils.Numbers` (`nuyen`, `integer`, `decimal`, `essence`), nie per Verkettung
+  wie `+ " ¥"`; das Format ist eine Anzeige-Einstellung (Standard ohne Tausenderpunkt, Dezimalkomma, ADR-061).
+
+**Bausteine (CSS-Klassen):**
+- Flächen: `.card` (+ `.card-title`, klein, fett, `muted`), `.hint-card` (+ `.hint-card-title`, `.hint-text`)
+  für Hinweise; Radius 8, Innenabstand 14/16.
+- Texte: `.page-title`, `.section-title`, `.key-figure` (+ `.key-figure-accent`, `.key-caption`), `.warn-text`.
+- Buttons: `.btn-primary` (eine Hauptaktion pro Bereich, Petrol mit Akzentrand) und `.btn-secondary`
+  (alles andere); Radius 6, Innenabstand 6/14; deaktiviert mit Deckkraft 0,45. Toggle-Buttons im selben Stil,
+  gewählt = Akzent-Hintergrund. Icon-Buttons über `GridSupport.useIcon()`, das Icon übernimmt die Textfarbe.
+- Grids: `MigPane` mit `GridSupport` (`addRowCells`, `preventShrink`, `withRightFiller`), Spalten nach Inhalt.
+
+**Rahmen (ADR-049):** gruppierte Seitenleiste, schmale Kopfzeile, Fußzeile `BP | Nuyen | Essenz` bzw.
+`Karma | Nuyen | Essenz`, Status als Slide-Panel oder statisch; Listen mit Kategorien als Master-Detail
+(Baum links, Details rechts, ADR-035).
+
+**Dialoge:** `Alert`/`TextInputDialog` über `applyDialogStyle()` (Font-Awesome-Icon in Akzentfarbe statt
+Java-Symbol), Hinweise als ControlsFX-Notification.
+
+**Später (Nutzerentscheidung 2026-11-18):** Ein Design-Durchgang, z.B. mit dem Plugin Impeccable
+(`critique`, `typeset`, `layout`, `harden` an Screenshots), kommt erst, wenn die Funktionalität nicht mehr
+im Vordergrund steht.
+
+## 9. Verifikation und Fehlersuche
 
 - **`./gradlew build`** (Compile + Tests + Checks) ist die Verifikation. Anzahl Tests und
   Fehlschläge berichten.
@@ -258,6 +318,19 @@ klein halten und im Ergebnis erwähnen.
 - **GRW-Rechenbeispiele als Unit-Tests nachrechnen** (z.B. "1,5 Cyberware + 2,5 Bioware → 2,75"), dazu
   Grenzfälle.
 - Tests nie löschen oder abschwächen, um grün zu werden.
+- **Erst belegen, dann melden:** „Fertig“ oder „grün“ nur nach einem Build-Lauf nach der letzten
+  Änderung, dessen Ausgabe gelesen wurde (Details: `java-developer`, Schritt 6).
+
+**Fehlersuche (Bugfix ohne Plan, aus Superpowers „systematic-debugging“ übernommen 2026-11-18):**
+1. **Ursache belegen, bevor etwas geändert wird:** Fehler nachvollziehen, möglichst mit einem
+   fehlschlagenden Unit-Test, sonst mit der konkreten Codestelle und dem Datenfluss dorthin. Ist die
+   Ursache eine Fachregel, zuerst im GRW prüfen, ob der Code oder die Erwartung falsch ist.
+2. **Eine Hypothese, eine Änderung:** Nicht mehrere Vermutungen gleichzeitig „mitfixen“.
+3. **Am Ursprung beheben**, nicht am Symptom (z.B. die falsche Summe in `Character` statt einer Korrektur
+   im Tab). Dieselbe Ursache an anderen Stellen suchen.
+4. **Regressionstest** behält den Fall dauerhaft; dann `./gradlew build`.
+5. **Nach zwei gescheiterten Ansätzen anhalten** und dem Nutzer Befund, Versuche und Vermutung
+   berichten, statt weiter zu probieren.
 
 ## 10. Nacharbeiten nach einer Umsetzung
 

@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.technomancer;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -15,4 +16,4 @@ public record ComplexFormData(
     @NonNull String skill,
     @NonNull String source,
     @NonNull String page
-) implements CatalogEntry {}
+) implements CatalogEntry, Sourced {}

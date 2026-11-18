@@ -2,8 +2,10 @@ package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.spirit.SpiritKind;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -11,7 +13,7 @@ import org.jspecify.annotations.NonNull;
  * überzogenes Ressourcengeld und Essenz auf 0 oder darunter (GRW S. 111), in beiden Modi überzogene Kraftpunkte und ein
  * Initiations- bzw. Wandlungsgrad über dem wirksamen Magie- bzw. Resonanzwert sowie Geister und Sprites, die nicht mehr
  * den Regeln entsprechen ({@code Spirits#getProblems}), und Foki über den Grenzen von Magie bzw. Logik
- * ({@code Foci#getProblems}).
+ * ({@code Foci#getProblems}), dazu Einträge aus abgeschalteten Regelwerken (ADR-061).
  */
 public final class StatusHints {
 
@@ -27,7 +29,7 @@ public final class StatusHints {
       }
       int nuyen = character.getRemainingNuyen();
       if (nuyen < 0) {
-        hints.add("Ressourcengeld um " + -nuyen + " ¥ überzogen");
+        hints.add("Ressourcengeld um " + Numbers.nuyen(-nuyen) + " überzogen");
       }
       if (character.isEssenceBelowCreationMinimum()) {
         hints.add("Essenz darf bei der Erschaffung nicht auf 0 oder darunter fallen");
@@ -44,6 +46,10 @@ public final class StatusHints {
     String initiationHint = character.getInitiation().getAboveAttributeHint();
     if (initiationHint != null) {
       hints.add(initiationHint);
+    }
+    Set<String> disabledBooks = character.getSourcesFromDisabledBooks();
+    if (!disabledBooks.isEmpty()) {
+      hints.add("Enthält Inhalte aus abgeschalteten Regelwerken: " + String.join(", ", disabledBooks));
     }
     return hints;
   }

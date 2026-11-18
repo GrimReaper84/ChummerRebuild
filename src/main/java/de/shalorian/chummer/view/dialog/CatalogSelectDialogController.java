@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
+import de.shalorian.chummer.model.character.option.RuleOptions;
 import java.text.Collator;
 import java.util.Comparator;
 import java.util.List;
@@ -35,6 +36,8 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
   @FXML
   protected ListView<T> itemListView;
 
+  private @Nullable RuleOptions ruleOptions;
+
   @FXML
   public void initialize() {
     refreshCategoryOptions();
@@ -67,8 +70,33 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
   protected void refreshCategoryOptions() {
     Collator collator = Collator.getInstance(Locale.GERMAN);
     categoryBox.getItems().setAll(CATEGORY_ALL);
-    categoryBox.getItems().addAll(categoryOptions().stream().sorted(collator).toList());
+    categoryBox.getItems().addAll(categoryOptions().stream().filter(this::hasEntriesFromEnabledBooks)
+        .sorted(collator).toList());
     categoryBox.setValue(CATEGORY_ALL);
+  }
+
+  /**
+   * Übernimmt die Regel-Einstellungen des Charakters: Einträge aus abgeschalteten Regelwerken werden ausgeblendet, nicht
+   * deaktiviert (Nutzerentscheidung 2026-11-18, ADR-061). Ohne Aufruf gilt alles als erlaubt. Gesetzt wird das zentral
+   * beim Öffnen des Dialogs ({@code TabServices#openDialog}).
+   */
+  public void setRuleOptions(@NonNull RuleOptions ruleOptions) {
+    this.ruleOptions = ruleOptions;
+    refreshCategoryOptions();
+    updateList();
+  }
+
+  /** Eine Kategorie bleibt, solange sie leer ist oder einen Eintrag aus einem aktiven Regelwerk hat. */
+  private boolean hasEntriesFromEnabledBooks(@NonNull String category) {
+    if (ruleOptions == null) {
+      return true;
+    }
+    List<T> inCategory = allEntries().stream().filter(e -> matchesCategory(e, category)).toList();
+    return inCategory.isEmpty() || inCategory.stream().anyMatch(this::allowedByRulebooks);
+  }
+
+  private boolean allowedByRulebooks(@NonNull T entry) {
+    return ruleOptions == null || ruleOptions.allows(entry);
   }
 
   /**
@@ -112,6 +140,7 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
     List<T> filtered = allEntries().stream()
         .filter(e -> category == null || CATEGORY_ALL.equals(category) || matchesCategory(e, category))
         .filter(e -> search.isEmpty() || e.name().toLowerCase(Locale.ROOT).contains(search))
+        .filter(this::allowedByRulebooks)
         .filter(this::additionalFilter)
         .sorted(Comparator.comparing(CatalogEntry::name))
         .toList();

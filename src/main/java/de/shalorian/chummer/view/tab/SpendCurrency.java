@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view.tab;
 
+import de.shalorian.chummer.utils.Numbers;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -30,11 +31,11 @@ enum SpendCurrency {
 
   /** Betrag mit Einheit, z.B. "5 Karma" oder "900 ¥". */
   @NonNull String formatAmount(int amount) {
-    return amount + amountSuffix;
+    return Numbers.integer(amount) + amountSuffix;
   }
 
   /** Zeile mit dem Guthaben nach dem Kauf, z.B. "Verbleibende Nuyen danach: 100 ¥". */
   @NonNull String formatRemaining(int remaining) {
-    return remainingPrefix + remaining + remainingSuffix;
+    return remainingPrefix + Numbers.integer(remaining) + remainingSuffix;
   }
 }

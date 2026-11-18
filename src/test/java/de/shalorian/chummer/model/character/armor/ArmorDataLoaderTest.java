@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.equipment.Legality;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.utils.NumberStyle;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,8 +37,16 @@ class ArmorDataLoaderTest {
     ArmorData clothing = find("Kleidung");
     assertEquals(ArmorCategory.CLOTHING, clothing.category());
     assertTrue(clothing.hasVariablePrice());
-    assertEquals("20–100.000 ¥", clothing.priceText());
-    assertEquals("20–100.000 ¥ + 500 ¥", find("Feedback-Kleidung").priceText());
+    // Zahlen folgen der Anzeige-Einstellung: Standard ohne Tausenderpunkt, auf Wunsch wie im GRW
+    assertEquals("20–100000 ¥", clothing.priceText());
+    assertEquals("20–100000 ¥ + 500 ¥", find("Feedback-Kleidung").priceText());
+    Numbers.setStyle(new NumberStyle(true, true));
+    try {
+      assertEquals("20–100.000 ¥", clothing.priceText());
+      assertEquals("20–100.000 ¥ + 500 ¥", find("Feedback-Kleidung").priceText());
+    } finally {
+      Numbers.setStyle(NumberStyle.DEFAULT);
+    }
     assertEquals("8", find("Feedback-Kleidung").availabilityText());
     assertEquals("2/2", find("Lederjacke/-mantel").protectionText());
     assertFalse(find("Panzerjacke").hasVariablePrice());

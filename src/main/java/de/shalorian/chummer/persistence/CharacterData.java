@@ -54,6 +54,8 @@ public class CharacterData {
   public @NonNull LifestyleEntry lifestyle = new LifestyleEntry();
   /** Spielleiter-Eingaben zur Reputation; fehlt in Dateien vor ADR-059 (dann alles 0). */
   public @NonNull ReputationData reputation = new ReputationData();
+  /** Regel-Einstellungen; fehlt in Dateien vor ADR-061 (dann alles aus). */
+  public @NonNull RuleOptionsEntry rules = new RuleOptionsEntry();
 
   public CharacterData() {
     // Für Jackson-Deserialisierung benötigt (public Felder werden nach dem Konstruktoraufruf per Reflection befüllt).

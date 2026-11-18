@@ -3,12 +3,15 @@ package de.shalorian.chummer.model.character;
 import de.shalorian.chummer.model.character.adept.AdeptPower;
 import de.shalorian.chummer.model.character.adept.AdeptPowerEffect;
 import de.shalorian.chummer.model.character.adept.AdeptPowers;
+import de.shalorian.chummer.model.character.armor.Armor;
 import de.shalorian.chummer.model.character.attribute.AttributeRange;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
 import de.shalorian.chummer.model.character.condition.AttributeTest;
+import de.shalorian.chummer.model.character.condition.StatusTest;
+import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.ImplantEffectType;
 import de.shalorian.chummer.model.character.cyberware.Implants;
 import de.shalorian.chummer.model.character.equipment.Equipment;
@@ -25,6 +28,7 @@ import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.Movement;
 import de.shalorian.chummer.model.character.gear.SkillsoftStatus;
+import de.shalorian.chummer.model.character.option.RuleOptions;
 import de.shalorian.chummer.model.character.reputation.Reputation;
 import de.shalorian.chummer.model.character.reputation.ReputationScore;
 import de.shalorian.chummer.model.character.quality.CharacterQuality;
@@ -35,6 +39,7 @@ import de.shalorian.chummer.model.character.quality.QualityRules;
 import de.shalorian.chummer.model.character.quality.QualitySelection;
 import de.shalorian.chummer.model.character.quality.QualitySource;
 import de.shalorian.chummer.model.character.quality.QualityType;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import de.shalorian.chummer.model.character.situation.SituationKind;
 import de.shalorian.chummer.model.character.situation.SituationalBonus;
 import de.shalorian.chummer.model.character.situation.SituationalPool;
@@ -50,6 +55,9 @@ import de.shalorian.chummer.model.character.spirit.Spirits;
 import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import de.shalorian.chummer.model.character.technomancer.LivingPersona;
+import de.shalorian.chummer.model.character.vehicle.Vehicle;
+import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.utils.Numbers;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -66,6 +74,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -131,6 +142,7 @@ public class Character {
   private final @NonNull Implants implants = new Implants(this);
   private final @NonNull Equipment equipment = new Equipment(this);
   private final @NonNull Reputation reputation = new Reputation();
+  private final @NonNull RuleOptions ruleOptions = new RuleOptions();
   /** Spielleiter-Modus, siehe {@link #isGmMode()}; bewusst nicht in der Speicherdatei. */
   private boolean gmMode;
   private final List<LogEntry> karmaLog = new ArrayList<>();
@@ -1092,7 +1104,7 @@ public class Character {
     if (gmMode) {
       return null;
     }
-    if (created && isAwakeningQuality(data)) {
+    if (created && !ruleOptions.isLateAwakening() && isAwakeningQuality(data)) {
       return "Nur bei der Erschaffung wählbar (S. 313)";
     }
     if (!created && !gratis) {
@@ -1110,7 +1122,8 @@ public class Character {
 
   /**
    * Adept, Zauberer, Magieradept und Technomancer: Gaben, die Magie bzw. Resonanz verleihen und laut GRW S. 313 nur
-   * bei der Erschaffung gewählt werden dürfen. Die Aufhebung für latente Charaktere kommt als Einstellung.
+   * bei der Erschaffung gewählt werden dürfen. Für latente Charaktere hebt {@link RuleOptions#isLateAwakening()} das
+   * auf.
    */
   private static boolean isAwakeningQuality(@NonNull QualityData data) {
     return data.bonuses().contains(QualityBonusType.GRANTS_MAGIC)
@@ -1771,6 +1784,23 @@ public class Character {
       @NonNull String bonusText) {
     return dicePool(attribute - 1 + bonus,
         "%s %d − 1 ohne Fertigkeitswert%s".formatted(attributeName, attribute, bonusText));
+  }
+
+  /**
+   * Pool einer Probe für das Status-Panel: Attributprobe, Sprint-Pool bzw. Fertigkeitspool; leer, wenn die Probe nicht
+   * möglich ist (z.B. kein Defaulting).
+   */
+  public @NonNull Optional<DicePool> getStatusTestPool(@NonNull StatusTest test) {
+    AttributeTest attributeTest = test.getAttributeTest();
+    if (attributeTest != null) {
+      return Optional.of(getAttributeTestPool(attributeTest));
+    }
+    String skillName = test.getSkillName();
+    if (skillName == null) {
+      return getSprintPool();
+    }
+    Skill skill = getSkill(skillName);
+    return skill == null ? Optional.empty() : getSkillDicePool(skill);
   }
 
   /** Würfelpool einer reinen Attributprobe (S. 166/167), Verletzungsmodifikator eingerechnet. */
@@ -2495,8 +2525,8 @@ public class Character {
     List<String> problems = new ArrayList<>();
     int remaining = getRemainingNuyen();
     if (remaining < 0) {
-      problems.add("Es wurden %d ¥ mehr ausgegeben, als an Ressourcen zur Verfügung stehen."
-          .formatted(-remaining));
+      problems.add("Es wurden %s mehr ausgegeben, als an Ressourcen zur Verfügung stehen."
+          .formatted(Numbers.nuyen(-remaining)));
     }
     return problems;
   }
@@ -2586,6 +2616,64 @@ public class Character {
    */
   public boolean isGmMode() {
     return gmMode;
+  }
+
+  /**
+   * Kürzel abgeschalteter Regelwerke, aus denen der Charakter Einträge besitzt (ADR-061). Solche Einträge bleiben und
+   * wirken weiter; der Status zeigt dazu nur einen Hinweis.
+   */
+  public @NonNull SortedSet<String> getSourcesFromDisabledBooks() {
+    List<Sourced> owned = new ArrayList<>();
+    for (CharacterQuality quality : qualities) {
+      owned.add(quality.data());
+      MentorData mentor = quality.data().selection() == QualitySelection.MENTOR
+          ? MentorDataLoader.findByChoice(quality.choice()) : null;
+      if (mentor != null) {
+        owned.add(mentor);
+      }
+    }
+    owned.addAll(spells);
+    complexForms.forEach(form -> owned.add(form.getData()));
+    owned.addAll(initiation.getTechniques());
+    spirits.getAll().forEach(spirit -> owned.add(spirit.getData()));
+    equipment.getCyberware().forEach(implant -> addImplantSources(implant, owned));
+    for (Armor armor : equipment.getArmor()) {
+      owned.add(armor.getData());
+      armor.getMods().forEach(mod -> owned.add(mod.getData()));
+    }
+    equipment.getWeapons().forEach(weapon -> addWeaponSources(weapon, owned));
+    equipment.getGear().forEach(gear -> addGearSources(gear, owned));
+    for (Vehicle vehicle : equipment.getVehicles()) {
+      owned.add(vehicle.getData());
+      vehicle.getGear().forEach(gear -> addGearSources(gear, owned));
+      vehicle.getMountedWeapons().forEach(weapon -> addWeaponSources(weapon, owned));
+    }
+    return owned.stream().map(Sourced::source).filter(code -> !ruleOptions.isBookEnabled(code))
+        .collect(Collectors.toCollection(TreeSet::new));
+  }
+
+  private static void addImplantSources(@NonNull Cyberware implant, @NonNull List<Sourced> owned) {
+    owned.add(implant.getData());
+    Gear commlink = implant.getCommlink();
+    if (commlink != null) {
+      addGearSources(commlink, owned);
+    }
+    implant.getInstalled().forEach(part -> addImplantSources(part, owned));
+  }
+
+  private static void addWeaponSources(@NonNull Weapon weapon, @NonNull List<Sourced> owned) {
+    owned.add(weapon.getData());
+    weapon.getAccessories().forEach(accessory -> owned.add(accessory.data()));
+  }
+
+  private static void addGearSources(@NonNull Gear gear, @NonNull List<Sourced> owned) {
+    owned.add(gear.getData());
+    gear.getInstalled().forEach(part -> addGearSources(part, owned));
+  }
+
+  /** Regel-Einstellungen dieses Charakters (gespeichert, nie {@code null}). */
+  public @NonNull RuleOptions getRuleOptions() {
+    return ruleOptions;
   }
 
   /** Schaltet den Spielleiter-Modus; wird nicht gespeichert. */

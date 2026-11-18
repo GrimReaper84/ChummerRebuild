@@ -398,12 +398,17 @@ public class Implants {
   }
 
   /**
-   * Gliedpanzerung für ballistisch und Stoß: Summe der Panzerungsverbesserungen aller angeschlossenen Glieder, wie im
-   * C#-Original (Nutzerentscheidung; das GRW sagt nur, dass sie sich mit getragener Panzerung addiert, S. 390).
-   * Einzige Stelle dieser Regel, damit eine spätere Einstellung (Durchschnitt über die fünf Körperteile) nur hier
-   * eingreift.
+   * Gliedpanzerung für ballistisch und Stoß (das GRW sagt nur, dass sie sich mit getragener Panzerung addiert, S. 390).
+   * Standard ist die Summe der Panzerungsverbesserungen aller angeschlossenen Glieder wie im C#-Original; mit
+   * {@code RuleOptions#isLimbArmorAverage()} der Durchschnitt über die fünf Körperteile wie bei den Attributen
+   * (natürliche Teile zählen 0, abgerundet; Hände, Füße und Unterarme gehen dabei nicht ein). Einzige Stelle dieser
+   * Regel.
    */
   public int getLimbArmor() {
+    if (owner.getRuleOptions().isLimbArmorAverage()) {
+      return AVERAGE_PARTS.stream().mapToInt(location -> averagePart(location).map(Cyberware::getLimbArmor).orElse(0))
+          .sum() / AVERAGE_PARTS.size();
+    }
     return getAttachedLimbs().stream().mapToInt(Cyberware::getLimbArmor).sum();
   }
 

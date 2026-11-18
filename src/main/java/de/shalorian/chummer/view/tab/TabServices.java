@@ -8,6 +8,8 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.equipment.Equipment;
+import de.shalorian.chummer.model.character.option.RuleOptions;
+import de.shalorian.chummer.view.dialog.CatalogSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -56,16 +58,21 @@ public final class TabServices {
 
   private final @NonNull Supplier<Window> owner;
   private final @NonNull Runnable onLogChanged;
+  private final @NonNull Supplier<@Nullable RuleOptions> ruleOptions;
   private final @NonNull UndoHistory undoHistory = new UndoHistory();
 
   /**
    * @param owner        liefert das Fenster des Charakterbogens; wird erst beim Öffnen eines Dialogs abgefragt,
    *                     weil die Szene bei der Initialisierung noch nicht steht
    * @param onLogChanged wird nach jeder Abbuchung aufgerufen (Log- und Guthabenanzeige nachziehen)
+   * @param ruleOptions  Regel-Einstellungen des offenen Charakters ({@code null} ohne Charakter); Auswahldialoge
+   *                     blenden damit Einträge aus abgeschalteten Regelwerken aus
    */
-  public TabServices(@NonNull Supplier<Window> owner, @NonNull Runnable onLogChanged) {
+  public TabServices(@NonNull Supplier<Window> owner, @NonNull Runnable onLogChanged,
+      @NonNull Supplier<@Nullable RuleOptions> ruleOptions) {
     this.owner = owner;
     this.onLogChanged = onLogChanged;
+    this.ruleOptions = ruleOptions;
   }
 
   /**
@@ -77,6 +84,11 @@ public final class TabServices {
       throws IOException {
     FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(App.class.getResource(fxmlName)));
     Parent root = loader.load();
+    RuleOptions options = ruleOptions.get();
+    // zentral, damit kein Auswahldialog den Regelwerk-Filter vergisst (ADR-061)
+    if (options != null && loader.getController() instanceof CatalogSelectDialogController<?> catalog) {
+      catalog.setRuleOptions(options);
+    }
 
     Stage dialogStage = new Stage();
     dialogStage.setTitle(title);

@@ -2,6 +2,8 @@ package de.shalorian.chummer.model.character.weapon;
 
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -30,7 +32,7 @@ public record AccessoryData(
     @NonNull String note,
     @NonNull String source,
     @NonNull String page
-) implements CatalogEntry {
+) implements CatalogEntry, Sourced {
 
   /**
    * Preisangabe des internen Smartgunsystems. GRW S. 368: Nachrüsten kostet noch einmal den Waffenpreis.
@@ -71,6 +73,6 @@ public record AccessoryData(
 
   /** Preis als Anzeigetext, z.B. "400 ¥" bzw. "Waffenpreis". */
   public @NonNull String costText() {
-    return WEAPON_PRICE.equals(cost) ? WEAPON_PRICE : cost + " ¥";
+    return WEAPON_PRICE.equals(cost) ? WEAPON_PRICE : Numbers.nuyen(Integer.parseInt(cost));
   }
 }

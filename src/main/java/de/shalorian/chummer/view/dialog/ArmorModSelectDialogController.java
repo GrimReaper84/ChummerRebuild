@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.character.armor.ArmorModData;
 import de.shalorian.chummer.model.character.armor.ArmorModDataLoader;
 import de.shalorian.chummer.model.character.armor.ArmorModKind;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -156,7 +157,7 @@ public class ArmorModSelectDialogController extends CatalogSelectDialogControlle
     int rating = currentRating(selected);
     effectLabel.setText(selected.effectText(rating));
     availabilityLabel.setText(target.availabilityText(selected, rating));
-    costLabel.setText(selected.costFor(rating) + " ¥");
+    costLabel.setText(Numbers.nuyen(selected.costFor(rating)));
     sourceLabel.setText(selected.source() + " S. " + selected.page());
     noteLabel.setText(selected.note());
     String problem = problem(selected, rating);

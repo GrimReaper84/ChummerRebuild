@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.dialog;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import javafx.fxml.FXML;
@@ -55,9 +56,9 @@ public class FinalizeDialogController {
     this.level = character.getEquipment().getLifestyle().getLevel();
     this.remainingNuyen = character.getRemainingNuyen();
     lifestyleLabel.setText(level.getDisplayName());
-    diceLabel.setText(level.getDice() + "W6 × " + level.getMultiplier() + " ¥"
-        + "  (Summe " + level.getMinDiceSum() + "–" + level.getMaxDiceSum() + ")");
-    remainingLabel.setText(remainingNuyen + " ¥ (verfällt)");
+    diceLabel.setText(level.getDice() + "W6 × " + Numbers.nuyen(level.getMultiplier())
+        + "  (Summe " + level.getMinDiceSum() + "–" + Numbers.integer(level.getMaxDiceSum()) + ")");
+    remainingLabel.setText(Numbers.nuyen(remainingNuyen) + " (verfällt)");
     bonusLabel.setText("+" + level.restBonus(remainingNuyen)
         + "  (+1 je 100 ¥ Restgeld, max. " + (level.getDice() * 3) + ")");
     onRoll();
@@ -85,7 +86,7 @@ public class FinalizeDialogController {
       okButton.setDisable(true);
       return;
     }
-    resultLabel.setText(level.startingCapital(sum, remainingNuyen) + " ¥");
+    resultLabel.setText(Numbers.nuyen(level.startingCapital(sum, remainingNuyen)));
     okButton.setDisable(false);
   }
 

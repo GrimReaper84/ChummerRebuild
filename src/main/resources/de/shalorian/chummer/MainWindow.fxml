@@ -20,7 +20,7 @@
                 <MenuItem fx:id="menuExit"   text="Beenden"           onAction="#onExit"/>
             </Menu>
             <Menu text="Einstellungen">
-                <CheckMenuItem fx:id="statusStaticItem" text="Status statisch anzeigen" onAction="#onStatusStaticChanged"/>
+                <MenuItem text="Einstellungen…" onAction="#onSettings"/>
                 <SeparatorMenuItem/>
                 <CheckMenuItem fx:id="gmModeItem" text="Spielleiter-Modus" onAction="#onGmMode" disable="true"/>
             </Menu>

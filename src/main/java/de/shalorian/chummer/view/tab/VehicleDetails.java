@@ -5,6 +5,7 @@ import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.vehicle.VehicleData;
 import de.shalorian.chummer.model.character.vehicle.VehicleModification;
 import de.shalorian.chummer.model.character.vehicle.WeaponMount;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.OptionalInt;
 import org.jspecify.annotations.NonNull;
 
@@ -93,15 +94,15 @@ record VehicleDetails(
   /** z.B. "14000 ¥" bzw. mit Ausstattung "14000 ¥ (gesamt 16500 ¥)". */
   private static @NonNull String costText(@NonNull Vehicle vehicle) {
     int own = vehicle.getData().cost();
-    String text = own + " ¥";
-    return vehicle.getNuyenCost() == own ? text : text + " (gesamt " + vehicle.getNuyenCost() + " ¥)";
+    String text = Numbers.nuyen(own);
+    return vehicle.getNuyenCost() == own ? text : text + " (gesamt " + Numbers.nuyen(vehicle.getNuyenCost()) + ")";
   }
 
   /** Text zu einer Halterung: Bauform laut Fahrzeugtext und Herkunft. */
   static @NonNull String mountText(@NonNull Vehicle vehicle, @NonNull WeaponMount mount) {
     if (!mount.isIncluded()) {
       VehicleModification mod = VehicleModification.WEAPON_MOUNT;
-      return "Nachgerüstet (" + mod.cost() + " ¥, Verf. " + mod.availability().displayText(0)
+      return "Nachgerüstet (" + Numbers.nuyen(mod.cost()) + ", Verf. " + mod.availability().displayText(0)
           + ", GRW S. 396)";
     }
     String note = vehicle.getData().mountNote();

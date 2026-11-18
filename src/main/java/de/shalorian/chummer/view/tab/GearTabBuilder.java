@@ -20,6 +20,7 @@ import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.gear.MatrixStats;
 import de.shalorian.chummer.model.character.gear.SkillsoftStatus;
 import de.shalorian.chummer.model.character.magic.Foci;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.GearSelectDialogController;
 import java.io.IOException;
@@ -148,7 +149,7 @@ final class GearTabBuilder {
   }
 
   private @NonNull HBox buildHeader(@NonNull Character character) {
-    Label costLabel = new Label("Kosten: " + character.getEquipment().getGearNuyenCost() + " ¥");
+    Label costLabel = new Label("Kosten: " + Numbers.nuyen(character.getEquipment().getGearNuyenCost()));
     costLabel.getStyleClass().add(STYLE_BP_LABEL);
 
     HBox header = new HBox(12);

@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.shell;
 
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import org.jspecify.annotations.NonNull;
 
@@ -22,7 +23,7 @@ public final class FooterText {
         ? "Karma: " + character.getKarmaTotal()
         : "BP: " + character.getRemainingBP();
     int nuyen = character.isCreated() ? character.getNuyenTotal() : character.getRemainingNuyen();
-    return first + SEPARATOR + "Nuyen: " + nuyen + " ¥" + SEPARATOR + "Essenz: "
+    return first + SEPARATOR + "Nuyen: " + Numbers.nuyen(nuyen) + SEPARATOR + "Essenz: "
         + ESSENCE_FORMAT.toString(character.getEssence());
   }
 }

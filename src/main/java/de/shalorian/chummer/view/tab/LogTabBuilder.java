@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogEntry;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.LogEntryDialogController;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public final class LogTabBuilder {
     TableColumn<LogEntry, String> amountCol = new TableColumn<>("Menge");
     amountCol.setCellValueFactory(c -> {
       int a = c.getValue().amount();
-      return new SimpleStringProperty(a > 0 ? "+" + a : String.valueOf(a));
+      return new SimpleStringProperty(a > 0 ? "+" + Numbers.integer(a) : Numbers.integer(a));
     });
     amountCol.setPrefWidth(70);
     amountCol.getStyleClass().add("number-cell");

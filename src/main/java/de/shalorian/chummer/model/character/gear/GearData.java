@@ -4,6 +4,7 @@ import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.cyberware.RatingFormula;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.magic.FocusType;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import java.math.RoundingMode;
 import java.util.Set;
 import org.jspecify.annotations.NonNull;
@@ -93,7 +94,7 @@ public record GearData(
     @NonNull String note,
     @NonNull String source,
     @NonNull String page
-) implements CatalogEntry {
+) implements CatalogEntry, Sourced {
 
   /** Erste Stufe der Preisspalte "Preis (bis Stufe 6)" der Matrixprogramme (GRW S. 376). */
   public static final int HIGH_COST_FROM_RATING = 4;

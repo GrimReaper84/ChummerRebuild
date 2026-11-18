@@ -182,7 +182,7 @@
 | Implantat-Wirkungen                                           | ✅      | Attributboni bis zum augmentierten Maximum (mit Adeptenkräften), Initiativedurchgänge, Panzerung ohne Behinderung, Poolboni (Athletik, sozial, körperlich, Wissen, Reflexrekorder), Schadenskompensator; situative Wirkungen als Hinweis (2026-11-12, ADR-048) |
 | Unverträglichkeiten                                           | ✅      | Datengetrieben, im Dialog gesperrt mit Grund, in beide Richtungen; Gesteigerte Reflexe ↔ technische Initiativesteigerung (S. 230) |
 | Kommlink-Headware                                             | ✅      | Kommlink-Modell aus dem Ausrüstungskatalog wird eingebaut, samt Betriebssystem (S. 386) |
-| Cybergliedmaßen, Cyberwaffen                                  | ✅      | 2026-11-12 (ADR-051): 14 Glieder mit Stelle, An-/Abnehmen, Maßanfertigung, Verbesserungen, 5 Zubehörteile, 4 Cyber-Nahkampfwaffen, Head-/Bodyware mit Gliedkapazität, Durchschnitt über fünf Körperteile, Monitor +1 je Glied, Gliedpanzerung (Summe wie C#), Waffen mit Glied-STR. Offen: Cyberguns (GRW ohne Kosten), Einstellung Gliedpanzerung als Durchschnitt, Schockhand-Ladungen |
+| Cybergliedmaßen, Cyberwaffen                                  | ✅      | 2026-11-12 (ADR-051): 14 Glieder mit Stelle, An-/Abnehmen, Maßanfertigung, Verbesserungen, 5 Zubehörteile, 4 Cyber-Nahkampfwaffen, Head-/Bodyware mit Gliedkapazität, Durchschnitt über fünf Körperteile, Monitor +1 je Glied, Gliedpanzerung (Summe wie C#, per Einstellung Durchschnitt, ADR-061), Waffen mit Glied-STR. Offen: Cyberguns (GRW ohne Kosten), Schockhand-Ladungen |
 | Datenbuchse, Kommlink, Sim-Modul, Simrig für VR | ✅ | 2026-11-13 (ADR-054): Neuralinterface bzw. Sim-Modul (kalt/heiß) als Implantat-Wirkung, zählen für den Matrixzugang (S. 258, 386) |
 | Smartlink-Bonus auf den Waffenpool | ✅ | 2026-11-15 (ADR-056) |
 | Talentleitungen mit Aktionssofts, Wissens- und Linguasofts | ✅ | 2026-11-15 (ADR-059): Schalter „geladen“, Leitungsstufe und Doppelte-Limit, Neuralinterface für Lingua-/Wissenssoft (S. 377, 389) |
@@ -210,7 +210,7 @@
 | Lebensstil (6 GRW-Stufen, Monate im Voraus) | ✅      | GRW S. 111; Kosten zählen gegen das Ressourcengeld; Tab "Straßenausrüstung" → "Lebensstil" (2026-09-27) |
 | Lebensstil-Ausbaustufen, weitere Lebensstile | ❌      | Zusatzband, zurückgestellt |
 | Lebensstilzahlungen im Karrieremodus      | ✅      | 2026-11-15 (ADR-058): „Monat bezahlen“ und „Stufe wechseln“ (erster Monat) buchen Nuyen als Lebensstil (S. 310) |
-| Versäumte Lebensstilzahlungen (GRW S. 310: W6 gegen ausgesetzte Monate, Abstieg, Schulden) | ❌ | Später als Einstellung (Nutzerwunsch 2026-11-15, mit den übrigen Einstellungsmöglichkeiten, Roadmap 12) |
+| Versäumte Lebensstilzahlungen (GRW S. 312: W6 gegen ausgesetzte Monate, Abstieg, Schulden) | ✅ | 2026-11-18 (ADR-061): Regel-Einstellung je Charakter; „Monat aussetzen“ würfelt, Rückstand und Schulden, „Schulden tilgen“ |
 
 ---
 
@@ -290,7 +290,7 @@
 | Undo für Log-Einträge                                                 | ✅      | 2026-11-15 (ADR-058): letzter Schritt, beliebig oft, über den gemerkten Stand vor der Buchung; nur in der laufenden Sitzung |
 | Expense-Typen (z.B. ImproveAttribute, AddQuality …)                   | ✅      | 2026-11-15 (ADR-058): zehn Arten (`LogCategory`, auch „Kontakt“) als Spalte „Art“, gespeichert; alte Einträge „Manuell“ |
 | Ruf: Straßenruf, Schlechter Ruf, Prominenz | ✅ | 2026-11-15 (ADR-059): im Tab Kontakte, Spielleiter-Punkte und Opfern im Karrieremodus (S. 308/309) |
-| Adept, Zauberer, Magieradept, Technomancer nicht nachträglich wählbar (S. 313) | ✅ | 2026-11-15 (ADR-059); per Einstellung aufhebbar für latente Charaktere (Nutzerwunsch, Roadmap 12) |
+| Adept, Zauberer, Magieradept, Technomancer nicht nachträglich wählbar (S. 313) | ✅ | 2026-11-15 (ADR-059); per Regel-Einstellung „Spätes Erwachen“ aufhebbar (ADR-061) |
 
 ---
 
@@ -339,9 +339,11 @@
 | Tastaturkürzel (Ctrl+N/O/S/Shift+S/Q)                                | ✅      |           |
 | Seitenleiste, Kopf- und Fußzeile, Status-Panel (statisch umschaltbar) | ✅      | UI-Rework 2026-11-12, ADR-049 |
 | Einheitliche Optik (Farbvariablen, Schriften, Kartenstil, Icon)      | ✅      | UI-Rework 2026-11-12, ADR-049 |
-| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ❌      | Nutzerwunsch 2026-11-12, Einstellungen (Roadmap 12) |
-| Einstellung: spätes Erwachen erlauben (latente Charaktere)          | ❌      | Nutzerwunsch 2026-11-15: hebt die Sperre aus Abschnitt 15 (S. 313) auf; Roadmap 12 |
-| Einstellung für Regelauslegungen: Gliedpanzerung als Durchschnitt statt Summe | ❌      | Nutzerwunsch 2026-11-12 (ADR-051): Standard ist die Summe wie im C#, der Durchschnitt über fünf Körperteile auf Wunsch; Berechnung liegt nur in `Implants#getLimbArmor` |
+| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ✅      | 2026-11-18 (ADR-061): sieben Proben (Attributproben, Sprinten, Wahrnehmung, Ausweichen), Karte „PROBEN“ |
+| Einstellung: spätes Erwachen erlauben (latente Charaktere)          | ✅      | 2026-11-18 (ADR-061): Regel-Einstellung je Charakter |
+| Einstellung für Regelauslegungen: Gliedpanzerung als Durchschnitt statt Summe | ✅      | 2026-11-18 (ADR-061): Regel-Einstellung je Charakter; Berechnung nur in `Implants#getLimbArmor` |
+| Einstellungsdialog (Anzeige global, Regeln je Charakter)            | ✅      | 2026-11-18 (ADR-061): Menü Einstellungen › „Einstellungen…“; „Status statisch“ dort statt im Menü |
+| Regelwerke je Charakter zuschaltbar                                  | ✅      | 2026-11-18 (ADR-061): `books.xml` (bisher nur GRW), Filter in den Auswahldialogen, Hinweis bei Bestand aus abgeschalteten Regelwerken |
 | Bestätigungsdialog bei Karma-Ausgaben                                | ✅      |           |
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
@@ -349,7 +351,7 @@
 | Spielleiter-Modus (Korrekturen ohne Kosten und Sperren) | ✅ | 2026-11-15 (ADR-060): Menü Einstellungen, nicht gespeichert, GRW-Obergrenzen bleiben |
 | Kategorie-Dropdowns alphabetisch                                     | ✅      | Nutzervorgabe 2026-10-08: zentral in `CatalogSelectDialogController.refreshCategoryOptions()` (deutsche Sortierung, "Alle" oben); ersetzt die GRW-Reihenfolge der Ausrüstungs-/Waffen-Pläne |
 | Icon für "Pfeile hinzufügen" (Waffen-Tab)                           | ❌      | **Notiz (Nutzerwunsch 2026-10-08):** das Bullseye-Icon passt nicht; ein anderes FontAwesome-Icon suchen oder den Button als Text-Button belassen |
-| Einstellbare Zahlendarstellung (QoL)                                 | ❌      | **Notiz (Nutzerwunsch 2026-09-30):** später umschaltbar machen, ob Tausender mit Punkt gruppiert werden ("1.500" wie im GRW vs. "1500") und ob Dezimalzahlen Komma oder Punkt nutzen (z.B. Essenz "5,8" vs. "5.8"). Derzeit überall ohne Tausenderpunkt (Preise, Reichweiten). Umsetzung dann zentral über eine Formatierungsstelle statt verstreuter String-Verkettung |
+| Einstellbare Zahlendarstellung (QoL)                                 | ✅      | 2026-11-18 (ADR-061): Tausenderpunkt und Dezimaltrennzeichen, zentral über `utils.Numbers` |
 
 ---
 
@@ -402,9 +404,9 @@ README-Roadmap sind erledigt; es folgen:
     Aktions-, Wissens- und Linguasofts (Abschnitt 10), Sperre für Adept/Zauberer/Magieradept/Technomancer im
     Karrieremodus (S. 313, Abschnitt 15; aufhebbar über Punkt 12), Vorschlagsliste für Wissensfertigkeiten (ADR-032),
     Portrait.
-12. **Einstellungen:** die gesammelten Wahlmöglichkeiten gebündelt (Abschnitte 11a, 15, 19): Zahlenformat,
-    Gliedpanzerung als Durchschnitt, häufige Proben im Status, versäumte Lebensstilzahlungen, Sperre für spätes
-    Erwachen aufheben (latente Charaktere, Nutzerwunsch 2026-11-15).
+12. ✅ **Einstellungen (2026-11-18, ADR-061):** Einstellungsdialog mit Zahlenformat, Proben im Status, Status statisch
+    (Anzeige, global) sowie Gliedpanzerung als Durchschnitt, spätes Erwachen, versäumte Lebensstilzahlungen und
+    Regelwerk-Auswahl (Regeln, je Charakter).
 13. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
 14. **NSCs:** vorgefertigte und eigene NSCs, dazu Critter mit ihren Kräften (Critter-Kapitel des GRW).
 15. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge

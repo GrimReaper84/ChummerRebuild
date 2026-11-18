@@ -3,14 +3,21 @@ package de.shalorian.chummer.view;
 import de.shalorian.chummer.App;
 import de.shalorian.chummer.AppInfo;
 import de.shalorian.chummer.model.character.Character;
+import de.shalorian.chummer.model.character.condition.StatusTest;
 import de.shalorian.chummer.persistence.CharacterStore;
+import de.shalorian.chummer.utils.NumberStyle;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.utils.PersistenceUtils;
 import de.shalorian.chummer.view.dialog.NewCharacterDialogController;
+import de.shalorian.chummer.view.dialog.SettingsDialogController;
+import de.shalorian.chummer.view.dialog.SettingsResult;
 import de.shalorian.chummer.view.shell.FloatingButtonPosition;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,12 +52,14 @@ public class MainWindowController {
   @FXML
   private MenuItem menuExit;
   @FXML
-  private CheckMenuItem statusStaticItem;
-  @FXML
   private CheckMenuItem gmModeItem;
 
-  /** Einstellung: Status als fester Bereich statt als Slide-Panel (Menü Einstellungen). */
+  /** Einstellung: Status als fester Bereich statt als Slide-Panel (Einstellungsdialog). */
   private static final String STATUS_STATIC_KEY = "character.statusStatic";
+  private static final String GROUP_THOUSANDS_KEY = "display.groupThousands";
+  private static final String DECIMAL_COMMA_KEY = "display.decimalComma";
+  /** Vorsilbe der Schlüssel für die Proben im Status, dahinter der Name der {@link StatusTest}-Konstante. */
+  private static final String STATUS_TEST_KEY_PREFIX = "display.statusTest.";
   private final @NonNull ViewPreferences preferences = ViewPreferences.user();
   /** Position des Status-Knopfs, gemeinsam für alle Charaktere und gemerkt zwischen den Starts. */
   private final @NonNull FloatingButtonPosition statusButtonPosition =
@@ -75,15 +84,71 @@ public class MainWindowController {
     menuExit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
     menuSave.setDisable(true);
     menuSaveAs.setDisable(true);
-    statusStaticItem.setSelected(preferences.getBoolean(STATUS_STATIC_KEY, false));
+    Numbers.setStyle(displaySettings().numberStyle());
   }
 
-  /** Merkt sich, ob der Status statisch angezeigt wird. */
+  /** Anzeige-Einstellungen aus den Preferences; Standard ist das bisherige Verhalten. */
+  private @NonNull SettingsResult displaySettings() {
+    NumberStyle numberStyle = new NumberStyle(
+        preferences.getBoolean(GROUP_THOUSANDS_KEY, NumberStyle.DEFAULT.groupThousands()),
+        preferences.getBoolean(DECIMAL_COMMA_KEY, NumberStyle.DEFAULT.decimalComma()));
+    Set<StatusTest> tests = EnumSet.noneOf(StatusTest.class);
+    for (StatusTest test : StatusTest.values()) {
+      if (preferences.getBoolean(STATUS_TEST_KEY_PREFIX + test.name(), false)) {
+        tests.add(test);
+      }
+    }
+    return new SettingsResult(numberStyle, preferences.getBoolean(STATUS_STATIC_KEY, false), tests);
+  }
+
+  private void storeDisplaySettings(@NonNull SettingsResult settings) {
+    preferences.putBoolean(GROUP_THOUSANDS_KEY, settings.numberStyle().groupThousands());
+    preferences.putBoolean(DECIMAL_COMMA_KEY, settings.numberStyle().decimalComma());
+    preferences.putBoolean(STATUS_STATIC_KEY, settings.statusStatic());
+    for (StatusTest test : StatusTest.values()) {
+      preferences.putBoolean(STATUS_TEST_KEY_PREFIX + test.name(), settings.statusTests().contains(test));
+    }
+  }
+
+  /**
+   * Öffnet den Einstellungsdialog (ADR-061). Nach „Übernehmen“ werden die Anzeige-Werte gemerkt und angewendet, die
+   * Regeln stehen schon im Charakter; danach wird der offene Charakter neu aufgebaut, weil Zahlenformat und Regeln
+   * überall wirken.
+   */
   @FXML
-  private void onStatusStaticChanged() {
-    preferences.putBoolean(STATUS_STATIC_KEY, statusStaticItem.isSelected());
-    if (currentView != null) {
-      currentView.setStatusStatic(statusStaticItem.isSelected());
+  private void onSettings() {
+    try {
+      FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("SettingsDialog.fxml")));
+      Parent root = loader.load();
+      SettingsDialogController controller = loader.getController();
+      Stage dialogStage = new Stage();
+      dialogStage.initModality(Modality.WINDOW_MODAL);
+      dialogStage.initOwner(stage);
+      dialogStage.setTitle("Einstellungen");
+      dialogStage.setResizable(false);
+      Scene scene = new Scene(root);
+      scene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
+      dialogStage.setScene(scene);
+      Character character = currentCharacter;
+      controller.setup(dialogStage, displaySettings(), character == null ? null : character.getRuleOptions(),
+          character == null ? "" : character.getName());
+      dialogStage.showAndWait();
+
+      SettingsResult result = controller.getResult();
+      if (result == null) {
+        return;
+      }
+      storeDisplaySettings(result);
+      Numbers.setStyle(result.numberStyle());
+      if (currentView != null) {
+        currentView.setStatusTests(result.statusTests());
+        if (currentView.isStatusStatic() != result.statusStatic()) {
+          currentView.setStatusStatic(result.statusStatic());
+        }
+        currentView.rebuild();
+      }
+    } catch (IOException e) {
+      showError("Fehler beim Öffnen der Einstellungen", e.getMessage());
     }
   }
 
@@ -200,7 +265,9 @@ public class MainWindowController {
     FXMLLoader viewLoader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("CharacterView.fxml")));
     viewLoader.load();
     CharacterViewController charCtrl = viewLoader.getController();
-    charCtrl.configureStatus(statusStaticItem.isSelected(), statusButtonPosition);
+    SettingsResult display = displaySettings();
+    charCtrl.configureStatus(display.statusStatic(), statusButtonPosition);
+    charCtrl.setStatusTests(display.statusTests());
     charCtrl.setCharacter(character);
     charCtrl.setOnCharacterReplaced(restored -> {
       currentCharacter = restored;

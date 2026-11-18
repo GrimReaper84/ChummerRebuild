@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Regelwerke, deren Inhalte die Kataloge über <source> zuordnen (Vorbild: books.xml des C#-Originals, ADR-061).
+  Genau ein Eintrag ist das Grundregelwerk (<core/>): immer aktiv, nicht abschaltbar. Ein Zusatzband kommt mit
+  seinen Inhalten dazu; jedes <source>-Kürzel der Kataloge muss hier stehen.
+-->
+<books>
+    <book>
+        <code>SR4</code>
+        <name>Grundregelwerk</name>
+        <core/>
+    </book>
+</books>

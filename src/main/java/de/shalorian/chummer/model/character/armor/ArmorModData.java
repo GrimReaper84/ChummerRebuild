@@ -3,6 +3,7 @@ package de.shalorian.chummer.model.character.armor;
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.cyberware.RatingFormula;
 import de.shalorian.chummer.model.character.equipment.Availability;
+import de.shalorian.chummer.model.character.rulebook.Sourced;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -37,7 +38,7 @@ public record ArmorModData(
     @NonNull String note,
     @NonNull String source,
     @NonNull String page
-) implements CatalogEntry {
+) implements CatalogEntry, Sourced {
 
   /** Niedrigste Stufe einer Modifikation mit Stufe. */
   public static final int MIN_RATING = 1;
