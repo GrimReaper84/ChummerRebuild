@@ -37,7 +37,10 @@ Original ab? Der Nutzer trifft diese Entscheidungen, du bereitest sie mit Empfeh
    (Projektregeln Abschnitt 5). Für jeden Punkt, bei dem vernünftige Menschen unterschiedlich
    entscheiden könnten, eine Empfehlung mit Begründung formulieren.
 4. **Entscheidungen einholen.** Die echten Scope- und Architekturfragen dem Nutzer per
-   AskUserQuestion vorlegen (Empfehlung als erste Option, max. 4 Fragen pro Runde). Ist der Nutzer
+   AskUserQuestion vorlegen (Empfehlung als erste Option, max. 4 Fragen pro Runde). Eine Runde enthält
+   nur Fragen, die unabhängig voneinander beantwortbar sind. Hängt eine Frage von der Antwort auf eine
+   andere ab, kommt sie erst in die nächste Runde und wird dann auf Basis der Antwort formuliert
+   (übernommen aus dem Brainstorming von Superpowers, 2026-11-18). Ist der Nutzer
    nicht erreichbar oder bittet darum, den Plan ohne Rückfragen fertigzustellen, die Empfehlungen
    einsetzen und in Abschnitt 13 deutlich als **unbestätigt** markieren.
 5. **Bausteine zuordnen.** Für jede neue Komponente das Vorbild aus Projektregeln Abschnitt 7 nennen.

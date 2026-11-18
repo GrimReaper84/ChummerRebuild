@@ -62,7 +62,7 @@ Package-Wurzel.
 - `NewCharacterDialogController`, `LogEntryDialogController` und die Auswahldialoge in `view.dialog`: modale Dialoge
 
 **Optik:** Alle Farben stehen als Variablen (`-cr-…`) am Anfang von `style.css`; Schriften Inter und Chakra Petch
-liegen unter `resources/.../fonts/` (ADR-049).
+liegen unter `resources/.../fonts/` (ADR-049). Regeln des Designsystems: Projektregeln Abschnitt 8, „Designsystem“.
 
 **UI-Refresh:** Die Tab-Builder führen `List<Runnable>`-Refresh-Listen für ihre +/−-Zeilen (`refresh()`). Ändert sich
 ein Wert, der andere Zeilen beeinflusst, meldet der Tab `refreshRows()`, und der Controller ruft `refresh()` aller Tabs.
@@ -121,7 +121,8 @@ Beteiligte Skills:
 - **catalog-extractor**: Katalogdaten aus dem GRW in die XML-Kataloge übertragen bzw. prüfen (Nebenzweig, eigener
   Schritt oder Schritt im Plan)
 - **java-code-quality-reviewer** (Diff-Modus) als letzter Schritt: java-developer startet nach der Umsetzung einen
-  eigenen Agenten mit frischem Kontext, der den Diff auf unnötige Komplexität, Überabstraktion und Duplikate prüft;
+  eigenen Agenten mit frischem Kontext, der den Diff erst gegen den Plan abgleicht (Plantreue) und dann auf unnötige
+  Komplexität, Überabstraktion und Duplikate prüft;
   er berichtet nur, der Nutzer entscheidet, welche Befunde umgesetzt werden
 
 Für Code-Qualitäts-Reviews an bestehendem Code:

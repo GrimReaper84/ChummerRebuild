@@ -20,6 +20,15 @@ frischem Kontext (siehe Projektregeln Abschnitt 2). Dann gilt zusätzlich:
 - **Umfang = nur der Diff** der Umsetzung (`git diff <basis>` bzw. uncommittete Änderungen inkl. neuer
   Dateien), dazu so viel umliegender Bestand, wie zum Verständnis nötig ist. Keine Befunde zu altem Code,
   außer der neue Code verschlimmert ein bestehendes Problem.
+- **Zwei Stufen, in dieser Reihenfolge** (aus dem Superpowers-Workflow übernommen, Nutzerentscheidung
+  2026-11-18). Grund: Ein sauberer Diff, der eine Nutzerentscheidung verfehlt, ist schlimmer als ein
+  umständlicher, der sie trifft.
+  1. **Plantreue:** Den Diff gegen den Plan abgleichen: jeden Schritt aus Abschnitt 11, jedes
+     Akzeptanzkriterium aus Abschnitt 12 und jede Entscheidung aus Abschnitt 13. Je Punkt festhalten:
+     umgesetzt / abweichend / fehlt. Dazu Ungeplantes nennen, also Code, für den es keinen Plan-Schritt
+     gibt. Im Abschlussbericht begründete Abweichungen sind kein Befund, sondern werden nur auf
+     Plausibilität geprüft. Bei Review-Befunden statt eines Plans gelten die Umsetzungsaufträge als Plan.
+  2. **Einfachheit und Qualität** (folgende Punkte).
 - **Schwerpunkt Einfachheit.** Aktiv danach fragen:
   - Gibt es Code, Typen oder öffentliche Methoden, die nur einem einzigen Aufrufer dienen und sich
     durch vorhandene Information ersetzen ließen?
@@ -31,7 +40,10 @@ frischem Kontext (siehe Projektregeln Abschnitt 2). Dann gilt zusätzlich:
   Lösung dasselbe fachliche Ziel erreicht. Solche Punkte als "Planentscheidung, Nutzer fragen" markieren.
 - **GRW-Belege im neuen Javadoc stichprobenartig prüfen** (Seitenzahl = gedruckte Seite, eigene Worte statt
   GRW-Wortlaut, Projektregeln Abschnitt 4).
-- Ausgabe A in kompakter Form; höchstens 7 Befunde. "Keine relevanten Befunde" ist ein gültiges Ergebnis.
+- Ausgabe A in kompakter Form, davor ein Abschnitt **„Plantreue“**: nur Abweichungen, Fehlendes und
+  Ungeplantes mit Plan-Abschnitt und Stelle; sonst ein Satz wie „Alle Schritte und Entscheidungen
+  umgesetzt“. Fehlende oder abweichende Nutzerentscheidungen haben mindestens Schweregrad Hoch. Danach
+  höchstens 7 Qualitätsbefunde. "Keine relevanten Befunde" ist ein gültiges Ergebnis.
 - Keine Dateien ändern, nichts committen.
 
 ## Grundhaltung

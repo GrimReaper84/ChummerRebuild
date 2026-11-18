@@ -27,7 +27,8 @@ nicht anfangen, sondern nachfragen.
 | Auftrag | Umfang laut Nutzer (alle Schritte oder einzelne) |
 
 Bei Review-Befunden statt eines Plans gelten die Umsetzungsaufträge des `java-code-quality-reviewer`
-(erlaubte/nicht erlaubte Änderungen, Verhaltenserhalt) als Plan.
+(erlaubte/nicht erlaubte Änderungen, Verhaltenserhalt) als Plan. Bei einem Bugfix ohne Plan gilt das
+Vorgehen „Fehlersuche“ aus Projektregeln Abschnitt 9.
 
 ## Vorgehen
 
@@ -46,7 +47,12 @@ Bei Review-Befunden statt eines Plans gelten die Umsetzungsaufträge des `java-c
    Tests für die Fachlogik mit synthetischen Testdaten (Records direkt erzeugen), Loader-Tests gegen
    die echten XML-Dateien.
 6. **Verifizieren:** `./gradlew build`. Testanzahl und Ergebnis aus `build/test-results` ermitteln. Die
-   App nicht starten.
+   App nicht starten. **Erst belegen, dann melden** (verification-before-completion, aus Superpowers
+   übernommen 2026-11-18): Ein Schritt, ein Fix oder das Feature gilt erst als fertig, wenn in diesem
+   Durchgang nach der letzten Änderung `./gradlew build` gelaufen ist und die Ausgabe gelesen wurde.
+   Testzahlen stammen aus diesem Lauf, nicht aus älteren `build/test-results` oder aus dem Gedächtnis.
+   Formulierungen wie „sollte jetzt grün sein“ ersetzen keinen Lauf. Wurde ein Punkt nicht geprüft,
+   etwa UI-Verhalten, steht das ausdrücklich im Bericht.
    Im **verschlankten Modus** (Standard, Projektregeln Abschnitt 2) laufen alle Schritte des Plans am
    Stück: nach jedem Schritt `./gradlew build`, kein Halt dazwischen, solange der Build grün ist und
    keine Nutzerentscheidung berührt wird.
@@ -57,7 +63,8 @@ Bei Review-Befunden statt eines Plans gelten die Umsetzungsaufträge des `java-c
    im **Diff-Modus** auf die Änderungen dieser Umsetzung anwendet. Der Auftrag an den Agenten nennt:
    den Plan (`docs/plaene/<feature>_plan.md`), den Basis-Commit bzw. "uncommittete Änderungen", die
    Aufforderung, zuerst `.claude/skills/_gemeinsam/projektregeln.md` und die Reviewer-SKILL.md zu lesen,
-   und dass er **nichts ändern** darf, sondern nur berichtet. Grund: Wer den Code gerade geschrieben
+   die beiden Stufen des Diff-Modus (erst Plantreue, dann Einfachheit), die Abweichungen aus dem
+   Abschlussbericht (Punkt 3) und dass er **nichts ändern** darf, sondern nur berichtet. Grund: Wer den Code gerade geschrieben
    hat, stellt seine eigenen Designentscheidungen kaum infrage; ein frischer Kontext ist kritischer.
    Die Befunde werden **nicht** eigenmächtig umgesetzt, sondern im Abschlussbericht vorgelegt; der
    Nutzer gibt sie frei. **Entfällt**, wenn der Auftrag selbst die Umsetzung von Review-Befunden war
@@ -95,7 +102,8 @@ Kurz und für den Nutzer lesbar (Deutsch), in dieser Reihenfolge:
 3. **Abweichungen vom Plan** mit Begründung (neue GRW-Funde, technische Zwänge, umbenannte
    Daten und deren Folgen). "Keine", wenn keine.
 4. **Offene Punkte:** was bewusst nicht gemacht wurde oder noch geklärt werden muss.
-5. **Abschluss-Review (Schritt 8):** die Befunde des Review-Agenten knapp mit Schweregrad, jeweils mit
+5. **Abschluss-Review (Schritt 8):** zuerst das Ergebnis der Plantreue, dann die Befunde des
+   Review-Agenten knapp mit Schweregrad, jeweils mit
    eigener Einschätzung (zustimmen/widersprechen, kurz begründet), und die Frage, welche umgesetzt
    werden sollen.
 6. Hinweis, dass nicht committet wurde und die UI nur kompiliert, nicht angeschaut wurde.
