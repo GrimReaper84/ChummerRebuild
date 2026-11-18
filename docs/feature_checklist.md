@@ -270,8 +270,6 @@
 | Fahrzeugkampf-Manöver (Rammen, Verfolgungsjagd) | ❌ | Zurückgestellt |
 | Arsenal-Inhalte (Slots, Mod-Boni, weitere Fahrzeuge/Mods), Gebrauchtwagen, Verkauf | ❌ | Zusatzband bzw. kein GRW-Beleg, zurückgestellt |
 
---------------------------------|--------|------------------|
-| Fahrzeuge kaufen und verwalten | ❌      | Komplett fehlend. Analysen: `docs/analysen/archiv/fahrzeuge_analyse.md` (C#/GRW), `docs/analysen/archiv/fahrzeuge_java_analyse.md` (Java-Ist, 2026-10-09). Schon vorhanden: Riggerkontrolle (Cyberware), Autosoft und Medkit (Gear), Fahrzeugfertigkeiten |
 
 ---
 
@@ -282,7 +280,7 @@
 | Übergang Creation → Career (Startkapital nach Lebensstil)             | ✅      | GRW S. 114: `Character.finalizeCreation()` bucht (Würfel + Restgeld-Bonus) × Multiplikator, Restgeld verfällt; Abschlussdialog würfelt, Wurf editierbar (2026-09-27, ersetzt die frühere Umrechnung des vollen Budgets) |
 | Nuyen-Käufe im Karrieremodus (Cyberware, Rüstung)                     | ✅      | Guthabenprüfung + Bestätigung + negativer Log-Eintrag; Entfernen ohne Erstattung |
 | Verkauf von Ausrüstung im Karrieremodus                               | ✅      | 2026-11-15 (ADR-058): Waffen, Rüstung, Ausrüstung, Fahrzeuge; Erlös mit 30 % vorbelegt und änderbar (S. 358), Gutschrift als Verkauf; keine Cyberware |
-| ESS-Penalty-Korrektur bei Übergang (MAG/RES += EssenzPenalty)         | ❌      | Abhängig von fehlenden Sonderattributen                       |
+| Essenzverlust senkt Magie/Resonanz (statt ESS-Penalty-Korrektur beim Übergang) | ✅ | GRW S. 208/111: `Character.getEssencePenalty()` senkt wirksamen Wert und Maximum in beiden Modi gleich; die C#-Übergangskorrektur entfällt damit |
 | Karma-Ausgaben für Attribute (neue Stufe × 5 Karma)                   | ✅      |                                                               |
 | Karma-Ausgaben für Fertigkeiten (neue Stufe × 2, erste Stufe 4 Karma) | ✅      | Korrigiert in `Skill.getKarmaCost()`                          |
 | Karma-Ausgaben für Qualities (2× GP-Kosten, Gabe/Handicap)            | ✅      | `Character.getQualityKarmaCost()`, 2026-08-04                 |
@@ -321,7 +319,7 @@
 | Feature                                                    | Status | Anmerkung                                                                    |
 |------------------------------------------------------------|--------|------------------------------------------------------------------------------|
 | JSON-Speicherung und -Laden (Grundstruktur)                | ✅      |                                                                              |
-| Attribute werden korrekt gespeichert/geladen               | ⚠️     | Nur 8 Grundattribute; EDG, MAG, RES fehlen im Modell                         |
+| Attribute werden korrekt gespeichert/geladen               | ✅      | Grundattribute, Edge (samt ausgegebenen und verheizten Punkten), Magie bzw. Resonanz |
 | Skills werden korrekt gespeichert/geladen (nur Rating > 0) | ✅      |                                                                              |
 | Entkoppelte Gruppen werden gespeichert/geladen             | ✅      |                                                                              |
 | Qualities werden gespeichert/geladen (inkl. Gratis-Flag)   | ✅      | Metatyp-Qualities werden nicht gespeichert, sondern beim Laden rekonstruiert |
@@ -355,30 +353,45 @@
 
 ---
 
+## 20. NSCs und Critter
+
+| Feature | Status | Anmerkung |
+|---|---|---|
+| Schergengruppen (eigene Dateiart, Werteblock-Bogen) | ✅ | 2026-11-18 (ADR-062): Professionalitätsstufe, Mitglieder, Schergen- und Anführer-Werteblock aus den Katalogen mit Pools |
+| Kampfverwaltung für Schergen | ✅ | Monitor je Mitglied (S. 324), Gruppen-Edge, Führungsprobe, Fluchthinweis (S. 325) |
+| Beispiel-Schergen des GRW als Vorlage | ✅ | sieben Gruppen (S. 325–328), `npcs.xml` |
+| Top-Runner | ❌ | Nutzerentscheidung 2026-11-18: als normalen Charakter bauen |
+| Critter mit Kräften und Schwächen | ❌ | Roadmap 14, Teil 2 (eigener Plan) |
+
+---
+
 ## Zusammenfassung
 
+Stand 2026-11-18, aus den Tabellen oben gezählt (❌ sind überwiegend bewusst zurückgestellte Zusatzband-Inhalte).
+
 | Bereich                | ✅ | ⚠️ | ❌ |
-|------------------------|---|----|---|
-| Erstellungsgrundgerüst | 4 | 0  | 2 |
-| Metatypen              | 3 | 0  | 2 |
-| Attribute              | 7 | 0  | 4 |
-| Aktive Fertigkeiten    | 11 | 0  | 2 |
-| Wissensfertigkeiten    | 6 | 0  | 1 |
-| Qualities              | 9 | 0  | 0 |
-| Kontakte               | 4 | 0  | 0 |
-| Magie                  | 0 | 0  | 6 |
-| Technomancer           | 4 | 0  | 1 |
-| Cyberware/Bioware      | 10 | 0  | 2 |
-| Rüstung                | 3 | 0  | 4 |
-| Lebensstil             | 1 | 0  | 2 |
-| Waffen                 | 4 | 0  | 1 |
-| Gear                   | 6 | 0  | 4 |
-| Fahrzeuge              | 4 | 0  | 6 |
-| Karrieremodus          | 5 | 0  | 4 |
-| Initiative             | 3 | 0  | 1 |
-| Condition Monitor      | 4 | 0  | 0 |
-| Persistenz             | 8 | 1  | 0 |
-| UI/Bedienbarkeit       | 4 | 0  | 2 |
+|------------------------|----|----|----|
+| Erstellungsgrundgerüst |  6 |  0 |  0 |
+| Metatypen              |  4 |  0 |  2 |
+| Attribute              | 14 |  0 |  0 |
+| Aktive Fertigkeiten    | 18 |  0 |  0 |
+| Wissensfertigkeiten    |  9 |  0 |  0 |
+| Qualities              | 10 |  0 |  0 |
+| Kontakte               |  4 |  0 |  0 |
+| Magie                  | 17 |  0 |  0 |
+| Technomancer           |  7 |  0 |  0 |
+| Cyberware/Bioware      | 14 |  0 |  0 |
+| Rüstung                |  7 |  0 |  0 |
+| Lebensstil             |  3 |  0 |  1 |
+| Waffen                 |  6 |  0 |  1 |
+| Ausrüstung (Gear)      | 13 |  0 |  5 |
+| Fahrzeuge              |  7 |  0 |  5 |
+| Karrieremodus          | 12 |  0 |  0 |
+| Initiative             |  4 |  0 |  0 |
+| Zustandsmonitor        |  4 |  0 |  0 |
+| Persistenz             |  9 |  0 |  0 |
+| UI/Bedienbarkeit       | 14 |  0 |  2 |
+| NSCs und Critter       |  3 |  0 |  2 |
 
 ---
 
@@ -408,96 +421,20 @@ README-Roadmap sind erledigt; es folgen:
     (Anzeige, global) sowie Gliedpanzerung als Durchschnitt, spätes Erwachen, versäumte Lebensstilzahlungen und
     Regelwerk-Auswahl (Regeln, je Charakter).
 13. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
-14. **NSCs:** vorgefertigte und eigene NSCs, dazu Critter mit ihren Kräften (Critter-Kapitel des GRW).
+14. **NSCs:** ✅ Teil 1 Schergengruppen mit GRW-Vorlagen und Kampfverwaltung (2026-11-18, ADR-062); Teil 2 Critter mit
+    ihren Kräften (Critter-Kapitel des GRW) folgt.
 15. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge
     (Abschnitt 13); nur, wenn das Werkzeug das abbilden soll.
 
-**Als Nächstes (Stand 2026-11-11):**
+**Release:** Das erste Release (Tag `v1.0.0`) kommt erst, wenn alle Funktionen des Grundregelwerks umgesetzt sind
+(Nutzerentscheidung 2026-11-11); die Release-Technik steht seit ADR-043. Vor dem Tag: erster Lauf von `release.yml` auf
+Windows und macOS (bisher nur Linux lokal gebaut), Installer und portables ZIP einmal von Hand starten, die UI
+durchklicken.
 
-Erledigt am 2026-11-11: Skill `catalog-extractor`, Umstieg auf Java 25 (ADR-038), Fallout-Workflow (ADR-008).
+**Nach dem Release (zurückgestellt, Reihenfolge offen):** Fahrzeugkampf-Manöver (Abschnitt 14), Zubehör an
+Fahrzeugwaffen, Lagerorte und Eigennamen für Ausrüstung, Waffen, Rüstung und Fahrzeuge (Abschnitte 13/14),
+DIY/Hacked/Schwarzmarkt (Abschnitt 13), Cyberguns (Abschnitt 10, GRW ohne Kosten), Zusatzbände über die
+Regelwerk-Auswahl (ADR-061; Kandidaten: Waffenmodifikationen, Lebensstil-Ausbaustufen, Arsenal-Fahrzeuge).
 
-*Technik und Aufräumen*
-
-1. ✅ **Moderne Java-Idiome (2026-11-11)**: `getFirst()`/`getLast()`/`reversed()`, `Stream.toList()`, Switch-Ausdrücke, Pattern
-   Matching, unbenannte Variablen `_`, flexible Konstruktor-Rümpfe, wo sinnvoll; Regel in die Projektregeln
-   Abschnitt 6, bestehende Stellen umstellen (103 × `get(0)`/`size() - 1`).
-2. ✅ **`CharacterViewController` aufgeteilt (2026-11-11, ADR-041)**, jetzt 481 Zeilen; vorher 3062 Zeilen: eine Klasse je Tab nach dem Muster der bestehenden
-   `WeaponTabBuilder`/`GearTabBuilder`/`VehicleTabBuilder`.
-   Bekannte Abweichung: `StreetGearTabBuilder` und `VehicleTabBuilder` bekommen den Charakter noch per
-   `build(character)` statt `setCharacter` + `build()` wie die übrigen Builder (bewusst nicht vereinheitlicht).
-3. ✅ **Auslieferung über GitHub Releases (vorbereitet 2026-11-11, ADR-043)** wie im Fallout2d20-Projekt: Release-Workflow bei Tag `v*` auf Ubuntu,
-   Windows und macOS, je Installer (`.msi`/`.deb`/`.dmg`) plus portables ZIP mit eingebautem Java, Tag-Prüfung
-   gegen die Version. Chummer bleibt **nicht modular**, daher Plugin `org.beryx.runtime` statt `org.beryx.jlink`
-   (ADR-039). Fällt dabei weg: die nativen JavaFX-JARs aller Plattformen in `build.gradle.kts` und `distZip`.
-   Dazu gehören App-Icon, Version an einer Stelle (`gradle.properties`) und ein CI-Workflow für Pull Requests.
-   Umgesetzt: „Chummer SR4 Reborn“ 1.0.0, Drachen-Icon, `ci.yml`/`release.yml` (Liberica `jdk+fx`), `LICENSE` (GPL-3.0),
-   `README.md`; lokal `.deb` und Linux-ZIP gebaut. Offen: erster echter Lauf der Workflows (Windows/macOS ungetestet),
-   erstes Release (Tag).
-
-   ✅ **Kataloge geprüft (2026-11-11, `docs/analysen/wortlaut_katalog.md`):** 22 Stellen umformuliert. Offen:
-   Javadoc-Zitate (≈ 70) und zwei Tooltips im Java-Code, siehe Bericht Abschnitt 6.
-   Ursprünglicher Auftrag: alle XML-Kataloge auf wörtlich übernommenen GRW-Text prüfen (v.a.
-   `<note>`, Beschreibungen, Kommentare) und in eigene Worte fassen (Projektregeln Abschnitt 4, Nutzervorgabe
-   2026-11-11), am besten mit `catalog-extractor` je Katalog.
-
-> **Release zurückgestellt (Nutzerentscheidung 2026-11-11):** Das erste Release (Tag `v1.0.0`) kommt erst, wenn
-> mindestens alle Funktionen des Grundregelwerks umgesetzt sind. Die Release-Technik ist fertig und wartet.
-
-*Fachliche Features (Kandidaten, Reihenfolge offen)*
-
-4. ✅ **Qualities vervollständigt (2026-11-12, ADR-044)**; ursprünglich: mit `catalog-extractor` (41 Einträge, davon 35 aus dem GRW, das 82 enthält; fehlende Bonus-Typen
-   siehe Abschnitt 6).
-5. ✅ **Adepten (2026-11-12, ADR-046)**: Tab Adeptenkräfte, 19 GRW-Kräfte, Magieradept-Aufteilung, sieben Kräfte
-   rechnen. Initiation/Metamagie ✅ (ADR-052). Situative Kräfte ✅ (ADR-055).
-6. ✅ **Würfelpools, Zustandsmonitor, Initiative (2026-11-12, ADR-045)**: Pool-Spalte, Tab „Zustand“, augmentiertes
-   Maximum, Attributproben, Obergrenze Komplexe Formen. Offen: Matrix-Initiative, situative Quality-Boni.
-7. ✅ **Rüstung als Baum + Detailbereich** wie Waffen/Gear/Fahrzeuge (ADR-035), umgesetzt 2026-11-12 (ADR-050).
-8. **Kataloge vervollständigen** (Bestandsaufnahme `docs/analysen/katalog_vollstaendigkeit.md`; Quelle zuerst das GRW,
-   dann das C#, Zusatzband-Inhalte bleiben draußen, ADR-047), einer nach dem anderen:
-   - ✅ Zauber (84), Komplexe Formen (21), Kleidung (3), Metavarianten entfernt (2026-11-12)
-   - ✅ Cyberware (51) und Bioware (25) samt Kapazität und Implantat-Wirkungen (2026-11-12, ADR-048)
-   - ✅ Rüstung: Zubehör der Ganzkörperpanzerung/des Urban Explorer Overalls und Panzerungsmodifikationen (2026-11-12, ADR-050)
-   - ✅ Cybergliedmaßen samt Verbesserungen, Zubehör und Cyber-Nahkampfwaffen (2026-11-12, ADR-051); Cyberguns
-     zurückgestellt (GRW ohne Essenz, Kapazität und Preis)
-   - Kommlink-/Hardware-Aufrüstungen (S. 260/261)
-   - ✅ Metamagie (6) und Echos (5) mit Initiation/Wandlung (2026-11-12, ADR-052)
-   - ✅ Geister (6) und Sprites (5) mit Werten (2026-11-12, ADR-053)
-   - ✅ Schutzpatrone (19) als Katalog (2026-11-13, ADR-055)
-9. ✅ **Wissensfertigkeiten-Vorschlagsliste** zurückgeholt (ADR-032, umgesetzt mit ADR-059).
-10. ✅ **Grundlegende Überarbeitung der UI** (umgesetzt 2026-11-12, ADR-049; Nutzerwunsch 2026-11-12): Die Tabs sind funktional brauchbar, aber
-    gewachsen statt gestaltet (Aufbau nach den alten Designer.cs, ADR-034). Umfang und Richtung (Layout, Navigation,
-    Darstellung der Werte, einheitliche Bausteine) vor der Planung mit dem Nutzer klären.
-
-> **Regelwerk-Abgleich (2026-08-04):** Die komplette Roadmap wurde gegen das SR4-Grundregelwerk geprüft,
-> bevor weitere Features umgesetzt werden — siehe `docs/analysen/archiv/regelwerk_abgleich_stufe2_roadmap.md` und
-> `docs/analysen/archiv/regelwerk_abgleich_stufe3_roadmap.md`. Ergebnis: fast alles ist solide belegt, bis auf zwei
-> Punkte ohne GRW-Beleg (s.u., auf Niedrig gesetzt) und zwei korrigierte Annahmen (Kontakte, Komplexe
-> Formen, siehe jeweilige Abschnitte oben).
-
-**Stufe 1 – Fehlende Kernfeatures für einen vollständigen Charakter**
-
-1. ~~**Wissensfertigkeiten**~~ ✅ umgesetzt (freier Pool (INT+LOG)×3, Kategorien, Überzug in BP, Karrieremodus-Karma)
-2. ~~**Sonderattribute** EDG, MAG, RES~~ ✅ umgesetzt (`SpecialAttribute`, BP/Karma-Kosten, UI-Sektion, Persistenz, MAG/RES-Freischaltung via Quality) — **Essenz-Berechnung bleibt offen** (aktuell fixer Wert 6.0, echter Abzug erst mit Cyberware/Bioware in Stufe 2 möglich)
-3. ~~**Spezialisierungen** (+2 BP / Karma)~~ ✅ umgesetzt (aktive Fertigkeiten: Fixpreis; Wissensfertigkeiten: +1 Poolpunkt; Karrieremodus einheitlich 2 Karma ohne Uneducated-Verdopplung; Mindestrating 1; Gruppenauflösung bei gruppierten aktiven Fertigkeiten im Karrieremodus), 2026-08-06
-4. ~~**Kontakte**~~ ✅ umgesetzt (2026-08-07) — Name/Beschreibung/Connection/Loyalty, BP-Kosten aus allgemeinem Budget, im Karrieremodus frei ohne Karma-Kosten (s. Abschnitt 7 oben)
-5. ~~**Charakter-Biografie**~~ ✅ umgesetzt (2026-08-08) — 15 Freitextfelder in `CharacterBiography`, eigener Tab, Live-Text-Binding, Persistenz via `BiographyData`; Mugshot/Portrait bleibt separater Checklisten-Punkt (s. Abschnitt 1 oben)
-
-Damit ist **Stufe 1 (Kernfeatures für einen vollständigen Charakter) komplett abgeschlossen.**
-
-**Stufe 2 – Erweiterte Features**
-
-1. ~~**Magie**~~ ⚠️ teilweise umgesetzt (2026-08-08) — **nur Magier** (Tradition-Auswahl + Zauber-Erlernen): eigener Magie-Tab (nur sichtbar bei Gabe "Magier", funktioniert bereits im Erstellungsmodus), `Tradition`-Enum (Hermetisch/Schamanistisch), Zauber-Katalog mit initialer verifizierter Teilmenge (10 Zauber, 2 je GRW-Kategorie — volle 84er-GRW-Kern-Liste als Folgeauftrag offen), feste Kosten 3 BP/5 Karma, Erstellungs-Cap 2×höchstes Rating(Spruchzauberei, Ritualzauberei), neue magische Fertigkeiten "Spruchzauberei"/"Ritualzauberei" (nur für Magier sichtbar). Bug-Fix mitgenommen: Magier-Quality-Kosten 5→15 BP korrigiert. **Adeptenkräfte + Mystic-Adept-Split bewusst zurückgestellt** (eigenes Folgefeature, User-Entscheidung)
-2. ~~**Technomancer**~~ ✅ umgesetzt (Commit `2a2018f`, `docs/plaene/archiv/technomancer_plan.md`): Tab, Schwund-Anzeige, Komplexe Formen mit Resonanz-Cap. Offen: Anzahl-Cap Logik × 2 (GRW S. 112, s. Abschnitt 9), Wandlung ✅ (2026-11-12, ADR-052)
-3. ~~**Cyberware/Bioware mit Essenz**~~ ⚠️ Kern umgesetzt (2026-09-27, `docs/plaene/archiv/cyberware_plan.md`): Grades, Essenz-Kombinationsregel, MAG/RES-Reduktion, Immunabstoßung, eigener Tab. Nuyen-Abbuchung + Verfügbarkeit ✅ (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`). Vollständiger Katalog, Kapazität der Augen/Ohren und Implantat-Wirkungen ✅ (2026-11-12, ADR-048). Cybergliedmaßen ✅ (2026-11-12, ADR-051)
-4. ~~**Rüstung + Nuyen-Budget + Lebensstil**~~ ✅ umgesetzt (2026-09-27, `docs/plaene/archiv/nuyen_ruestung_plan.md`): Budget/Restgeld, GRW-Startkapital, Verfügbarkeit ≤ 12, Rüstung mit Schutzwert und Behinderung. Offen: Kleidung/Lederware, Rüstungsmods, Verkauf, Lebensstilzahlungen im Karrieremodus
-5. **Waffen** ✅ Teil A (2026-09-28), Teil B (2026-09-30) und Teil C Zubehör (2026-10-04) umgesetzt (`docs/plaene/archiv/waffen_plan.md`)
-6. **Gear** ✅ Teile A–D umgesetzt (2026-10-04 bis 2026-10-08, `docs/plaene/archiv/gear_plan.md`): Grundgerüst, Kommlinks/Matrix, Kapazität/Einbauten, Munition/Pfeile/Granaten/Sprengstoffe. Offen: Kommlink-Aufrüstungen und Matrix-Upgrades, Lagerorte
-7. **Fahrzeuge & Drohnen** ✅ umgesetzt (2026-10-09, `docs/plaene/archiv/fahrzeuge_plan.md`): 37 GRW-Fahrzeuge, Riggeradapter, Waffenhalterungen, Ausrüstung im Fahrzeug. Offen: Zubehör an Fahrzeugwaffen, Matrix-Upgrades, Eigenname, Würfelpools/Fahrzeugkampf
-
-**Stufe 3 – Abgeleitete Werte & Gameplay**
-
-1. Würfelpool-Anzeige für Skills — GRW S. 82 exakt bestätigt, fundamentale Kernmechanik des gesamten Systems
-2. Condition Monitor — GRW S. 94 exakt bestätigt (inkl. Wundmodifikator-Formel)
-3. Initiative-Anzeige — GRW bestätigt, aber Formel bei Umsetzung präzisieren (Initiativattribut vs. vollständiges Würfelergebnis, s. Abschnitt 16)
-4. Undo für Log-Einträge — reines Tool-Feature, kein Regelwerk-Bezug zu erwarten (Priorisierung unabhängig vom GRW-Abgleich)
-5. **Drucken / Export — Niedrige Priorität**, keine Charakterbogen-Vorlage im GRW gefunden, reines Tool-Feature
+Frühere Roadmaps (Stufen 1–3, Kandidatenliste vom 2026-11-11) sind abgearbeitet und stehen in der Git-Historie dieser
+Datei; Begründungen in `DECISIONS.md`, Pläne in `docs/plaene/archiv/`.

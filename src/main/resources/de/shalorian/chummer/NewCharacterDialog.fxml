@@ -8,19 +8,29 @@
       spacing="20" styleClass="dialog-pane">
     <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
 
-    <Label text="Neuer Charakter" styleClass="dialog-title"/>
+    <Label text="Neu" styleClass="dialog-title"/>
+
+    <HBox spacing="8">
+        <ToggleButton fx:id="characterBtn" text="Charakter" styleClass="toggle-button"/>
+        <ToggleButton fx:id="groupBtn" text="Schergengruppe" styleClass="toggle-button"/>
+    </HBox>
 
     <GridPane hgap="14" vgap="12">
         <columnConstraints>
             <ColumnConstraints minWidth="90" prefWidth="100"/>
-            <ColumnConstraints minWidth="200" prefWidth="240" hgrow="ALWAYS"/>
+            <ColumnConstraints minWidth="200" prefWidth="280" hgrow="ALWAYS"/>
         </columnConstraints>
         <Label text="Name:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="nameField" promptText="Charaktername"
+        <TextField fx:id="nameField" promptText="Name"
                    GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        <Label text="Metatyp:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="metatypeLabel" text="Metatyp:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <ComboBox fx:id="metatypeBox" maxWidth="Infinity"
                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label fx:id="templateLabel" text="Vorlage:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <ComboBox fx:id="templateBox" maxWidth="Infinity"
+                  GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label fx:id="templateInfo" wrapText="true" maxWidth="280" styleClass="key-caption"
+               GridPane.columnIndex="1" GridPane.rowIndex="3"/>
     </GridPane>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">

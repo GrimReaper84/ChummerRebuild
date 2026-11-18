@@ -227,6 +227,8 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
 | Tab-Inhalt | eigener `XTabBuilder` in `view.tab` (Vorbild `ContactTabBuilder`): Konstruktor mit FXML-Container(n), `CharacterTabHost` und ggf. `IncrementWiring`; `setCharacter`, `build()` baut komplett neu auf, `refresh()` für Zeilen-Refresher. Wirkt eine Änderung auf andere Tabs, eine fachliche Rückmeldung in `CharacterTabHost` ergänzen (z.B. `onImplantsChanged`) und im `CharacterViewController` entscheiden, was neu gebaut wird; Tabs rufen sich nie gegenseitig auf |
 | Dialoge, Hinweise, Abbuchung | `host.services()` (`TabServices`): `openDialog`, `warn`, `confirmYesNo`, `karmaChargeFailed` (optional mit Zusatzhinweis)/`nuyenChargeFailed`, `bookKarma`/`bookNuyen` |
 | +/−-Zeile | `IncrementWiring.wire(...)` bzw. `wireFree(...)` mit einer `RowModel`-Implementierung |
+| Zustandsmonitor-Kästchen | `view.grid.MonitorBoxRow.build(...)` (Status-Panel, Schergen-Bogen) |
+| NSC-Werteblock | `model.npc.NpcStatblock`: ein `Character` im Spielleiter-Modus plus Ausrüstungstext (ADR-062); Anzeige über `view.npc.StatblockBuilder` |
 
 Vorhandene Muster bevorzugen und nur erweitern, wenn sie nicht passen. Erweiterungen der Basisklassen
 klein halten und im Ergebnis erwähnen.

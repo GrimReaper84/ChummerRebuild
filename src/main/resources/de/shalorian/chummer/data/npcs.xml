@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Beispiel-Schergengruppen des SR4-Grundregelwerks (S. 325–328), Werte am Seitenbild übertragen (2026-11-18).
+  Beschreibungen in eigenen Worten. Attribute sind die natürlichen Werte; die Klammerwerte des GRW („5 (7)“)
+  entstehen aus den Implantaten und Adeptenkräften. Waffen, Panzerung, Implantate, Zauber und Kräfte stehen mit
+  ihren Katalognamen; alles andere (Kommlinks, Drogen, Granaten, Programme, Foki) steht im Ausrüstungstext.
+  Wo das GRW „A oder B“ schreibt, steht A als Eintrag und B im Ausrüstungstext. Den Metatyp nennt das GRW nur bei
+  den Tir Ghosts (Elfen); sonst Mensch.
+  limb: rating = maßgefertigte Geschicklichkeit, detail = Körperstelle.
+-->
+<npcs>
+    <group rating="0" page="326" members="6">
+        <name>Humanis Policlub Schlägertrupp</name>
+        <source>SR4</source>
+        <description>Schläger einer menschenfeindlichen Organisation, die Metamenschen einschüchtern und beim ersten ernsthaften Widerstand das Weite suchen.</description>
+        <grunt metatype="Mensch" BOD="3" AGI="2" REA="2" STR="4" CHA="1" INT="2" LOG="1" WIL="2">
+            <skill rating="2">Einschüchtern</skill>
+            <skill rating="2">Knüppel</skill>
+            <skill rating="2">Waffenloser Kampf</skill>
+            <weapon>Knüppel</weapon>
+            <weapon>Messer</weapon>
+            <gear>Kommlink (Gerätestufe 2)</gear>
+        </grunt>
+        <leader metatype="Mensch" BOD="3" AGI="3" REA="3" STR="4" CHA="2" INT="3" LOG="2" WIL="2">
+            <skill rating="3">Einschüchtern</skill>
+            <knowledge rating="2" detail="STREET">Humanis Policlub</knowledge>
+            <skill rating="3">Knüppel</skill>
+            <skill rating="2">Pistolen</skill>
+            <skill rating="2">Waffenloser Kampf</skill>
+            <weapon>Colt America L36</weapon>
+            <weapon>Messer</weapon>
+            <gear>Kommlink (Gerätestufe 2)</gear>
+        </leader>
+    </group>
+
+    <group rating="1" page="325" members="6">
+        <name>Halloweener-Straßengang</name>
+        <source>SR4</source>
+        <description>Bunte Straßengang aus Seattle, die sich nach schweren Verlusten neu formiert hat und gern mit Feuer arbeitet.</description>
+        <grunt metatype="Mensch" BOD="3" AGI="4" REA="3" STR="3" CHA="2" INT="3" LOG="2" WIL="2">
+            <quality>Zähigkeit</quality>
+            <skill rating="2">Einschüchtern</skill>
+            <skill rating="3" detail="Straße">Gebräuche</skill>
+            <group rating="3">Nahkampf</group>
+            <skill rating="2">Pistolen</skill>
+            <cyberware>Nagelmesser (einziehbar)</cyberware>
+            <weapon>Ares Predator IV</weapon>
+            <weapon>Messer</weapon>
+            <armor>Panzerweste</armor>
+            <gear>Kommlink (Gerätestufe 2), 1 Dosis Cram oder Jazz; statt Ares Predator auch Steyr TMP (dann Schnellfeuerwaffen 2 statt Pistolen 2)</gear>
+        </grunt>
+        <leader metatype="Mensch" BOD="3" AGI="4" REA="4" STR="3" CHA="3" INT="3" LOG="2" WIL="3">
+            <skill rating="2">Ausweichen</skill>
+            <skill rating="4">Einschüchtern</skill>
+            <skill rating="3" detail="Straße">Gebräuche</skill>
+            <skill rating="3" detail="Remington Roomsweeper">Pistolen</skill>
+            <skill rating="3" detail="Cybersporne">Waffenloser Kampf</skill>
+            <skill rating="2">Wurfwaffen</skill>
+            <cyberware rating="2">Dermalpanzerung</cyberware>
+            <cyberware>Sporn (einziehbar)</cyberware>
+            <weapon>Remington Roomsweeper</weapon>
+            <gear>Kommlink (Gerätestufe 2), Molotow-Cocktail (4K Feuerschaden), 1 Dosis Cram oder Jazz</gear>
+        </leader>
+    </group>
+
+    <group rating="2" page="326" members="4">
+        <name>Konzernsicherheitseinheit</name>
+        <source>SR4</source>
+        <description>Sicherheitsleute eines Konzerns, darauf trainiert, Eindringlinge aufzuhalten, bis Verstärkung kommt.</description>
+        <grunt metatype="Mensch" BOD="3" AGI="3" REA="4" STR="3" CHA="3" INT="3" LOG="2" WIL="3">
+            <quality detail="Konzernanlage">Vertrautes Terrain</quality>
+            <group rating="3">Athletik</group>
+            <skill rating="3">Ausweichen</skill>
+            <group rating="3">Nahkampf</group>
+            <skill rating="3">Pistolen</skill>
+            <skill rating="3">Schnellfeuerwaffen</skill>
+            <weapon>Betäubungsschlagstock</weapon>
+            <weapon>Fichetti Security 600</weapon>
+            <weapon>HK 227-X</weapon>
+            <armor>Panzerweste</armor>
+            <gear>Kommlink (Gerätestufe 4)</gear>
+        </grunt>
+        <leader metatype="Mensch" BOD="3" AGI="3" REA="3" STR="3" CHA="3" INT="4" LOG="3" WIL="4" MAG="3">
+            <quality>Zauberer</quality>
+            <skill rating="3">Askennen</skill>
+            <skill rating="4">Astralkampf</skill>
+            <group rating="3">Beschwören</group>
+            <skill rating="2">Führung</skill>
+            <group rating="4">Hexerei</group>
+            <skill rating="2">Pistolen</skill>
+            <spell>Betäubungsball</spell>
+            <spell>Energieblitz</spell>
+            <spell>Leben aufspüren</spell>
+            <spell>Licht</spell>
+            <spell>Physische Barriere</spell>
+            <spell>Stille</spell>
+            <weapon>Fichetti Security 600</weapon>
+            <armor>Panzerweste</armor>
+            <gear>Kommlink (Gerätestufe 4), Mage-Sight-Brille, Zauberspruchfokus (Kraft 2)</gear>
+        </leader>
+    </group>
+
+    <group rating="3" page="326" members="4">
+        <name>Lone Star Polizeieinheit</name>
+        <source>SR4</source>
+        <description>Streife des privaten Polizeidienstleisters, der in Seattle die öffentliche Gesetzesvollstreckung übernommen hat.</description>
+        <grunt metatype="Mensch" BOD="4" AGI="4" REA="4" STR="3" CHA="3" INT="4" LOG="3" WIL="3">
+            <knowledge rating="3" detail="PROFESSIONAL">Gesetzesvollstreckung</knowledge>
+            <skill rating="3">Knüppel</skill>
+            <skill rating="3">Pistolen</skill>
+            <skill rating="3">Waffenloser Kampf</skill>
+            <skill rating="2">Wahrnehmung</skill>
+            <weapon>Betäubungsschlagstock</weapon>
+            <weapon>Colt America L36</weapon>
+            <weapon>Defiance EX Schocker</weapon>
+            <armor>Panzerjacke</armor>
+            <gear>Kommlink (Gerätestufe 3), 2 Dosen Jazz</gear>
+        </grunt>
+        <leader metatype="Mensch" BOD="4" AGI="4" REA="4" STR="3" CHA="4" INT="5" LOG="3" WIL="4">
+            <skill rating="3">Einschüchtern</skill>
+            <skill rating="3">Führung</skill>
+            <knowledge rating="4" detail="PROFESSIONAL">Gesetzesvollstreckung</knowledge>
+            <skill rating="2">Infiltration</skill>
+            <group rating="4">Nahkampf</group>
+            <skill rating="4">Pistolen</skill>
+            <skill rating="3">Wahrnehmung</skill>
+            <!-- GRW nennt Armpanzerung 4; über Stufe 3 braucht es einen Cybertorso (S. 390), daher 3 -->
+            <limb rating="5" detail="ARM_RIGHT">Ganzer Arm (offensichtlich)
+                <part rating="3">Panzerungsverbesserung</part>
+            </limb>
+            <cyberware rating="2">Reaktionsverbesserung</cyberware>
+            <cyberware>Smartlink</cyberware>
+            <weapon>Betäubungsschlagstock</weapon>
+            <weapon>Colt Manhunter</weapon>
+            <weapon>Defiance EX Schocker</weapon>
+            <armor>Panzerjacke</armor>
+            <gear>Kommlink (Gerätestufe 4), 1 Dosis Jazz; Colt Manhunter mit Smartgunsystem; Smartlink als Retinamodifikation</gear>
+        </leader>
+    </group>
+
+    <group rating="4" page="328" members="3">
+        <name>Triadenbande</name>
+        <source>SR4</source>
+        <description>Soldaten eines chinesischen Verbrechersyndikats, die auf Numerologie achten und gern mit Magie arbeiten.</description>
+        <grunt metatype="Mensch" BOD="3" AGI="5" REA="4" STR="3" CHA="3" INT="4" LOG="3" WIL="4">
+            <skill rating="3">Ausweichen</skill>
+            <skill rating="3">Einschüchtern</skill>
+            <group rating="4">Feuerwaffen</group>
+            <skill rating="3">Klingenwaffen</skill>
+            <skill rating="3">Waffenloser Kampf</skill>
+            <weapon>Ceska Black Scorpion</weapon>
+            <weapon>Messer</weapon>
+            <armor>Gefütterter Mantel</armor>
+            <gear>Kommlink (Gerätestufe 3); statt Messer auch Schwert</gear>
+        </grunt>
+        <leader metatype="Mensch" BOD="4" AGI="6" REA="5" STR="5" CHA="3" INT="4" LOG="3" WIL="3" MAG="4">
+            <quality>Adept</quality>
+            <quality>Zähigkeit</quality>
+            <group rating="3">Athletik</group>
+            <skill rating="4">Ausweichen</skill>
+            <knowledge rating="4" detail="ACADEMIC">Feng Shui</knowledge>
+            <skill rating="3">Infiltration</skill>
+            <group rating="5">Nahkampf</group>
+            <skill rating="3">Pistolen</skill>
+            <skill rating="3">Überreden</skill>
+            <skill rating="3">Wahrnehmung</skill>
+            <power>Astrale Wahrnehmung</power>
+            <power rating="1">Gesteigerte Reflexe</power>
+            <power rating="2">Großer Sprung</power>
+            <power rating="2">Kritischer Schlag</power>
+            <power>Todeskralle</power>
+            <weapon>Remington Roomsweeper</weapon>
+            <weapon>Schwert</weapon>
+            <armor>Gefütterter Mantel</armor>
+            <gear>Kommlink (Gerätestufe 4), Waffenfokus 1 (das Schwert)</gear>
+        </leader>
+    </group>
+
+    <group rating="5" page="327" members="4">
+        <name>Abteilung der Roten Samurai</name>
+        <source>SR4</source>
+        <description>Paramilitärische Elitetruppe eines Megakonzerns, absolut loyal und schwer vercybert.</description>
+        <grunt metatype="Mensch" BOD="5" AGI="5" REA="5" STR="4" CHA="3" INT="3" LOG="3" WIL="4">
+            <group rating="3">Athletik</group>
+            <group rating="5">Feuerwaffen</group>
+            <skill rating="1" detail="Konzern">Gebräuche</skill>
+            <skill rating="3">Infiltration</skill>
+            <group rating="4">Nahkampf</group>
+            <skill rating="3">Wahrnehmung</skill>
+            <cyberware rating="3">Cyberaugen-Basissystem
+                <part>Blitzkompensation</part>
+                <part>Restlichtverstärkung</part>
+                <part>Smartlink</part>
+            </cyberware>
+            <cyberware rating="2">Muskelverstärkung</cyberware>
+            <cyberware rating="2">Muskelstraffung</cyberware>
+            <cyberware rating="3">Synthacardium</cyberware>
+            <cyberware rating="2">Reflexbooster</cyberware>
+            <weapon>FN HAR</weapon>
+            <weapon>Katana</weapon>
+            <armor>Ganzkörperpanzerung
+                <part>Helm (Ganzkörperpanzerung)</part>
+            </armor>
+            <gear>Kommlink (Gerätestufe 4)</gear>
+        </grunt>
+        <leader metatype="Mensch" BOD="4" AGI="6" REA="5" STR="4" CHA="4" INT="5" LOG="4" WIL="5">
+            <group rating="4">Athletik</group>
+            <skill rating="4">Ausweichen</skill>
+            <group rating="3">Cracken</group>
+            <skill rating="2">Datensuche</skill>
+            <group rating="3">Elektronik</group>
+            <group rating="5">Feuerwaffen</group>
+            <skill rating="3">Führung</skill>
+            <skill rating="4" detail="Konzern">Gebräuche</skill>
+            <skill rating="3">Infiltration</skill>
+            <group rating="4">Nahkampf</group>
+            <skill rating="3">Sprengstoffe</skill>
+            <skill rating="3">Wahrnehmung</skill>
+            <cyberware rating="3">Cyberaugen-Basissystem
+                <part>Blitzkompensation</part>
+                <part>Restlichtverstärkung</part>
+                <part>Smartlink</part>
+            </cyberware>
+            <cyberware>Datenbuchse</cyberware>
+            <cyberware rating="3">Muskelverstärkung</cyberware>
+            <cyberware rating="3">Muskelstraffung</cyberware>
+            <cyberware rating="2">Reflexbooster</cyberware>
+            <weapon>FN HAR</weapon>
+            <weapon>Katana</weapon>
+            <armor>Ganzkörperpanzerung
+                <part>Helm (Ganzkörperpanzerung)</part>
+            </armor>
+            <gear>Kommlink (Gerätestufe 5); Programme: Analyse 4, Angriff 3, Ausnutzen 3, Schmöker 3, Schleicher 4, WiFi-Scan 3</gear>
+        </leader>
+    </group>
+
+    <group rating="6" page="327" members="4">
+        <name>Tir Ghosts</name>
+        <source>SR4</source>
+        <description>Elfische Spezialeinheit für verdeckte Einsätze, die selbst in bestens geschützte Anlagen eindringt.</description>
+        <grunt metatype="Elf" BOD="4" AGI="6" REA="5" STR="4" CHA="5" INT="6" LOG="4" WIL="5">
+            <group rating="4">Athletik</group>
+            <skill rating="4">Ausweichen</skill>
+            <group rating="5">Feuerwaffen</group>
+            <group rating="6">Heimlichkeit</group>
+            <group rating="4">Nahkampf</group>
+            <skill rating="4">Sprengstoffe</skill>
+            <skill rating="4">Wahrnehmung</skill>
+            <cyberware rating="2">Muskelverstärkung</cyberware>
+            <cyberware rating="2">Muskelstraffung</cyberware>
+            <cyberware rating="2">Synapsenbeschleuniger</cyberware>
+            <cyberware rating="3">Synthacardium</cyberware>
+            <weapon>HK 227-X</weapon>
+            <armor>Ganzkörperpanzerung</armor>
+            <gear>Enterhakenkanone, Kommlink (Gerätestufe 5), Kontaktlinsen (Blitzkompensation, Smartlink), 2 Rauchgranaten, 2 IR-Rauchgranaten</gear>
+        </grunt>
+        <leader metatype="Elf" BOD="4" AGI="6" REA="5" STR="4" CHA="5" INT="6" LOG="5" WIL="6">
+            <group rating="3">Athletik</group>
+            <skill rating="4">Ausweichen</skill>
+            <group rating="5">Elektronik</group>
+            <group rating="5">Feuerwaffen</group>
+            <skill rating="4">Führung</skill>
+            <group rating="6">Heimlichkeit</group>
+            <group rating="5">Nahkampf</group>
+            <skill rating="4">Sprengstoffe</skill>
+            <skill rating="5">Wahrnehmung</skill>
+            <cyberware rating="2">Muskelverstärkung</cyberware>
+            <cyberware rating="2">Muskelstraffung</cyberware>
+            <cyberware rating="2">Synapsenbeschleuniger</cyberware>
+            <cyberware rating="3">Synthacardium</cyberware>
+            <cyberware>Kommlink</cyberware>
+            <weapon>HK 227-X</weapon>
+            <armor>Ganzkörperpanzerung</armor>
+            <gear>Kommlink implantiert (Gerätestufe 5), Kontaktlinsen (Blitzkompensation, Smartlink); Programme: Analyse 4, Aufspüren 4, Ausnutzen 5, Blackout 4, Panzerung 5, Schmöker 3, Schleicher 4, WiFi-Scan 3</gear>
+        </leader>
+    </group>
+</npcs>

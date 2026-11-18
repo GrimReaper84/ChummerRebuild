@@ -13,6 +13,7 @@ import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.situation.SituationalPool;
 import de.shalorian.chummer.model.character.skill.DicePool;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
+import de.shalorian.chummer.view.grid.MonitorBoxRow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -220,25 +221,12 @@ public final class StatusOverviewBuilder {
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
     HBox caption = new HBox(styled(new Label(label), "attr-name"), spacer, styled(new Label(values), "key-caption"));
-    FlowPane row = new FlowPane(4, 4);
-    for (int i = 0; i < boxes; i++) {
-      int box = i + 1;
-      Button button = new Button();
-      button.getStyleClass().setAll("cm-mini");
-      if (box <= damage) {
-        button.getStyleClass().add(filledStyle);
-      }
-      button.setDisable(!c.isCreated());
-      button.setOnAction(_ -> {
-        setDamage.accept(box == damage ? box - 1 : box);
-        onDamageChanged.run();
-      });
-      row.getChildren().add(button);
-      if (box < boxes && c.getColumnWoundModifier(box) != c.getColumnWoundModifier(box - 1)) {
-        // Trenner hinter dem Kästchen, mit dem der Verletzungsmodifikator steigt (S. 193, mit Schmerztoleranz u.Ä.)
-        row.getChildren().add(styled(new Label("|"), "key-caption"));
-      }
-    }
+    // Trenner hinter dem Kästchen, mit dem der Verletzungsmodifikator steigt (S. 193, mit Schmerztoleranz u.Ä.)
+    FlowPane row = MonitorBoxRow.build(boxes, damage, filledStyle, c.isCreated(),
+        box -> c.getColumnWoundModifier(box) != c.getColumnWoundModifier(box - 1), value -> {
+          setDamage.accept(value);
+          onDamageChanged.run();
+        });
     if (!c.isCreated()) {
       // Deaktivierte Knöpfe zeigen keinen Tooltip, deshalb trägt ihn die Zeile.
       Tooltip.install(row, new Tooltip(CREATION_HINT));

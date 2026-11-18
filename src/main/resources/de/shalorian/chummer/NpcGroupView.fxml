@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" fitToWidth="true" styleClass="attr-scroll"
+            fx:controller="de.shalorian.chummer.view.npc.NpcGroupViewController">
+    <VBox fx:id="content" spacing="12" styleClass="root-pane">
+        <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+    </VBox>
+</ScrollPane>

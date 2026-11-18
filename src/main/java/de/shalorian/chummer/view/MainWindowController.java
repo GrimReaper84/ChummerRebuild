@@ -4,13 +4,20 @@ import de.shalorian.chummer.App;
 import de.shalorian.chummer.AppInfo;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.condition.StatusTest;
+import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.npc.NpcGroup;
+import de.shalorian.chummer.model.npc.NpcStatblock;
+import de.shalorian.chummer.model.npc.NpcTemplate;
 import de.shalorian.chummer.persistence.CharacterStore;
+import de.shalorian.chummer.persistence.DocumentKind;
+import de.shalorian.chummer.persistence.NpcGroupStore;
 import de.shalorian.chummer.utils.NumberStyle;
 import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.utils.PersistenceUtils;
 import de.shalorian.chummer.view.dialog.NewCharacterDialogController;
 import de.shalorian.chummer.view.dialog.SettingsDialogController;
 import de.shalorian.chummer.view.dialog.SettingsResult;
+import de.shalorian.chummer.view.npc.NpcGroupViewController;
 import de.shalorian.chummer.view.shell.FloatingButtonPosition;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.io.File;
@@ -65,6 +72,9 @@ public class MainWindowController {
   private final @NonNull FloatingButtonPosition statusButtonPosition =
       new FloatingButtonPosition(preferences, "character.statusButtonPosition");
   private @Nullable CharacterViewController currentView;
+  /** Offene Schergengruppe (ADR-062); schließt einen offenen Charakter aus und umgekehrt. */
+  private @Nullable NpcGroup currentGroup;
+  private @Nullable NpcGroupViewController currentGroupView;
 
   private @Nullable Stage stage;
   private @Nullable Character currentCharacter;
@@ -140,6 +150,9 @@ public class MainWindowController {
       }
       storeDisplaySettings(result);
       Numbers.setStyle(result.numberStyle());
+      if (currentGroupView != null) {
+        currentGroupView.rebuild();
+      }
       if (currentView != null) {
         currentView.setStatusTests(result.statusTests());
         if (currentView.isStatusStatic() != result.statusStatic()) {
@@ -190,7 +203,7 @@ public class MainWindowController {
       Stage dialogStage = new Stage();
       dialogStage.initModality(Modality.WINDOW_MODAL);
       dialogStage.initOwner(stage);
-      dialogStage.setTitle("Neuer Charakter");
+      dialogStage.setTitle("Neu");
       dialogStage.setResizable(false);
       Scene dialogScene = new Scene(dialogRoot);
       dialogScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
@@ -204,8 +217,11 @@ public class MainWindowController {
       }
 
       currentFile = null;
-      showCharacter(new Character(
-          dialogCtrl.getCharacterName(), dialogCtrl.getSelectedMetatype()));
+      if (dialogCtrl.isNpcGroup()) {
+        showGroup(newGroup(dialogCtrl.getCharacterName(), dialogCtrl.getSelectedTemplate()));
+      } else {
+        showCharacter(new Character(dialogCtrl.getCharacterName(), dialogCtrl.getSelectedMetatype()));
+      }
 
     } catch (IOException e) {
       showError("Fehler beim Erstellen", e.getMessage());
@@ -214,14 +230,18 @@ public class MainWindowController {
 
   @FXML
   private void onOpen() {
-    FileChooser chooser = buildChooser("Charakter öffnen");
+    FileChooser chooser = buildChooser("Öffnen");
     File file = chooser.showOpenDialog(stage);
     if (file == null) {
       return;
     }
     try {
       currentFile = file;
-      showCharacter(CharacterStore.load(file));
+      if (DocumentKind.detect(file) == DocumentKind.NPC_GROUP) {
+        showGroup(NpcGroupStore.load(file));
+      } else {
+        showCharacter(CharacterStore.load(file));
+      }
     } catch (IOException e) {
       showError("Fehler beim Laden", e.getMessage());
     }
@@ -238,10 +258,11 @@ public class MainWindowController {
 
   @FXML
   private void onSaveAs() {
-    FileChooser chooser = buildChooser("Charakter speichern");
-    if (currentCharacter != null && currentFile == null) {
-      chooser.setInitialFileName(
-          currentCharacter.getName().replaceAll("\\s+", "_") + PersistenceUtils.JSON_EXT);
+    FileChooser chooser = buildChooser("Speichern");
+    String documentName = currentGroup != null ? currentGroup.getName()
+        : currentCharacter != null ? currentCharacter.getName() : null;
+    if (documentName != null && currentFile == null) {
+      chooser.setInitialFileName(documentName.replaceAll("\\s+", "_") + PersistenceUtils.JSON_EXT);
     }
     File file = chooser.showSaveDialog(stage);
     if (file == null) {
@@ -276,6 +297,8 @@ public class MainWindowController {
 
     currentCharacter = character;
     currentView = charCtrl;
+    currentGroup = null;
+    currentGroupView = null;
     borderPane.setCenter(charCtrl.node());
     menuSave.setDisable(false);
     menuSaveAs.setDisable(false);
@@ -284,10 +307,43 @@ public class MainWindowController {
     updateTitle();
   }
 
+  /** Leere Gruppe (Stufe 0, 4 Mitglieder, Mensch mit Mindestwerten) oder eine Gruppe aus der GRW-Vorlage. */
+  private static @NonNull NpcGroup newGroup(@NonNull String name, @Nullable NpcTemplate template) {
+    NpcGroup group = template == null
+        ? new NpcGroup(name, 0, 4, new NpcStatblock(new Character("Scherge", MetatypeDataLoader.find("Mensch")), ""))
+        : template.create();
+    group.setName(name);
+    return group;
+  }
+
+  private void showGroup(@NonNull NpcGroup group) throws IOException {
+    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("NpcGroupView.fxml")));
+    loader.load();
+    NpcGroupViewController controller = loader.getController();
+    TabServices services = new TabServices(() -> borderPane.getScene().getWindow(), () -> { },
+        () -> group.getGrunt().getCharacter().getRuleOptions());
+    controller.setGroup(group, services, this::updateTitle);
+    currentGroup = group;
+    currentGroupView = controller;
+    currentCharacter = null;
+    currentView = null;
+    borderPane.setCenter(controller.node());
+    menuSave.setDisable(false);
+    menuSaveAs.setDisable(false);
+    gmModeItem.setDisable(true);
+    gmModeItem.setSelected(false);
+    updateTitle();
+  }
+
   private void saveToFile(@NonNull File file) {
-    if (currentCharacter == null) return;
     try {
-      CharacterStore.save(currentCharacter, file);
+      if (currentGroup != null) {
+        NpcGroupStore.save(currentGroup, file);
+      } else if (currentCharacter != null) {
+        CharacterStore.save(currentCharacter, file);
+      } else {
+        return;
+      }
       updateTitle();
     } catch (IOException e) {
       showError("Fehler beim Speichern", e.getMessage());
@@ -296,7 +352,8 @@ public class MainWindowController {
 
   private void updateTitle() {
     if (stage == null) return;
-    String name = currentCharacter != null ? currentCharacter.getName() : "";
+    String name = currentGroup != null ? currentGroup.getName()
+        : currentCharacter != null ? currentCharacter.getName() : "";
     String file = currentFile != null ? "  [" + currentFile.getName() + "]" : "";
     stage.setTitle(AppInfo.title() + " – " + name + file);
   }

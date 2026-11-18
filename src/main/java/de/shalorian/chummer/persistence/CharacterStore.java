@@ -107,7 +107,7 @@ public class CharacterStore {
     }
   }
 
-  private static @NonNull CharacterData toData(@NonNull Character character) {
+  static @NonNull CharacterData toData(@NonNull Character character) {
     CharacterData data = new CharacterData();
     data.name = character.getName();
     data.metatype = character.getMetatype().name(); // MetatypeData.name() Accessor
@@ -304,7 +304,7 @@ public class CharacterStore {
     return data;
   }
 
-  private static @NonNull Character fromData(@NonNull CharacterData data) {
+  static @NonNull Character fromData(@NonNull CharacterData data) {
     String charName = Objects.requireNonNull(data.name, "Name fehlt in Speicherdatei");
     String metatypeName = Objects.requireNonNull(data.metatype, "Metatyp fehlt in Speicherdatei");
     MetatypeData metatype = MetatypeDataLoader.find(metatypeName);

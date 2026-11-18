@@ -1125,6 +1125,12 @@
     -fx-border-color: -cr-stun;
 }
 
+/* Verbrauchtes Gruppen-Edge (Schergen-Bogen): Akzent statt Schadensfarbe */
+.cm-mini-accent {
+    -fx-background-color: -cr-accent;
+    -fx-border-color: -cr-accent;
+}
+
 /* Seite eines Bereichs: Seitentitel über dem Inhalt (SectionNavigator) */
 .page {
     -fx-background-color: -cr-bg;

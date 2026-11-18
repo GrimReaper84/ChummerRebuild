@@ -22,6 +22,7 @@ public final class DataPaths {
   public static final String SPIRITS_XML = "/de/shalorian/chummer/data/spirits.xml";
   public static final String MENTORS_XML = "/de/shalorian/chummer/data/mentors.xml";
   public static final String BOOKS_XML = "/de/shalorian/chummer/data/books.xml";
+  public static final String NPCS_XML = "/de/shalorian/chummer/data/npcs.xml";
 
   private DataPaths() {}
 }

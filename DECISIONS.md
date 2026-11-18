@@ -280,6 +280,22 @@ der Kataloge muss in `books.xml` stehen (Test). Setzt den Regelwerk-Schalter aus
 **Warum:** Nutzerentscheidungen 2026-11-18 (drei Fragerunden); Regeln reisen mit der Datei, damit ein weitergegebener
 Charakter überall dieselben Werte zeigt. `docs/plaene/archiv/einstellungen_plan.md`.
 
+### ADR-062: NSCs als Schergengruppen (2026-11-18)
+Neben Charakteren gibt es Schergengruppen als zweite Dateiart (JSON mit Feld `kind: "npcGroup"`; Dateien ohne das Feld
+sind Charaktere). Eine Gruppe hat Name, Professionalitätsstufe 0–6, 1–20 Mitglieder, einen Werteblock für die Schergen
+und optional einen für den Anführer. Jeder Werteblock ist intern ein `Character` im Spielleiter-Modus, damit Pools,
+Initiative, Panzerung und Essenz aus dem vorhandenen Modell kommen; gezeigt wird er auf einem schlanken Bogen im Stil der
+GRW-Werteblöcke, Waffen, Panzerung, Implantate, Zauber und Kräfte kommen aus den Katalogen, sonstige Ausrüstung ist
+Text. Regeln (S. 324/325): ein gemeinsamer Monitor je Mitglied mit 8 + ⌈max(KON, WIL)/2⌉ Kästchen (wirksame Werte),
+−1 je 3 Kästchen, Gruppen-Edge = Professionalitätsstufe (am Bild S. 325 bestätigt), gelungene Führungsprobe +1 Stufe für
+den Kampf (nicht gespeichert), Flucht bei mehr als ¼ (0), ½ (1–2), ¾ (3–4) Ausgeschalteten, Elite nie; Anführer-Richtwert
++4 auf Attribut- und Fertigkeitssumme als Hinweis. Schaden und verbrauchtes Edge werden gespeichert. „Neu“ bietet die
+sieben Beispielgruppen des GRW (S. 325–328) als Vorlage (`npcs.xml`, Bericht `docs/analysen/schergen_katalog.md`).
+Panzerungsbehinderung wirkt auch bei Schergen, obwohl die GRW-Werteblöcke sie nicht einrechnen. Top-Runner baut man als
+normalen Charakter.
+**Warum:** Nutzerentscheidungen 2026-11-18 (eigener Bogen, nur Schergen, Kampfverwaltung, Kataloge statt Text, eigene
+Datei); `docs/plaene/archiv/schergen_plan.md`. Critter folgen als zweiter Teil auf demselben Bogen.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

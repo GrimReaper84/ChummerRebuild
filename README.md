@@ -47,11 +47,11 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 11. ✅ **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Ruf (Straßenruf, Schlechter Ruf,
     Prominenz), Talentleitungen mit Aktions-, Wissens- und Linguasofts, keine spätere Wahl von Adept, Zauberer,
     Magieradept oder Technomancer im Karrieremodus, Vorschlagsliste für Wissensfertigkeiten, Portrait.
-12. **Einstellungen**: gesammelte Wahlmöglichkeiten, z.B. Zahlenformat, Gliedpanzerung als Durchschnitt, häufige Proben
-    im Status, versäumte Lebensstilzahlungen und das spätere Erwachen latenter Charaktere.
+12. ✅ **Einstellungen**: Zahlenformat, Proben im Status, Gliedpanzerung als Durchschnitt, versäumte
+    Lebensstilzahlungen, spätes Erwachen latenter Charaktere und die Auswahl der Regelwerke je Charakter.
 13. **Charakterbogen**: Drucken und Exportieren.
-14. **NSCs**: Vorgefertigte NSCs wie sie in den Regelbüchern beschrieben sind und die Möglichkeit eigene NSCs zu erstellen,
-    dazu Critter mit ihren Kräften.
+14. **NSCs**: ✅ Schergengruppen mit den Beispielgruppen des Grundregelwerks und Kampfverwaltung; als Nächstes Critter
+    mit ihren Kräften.
 15. **Drogen, Toxine und Granaten** (optional): ihre Wirkung statt nur Katalogeinträge.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in

@@ -8,6 +8,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -24,6 +25,12 @@ import org.tbee.javafx.scene.layout.MigPane;
  * Ausrüstung).
  */
 public final class GridSupport {
+
+  /** Hängt {@code style} an {@code control} an und gibt es zurück. */
+  public static <T extends Control> @NonNull T styled(@NonNull T control, @NonNull String style) {
+    control.getStyleClass().add(style);
+    return control;
+  }
 
   private GridSupport() {
   }
