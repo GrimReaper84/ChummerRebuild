@@ -11,7 +11,11 @@ Diese Datei gibt Claude Code (claude.ai/code) Hinweise für die Arbeit an diesem
 ./gradlew jpackage       # Installer für das aktuelle Betriebssystem (build/jpackage)
 ./gradlew runtimeZip     # Portables ZIP mit eingebautem Java (build/portable)
 ./gradlew generateIcons  # Fenster- und Installer-Icons neu zeichnen (von Hand, Ergebnis wird eingecheckt)
+./gradlew generateSamples  # Testfälle des Beta-Menüs neu erzeugen (von Hand, Ergebnis wird eingecheckt)
 ```
+
+**Beta-Menü:** Nur `./gradlew run` setzt `chummer.beta`; dann öffnet das Menü „Beta“ Archetypen, Schergengruppen und
+die Testfälle aus `src/test/resources/samples` als ungespeicherte Kopie (ADR-063, `docs/beta_checkliste.md`).
 
 **Java 25** ist Pflicht (per Toolchain erzwungen; Gradle findet auch die JDKs aus `~/.jdks`). Hauptklasse: `de.shalorian.chummer.App`.
 Für `jpackage`/`runtimeZip` muss die JDK JavaFX enthalten (Liberica Full, ADR-043).
@@ -48,7 +52,8 @@ Package überschaubar bleibt:
 - `view.converter`: JavaFX-`StringConverter`
 - `view.grid`: gemeinsame Zeilen-Bausteine (`RowModel`, `RowControls`, `AttributeRowLabel`, `SkillSortMode`)
 
-`persistence` und `utils` bleiben flach. Neue Klassen kommen in das Unterpaket ihres Fachbereichs, nicht in die
+`model.npc` enthält die Schergengruppen, `model.template` die Vorlagen für den Dialog „Neu“ (Archetypen,
+gemeinsame Bauanleitung `CharacterSpec`). `persistence` und `utils` bleiben flach. Neue Klassen kommen in das Unterpaket ihres Fachbereichs, nicht in die
 Package-Wurzel.
 
 **Controller-Hierarchie:**

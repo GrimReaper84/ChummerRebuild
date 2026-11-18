@@ -19,7 +19,7 @@
             <skill rating="2">Waffenloser Kampf</skill>
             <weapon>Knüppel</weapon>
             <weapon>Messer</weapon>
-            <gear>Kommlink (Gerätestufe 2)</gear>
+            <notes>Kommlink (Gerätestufe 2)</notes>
         </grunt>
         <leader metatype="Mensch" BOD="3" AGI="3" REA="3" STR="4" CHA="2" INT="3" LOG="2" WIL="2">
             <skill rating="3">Einschüchtern</skill>
@@ -29,7 +29,7 @@
             <skill rating="2">Waffenloser Kampf</skill>
             <weapon>Colt America L36</weapon>
             <weapon>Messer</weapon>
-            <gear>Kommlink (Gerätestufe 2)</gear>
+            <notes>Kommlink (Gerätestufe 2)</notes>
         </leader>
     </group>
 
@@ -47,7 +47,7 @@
             <weapon>Ares Predator IV</weapon>
             <weapon>Messer</weapon>
             <armor>Panzerweste</armor>
-            <gear>Kommlink (Gerätestufe 2), 1 Dosis Cram oder Jazz; statt Ares Predator auch Steyr TMP (dann Schnellfeuerwaffen 2 statt Pistolen 2)</gear>
+            <notes>Kommlink (Gerätestufe 2), 1 Dosis Cram oder Jazz; statt Ares Predator auch Steyr TMP (dann Schnellfeuerwaffen 2 statt Pistolen 2)</notes>
         </grunt>
         <leader metatype="Mensch" BOD="3" AGI="4" REA="4" STR="3" CHA="3" INT="3" LOG="2" WIL="3">
             <skill rating="2">Ausweichen</skill>
@@ -59,7 +59,7 @@
             <cyberware rating="2">Dermalpanzerung</cyberware>
             <cyberware>Sporn (einziehbar)</cyberware>
             <weapon>Remington Roomsweeper</weapon>
-            <gear>Kommlink (Gerätestufe 2), Molotow-Cocktail (4K Feuerschaden), 1 Dosis Cram oder Jazz</gear>
+            <notes>Kommlink (Gerätestufe 2), Molotow-Cocktail (4K Feuerschaden), 1 Dosis Cram oder Jazz</notes>
         </leader>
     </group>
 
@@ -78,7 +78,7 @@
             <weapon>Fichetti Security 600</weapon>
             <weapon>HK 227-X</weapon>
             <armor>Panzerweste</armor>
-            <gear>Kommlink (Gerätestufe 4)</gear>
+            <notes>Kommlink (Gerätestufe 4)</notes>
         </grunt>
         <leader metatype="Mensch" BOD="3" AGI="3" REA="3" STR="3" CHA="3" INT="4" LOG="3" WIL="4" MAG="3">
             <quality>Zauberer</quality>
@@ -96,7 +96,7 @@
             <spell>Stille</spell>
             <weapon>Fichetti Security 600</weapon>
             <armor>Panzerweste</armor>
-            <gear>Kommlink (Gerätestufe 4), Mage-Sight-Brille, Zauberspruchfokus (Kraft 2)</gear>
+            <notes>Kommlink (Gerätestufe 4), Mage-Sight-Brille, Zauberspruchfokus (Kraft 2)</notes>
         </leader>
     </group>
 
@@ -114,7 +114,7 @@
             <weapon>Colt America L36</weapon>
             <weapon>Defiance EX Schocker</weapon>
             <armor>Panzerjacke</armor>
-            <gear>Kommlink (Gerätestufe 3), 2 Dosen Jazz</gear>
+            <notes>Kommlink (Gerätestufe 3), 2 Dosen Jazz</notes>
         </grunt>
         <leader metatype="Mensch" BOD="4" AGI="4" REA="4" STR="3" CHA="4" INT="5" LOG="3" WIL="4">
             <skill rating="3">Einschüchtern</skill>
@@ -134,7 +134,7 @@
             <weapon>Colt Manhunter</weapon>
             <weapon>Defiance EX Schocker</weapon>
             <armor>Panzerjacke</armor>
-            <gear>Kommlink (Gerätestufe 4), 1 Dosis Jazz; Colt Manhunter mit Smartgunsystem; Smartlink als Retinamodifikation</gear>
+            <notes>Kommlink (Gerätestufe 4), 1 Dosis Jazz; Colt Manhunter mit Smartgunsystem; Smartlink als Retinamodifikation</notes>
         </leader>
     </group>
 
@@ -151,7 +151,7 @@
             <weapon>Ceska Black Scorpion</weapon>
             <weapon>Messer</weapon>
             <armor>Gefütterter Mantel</armor>
-            <gear>Kommlink (Gerätestufe 3); statt Messer auch Schwert</gear>
+            <notes>Kommlink (Gerätestufe 3); statt Messer auch Schwert</notes>
         </grunt>
         <leader metatype="Mensch" BOD="4" AGI="6" REA="5" STR="5" CHA="3" INT="4" LOG="3" WIL="3" MAG="4">
             <quality>Adept</quality>
@@ -172,7 +172,7 @@
             <weapon>Remington Roomsweeper</weapon>
             <weapon>Schwert</weapon>
             <armor>Gefütterter Mantel</armor>
-            <gear>Kommlink (Gerätestufe 4), Waffenfokus 1 (das Schwert)</gear>
+            <notes>Kommlink (Gerätestufe 4), Waffenfokus 1 (das Schwert)</notes>
         </leader>
     </group>
 
@@ -201,7 +201,7 @@
             <armor>Ganzkörperpanzerung
                 <part>Helm (Ganzkörperpanzerung)</part>
             </armor>
-            <gear>Kommlink (Gerätestufe 4)</gear>
+            <notes>Kommlink (Gerätestufe 4)</notes>
         </grunt>
         <leader metatype="Mensch" BOD="4" AGI="6" REA="5" STR="4" CHA="4" INT="5" LOG="4" WIL="5">
             <group rating="4">Athletik</group>
@@ -230,7 +230,7 @@
             <armor>Ganzkörperpanzerung
                 <part>Helm (Ganzkörperpanzerung)</part>
             </armor>
-            <gear>Kommlink (Gerätestufe 5); Programme: Analyse 4, Angriff 3, Ausnutzen 3, Schmöker 3, Schleicher 4, WiFi-Scan 3</gear>
+            <notes>Kommlink (Gerätestufe 5); Programme: Analyse 4, Angriff 3, Ausnutzen 3, Schmöker 3, Schleicher 4, WiFi-Scan 3</notes>
         </leader>
     </group>
 
@@ -252,7 +252,7 @@
             <cyberware rating="3">Synthacardium</cyberware>
             <weapon>HK 227-X</weapon>
             <armor>Ganzkörperpanzerung</armor>
-            <gear>Enterhakenkanone, Kommlink (Gerätestufe 5), Kontaktlinsen (Blitzkompensation, Smartlink), 2 Rauchgranaten, 2 IR-Rauchgranaten</gear>
+            <notes>Enterhakenkanone, Kommlink (Gerätestufe 5), Kontaktlinsen (Blitzkompensation, Smartlink), 2 Rauchgranaten, 2 IR-Rauchgranaten</notes>
         </grunt>
         <leader metatype="Elf" BOD="4" AGI="6" REA="5" STR="4" CHA="5" INT="6" LOG="5" WIL="6">
             <group rating="3">Athletik</group>
@@ -271,7 +271,7 @@
             <cyberware>Kommlink</cyberware>
             <weapon>HK 227-X</weapon>
             <armor>Ganzkörperpanzerung</armor>
-            <gear>Kommlink implantiert (Gerätestufe 5), Kontaktlinsen (Blitzkompensation, Smartlink); Programme: Analyse 4, Aufspüren 4, Ausnutzen 5, Blackout 4, Panzerung 5, Schmöker 3, Schleicher 4, WiFi-Scan 3</gear>
+            <notes>Kommlink implantiert (Gerätestufe 5), Kontaktlinsen (Blitzkompensation, Smartlink); Programme: Analyse 4, Aufspüren 4, Ausnutzen 5, Blackout 4, Panzerung 5, Schmöker 3, Schleicher 4, WiFi-Scan 3</notes>
         </leader>
     </group>
 </npcs>

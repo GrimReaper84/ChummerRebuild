@@ -1,0 +1,352 @@
+{
+  "kind" : "npcGroup",
+  "name" : "Lone Star Polizeieinheit",
+  "professionalRating" : 3,
+  "grunt" : {
+    "character" : {
+      "name" : "Scherge",
+      "metatype" : "Mensch",
+      "created" : true,
+      "nuyenBP" : 0,
+      "physicalDamage" : 0,
+      "stunDamage" : 0,
+      "selectedQualities" : [ ],
+      "attributes" : {
+        "STR" : 3,
+        "AGI" : 4,
+        "LOG" : 3,
+        "BOD" : 4,
+        "WIL" : 3,
+        "CHA" : 3,
+        "INT" : 4,
+        "REA" : 4
+      },
+      "edge" : 2,
+      "edgeBurned" : 0,
+      "edgeSpent" : 0,
+      "magic" : null,
+      "resonance" : null,
+      "skills" : [ {
+        "name" : "Knüppel",
+        "rating" : 3,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Waffenloser Kampf",
+        "rating" : 3,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Pistolen",
+        "rating" : 3,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Wahrnehmung",
+        "rating" : 2,
+        "specialization" : null,
+        "exoticTarget" : null
+      } ],
+      "knowledgeSkills" : [ {
+        "name" : "Gesetzesvollstreckung",
+        "category" : "PROFESSIONAL",
+        "rating" : 3,
+        "nativeLanguage" : false,
+        "specialization" : null
+      } ],
+      "contacts" : [ ],
+      "decoupledGroups" : [ ],
+      "karmaLog" : [ ],
+      "nuyenLog" : [ ],
+      "biography" : {
+        "alias" : "",
+        "sex" : "",
+        "age" : "",
+        "eyes" : "",
+        "height" : "",
+        "weight" : "",
+        "skin" : "",
+        "hair" : "",
+        "description" : "",
+        "background" : "",
+        "concept" : "",
+        "notes" : "",
+        "playerName" : "",
+        "gameNotes" : "",
+        "portrait" : null
+      },
+      "tradition" : "HERMETIC",
+      "spellNames" : [ ],
+      "complexForms" : [ ],
+      "adeptPowers" : [ ],
+      "adeptMagic" : 0,
+      "initiation" : {
+        "grade" : 0,
+        "techniques" : [ ]
+      },
+      "spirits" : [ ],
+      "cyberware" : [ ],
+      "armor" : [ {
+        "name" : "Panzerjacke",
+        "equipped" : true,
+        "price" : null,
+        "mods" : [ ]
+      } ],
+      "weapons" : [ {
+        "name" : "Betäubungsschlagstock",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }, {
+        "name" : "Colt America L36",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }, {
+        "name" : "Defiance EX Schocker",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      } ],
+      "gear" : [ ],
+      "vehicles" : [ ],
+      "lifestyle" : {
+        "level" : "STREET",
+        "months" : 1,
+        "missedMonths" : 0,
+        "debt" : 0
+      },
+      "reputation" : {
+        "streetCredBonus" : 0,
+        "notorietyBonus" : 0,
+        "burnedStreetCred" : 0,
+        "awarenessAdjustment" : 0
+      },
+      "rules" : {
+        "limbArmorAverage" : false,
+        "lateAwakening" : false,
+        "missedLifestylePayments" : false,
+        "books" : [ ]
+      }
+    },
+    "gear" : "Kommlink (Gerätestufe 3), 2 Dosen Jazz"
+  },
+  "leader" : {
+    "character" : {
+      "name" : "Anführer",
+      "metatype" : "Mensch",
+      "created" : true,
+      "nuyenBP" : 0,
+      "physicalDamage" : 0,
+      "stunDamage" : 0,
+      "selectedQualities" : [ ],
+      "attributes" : {
+        "STR" : 3,
+        "AGI" : 4,
+        "LOG" : 3,
+        "BOD" : 4,
+        "WIL" : 4,
+        "CHA" : 4,
+        "INT" : 5,
+        "REA" : 4
+      },
+      "edge" : 2,
+      "edgeBurned" : 0,
+      "edgeSpent" : 0,
+      "magic" : null,
+      "resonance" : null,
+      "skills" : [ {
+        "name" : "Klingenwaffen",
+        "rating" : 4,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Knüppel",
+        "rating" : 4,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Waffenloser Kampf",
+        "rating" : 4,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Pistolen",
+        "rating" : 4,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Infiltration",
+        "rating" : 2,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Wahrnehmung",
+        "rating" : 3,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Führung",
+        "rating" : 3,
+        "specialization" : null,
+        "exoticTarget" : null
+      }, {
+        "name" : "Einschüchtern",
+        "rating" : 3,
+        "specialization" : null,
+        "exoticTarget" : null
+      } ],
+      "knowledgeSkills" : [ {
+        "name" : "Gesetzesvollstreckung",
+        "category" : "PROFESSIONAL",
+        "rating" : 4,
+        "nativeLanguage" : false,
+        "specialization" : null
+      } ],
+      "contacts" : [ ],
+      "decoupledGroups" : [ ],
+      "karmaLog" : [ ],
+      "nuyenLog" : [ ],
+      "biography" : {
+        "alias" : "",
+        "sex" : "",
+        "age" : "",
+        "eyes" : "",
+        "height" : "",
+        "weight" : "",
+        "skin" : "",
+        "hair" : "",
+        "description" : "",
+        "background" : "",
+        "concept" : "",
+        "notes" : "",
+        "playerName" : "",
+        "gameNotes" : "",
+        "portrait" : null
+      },
+      "tradition" : "HERMETIC",
+      "spellNames" : [ ],
+      "complexForms" : [ ],
+      "adeptPowers" : [ ],
+      "adeptMagic" : 0,
+      "initiation" : {
+        "grade" : 0,
+        "techniques" : [ ]
+      },
+      "spirits" : [ ],
+      "cyberware" : [ {
+        "name" : "Ganzer Arm (offensichtlich)",
+        "grade" : "STANDARD",
+        "rating" : 0,
+        "choice" : "",
+        "price" : null,
+        "installed" : [ {
+          "name" : "Panzerungsverbesserung",
+          "grade" : "STANDARD",
+          "rating" : 3,
+          "choice" : "",
+          "price" : null,
+          "installed" : [ ],
+          "commlink" : null,
+          "location" : null,
+          "attached" : true,
+          "body" : 0,
+          "strength" : 0,
+          "agility" : 0,
+          "pairedCopy" : false,
+          "pair" : 0
+        } ],
+        "commlink" : null,
+        "location" : "ARM_RIGHT",
+        "attached" : true,
+        "body" : 3,
+        "strength" : 3,
+        "agility" : 5,
+        "pairedCopy" : false,
+        "pair" : 0
+      }, {
+        "name" : "Reaktionsverbesserung",
+        "grade" : "STANDARD",
+        "rating" : 2,
+        "choice" : "",
+        "price" : null,
+        "installed" : [ ],
+        "commlink" : null,
+        "location" : null,
+        "attached" : true,
+        "body" : 0,
+        "strength" : 0,
+        "agility" : 0,
+        "pairedCopy" : false,
+        "pair" : 0
+      }, {
+        "name" : "Smartlink",
+        "grade" : "STANDARD",
+        "rating" : 0,
+        "choice" : "",
+        "price" : null,
+        "installed" : [ ],
+        "commlink" : null,
+        "location" : null,
+        "attached" : true,
+        "body" : 0,
+        "strength" : 0,
+        "agility" : 0,
+        "pairedCopy" : false,
+        "pair" : 0
+      } ],
+      "armor" : [ {
+        "name" : "Panzerjacke",
+        "equipped" : true,
+        "price" : null,
+        "mods" : [ ]
+      } ],
+      "weapons" : [ {
+        "name" : "Betäubungsschlagstock",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }, {
+        "name" : "Colt Manhunter",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }, {
+        "name" : "Defiance EX Schocker",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      } ],
+      "gear" : [ ],
+      "vehicles" : [ ],
+      "lifestyle" : {
+        "level" : "STREET",
+        "months" : 1,
+        "missedMonths" : 0,
+        "debt" : 0
+      },
+      "reputation" : {
+        "streetCredBonus" : 0,
+        "notorietyBonus" : 0,
+        "burnedStreetCred" : 0,
+        "awarenessAdjustment" : 0
+      },
+      "rules" : {
+        "limbArmorAverage" : false,
+        "lateAwakening" : false,
+        "missedLifestylePayments" : false,
+        "books" : [ ]
+      }
+    },
+    "gear" : "Kommlink (Gerätestufe 4), 1 Dosis Jazz; Colt Manhunter mit Smartgunsystem; Smartlink als Retinamodifikation"
+  },
+  "memberDamage" : [ 3, 10, 0, 0 ],
+  "leaderDamage" : 2,
+  "edgeSpent" : 1
+}

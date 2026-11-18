@@ -350,6 +350,8 @@
 | Kategorie-Dropdowns alphabetisch                                     | ✅      | Nutzervorgabe 2026-10-08: zentral in `CatalogSelectDialogController.refreshCategoryOptions()` (deutsche Sortierung, "Alle" oben); ersetzt die GRW-Reihenfolge der Ausrüstungs-/Waffen-Pläne |
 | Icon für "Pfeile hinzufügen" (Waffen-Tab)                           | ❌      | **Notiz (Nutzerwunsch 2026-10-08):** das Bullseye-Icon passt nicht; ein anderes FontAwesome-Icon suchen oder den Button als Text-Button belassen |
 | Einstellbare Zahlendarstellung (QoL)                                 | ✅      | 2026-11-18 (ADR-061): Tausenderpunkt und Dezimaltrennzeichen, zentral über `utils.Numbers` |
+| Vorlagen im Dialog „Neu“ (Archetypen, Schergengruppen)                | ✅      | 2026-11-19 (ADR-063): eine Auswahl mit Quelle und Seite; 16 GRW-Archetypen (S. 124–139) in der Erschaffung, alle mit genau 400 GP |
+| Beta-Menü und Durchklick-Checkliste                                   | ✅      | 2026-11-19 (ADR-063): nur mit `./gradlew run`; Testfälle über `./gradlew generateSamples`; `docs/beta_checkliste.md` |
 
 ---
 
@@ -429,12 +431,36 @@ README-Roadmap sind erledigt; es folgen:
 **Release:** Das erste Release (Tag `v1.0.0`) kommt erst, wenn alle Funktionen des Grundregelwerks umgesetzt sind
 (Nutzerentscheidung 2026-11-11); die Release-Technik steht seit ADR-043. Vor dem Tag: erster Lauf von `release.yml` auf
 Windows und macOS (bisher nur Linux lokal gebaut), Installer und portables ZIP einmal von Hand starten, die UI
-durchklicken.
+nach `docs/beta_checkliste.md` durchklicken (Beta-Menü mit `./gradlew run`).
 
 **Nach dem Release (zurückgestellt, Reihenfolge offen):** Fahrzeugkampf-Manöver (Abschnitt 14), Zubehör an
 Fahrzeugwaffen, Lagerorte und Eigennamen für Ausrüstung, Waffen, Rüstung und Fahrzeuge (Abschnitte 13/14),
 DIY/Hacked/Schwarzmarkt (Abschnitt 13), Cyberguns (Abschnitt 10, GRW ohne Kosten), Zusatzbände über die
 Regelwerk-Auswahl (ADR-061; Kandidaten: Waffenmodifikationen, Lebensstil-Ausbaustufen, Arsenal-Fahrzeuge).
+
+**Zusatzbände (Ideen vom 2026-11-18):**
+
+- **Reihenfolge der Bücher:** 1. Runner-Kompendium (Erschaffung: Metavarianten, Gaben/Handicaps, Kontakte, Lebensstil),
+  2. Straßenmagie (Traditionen, Mentorgeister, Metamagie, Geasa), 3. Arsenal 2070 (Waffen, Ausrüstung,
+  Modifikationen), 4. Vernetzt (Matrix, Echos, Sprites; rückt vor, sobald jemand Hacker spielt), 5. Bodytech; danach
+  Parazoologie (mehr Critter in der Vorlagenliste), Fronteinsatz, Parabotanik. Quellen sind die deutschen Ausgaben.
+- **Vorher:** eine Übersicht aller vorhandenen Bücher, je Buch eingeordnet als „nur Katalog“, „ändert Regeln“ oder
+  „nur Setting“, mit Umfang.
+- **Katalog-Rezept:** `catalog-extractor` um einen Ablauf „Neues Buch aufnehmen“ erweitern, geschrieben am ersten
+  echten Buch. Inhalt: Einordnung (Regeln laufen über den Plan-Workflow, nur Katalog über das Rezept),
+  `books.xml`-Eintrag mit Seitenversatz, Übertragung am Seitenbild, Abgleich mit den C#-Daten (nur Werte, keine
+  Seiten, weil Chummer die englischen Ausgaben referenziert), Zuordnung Buchtitel deutsch ↔ Chummer-Kürzel und
+  englischer Name je Eintrag (nützt dem Chummer4-Konverter), Loader-Test je Quelle, fester Bericht.
+- **Chummer4-Konverter:** Entwickler-Tool `.chum` → `.json`, kein App-Feature; Grobplan
+  `docs/plaene/chum_konverter_plan.md`, kurz vor dem Release.
+
+**Regelfragen (Ideen vom 2026-11-18):**
+
+- **Globale Katalogsuche** („In welchem Regelwerk finde ich …?“): ein Suchfeld über alle Kataloge, Treffer mit Quelle,
+  Seite und eigener Kurzbeschreibung; offline, ohne Buchtexte, klein (2–3 Schritte).
+- **Regel-Assistent** („Erkläre mir den Zauber …“), voraussichtlich nicht umgesetzt: eigene PDFs aus einem lokalen
+  Ordner indizieren, passende Ausschnitte an ein Sprachmodell (eigener API-Schlüssel), Antwort mit Buch und Seite. Groß
+  (6–8 Schritte); Hindernisse: OCR-Qualität und Tabellen, Netz und Kosten, Ausschnitte gehen an einen externen Dienst.
 
 Frühere Roadmaps (Stufen 1–3, Kandidatenliste vom 2026-11-11) sind abgearbeitet und stehen in der Git-Historie dieser
 Datei; Begründungen in `DECISIONS.md`, Pläne in `docs/plaene/archiv/`.

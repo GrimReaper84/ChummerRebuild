@@ -2546,6 +2546,11 @@ public class Character {
    * @throws IllegalArgumentException bei einer mit der Würfelzahl unmöglichen Würfelsumme
    */
   public int finalizeCreation(int diceSum) {
+    return finalizeCreation(diceSum, LocalDate.now(ZoneId.systemDefault()));
+  }
+
+  /** Wie {@link #finalizeCreation(int)} mit festem Buchungsdatum (z.B. für reproduzierbare Testfälle). */
+  public int finalizeCreation(int diceSum, @NonNull LocalDate date) {
     if (created) {
       throw new IllegalStateException("Charaktererschaffung ist bereits abgeschlossen");
     }
@@ -2556,7 +2561,7 @@ public class Character {
     int startingCapital = equipment.getLifestyle().getLevel().startingCapital(diceSum, getRemainingNuyen());
     nuyenLog.add(new LogEntry(
         "Startkapital (Lebensstil " + equipment.getLifestyle().getLevel().getDisplayName() + ")",
-        startingCapital, LocalDate.now(ZoneId.systemDefault()), LogCategory.START));
+        startingCapital, date, LogCategory.START));
     nuyenBP = 0;
     created = true;
     return startingCapital;

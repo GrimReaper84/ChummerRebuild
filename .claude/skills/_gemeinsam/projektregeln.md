@@ -314,7 +314,9 @@ im Vordergrund steht.
 - **`./gradlew build`** (Compile + Tests + Checks) ist die Verifikation. Anzahl Tests und
   Fehlschläge berichten.
 - **Die App nicht starten** (`./gradlew run`). Das Display ist der echte Desktop des Nutzers, und es gibt
-  keine Klick-Automatisierung. UI-Verhalten prüft der Nutzer selbst.
+  keine Klick-Automatisierung. UI-Verhalten prüft der Nutzer selbst, vor dem Release über das Beta-Menü
+  (nur mit `./gradlew run`) nach `docs/beta_checkliste.md`. Neue Bereiche dort mit Prüfpunkt und passendem
+  Archetyp bzw. Testfall nachtragen; fehlt ein passender Zustand, einen Testfall in `GenerateSamples` ergänzen.
 - Keine TestFX/UI-Test-Infrastruktur ohne Auftrag einführen. Fachlogik so bauen, dass sie ohne UI
   testbar ist.
 - **GRW-Rechenbeispiele als Unit-Tests nachrechnen** (z.B. "1,5 Cyberware + 2,5 Bioware → 2,75"), dazu

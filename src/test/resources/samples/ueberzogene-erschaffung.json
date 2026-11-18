@@ -1,0 +1,485 @@
+{
+  "name" : "Überzogene Erschaffung",
+  "metatype" : "Zwerg",
+  "created" : false,
+  "nuyenBP" : 15,
+  "physicalDamage" : 0,
+  "stunDamage" : 0,
+  "selectedQualities" : [ {
+    "name" : "Außergewöhnliches Attribut",
+    "gratis" : false,
+    "choice" : "CHA"
+  }, {
+    "name" : "Soziales Chamäleon",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Gremlins 2",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Kampflähmung",
+    "gratis" : false,
+    "choice" : ""
+  } ],
+  "attributes" : {
+    "STR" : 3,
+    "AGI" : 3,
+    "LOG" : 4,
+    "BOD" : 3,
+    "WIL" : 5,
+    "CHA" : 5,
+    "INT" : 5,
+    "REA" : 3
+  },
+  "edge" : 4,
+  "edgeBurned" : 0,
+  "edgeSpent" : 0,
+  "magic" : null,
+  "resonance" : null,
+  "skills" : [ {
+    "name" : "Pistolen",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Ausweichen",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Wahrnehmung",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Gebräuche",
+    "rating" : 5,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Überreden",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Verhandlung",
+    "rating" : 5,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Einschüchtern",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Computer",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Datensuche",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Hardware",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Software",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Bodenfahrzeuge",
+    "rating" : 2,
+    "specialization" : "Pkw",
+    "exoticTarget" : null
+  } ],
+  "knowledgeSkills" : [ {
+    "name" : "Combat Biking-Spielpläne",
+    "category" : "HOBBY",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Gehobene Küche",
+    "category" : "HOBBY",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Gute Restaurants",
+    "category" : "STREET",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Stadtkrieg-Spielpläne",
+    "category" : "HOBBY",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Englisch",
+    "category" : "LANGUAGE",
+    "rating" : 0,
+    "nativeLanguage" : true,
+    "specialization" : null
+  }, {
+    "name" : "Arabisch",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Deutsch",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Japanisch",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Kantonesisch",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Spanisch",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  } ],
+  "contacts" : [ {
+    "name" : "Barkeeper",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 1
+  }, {
+    "name" : "Mr. Johnson",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  }, {
+    "name" : "Schieber",
+    "description" : null,
+    "connection" : 4,
+    "loyalty" : 2
+  }, {
+    "name" : "Triaden-Soldat",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 1
+  }, {
+    "name" : "Waffenhändler",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  } ],
+  "decoupledGroups" : [ "Einfluss", "Feuerwaffen" ],
+  "karmaLog" : [ ],
+  "nuyenLog" : [ ],
+  "biography" : {
+    "alias" : "",
+    "sex" : "",
+    "age" : "",
+    "eyes" : "",
+    "height" : "",
+    "weight" : "",
+    "skin" : "",
+    "hair" : "",
+    "description" : "",
+    "background" : "",
+    "concept" : "Verhandler und Gesicht des Teams, das mit Charme, Kontakten und Menschenkenntnis arbeitet.",
+    "notes" : "Laut GRW S. 124 außerdem: Das Kommlink ist implantiert; Monokel mit Sichtverbindung.",
+    "playerName" : "",
+    "gameNotes" : "",
+    "portrait" : null
+  },
+  "tradition" : "HERMETIC",
+  "spellNames" : [ ],
+  "complexForms" : [ ],
+  "adeptPowers" : [ ],
+  "adeptMagic" : 0,
+  "initiation" : {
+    "grade" : 0,
+    "techniques" : [ ]
+  },
+  "spirits" : [ ],
+  "cyberware" : [ {
+    "name" : "Datenbuchse",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Kommlink",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Reflexbooster",
+    "grade" : "STANDARD",
+    "rating" : 3,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Kunstmuskeln",
+    "grade" : "STANDARD",
+    "rating" : 2,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  } ],
+  "armor" : [ {
+    "name" : "Panzerkleidung",
+    "equipped" : true,
+    "price" : null,
+    "mods" : [ ]
+  } ],
+  "weapons" : [ {
+    "name" : "Fichetti Security 600",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  } ],
+  "gear" : [ {
+    "name" : "Störsender, Bereich",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Beglaubigter Credstick",
+    "rating" : 0,
+    "quantity" : 4,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "DocWagon-Vertrag (Standard)",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gefälschte SIN",
+    "rating" : 4,
+    "quantity" : 2,
+    "extra" : "Tarnidentität",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Transys Avalon",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ {
+      "name" : "Iris Orb",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Analyse",
+      "rating" : 2,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Editieren",
+      "rating" : 2,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Schmöker",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Monokel",
+    "rating" : 1,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "AR-Handschuhe",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Tarnholster",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Standardmunition",
+    "rating" : 0,
+    "quantity" : 300,
+    "extra" : "Leichte Pistolen",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gefälschte SIN",
+    "rating" : 6,
+    "quantity" : 10,
+    "extra" : "Tarnidentität",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  } ],
+  "vehicles" : [ {
+    "name" : "Mercury Comet (Mittelklassewagen)",
+    "riggerAdapter" : false,
+    "mounts" : [ ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Fahrzeug)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  } ],
+  "lifestyle" : {
+    "level" : "HIGH",
+    "months" : 1,
+    "missedMonths" : 0,
+    "debt" : 0
+  },
+  "reputation" : {
+    "streetCredBonus" : 0,
+    "notorietyBonus" : 0,
+    "burnedStreetCred" : 0,
+    "awarenessAdjustment" : 0
+  },
+  "rules" : {
+    "limbArmorAverage" : false,
+    "lateAwakening" : false,
+    "missedLifestylePayments" : false,
+    "books" : [ ]
+  }
+}

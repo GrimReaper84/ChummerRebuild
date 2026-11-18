@@ -296,6 +296,22 @@ normalen Charakter.
 **Warum:** Nutzerentscheidungen 2026-11-18 (eigener Bogen, nur Schergen, Kampfverwaltung, Kataloge statt Text, eigene
 Datei); `docs/plaene/archiv/schergen_plan.md`. Critter folgen als zweiter Teil auf demselben Bogen.
 
+### ADR-063: Beta-Modus und Vorlagen (2026-11-19)
+Der Dialog „Neu“ hat drei Wahlen: Charakter und Schergengruppe legen immer leer an, „Vorlagen“ zeigt alle Vorlagen der
+aktiven Regelwerke an einer Stelle (`Templates`, `DocumentTemplate`, `TemplateKind`), gruppiert nach Art, als
+„Name (SR4)“ mit Tooltip „Grundregelwerk, S. …“. Vorlagen sind die 16 Archetypen des GRW (S. 124–139,
+`archetypes.xml`), die in der normalen Erschaffung öffnen, und die Beispiel-Schergen; Critter kommen später als
+weitere Art dazu. Archetypen und Schergen nutzen dieselbe Bauanleitung (`CharacterSpec`, `CharacterSpecReader`) mit
+`BuildMode.GM` bzw. `CREATION`; was kein Katalog abbildet, steht als Notiz am Charakter. Ein Test baut jeden Archetyp
+und verlangt genau 400 GP mit den Teilsummen des GRW (alle 16 gehen auf). Das Menü „Beta“ erscheint nur, wenn der
+Gradle-Task `run` die Systemeigenschaft `chummer.beta` setzt (nicht `applicationDefaultJvmArgs`, das käme in
+Startskripte und Installer); es öffnet Archetypen, Schergengruppen und die Testfälle aus
+`src/test/resources/samples` als ungespeicherte Kopie mit „(Beta)“ im Titel. Die Testfälle erzeugt
+`./gradlew generateSamples` von Hand; sie werden eingecheckt. Durchgeklickt wird nach `docs/beta_checkliste.md`.
+**Warum:** Vor dem Release jeden Bereich mit fertigen Charakteren prüfen, ohne Testdateien zu überschreiben; die
+Archetypen sind zugleich Startpunkte für Spieler (S. 105) und ein Abnahmetest der Erschaffungsregeln. Vorbild:
+Fallout-Projekt, ADR-018.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

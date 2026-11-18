@@ -1,0 +1,781 @@
+{
+  "name" : "Karriere mit Log",
+  "metatype" : "Mensch",
+  "created" : true,
+  "nuyenBP" : 0,
+  "physicalDamage" : 0,
+  "stunDamage" : 0,
+  "selectedQualities" : [ {
+    "name" : "Hohe Schmerztoleranz 2",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Mut",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Abhängigkeit (Leicht)",
+    "gratis" : false,
+    "choice" : "Stimulanzmittel"
+  }, {
+    "name" : "Allergie (Ungewöhnlich, Leicht)",
+    "gratis" : false,
+    "choice" : "Gold"
+  }, {
+    "name" : "Inkompetenz",
+    "gratis" : false,
+    "choice" : "Hacking"
+  }, {
+    "name" : "Fotografisches Gedächtnis",
+    "gratis" : false,
+    "choice" : ""
+  } ],
+  "attributes" : {
+    "STR" : 5,
+    "AGI" : 5,
+    "LOG" : 2,
+    "BOD" : 4,
+    "WIL" : 3,
+    "CHA" : 2,
+    "INT" : 4,
+    "REA" : 4
+  },
+  "edge" : 2,
+  "edgeBurned" : 0,
+  "edgeSpent" : 0,
+  "magic" : null,
+  "resonance" : null,
+  "skills" : [ {
+    "name" : "Klingenwaffen",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Waffenloser Kampf",
+    "rating" : 5,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Pistolen",
+    "rating" : 5,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Schnellfeuerwaffen",
+    "rating" : 5,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Schwere Waffen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Akrobatik",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Klettern",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Laufen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Schwimmen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Infiltration",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Wahrnehmung",
+    "rating" : 1,
+    "specialization" : "Sehen",
+    "exoticTarget" : null
+  }, {
+    "name" : "Verhandlung",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Bodenfahrzeuge",
+    "rating" : 1,
+    "specialization" : "Motorrad",
+    "exoticTarget" : null
+  } ],
+  "knowledgeSkills" : [ {
+    "name" : "Feuerwaffenentwurf",
+    "category" : "PROFESSIONAL",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Geheime Unterschlupfe",
+    "category" : "STREET",
+    "rating" : 4,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Zen-Meditation",
+    "category" : "HOBBY",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Spanisch",
+    "category" : "LANGUAGE",
+    "rating" : 0,
+    "nativeLanguage" : true,
+    "specialization" : null
+  }, {
+    "name" : "Englisch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : "Stadtsprache"
+  }, {
+    "name" : "Japanisch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  } ],
+  "contacts" : [ {
+    "name" : "Schieber",
+    "description" : null,
+    "connection" : 3,
+    "loyalty" : 3
+  }, {
+    "name" : "Straßendoc",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 3
+  }, {
+    "name" : "Waffenhändler",
+    "description" : null,
+    "connection" : 1,
+    "loyalty" : 1
+  } ],
+  "decoupledGroups" : [ "Einfluss", "Heimlichkeit", "Nahkampf", "Feuerwaffen" ],
+  "karmaLog" : [ {
+    "description" : "Run: Hafenauftrag",
+    "amount" : 20,
+    "date" : "2072-03-01",
+    "category" : "MANUAL"
+  }, {
+    "description" : "Run: Konzernextraktion",
+    "amount" : 30,
+    "date" : "2072-03-01",
+    "category" : "MANUAL"
+  }, {
+    "description" : "Intuition 3 → 4",
+    "amount" : -20,
+    "date" : "2072-03-01",
+    "category" : "ATTRIBUTE"
+  }, {
+    "description" : "Pistolen 4 → 5",
+    "amount" : -10,
+    "date" : "2072-03-01",
+    "category" : "SKILL"
+  }, {
+    "description" : "Fotografisches Gedächtnis",
+    "amount" : -20,
+    "date" : "2072-03-01",
+    "category" : "QUALITY"
+  }, {
+    "description" : "Kontakt Waffenhändler",
+    "amount" : -2,
+    "date" : "2072-03-01",
+    "category" : "CONTACT"
+  } ],
+  "nuyenLog" : [ {
+    "description" : "Startkapital (Lebensstil Unterschicht)",
+    "amount" : 950,
+    "date" : "2072-03-01",
+    "category" : "START"
+  }, {
+    "description" : "Run: Hafenauftrag",
+    "amount" : 6000,
+    "date" : "2072-03-01",
+    "category" : "MANUAL"
+  }, {
+    "description" : "Medkit (Stufe 4)",
+    "amount" : -400,
+    "date" : "2072-03-01",
+    "category" : "PURCHASE"
+  }, {
+    "description" : "AR-Handschuhe verkauft",
+    "amount" : 75,
+    "date" : "2072-03-01",
+    "category" : "SALE"
+  }, {
+    "description" : "Lebensstil, 1 Monat",
+    "amount" : -2000,
+    "date" : "2072-03-01",
+    "category" : "LIFESTYLE"
+  } ],
+  "biography" : {
+    "alias" : "",
+    "sex" : "",
+    "age" : "",
+    "eyes" : "",
+    "height" : "",
+    "weight" : "",
+    "skin" : "",
+    "hair" : "",
+    "description" : "",
+    "background" : "",
+    "concept" : "Vercyberter Profi-Kämpfer mit zwei Cyberarmen, Reflexbooster und einem eigenen Ehrenkodex.",
+    "notes" : "Laut GRW S. 135 außerdem: Beide Cyberarme maßgefertigt; Stoner-Ares M202 mit internem Smartgunsystem; Ingram Smartgun X laut GRW mit Gasventilsystem 3 statt des\n                mitgelieferten Gasventilsystems 2; DocWagon-Vertrag für\n                1 Jahr; die fünf gefälschten Lizenzen gelten für zwei Ares Predator IV, Katana, Ingram Smartgun X und\n                Reflexbooster.",
+    "playerName" : "",
+    "gameNotes" : "",
+    "portrait" : null
+  },
+  "tradition" : "HERMETIC",
+  "spellNames" : [ ],
+  "complexForms" : [ ],
+  "adeptPowers" : [ ],
+  "adeptMagic" : 0,
+  "initiation" : {
+    "grade" : 0,
+    "techniques" : [ ]
+  },
+  "spirits" : [ ],
+  "cyberware" : [ {
+    "name" : "Cyberaugen-Basissystem",
+    "grade" : "ALPHAWARE",
+    "rating" : 3,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ {
+      "name" : "Blitzkompensation",
+      "grade" : "ALPHAWARE",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Infrarotsicht",
+      "grade" : "ALPHAWARE",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Restlichtverstärkung",
+      "grade" : "ALPHAWARE",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Smartlink",
+      "grade" : "ALPHAWARE",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    } ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Schutzgläser",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Ganzer Arm (offensichtlich)",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ {
+      "name" : "Panzerungsverbesserung",
+      "grade" : "STANDARD",
+      "rating" : 2,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Geschicklichkeitsverbesserung",
+      "grade" : "STANDARD",
+      "rating" : 3,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Stärkeverbesserung",
+      "grade" : "STANDARD",
+      "rating" : 2,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Sporn (einziehbar)",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Schockhand",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    } ],
+    "commlink" : null,
+    "location" : "ARM_RIGHT",
+    "attached" : true,
+    "body" : 3,
+    "strength" : 5,
+    "agility" : 5,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Ganzer Arm (offensichtlich)",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ {
+      "name" : "Panzerungsverbesserung",
+      "grade" : "STANDARD",
+      "rating" : 2,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Geschicklichkeitsverbesserung",
+      "grade" : "STANDARD",
+      "rating" : 3,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Stärkeverbesserung",
+      "grade" : "STANDARD",
+      "rating" : 2,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Schmuggelbehälter",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    } ],
+    "commlink" : null,
+    "location" : "ARM_LEFT",
+    "attached" : true,
+    "body" : 3,
+    "strength" : 5,
+    "agility" : 5,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Reflexbooster",
+    "grade" : "ALPHAWARE",
+    "rating" : 2,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  } ],
+  "armor" : [ {
+    "name" : "Panzerweste",
+    "equipped" : true,
+    "price" : null,
+    "mods" : [ {
+      "name" : "Elektrische Isolierung",
+      "rating" : 2
+    } ]
+  } ],
+  "weapons" : [ {
+    "name" : "Überlebensmesser",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  }, {
+    "name" : "Ares Predator IV",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  }, {
+    "name" : "Ares Predator IV",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  }, {
+    "name" : "Ingram Smartgun X",
+    "rating" : 0,
+    "accessories" : [ {
+      "name" : "Schallunterdrücker",
+      "mount" : "BARREL"
+    } ],
+    "arrows" : [ ],
+    "ammo" : ""
+  }, {
+    "name" : "Stoner-Ares M202",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  } ],
+  "gear" : [ {
+    "name" : "Werkzeugkiste",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "Waffenbau",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "DocWagon-Vertrag (Gold)",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gefälschte Lizenz",
+    "rating" : 2,
+    "quantity" : 5,
+    "extra" : "Waffenlizenzen und Implantatlizenz",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gefälschte SIN",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "Tarnidentität",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Hermes Ikon",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ {
+      "name" : "Redcap Nix",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Sim-Modul",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : 100,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Analyse",
+      "rating" : 2,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Befehl",
+      "rating" : 1,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Editieren",
+      "rating" : 1,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Schmöker",
+      "rating" : 2,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Tarnholster",
+    "rating" : 0,
+    "quantity" : 2,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Explosivgeschosse",
+    "rating" : 0,
+    "quantity" : 300,
+    "extra" : "Schwere Pistolen",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Standardmunition",
+    "rating" : 0,
+    "quantity" : 320,
+    "extra" : "Maschinenpistolen",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Standardmunition",
+    "rating" : 0,
+    "quantity" : 200,
+    "extra" : "Mittlere Maschinengewehre",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Medkit",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  } ],
+  "vehicles" : [ {
+    "name" : "Suzuki Mirage (Rennmaschine)",
+    "riggerAdapter" : false,
+    "mounts" : [ ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Fahrzeug)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  } ],
+  "lifestyle" : {
+    "level" : "LOW",
+    "months" : 3,
+    "missedMonths" : 0,
+    "debt" : 0
+  },
+  "reputation" : {
+    "streetCredBonus" : 0,
+    "notorietyBonus" : 0,
+    "burnedStreetCred" : 0,
+    "awarenessAdjustment" : 0
+  },
+  "rules" : {
+    "limbArmorAverage" : false,
+    "lateAwakening" : false,
+    "missedLifestylePayments" : false,
+    "books" : [ ]
+  }
+}

@@ -464,6 +464,7 @@
         <notoriety>1</notoriety>
         <note>Tägliches Verlangen, nach außen kaum sichtbar.</note>
         <select label="Substanz">text</select>
+        <multiple/>
         <bonus/>
     </quality>
     <quality>
@@ -475,6 +476,7 @@
         <notoriety>1</notoriety>
         <note>Mindestens tägliches Verlangen; −4 auf Proben, ihm zu widerstehen.</note>
         <select label="Substanz">text</select>
+        <multiple/>
         <bonus/>
     </quality>
     <quality>
@@ -486,6 +488,7 @@
         <notoriety>1</notoriety>
         <note>Ständiges Verlangen; −6 auf Proben, ihm zu widerstehen.</note>
         <select label="Substanz">text</select>
+        <multiple/>
         <bonus/>
     </quality>
     <quality>

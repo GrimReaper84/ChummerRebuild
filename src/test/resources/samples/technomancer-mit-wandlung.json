@@ -1,0 +1,371 @@
+{
+  "name" : "Technomancer mit Wandlung",
+  "metatype" : "Mensch",
+  "created" : true,
+  "nuyenBP" : 0,
+  "physicalDamage" : 0,
+  "stunDamage" : 0,
+  "selectedQualities" : [ {
+    "name" : "Resistenz gegen Signalspitzen",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Technomancer",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Kampflähmung",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Schwaches Immunsystem",
+    "gratis" : false,
+    "choice" : ""
+  } ],
+  "attributes" : {
+    "STR" : 2,
+    "AGI" : 3,
+    "LOG" : 5,
+    "BOD" : 2,
+    "WIL" : 3,
+    "CHA" : 3,
+    "INT" : 5,
+    "REA" : 4
+  },
+  "edge" : 2,
+  "edgeBurned" : 0,
+  "edgeSpent" : 0,
+  "magic" : null,
+  "resonance" : 5,
+  "skills" : [ {
+    "name" : "Pistolen",
+    "rating" : 1,
+    "specialization" : "Leichte Pistolen",
+    "exoticTarget" : null
+  }, {
+    "name" : "Ausweichen",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Wahrnehmung",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Verhandlung",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Elektronische Kriegsführung",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Hacking",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Matrixkampf",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Computer",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Datensuche",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Hardware",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Software",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Dekompilieren",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Kompilieren",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Registrieren",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  } ],
+  "knowledgeSkills" : [ {
+    "name" : "Betriebssysteme",
+    "category" : "ACADEMIC",
+    "rating" : 5,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Comicbücher",
+    "category" : "HOBBY",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Data Havens",
+    "category" : "STREET",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "IC-Identifikation",
+    "category" : "PROFESSIONAL",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Konzern-Matrix-Sicherheitsprozeduren",
+    "category" : "PROFESSIONAL",
+    "rating" : 4,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Matrixtheorie",
+    "category" : "ACADEMIC",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Spanisch",
+    "category" : "LANGUAGE",
+    "rating" : 0,
+    "nativeLanguage" : true,
+    "specialization" : null
+  }, {
+    "name" : "Englisch",
+    "category" : "LANGUAGE",
+    "rating" : 4,
+    "nativeLanguage" : false,
+    "specialization" : "Stadtsprache"
+  }, {
+    "name" : "Japanisch",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Kantonesisch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  } ],
+  "contacts" : [ {
+    "name" : "Blogger",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  }, {
+    "name" : "Schieber",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  } ],
+  "decoupledGroups" : [ "Einfluss", "Feuerwaffen" ],
+  "karmaLog" : [ {
+    "description" : "Karma aus Runs",
+    "amount" : 30,
+    "date" : "2072-03-01",
+    "category" : "MANUAL"
+  }, {
+    "description" : "Wandlung Grad 1",
+    "amount" : -13,
+    "date" : "2072-03-01",
+    "category" : "MAGIC_RESONANCE"
+  } ],
+  "nuyenLog" : [ {
+    "description" : "Startkapital (Lebensstil Unterschicht)",
+    "amount" : 550,
+    "date" : "2072-03-01",
+    "category" : "START"
+  } ],
+  "biography" : {
+    "alias" : "",
+    "sex" : "",
+    "age" : "",
+    "eyes" : "",
+    "height" : "",
+    "weight" : "",
+    "skin" : "",
+    "hair" : "",
+    "description" : "",
+    "background" : "",
+    "concept" : "Lebt mit seiner Resonanz in der Matrix und braucht dafür weder teures Kommlink noch Programme.",
+    "notes" : "Laut GRW S. 137 außerdem: Colt America L36 mit internem Smartgunsystem; das GRW nennt 5 Streifen zu 11 Schuss, Munition gibt es nur in Packungen zu 10.",
+    "playerName" : "",
+    "gameNotes" : "",
+    "portrait" : null
+  },
+  "tradition" : "HERMETIC",
+  "spellNames" : [ ],
+  "complexForms" : [ {
+    "name" : "Analyse",
+    "rating" : 2
+  }, {
+    "name" : "Angriff",
+    "rating" : 4
+  }, {
+    "name" : "Aufspüren",
+    "rating" : 4
+  }, {
+    "name" : "Ausnutzen",
+    "rating" : 5
+  }, {
+    "name" : "Editieren",
+    "rating" : 3
+  }, {
+    "name" : "Entschlüsselung",
+    "rating" : 3
+  }, {
+    "name" : "Panzerung",
+    "rating" : 3
+  }, {
+    "name" : "Schmöker",
+    "rating" : 3
+  }, {
+    "name" : "Scannen",
+    "rating" : 3
+  }, {
+    "name" : "Schleicher",
+    "rating" : 5
+  } ],
+  "adeptPowers" : [ ],
+  "adeptMagic" : 0,
+  "initiation" : {
+    "grade" : 1,
+    "techniques" : [ "Firewall-Upgrade" ]
+  },
+  "spirits" : [ {
+    "name" : "Kurier-Sprite",
+    "force" : 3,
+    "services" : 2,
+    "bound" : true
+  } ],
+  "cyberware" : [ ],
+  "armor" : [ {
+    "name" : "Gefütterter Mantel",
+    "equipped" : true,
+    "price" : null,
+    "mods" : [ ]
+  } ],
+  "weapons" : [ {
+    "name" : "Colt America L36",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  } ],
+  "gear" : [ {
+    "name" : "Gefälschte SIN",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "Tarnidentität",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Meta Link",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ {
+      "name" : "Vector Xim",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Versteckte Armhalterung",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Standardmunition",
+    "rating" : 0,
+    "quantity" : 60,
+    "extra" : "Leichte Pistolen",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  } ],
+  "vehicles" : [ {
+    "name" : "Dodge Scoot (Scooter)",
+    "riggerAdapter" : false,
+    "mounts" : [ ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Fahrzeug)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  } ],
+  "lifestyle" : {
+    "level" : "LOW",
+    "months" : 3,
+    "missedMonths" : 0,
+    "debt" : 0
+  },
+  "reputation" : {
+    "streetCredBonus" : 0,
+    "notorietyBonus" : 0,
+    "burnedStreetCred" : 0,
+    "awarenessAdjustment" : 0
+  },
+  "rules" : {
+    "limbArmorAverage" : false,
+    "lateAwakening" : false,
+    "missedLifestylePayments" : false,
+    "books" : [ ]
+  }
+}

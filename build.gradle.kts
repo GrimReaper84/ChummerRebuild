@@ -27,6 +27,21 @@ application {
     applicationName = "ChummerSR4Reborn"
 }
 
+// Beta-Menü mit Vorlagen und Testfällen (ADR-063): nur für Entwicklungsläufe. Bewusst nicht in
+// applicationDefaultJvmArgs, das käme in Startskripte und Installer.
+tasks.named<JavaExec>("run") {
+    systemProperty("chummer.beta", layout.projectDirectory.dir("src/test/resources").asFile.absolutePath)
+}
+
+// Testfälle für das Beta-Menü neu erzeugen (von Hand, nicht im Build; Ergebnis wird eingecheckt).
+tasks.register<JavaExec>("generateSamples") {
+    group = "application"
+    description = "Schreibt die Testfälle des Beta-Menüs nach src/test/resources/samples."
+    mainClass.set("de.shalorian.chummer.samples.GenerateSamples")
+    classpath = sourceSets.test.get().runtimeClasspath
+    args(layout.projectDirectory.dir("src/test/resources/samples").asFile.absolutePath)
+}
+
 javafx {
     version = libs.versions.javafx.runtime.get()
     modules = listOf("javafx.controls", "javafx.fxml")

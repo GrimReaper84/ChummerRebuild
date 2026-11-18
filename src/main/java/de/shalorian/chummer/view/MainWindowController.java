@@ -8,6 +8,8 @@ import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.npc.NpcGroup;
 import de.shalorian.chummer.model.npc.NpcStatblock;
 import de.shalorian.chummer.model.npc.NpcTemplate;
+import de.shalorian.chummer.model.template.ArchetypeTemplate;
+import de.shalorian.chummer.model.template.DocumentTemplate;
 import de.shalorian.chummer.persistence.CharacterStore;
 import de.shalorian.chummer.persistence.DocumentKind;
 import de.shalorian.chummer.persistence.NpcGroupStore;
@@ -22,6 +24,7 @@ import de.shalorian.chummer.view.shell.FloatingButtonPosition;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
@@ -33,6 +36,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -48,6 +52,8 @@ public class MainWindowController {
 
   @FXML
   private BorderPane borderPane;
+  @FXML
+  private MenuBar menuBar;
   @FXML
   private MenuItem menuNew;
   @FXML
@@ -74,6 +80,8 @@ public class MainWindowController {
   private @Nullable CharacterViewController currentView;
   /** Offene Schergengruppe (ADR-062); schließt einen offenen Charakter aus und umgekehrt. */
   private @Nullable NpcGroup currentGroup;
+  /** Ob das offene Dokument eine Kopie aus dem Beta-Menü ist; der Titel zeigt „(Beta)“ bis zum ersten Speichern. */
+  private boolean betaCopy;
   private @Nullable NpcGroupViewController currentGroupView;
 
   private @Nullable Stage stage;
@@ -95,6 +103,38 @@ public class MainWindowController {
     menuSave.setDisable(true);
     menuSaveAs.setDisable(true);
     Numbers.setStyle(displaySettings().numberStyle());
+    BetaMenu.folder().ifPresent(folder -> menuBar.getMenus().add(
+        BetaMenu.create(folder, this::openBetaTemplate, this::openBetaSample)));
+  }
+
+  /** Lädt eine Datei je nach Dateiart als Charakter oder Schergengruppe und zeigt sie. */
+  private void showDocument(@NonNull File file) throws IOException {
+    if (DocumentKind.detect(file) == DocumentKind.NPC_GROUP) {
+      showGroup(NpcGroupStore.load(file));
+    } else {
+      showCharacter(CharacterStore.load(file));
+    }
+  }
+
+  private void openBetaTemplate(@NonNull DocumentTemplate template) {
+    try {
+      currentFile = null;
+      betaCopy = true;
+      openTemplate(template, template.name());
+    } catch (IOException e) {
+      showError("Fehler beim Erstellen", e.getMessage());
+    }
+  }
+
+  /** Öffnet einen Testfall ohne Dateipfad, damit Speichern nach einer neuen Datei fragt und ihn nie überschreibt. */
+  private void openBetaSample(@NonNull Path file) {
+    try {
+      currentFile = null;
+      betaCopy = true;
+      showDocument(file.toFile());
+    } catch (IOException e) {
+      showError("Fehler beim Laden", e.getMessage());
+    }
   }
 
   /** Anzeige-Einstellungen aus den Preferences; Standard ist das bisherige Verhalten. */
@@ -217,8 +257,12 @@ public class MainWindowController {
       }
 
       currentFile = null;
-      if (dialogCtrl.isNpcGroup()) {
-        showGroup(newGroup(dialogCtrl.getCharacterName(), dialogCtrl.getSelectedTemplate()));
+      betaCopy = false;
+      DocumentTemplate template = dialogCtrl.getSelectedTemplate();
+      if (template != null) {
+        openTemplate(template, dialogCtrl.getCharacterName());
+      } else if (dialogCtrl.isNpcGroup()) {
+        showGroup(newGroup(dialogCtrl.getCharacterName()));
       } else {
         showCharacter(new Character(dialogCtrl.getCharacterName(), dialogCtrl.getSelectedMetatype()));
       }
@@ -237,11 +281,8 @@ public class MainWindowController {
     }
     try {
       currentFile = file;
-      if (DocumentKind.detect(file) == DocumentKind.NPC_GROUP) {
-        showGroup(NpcGroupStore.load(file));
-      } else {
-        showCharacter(CharacterStore.load(file));
-      }
+      betaCopy = false;
+      showDocument(file);
     } catch (IOException e) {
       showError("Fehler beim Laden", e.getMessage());
     }
@@ -308,12 +349,25 @@ public class MainWindowController {
   }
 
   /** Leere Gruppe (Stufe 0, 4 Mitglieder, Mensch mit Mindestwerten) oder eine Gruppe aus der GRW-Vorlage. */
-  private static @NonNull NpcGroup newGroup(@NonNull String name, @Nullable NpcTemplate template) {
-    NpcGroup group = template == null
-        ? new NpcGroup(name, 0, 4, new NpcStatblock(new Character("Scherge", MetatypeDataLoader.find("Mensch")), ""))
-        : template.create();
-    group.setName(name);
-    return group;
+  private static @NonNull NpcGroup newGroup(@NonNull String name) {
+    return new NpcGroup(name, 0, 4, new NpcStatblock(new Character("Scherge", MetatypeDataLoader.find("Mensch")), ""));
+  }
+
+  /** Öffnet ein neues, ungespeichertes Dokument aus einer Vorlage unter dem Namen {@code name}. */
+  private void openTemplate(@NonNull DocumentTemplate template, @NonNull String name) throws IOException {
+    switch (template) {
+      case NpcTemplate npc -> {
+        NpcGroup group = npc.create();
+        group.setName(name);
+        showGroup(group);
+      }
+      case ArchetypeTemplate archetype -> {
+        Character character = archetype.create();
+        character.setName(name);
+        showCharacter(character);
+      }
+      default -> throw new IllegalStateException("Unbekannte Vorlage: " + template.kind());
+    }
   }
 
   private void showGroup(@NonNull NpcGroup group) throws IOException {
@@ -354,7 +408,7 @@ public class MainWindowController {
     if (stage == null) return;
     String name = currentGroup != null ? currentGroup.getName()
         : currentCharacter != null ? currentCharacter.getName() : "";
-    String file = currentFile != null ? "  [" + currentFile.getName() + "]" : "";
+    String file = currentFile != null ? "  [" + currentFile.getName() + "]" : betaCopy ? " (Beta)" : "";
     stage.setTitle(AppInfo.title() + " – " + name + file);
   }
 

@@ -54,4 +54,16 @@ public final class XmlUtils {
     }
     return null;
   }
+
+  /** Direkte Kind-Elemente, mit {@code tag} nur die gleichnamigen. */
+  public static @NonNull List<Element> children(@NonNull Element parent, @Nullable String tag) {
+    List<Element> result = new ArrayList<>();
+    NodeList nodes = parent.getChildNodes();
+    for (int i = 0; i < nodes.getLength(); i++) {
+      if (nodes.item(i) instanceof Element el && (tag == null || el.getTagName().equals(tag))) {
+        result.add(el);
+      }
+    }
+    return result;
+  }
 }

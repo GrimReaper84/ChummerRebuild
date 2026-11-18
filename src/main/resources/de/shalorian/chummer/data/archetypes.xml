@@ -1,0 +1,1105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Archetypen des SR4-Grundregelwerks (S. 124–139, PDF 125–140), Werte am Seitenbild abgelesen 2026-11-18.
+  Beschreibungen in eigenen Worten, kein Hintergrundtext aus dem GRW.
+
+  <gp> enthält die GP-Teilsummen aus den Überschriften des GRW; nur der Katalogtest liest sie (Regel A1: zusammen
+  400 GP). <character> ist eine Bauanleitung wie in npcs.xml (Attribute als XML-Attribute, EDG = Edge, MAG/RES =
+  Magie bzw. Resonanz), zusätzlich: <language detail="muttersprache"> bzw. mit Stufe und Spezialisierung im detail,
+  <contact rating="Connection" amount="Loyalität">, <lifestyle amount="Monate">Stufe</lifestyle>, <resources rating="GP"/>,
+  <gear rating amount detail="Auswahl"> mit <part> für Einbauten (Betriebssystem, Programme), <focus> (gebunden),
+  <vehicle> mit <weapon>- und <gear>-Kindern, <spirit rating="Kraftstufe" amount="Dienste">, <complexform>.
+  Munition: amount = Schuss (ein Streifen = Magazingröße der Waffe). Ausrüstung ohne Katalogeintrag oder ohne
+  Entsprechung im Modell (Fahrzeug-Upgrades, Autosofts, Riggeradaption, implantierte Kommlinks als Einbau) steht
+  im Text <notes> und landet als Notiz in der Biografie.
+-->
+<archetypes>
+
+    <archetype page="124">
+        <name>Chamäleon</name>
+        <description>Verhandler und Gesicht des Teams, das mit Charme, Kontakten und Menschenkenntnis arbeitet.</description>
+        <source>SR4</source>
+        <gp metatype="25" attributes="220" skills="130" qualities="-5" resources="10" contacts="20"/>
+        <character metatype="Zwerg" BOD="3" AGI="3" REA="3" STR="3" CHA="5" INT="5" LOG="4" WIL="5" EDG="4">
+            <quality detail="CHA">Außergewöhnliches Attribut</quality>
+            <quality>Soziales Chamäleon</quality>
+            <quality>Gremlins 2</quality>
+            <quality>Kampflähmung</quality>
+            <skill rating="2">Ausweichen</skill>
+            <skill rating="2" detail="Pkw">Bodenfahrzeuge</skill>
+            <skill rating="3">Einschüchtern</skill>
+            <group rating="2">Elektronik</group>
+            <skill rating="5">Gebräuche</skill>
+            <skill rating="2">Pistolen</skill>
+            <skill rating="4">Überreden</skill>
+            <skill rating="5">Verhandlung</skill>
+            <skill rating="4">Wahrnehmung</skill>
+            <knowledge rating="3" detail="HOBBY">Combat Biking-Spielpläne</knowledge>
+            <knowledge rating="3" detail="HOBBY">Gehobene Küche</knowledge>
+            <knowledge rating="3" detail="STREET">Gute Restaurants</knowledge>
+            <knowledge rating="3" detail="HOBBY">Stadtkrieg-Spielpläne</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <language rating="3">Arabisch</language>
+            <language rating="3">Deutsch</language>
+            <language rating="3">Japanisch</language>
+            <language rating="3">Kantonesisch</language>
+            <language rating="3">Spanisch</language>
+            <resources rating="10"/>
+            <armor>Panzerkleidung</armor>
+            <vehicle>Mercury Comet (Mittelklassewagen)</vehicle>
+            <gear rating="4">Störsender, Bereich</gear>
+            <gear amount="4">Beglaubigter Credstick</gear>
+            <gear>DocWagon-Vertrag (Standard)</gear>
+            <gear rating="4" amount="2" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="1">HIGH</lifestyle>
+            <cyberware>Datenbuchse</cyberware>
+            <cyberware>Kommlink</cyberware>
+            <gear>Transys Avalon
+                <part>Iris Orb</part>
+                <part rating="2">Analyse</part>
+                <part rating="2">Editieren</part>
+                <part rating="3">Schmöker</part>
+            </gear>
+            <gear rating="1">Monokel</gear>
+            <gear>AR-Handschuhe</gear>
+            <weapon>Fichetti Security 600</weapon>
+            <gear>Tarnholster</gear>
+            <gear amount="300" detail="Leichte Pistolen">Standardmunition</gear>
+            <contact rating="2" amount="1">Barkeeper</contact>
+            <contact rating="2" amount="2">Mr. Johnson</contact>
+            <contact rating="4" amount="2">Schieber</contact>
+            <contact rating="2" amount="1">Triaden-Soldat</contact>
+            <contact rating="2" amount="2">Waffenhändler</contact>
+            <notes>Das Kommlink ist implantiert; Monokel mit Sichtverbindung.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="125">
+        <name>Drohnenrigger</name>
+        <description>Rigger, der über seine Riggerkontrolle eine ganze Flotte bewaffneter und unbewaffneter Drohnen lenkt.</description>
+        <source>SR4</source>
+        <gp metatype="25" attributes="180" skills="152" qualities="-15" resources="50" contacts="8"/>
+        <character metatype="Zwerg" BOD="3" AGI="4" REA="4" STR="3" CHA="2" INT="5" LOG="4" WIL="3" EDG="3">
+            <quality detail="Flugzeuge">Talentiert</quality>
+            <quality detail="Gold">Allergie (Ungewöhnlich, Mittel)</quality>
+            <quality>Niedrige Schmerztoleranz</quality>
+            <quality>Schwaches Immunsystem</quality>
+            <skill rating="4">Bodenfahrzeuge</skill>
+            <group rating="4">Elektronik</group>
+            <skill rating="2">Elektronische Kriegsführung</skill>
+            <skill rating="2">Fahrzeugmechanik</skill>
+            <skill rating="6">Flugzeuge</skill>
+            <skill rating="3">Geschütze</skill>
+            <skill rating="3">Läufer</skill>
+            <skill rating="2">Luftfahrtmechanik</skill>
+            <skill rating="2">Schnellfeuerwaffen</skill>
+            <skill rating="2">Schlosser</skill>
+            <skill rating="2">Wahrnehmung</skill>
+            <knowledge rating="3" detail="ACADEMIC">Computertheorie</knowledge>
+            <knowledge rating="3" detail="STREET">Geheime Unterschlupfe</knowledge>
+            <knowledge rating="4" detail="STREET">Krankenhausrouten</knowledge>
+            <knowledge rating="5" detail="STREET">Örtliche Schrottplätze</knowledge>
+            <knowledge rating="4" detail="HOBBY">Piratensender</knowledge>
+            <knowledge rating="3" detail="HOBBY">SciFi-SimSinn</knowledge>
+            <language detail="muttersprache">Japanisch</language>
+            <language rating="2">Kantonesisch</language>
+            <language rating="2" detail="Stadtsprache">Englisch</language>
+            <resources rating="50"/>
+            <armor>Panzerjacke</armor>
+            <gear detail="Fahrzeugmechanik">Werkzeugkiste</gear>
+            <gear detail="Fahrzeugmechanik">Werkzeugladen</gear>
+            <gear rating="1">Automatischer Dietrich</gear>
+            <gear rating="4">Magschlossknacker</gear>
+            <gear rating="3" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="1">LOW</lifestyle>
+            <cyberware>Datenbuchse</cyberware>
+            <cyberware rating="2">Cyberaugen-Basissystem
+                <part>Blitzkompensation</part>
+                <part>Infrarotsicht</part>
+                <part>Restlichtverstärkung</part>
+            </cyberware>
+            <cyberware>Riggerkontrolle</cyberware>
+            <cyberware rating="2">Reaktionsverbesserung</cyberware>
+            <gear>Transys Avalon
+                <part>Sim-Modul (für BTL/heißes Sim modifiziert)</part>
+                <part rating="5">Aufspüren</part>
+                <part rating="5">Befehl</part>
+                <part rating="5">ECCM</part>
+                <part rating="4">Schleicher</part>
+                <part rating="5">Verschlüsselung</part>
+            </gear>
+            <gear rating="4" detail="Clearsight">Autosoft</gear>
+            <gear rating="4" detail="Elektronische Kriegsführung">Autosoft</gear>
+            <gear rating="4" detail="Steuerung">Autosoft</gear>
+            <gear rating="4" detail="Steuerung">Autosoft</gear>
+            <gear rating="4" detail="Abwehr">Autosoft</gear>
+            <gear rating="4" detail="Zielerfassung">Autosoft</gear>
+            <gear rating="4" detail="Zielerfassung">Autosoft</gear>
+            <weapon>HK MP-5 TX</weapon>
+            <gear amount="200" detail="Maschinenpistolen">Explosivgeschosse</gear>
+            <vehicle>GMC Bulldog Step-Van (Kleinlaster)</vehicle>
+            <vehicle>Lockheed Optic-X (Klein)</vehicle>
+            <vehicle>GM-Nissan Doberman (Mittel)<weapon>Ingram White Knight</weapon></vehicle>
+            <vehicle>GM-Nissan Doberman (Mittel)<weapon>Ingram White Knight</weapon></vehicle>
+            <vehicle>MCT-Nissan Roto-Drohne (Mittel)<weapon>HK 227-X</weapon></vehicle>
+            <vehicle>MCT-Nissan Roto-Drohne (Mittel)<weapon>HK 227-X</weapon></vehicle>
+            <vehicle>Shiawase Kanmushi (Mikrodrohne)</vehicle>
+            <vehicle>Lone Star iBall (Minidrohne)</vehicle>
+            <contact rating="2" amount="2">Schieber</contact>
+            <contact rating="2" amount="2">Mechaniker</contact>
+            <notes>Kommlink mit Prozessor 5, Signal 5, Firewall 5, System 5; Autosofts Steuerung für Bodenfahrzeuge und
+                Flugzeuge, Zielerfassung für Schnellfeuerwaffen und Schwere Waffen, Verteidigung als Abwehr; Step-Van und Drohnen mit
+                Pilot 4, Signal 4, Firewall 4, Prozessor 4, Step-Van mit Riggeradaption; Munition der Drohnenwaffen
+                (je 2 Gurte und 100 Schuss bzw. 10 Streifen Explosivmunition).</notes>
+        </character>
+    </archetype>
+
+    <archetype page="126">
+        <name>Geheimagent</name>
+        <description>Infiltrationsspezialist, der unbemerkt in Anlagen eindringt und mit Daten oder Prototypen wieder verschwindet.</description>
+        <source>SR4</source>
+        <gp metatype="0" attributes="220" skills="144" qualities="10" resources="16" contacts="10"/>
+        <character metatype="Mensch" BOD="2" AGI="5" REA="5" STR="2" CHA="3" INT="4" LOG="4" WIL="3" EDG="4">
+            <quality>Gummi-Gelenke</quality>
+            <quality>Schlechte Verbindung</quality>
+            <quality>Unauffälligkeit</quality>
+            <quality detail="Gold">Allergie (Ungewöhnlich, Leicht)</quality>
+            <quality detail="Erste Hilfe">Inkompetenz</quality>
+            <quality>Schwaches Immunsystem</quality>
+            <group rating="3">Athletik</group>
+            <skill rating="3">Beschatten</skill>
+            <group rating="2">Elektronik</group>
+            <skill rating="2">Gebräuche</skill>
+            <skill rating="4" detail="Stadt">Infiltration</skill>
+            <group rating="3">Nahkampf</group>
+            <skill rating="2" detail="Maschinenpistolen">Schnellfeuerwaffen</skill>
+            <skill rating="2">Verkleiden</skill>
+            <skill rating="2">Wahrnehmung</skill>
+            <knowledge rating="2" detail="PROFESSIONAL">Finanzen</knowledge>
+            <knowledge rating="3" detail="HOBBY">Gehobene Küche</knowledge>
+            <knowledge rating="2" detail="STREET">Geheime Unterschlupfe</knowledge>
+            <knowledge rating="3" detail="PROFESSIONAL">Konzernpolitik</knowledge>
+            <knowledge rating="2" detail="ACADEMIC">Moderne Literatur</knowledge>
+            <knowledge rating="3" detail="PROFESSIONAL">Sicherheitssysteme</knowledge>
+            <language detail="muttersprache">Japanisch</language>
+            <language rating="2">Deutsch</language>
+            <language rating="3">Englisch</language>
+            <language rating="2">Französisch</language>
+            <language rating="2">Spanisch</language>
+            <resources rating="16"/>
+            <gear amount="5">Flash-Pack</gear>
+            <gear amount="5" detail="Standard">Rauchgranate</gear>
+            <armor>Panzerjacke</armor>
+            <armor>Chamäleonanzug</armor>
+            <gear rating="4">Störsender, Bereich</gear>
+            <gear rating="4">White-Noise-Generator</gear>
+            <gear amount="2">Nanitencreme-Verkleidung (kleiner Behälter)</gear>
+            <gear>Enterhakenkanone</gear>
+            <gear>Kletterausrüstung</gear>
+            <gear amount="200">Camouflageseil</gear>
+            <gear>Katalysatorstab</gear>
+            <gear>Kletterhandschuhe</gear>
+            <gear>Gecko-Tape-Handschuhe</gear>
+            <gear>Gasmaske</gear>
+            <gear>Drahtzange</gear>
+            <gear>Monofilament-Kettensäge</gear>
+            <gear rating="4">Automatischer Dietrich</gear>
+            <gear rating="4">Magschlossknacker</gear>
+            <gear rating="4">Magschlosskarten-Kopierer</gear>
+            <gear rating="6">Medkit</gear>
+            <gear rating="4" amount="2" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="1">HIGH</lifestyle>
+            <cyberware rating="3">Cyberaugen-Basissystem
+                <part>Blitzkompensation</part>
+                <part>Infrarotsicht</part>
+                <part>Restlichtverstärkung</part>
+                <part>Sichtvergrößerung</part>
+                <part>Smartlink</part>
+            </cyberware>
+            <cyberware rating="2">Reaktionsverbesserung</cyberware>
+            <cyberware>Sporn (einziehbar)</cyberware>
+            <gear>Hermes Ikon
+                <part>Novatech Navi</part>
+                <part>Sim-Modul</part>
+                <part rating="3">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="3">Editieren</part>
+                <part rating="3">Schmöker</part>
+            </gear>
+            <gear>Elektroden</gear>
+            <gear>AR-Handschuhe</gear>
+            <gear rating="2" detail="Kantonesisch">Linguasoft</gear>
+            <weapon>Monofilamentschwert</weapon>
+            <weapon>Schockhandschuh</weapon>
+            <weapon>Ingram Smartgun X</weapon>
+            <gear amount="320" detail="Maschinenpistolen">Standardmunition</gear>
+            <contact rating="3" amount="2">Schieber</contact>
+            <contact rating="3" amount="2">Mr. Johnson</contact>
+        </character>
+    </archetype>
+
+    <archetype page="127">
+        <name>Hacker</name>
+        <description>Matrix-Spezialist, der mit maßgeschneidertem Kommlink und Programmen jedes System knackt.</description>
+        <source>SR4</source>
+        <gp metatype="20" attributes="200" skills="138" qualities="0" resources="30" contacts="12"/>
+        <character metatype="Ork" BOD="4" AGI="3" REA="5" STR="3" CHA="3" INT="5" LOG="4" WIL="3" EDG="4">
+            <quality>Fotografisches Gedächtnis</quality>
+            <quality detail="Eiliges Hacken">Programmier-Genie</quality>
+            <quality>Ungehobelt</quality>
+            <skill rating="2">Ausweichen</skill>
+            <group rating="4">Elektronik</group>
+            <skill rating="5">Elektronische Kriegsführung</skill>
+            <skill rating="2">Fälschen</skill>
+            <skill rating="5" detail="Ausnutzen">Hacking</skill>
+            <skill rating="4">Matrixkampf</skill>
+            <skill rating="2">Pistolen</skill>
+            <skill rating="4">Wahrnehmung</skill>
+            <knowledge rating="5" detail="ACADEMIC">Betriebssysteme</knowledge>
+            <knowledge rating="3" detail="STREET">Geheime Unterschlupfe</knowledge>
+            <knowledge rating="5" detail="PROFESSIONAL">Konzern-Matrix-Sicherheitsprozeduren</knowledge>
+            <knowledge rating="3" detail="STREET">Matrix-Treffpunkte</knowledge>
+            <knowledge rating="3" detail="STREET">Unterwelt-Politik</knowledge>
+            <knowledge rating="3" detail="HOBBY">Verschwörungstheorien</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <language rating="3">Chinesisch</language>
+            <language rating="2">Japanisch</language>
+            <resources rating="30"/>
+            <armor>Panzerweste</armor>
+            <gear>Biometrischer Scanner</gear>
+            <gear rating="4" amount="4" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="2">LOW</lifestyle>
+            <cyberware>Datenbuchse</cyberware>
+            <cyberware>Datenschloss</cyberware>
+            <cyberware>Kommlink</cyberware>
+            <cyberware>Riggerkontrolle</cyberware>
+            <cyberware>Hochleistungsgelenke</cyberware>
+            <cyberware>Hauttasche</cyberware>
+            <cyberware>Schlafregulator</cyberware>
+            <gear>Erika Elite
+                <part>Sim-Modul (für BTL/heißes Sim modifiziert)</part>
+                <part rating="5">Analyse</part>
+                <part rating="5">Angriff</part>
+                <part rating="5">Aufspüren</part>
+                <part rating="5">Ausnutzen</part>
+                <part rating="5">Befehl</part>
+                <part rating="4">Biofeedback-Filter</part>
+                <part rating="2">Datenbombe</part>
+                <part rating="5">Editieren</part>
+                <part rating="3">Entschlüsselung</part>
+                <part rating="4">Panzerung</part>
+                <part rating="5">Scannen</part>
+                <part rating="5">Schleicher</part>
+                <part rating="5">Schmöker</part>
+                <part rating="4">Schwarzer Hammer</part>
+                <part rating="4">Täuschung</part>
+            </gear>
+            <gear>Subvokales Mikrofon</gear>
+            <gear amount="15">VR-Spiele</gear>
+            <weapon>Hämmerli 620S</weapon>
+            <gear amount="60" detail="Leichte Pistolen">Standardmunition</gear>
+            <contact rating="3" amount="1">Blogger</contact>
+            <contact rating="3" amount="2">Schieber</contact>
+            <contact rating="2" amount="1">Spinne</contact>
+            <notes>Das Kommlink ist implantiert, mit Prozessor 5, Signal 5, Firewall 5, System 5; Datenschloss mit
+                Verschlüsselung 5.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="128">
+        <name>Kampfmagier</name>
+        <description>Hermetischer Zauberer an vorderster Front, mit Kampfzaubern und Schutzsprüchen statt Bücherstube.</description>
+        <source>SR4</source>
+        <gp metatype="30" attributes="230" skills="124" qualities="-20" magic="24" resources="4" contacts="8"/>
+        <character metatype="Elf" BOD="3" AGI="4" REA="4" STR="3" CHA="4" INT="3" LOG="4" WIL="4" MAG="5" EDG="2">
+            <quality>Zauberer</quality>
+            <quality detail="SimSinn">Abhängigkeit (Leicht)</quality>
+            <quality detail="Stimulanzmittel">Abhängigkeit (Leicht)</quality>
+            <quality detail="Sonnenlicht">Allergie (Gewöhnlich, Leicht)</quality>
+            <quality>Immunabstoßung</quality>
+            <skill rating="3">Antimagie</skill>
+            <skill rating="3">Astralkampf</skill>
+            <skill rating="3">Ausweichen</skill>
+            <group rating="3">Beschwören</group>
+            <skill rating="2" detail="Straße">Gebräuche</skill>
+            <skill rating="2">Klingenwaffen</skill>
+            <skill rating="3">Pistolen</skill>
+            <skill rating="5">Spruchzauberei</skill>
+            <skill rating="2">Wahrnehmung</skill>
+            <knowledge rating="2" detail="PROFESSIONAL">Konzern-Sicherheitstaktiken</knowledge>
+            <knowledge rating="2" detail="PROFESSIONAL">Lone-Star-Vorgehensweisen</knowledge>
+            <knowledge rating="3" detail="ACADEMIC">Magietheorie</knowledge>
+            <knowledge rating="3" detail="ACADEMIC">Magische Phänomene</knowledge>
+            <knowledge rating="2" detail="STREET">Söldner-Treffpunkte</knowledge>
+            <knowledge rating="2" detail="HOBBY">Stadtkrieg-Wetten</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <language rating="3">Latein</language>
+            <language rating="4">Sperethiel</language>
+            <spell>Blitzstrahl</spell>
+            <spell>Levitieren</spell>
+            <spell>Manaball</spell>
+            <spell>Manablitz</spell>
+            <spell>Panzerung</spell>
+            <spell>Physische Barriere</spell>
+            <spell>Reflexe Steigern</spell>
+            <spell>Stoß</spell>
+            <resources rating="4"/>
+            <armor>Gefütterter Mantel</armor>
+            <gear>Mage-Sight-Brille</gear>
+            <gear rating="3" amount="4">Stimulanz-Patch</gear>
+            <gear rating="3" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="2">LOW</lifestyle>
+            <gear>Novatech Airware
+                <part>Mangadyne Deva</part>
+                <part>Sim-Modul (für BTL/heißes Sim modifiziert)</part>
+                <part rating="3">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="3">Editieren</part>
+                <part rating="3">Schmöker</part>
+            </gear>
+            <gear>Simrig</gear>
+            <weapon>Katana</weapon>
+            <weapon>Yamaha Sakura Fubuki</weapon>
+            <gear>Schnellziehholster</gear>
+            <gear amount="200" detail="Leichte Pistolen">Standardmunition</gear>
+            <contact rating="2" amount="2">Schieber</contact>
+            <contact rating="2" amount="2">Talismankrämer</contact>
+            <notes>Magisches Refugium (Kraft 5); Mage-Sight-Brille mit 10 m Kabel.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="129">
+        <name>Kopfgeldjäger</name>
+        <description>Troll-Fährtensucher, der für Geld Flüchtige, Ausbrecher und entlaufene Paracritter zur Strecke bringt.</description>
+        <source>SR4</source>
+        <gp metatype="40" attributes="200" skills="126" qualities="0" resources="20" contacts="14"/>
+        <character metatype="Troll" BOD="8" AGI="3" REA="3" STR="8" CHA="2" INT="3" LOG="3" WIL="4" EDG="3">
+            <quality>Pathogen- und Toxinresistenz (beides)</quality>
+            <quality>Schnellheilung</quality>
+            <quality>Tierempathie</quality>
+            <quality>Gremlins 1</quality>
+            <quality>SIN-Mensch (normale SIN)</quality>
+            <quality>Ungehobelt</quality>
+            <group rating="2">Athletik</group>
+            <skill rating="3">Erste Hilfe</skill>
+            <skill rating="3" detail="Schrotflinten">Gewehre</skill>
+            <skill rating="1" detail="Messer">Klingenwaffen</skill>
+            <skill rating="2" detail="Schlagstöcke">Knüppel</skill>
+            <skill rating="3">Projektilwaffen</skill>
+            <skill rating="3">Spurenlesen</skill>
+            <skill rating="2">Survival</skill>
+            <skill rating="5">Waffenloser Kampf</skill>
+            <skill rating="3">Wahrnehmung</skill>
+            <knowledge rating="3" detail="STREET">Gauner-Treffpunkte</knowledge>
+            <knowledge rating="2" detail="ACADEMIC">Gegengifte</knowledge>
+            <knowledge rating="4" detail="PROFESSIONAL">Lone-Star-Vorgehensweisen</knowledge>
+            <knowledge rating="2" detail="ACADEMIC">Parazoologie</knowledge>
+            <knowledge rating="3" detail="HOBBY">Polizei-Tridserien</knowledge>
+            <language detail="muttersprache">Sioux</language>
+            <language rating="3" detail="Stadtsprache">Englisch</language>
+            <resources rating="20"/>
+            <gear amount="5" detail="Standard">IR-Rauchgranate</gear>
+            <gear amount="3">Flash-Pack</gear>
+            <armor>Gefütterter Mantel</armor>
+            <gear amount="4">Plasstahl-Handschellen</gear>
+            <gear amount="2">Cyberwareblocker</gear>
+            <gear amount="20">Sicherheits-RFID</gear>
+            <gear rating="3" detail="Tarnidentität">Gefälschte SIN</gear>
+            <gear>DocWagon-Vertrag (Gold)</gear>
+            <lifestyle amount="3">MIDDLE</lifestyle>
+            <cyberware rating="3">Cyberaugen-Basissystem
+                <part>Blitzkompensation</part>
+                <part>Infrarotsicht</part>
+                <part>Restlichtverstärkung</part>
+                <part>Sichtvergrößerung</part>
+                <part>Smartlink</part>
+            </cyberware>
+            <cyberware rating="2">Cyberohren
+                <part rating="3">Audioverbesserung</part>
+                <part>Dämpfer</part>
+                <part rating="3">Selektiver Geräuschfilter</part>
+            </cyberware>
+            <cyberware rating="2">Reaktionsverbesserung</cyberware>
+            <cyberware rating="1">Synthacardium</cyberware>
+            <gear>Erika Elite
+                <part>Iris Orb</part>
+                <part rating="3">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="3">Editieren</part>
+                <part rating="3">Schmöker</part>
+            </gear>
+            <weapon>Teleskopschlagstock</weapon>
+            <weapon>Betäubungsschlagstock</weapon>
+            <weapon>Überlebensmesser</weapon>
+            <weapon>Überlebensmesser</weapon>
+            <weapon>Schockhandschuh</weapon>
+            <weapon>Schockhandschuh</weapon>
+            <weapon rating="8">Bogen</weapon>
+            <gear rating="8" amount="20">Pfeil</gear>
+            <weapon>Mossberg AM-CMDT</weapon>
+            <gear amount="100" detail="Schrotflinten">Flechettegeschosse</gear>
+            <weapon>Ruger 100<part detail="UNDERBARREL">Zweibein</part></weapon>
+            <gear amount="50" detail="Sportgewehre">Standardmunition</gear>
+            <contact rating="2" amount="2">Schieber</contact>
+            <contact rating="2" amount="2">Straßendoc</contact>
+            <contact rating="2" amount="4">Streifenpolizist</contact>
+            <notes>Mossberg mit internem Smartgunsystem; DocWagon-Vertrag für 1 Jahr.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="130">
+        <name>Magischer Ermittler</name>
+        <description>Erwachter Privatdetektiv, der mit Zaubern, Geistern und Straßenkontakten jeder Spur folgt.</description>
+        <source>SR4</source>
+        <gp metatype="0" attributes="230" skills="146" qualities="-10" magic="15" resources="5" contacts="14"/>
+        <character metatype="Mensch" BOD="3" AGI="3" REA="3" STR="2" CHA="4" INT="4" LOG="4" WIL="4" MAG="4" EDG="3">
+            <quality>Zauberer</quality>
+            <quality detail="Alkohol">Abhängigkeit (Leicht)</quality>
+            <quality>Unglück</quality>
+            <skill rating="3">Askennen</skill>
+            <skill rating="2">Ausweichen</skill>
+            <skill rating="2">Beschatten</skill>
+            <group rating="3">Beschwören</group>
+            <skill rating="3">Datensuche</skill>
+            <group rating="2">Einfluss</group>
+            <group rating="3">Hexerei</group>
+            <skill rating="1">Pistolen</skill>
+            <skill rating="1">Schlosser</skill>
+            <skill rating="4" detail="Sehen">Wahrnehmung</skill>
+            <knowledge rating="3" detail="ACADEMIC">Chemie</knowledge>
+            <knowledge rating="4" detail="ACADEMIC">Magietheorie</knowledge>
+            <knowledge rating="4" detail="STREET">Örtliche Umgebung</knowledge>
+            <knowledge rating="4" detail="STREET">Unterwelt-Politik</knowledge>
+            <language detail="muttersprache">Arabisch</language>
+            <language rating="3" detail="Stadtsprache">Englisch</language>
+            <language rating="2">Japanisch</language>
+            <language rating="3">Latein</language>
+            <spell>Betäubungsblitz</spell>
+            <spell>Beeinflussen</spell>
+            <spell>Entzünden</spell>
+            <spell>Geistessonde</spell>
+            <spell>Verbesserte Unsichtbarkeit</spell>
+            <resources rating="5"/>
+            <armor>Gefütterter Mantel</armor>
+            <gear>Mage-Sight-Brille</gear>
+            <gear rating="3">Radiosignalscanner</gear>
+            <gear amount="20">Sicherheits-RFID</gear>
+            <gear>Richtmikrofon</gear>
+            <gear>Dietrich-Set</gear>
+            <gear rating="3">Automatischer Dietrich</gear>
+            <gear rating="4">Magschlossknacker</gear>
+            <gear rating="4" detail="Presseausweis">Gefälschte Lizenz</gear>
+            <gear rating="3" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="2">LOW</lifestyle>
+            <gear rating="4">Brille
+                <part>Bildverbindung</part>
+                <part>Blitzkompensation</part>
+                <part>Infrarot</part>
+                <part>Restlichtverstärkung</part>
+            </gear>
+            <gear rating="3">Ohrstöpsel
+                <part rating="1">Selektiver Geräuschfilter</part>
+            </gear>
+            <gear>Sony Emperor
+                <part>Renraku Ichi</part>
+                <part rating="3">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="3">Editieren</part>
+                <part rating="3">Schmöker</part>
+            </gear>
+            <gear>AR-Handschuhe</gear>
+            <weapon>Colt Manhunter</weapon>
+            <gear>Tarnholster</gear>
+            <gear amount="160" detail="Schwere Pistolen">Standardmunition</gear>
+            <contact rating="2" amount="1">Barkeeper</contact>
+            <contact rating="2" amount="1">Schieber</contact>
+            <contact rating="2" amount="1">Lone Star Cop</contact>
+            <contact rating="1" amount="1">Informant</contact>
+            <contact rating="2" amount="1">Talismankrämer</contact>
+            <notes>Magisches Refugium (Stufe 3), Mikro-Richtmikrofon, 3 Mikro-Mikrofone, 4 Mikrokameras; Ohrstöpsel mit
+                Audioverbindung (Stufe 2). Der Zauber „Einfluss“ des GRW-Werteblocks heißt im Zauberkatalog
+                „Beeinflussen“.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="131">
+        <name>Pistolero-Adeptin</name>
+        <description>Adeptin, die ihre Magie in Reflexe und Treffsicherheit mit Pistolen lenkt, gern mit einer Waffe in jeder Hand.</description>
+        <source>SR4</source>
+        <gp metatype="20" attributes="250" skills="112" qualities="-5" resources="9" contacts="14"/>
+        <character metatype="Ork" BOD="5" AGI="5" REA="5" STR="4" CHA="2" INT="3" LOG="4" WIL="3" MAG="5" EDG="4">
+            <quality>Adept</quality>
+            <quality>Beidhändigkeit</quality>
+            <quality detail="Schadstoffe">Allergie (Gewöhnlich, Leicht)</quality>
+            <quality>SIN-Mensch (normale SIN)</quality>
+            <group rating="3">Athletik</group>
+            <skill rating="1" detail="Pkw">Bodenfahrzeuge</skill>
+            <group rating="4">Feuerwaffen</group>
+            <skill rating="2" detail="Straße">Gebräuche</skill>
+            <skill rating="3">Waffenloser Kampf</skill>
+            <skill rating="3" detail="Sehen">Wahrnehmung</skill>
+            <knowledge rating="4" detail="PROFESSIONAL">Feuerwaffenentwurf</knowledge>
+            <knowledge rating="2" detail="ACADEMIC">Feuerwaffengeschichte</knowledge>
+            <knowledge rating="3" detail="HOBBY">Hongkong-Actionfilme</knowledge>
+            <knowledge rating="3" detail="STREET">Hongkong-Triaden</knowledge>
+            <knowledge rating="3" detail="PROFESSIONAL">Lone-Star-Vorgehensweisen</knowledge>
+            <language detail="muttersprache">Kantonesisch</language>
+            <language rating="2" detail="Stadtsprache">Englisch</language>
+            <language rating="1">Japanisch</language>
+            <language rating="2">Mandarin</language>
+            <power rating="2" detail="AGI">Adrenalinkick</power>
+            <power rating="2">Gesteigerte Reflexe</power>
+            <power rating="2">Kampfsinn</power>
+            <power rating="2" detail="Pistolen">Verbesserte Fertigkeit</power>
+            <resources rating="9"/>
+            <armor>Gefütterter Mantel</armor>
+            <gear rating="5">Automatischer Dietrich</gear>
+            <gear rating="6">Medkit</gear>
+            <vehicle>Chrysler-Nissan Patrol-1 (Streifenwagen)</vehicle>
+            <gear rating="4" detail="Detektiv-Lizenz">Gefälschte Lizenz</gear>
+            <gear rating="4" detail="Führerschein">Gefälschte Lizenz</gear>
+            <gear rating="4" detail="Waffen-Lizenz (Colt Manhunter)">Gefälschte Lizenz</gear>
+            <gear rating="4" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="3">LOW</lifestyle>
+            <gear>Hermes Ikon
+                <part>Mangadyne Deva</part>
+                <part rating="3">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="2">Editieren</part>
+                <part rating="3">Schmöker</part>
+            </gear>
+            <gear rating="2">Kontaktlinsen
+                <part>Smartlink</part>
+                <part>Bildverbindung</part>
+            </gear>
+            <gear>AR-Handschuhe</gear>
+            <weapon>Colt Manhunter</weapon>
+            <weapon>Colt Manhunter</weapon>
+            <gear amount="2">Schnellziehholster</gear>
+            <gear amount="320" detail="Schwere Pistolen">Explosivgeschosse</gear>
+            <weapon>Raecor Sting</weapon>
+            <gear>Tarnholster</gear>
+            <gear amount="10" detail="Holdout-Pistolen">Flechettegeschosse</gear>
+            <contact rating="2" amount="2">Lone-Star-Detective</contact>
+            <contact rating="3" amount="3">Schieber</contact>
+            <contact rating="2" amount="2">Waffenhändler</contact>
+            <notes>Beide Colt Manhunter mit internem Smartgunsystem; die Feuerwaffen-Gruppe ist durch Verbesserte
+                Fertigkeit bei Pistolen 6.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="132">
+        <name>Radikale Öko-Schamanin</name>
+        <description>Schamanin mit Schutzpatron Wolf, die mit Zaubern und Geistern gegen die Zerstörung der Natur kämpft.</description>
+        <source>SR4</source>
+        <gp metatype="25" attributes="230" skills="130" qualities="-15" magic="18" resources="3" contacts="9"/>
+        <character metatype="Zwerg" BOD="3" AGI="3" REA="3" STR="3" CHA="5" INT="4" LOG="3" WIL="5" MAG="5" EDG="3">
+            <quality>Zauberer</quality>
+            <quality detail="Wolf">Schutzpatron</quality>
+            <quality detail="Schadstoffe">Allergie (Gewöhnlich, Mittel)</quality>
+            <quality detail="Feuergeister">Feindliche Geister</quality>
+            <quality>Niedrige Schmerztoleranz</quality>
+            <skill rating="5">Binden</skill>
+            <skill rating="2">Erste Hilfe</skill>
+            <skill rating="2">Gebräuche</skill>
+            <skill rating="5">Herbeirufen</skill>
+            <group rating="3">Hexerei</group>
+            <skill rating="2">Pistolen</skill>
+            <skill rating="4">Sprengstoffe</skill>
+            <skill rating="3">Verbannen</skill>
+            <skill rating="2">Wahrnehmung</skill>
+            <knowledge rating="3" detail="ACADEMIC">Astralforschung</knowledge>
+            <knowledge rating="2" detail="ACADEMIC">Ingenieurswissenschaften</knowledge>
+            <knowledge rating="3" detail="ACADEMIC">Magietheorie</knowledge>
+            <knowledge rating="3" detail="PROFESSIONAL">Megakonzern-Recht</knowledge>
+            <knowledge rating="3" detail="ACADEMIC">Parazoologie</knowledge>
+            <knowledge rating="4" detail="STREET">Radikale Gruppierungen</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <language rating="3">Spanisch</language>
+            <spell>Chaotische Welt</spell>
+            <spell>Flammenwerfer</spell>
+            <spell>Heilen</spell>
+            <spell>Manablitz</spell>
+            <spell>Mob-Laune</spell>
+            <spell>Verwandlung in [Critter]</spell>
+            <resources rating="3"/>
+            <armor>Panzerweste</armor>
+            <armor>Tarnanzug</armor>
+            <gear rating="4" amount="10">Plastiksprengstoff</gear>
+            <gear amount="10">Sprengkapsel</gear>
+            <gear rating="6">Medkit</gear>
+            <gear rating="5" amount="3">Tranq-Patch</gear>
+            <gear amount="2">Trauma-Patch</gear>
+            <lifestyle amount="1">LOW</lifestyle>
+            <gear>Sony Emperor
+                <part>Renraku Ichi</part>
+            </gear>
+            <weapon>Überlebensmesser</weapon>
+            <weapon>Colt Manhunter</weapon>
+            <gear amount="160" detail="Schwere Pistolen">Standardmunition</gear>
+            <contact rating="2" amount="2">Schieber</contact>
+            <contact rating="2" amount="3">Talismankrämer</contact>
+            <notes>Magisches Refugium (Stufe 5). Das GRW nennt 10 kg Schaumsprengstoff der Stufe 4, im Katalog als
+                Plastiksprengstoff; der Zauber ist Verwandlung in Wolf.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="133">
+        <name>Schmugglerin</name>
+        <description>Riggerin und Schrauberin, die mit frisierten Fahrzeugen Ware über jede Grenze bringt.</description>
+        <source>SR4</source>
+        <gp metatype="0" attributes="210" skills="156" qualities="-30" resources="50" contacts="14"/>
+        <character metatype="Mensch" BOD="3" AGI="5" REA="5" STR="2" CHA="2" INT="5" LOG="3" WIL="3" EDG="3">
+            <quality detail="Sonnenlicht">Allergie (Gewöhnlich, Mittel)</quality>
+            <quality>Elfenposer</quality>
+            <quality>Niedrige Schmerztoleranz</quality>
+            <skill rating="3">Ausweichen</skill>
+            <skill rating="5">Bodenfahrzeuge</skill>
+            <skill rating="4">Elektronische Kriegsführung</skill>
+            <skill rating="4">Flugzeuge</skill>
+            <skill rating="2" detail="Schmuggler">Gebräuche</skill>
+            <skill rating="4">Geschütze</skill>
+            <skill rating="3">Infiltration</skill>
+            <group rating="2">Mechanik</group>
+            <skill rating="2">Navigation</skill>
+            <skill rating="1">Pistolen</skill>
+            <skill rating="2" detail="Handeln">Verhandlung</skill>
+            <skill rating="3">Wahrnehmung</skill>
+            <knowledge rating="5" detail="PROFESSIONAL">Auto-Mechanik</knowledge>
+            <knowledge rating="4" detail="PROFESSIONAL">Grenzschutz-Taktiken</knowledge>
+            <knowledge rating="3" detail="ACADEMIC">Ingenieurswissenschaften</knowledge>
+            <knowledge rating="5" detail="STREET">Schmuggel-Routen</knowledge>
+            <knowledge rating="4" detail="STREET">Schmuggler-Verstecke</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <language rating="3">Spanisch</language>
+            <resources rating="50"/>
+            <armor>Helm</armor>
+            <armor>Gefütterter Mantel</armor>
+            <gear detail="Fahrzeugmechanik">Werkzeugkiste</gear>
+            <gear detail="Fahrzeugmechanik">Werkzeugladen</gear>
+            <lifestyle amount="1">LOW</lifestyle>
+            <cyberware>Datenbuchse</cyberware>
+            <cyberware rating="3">Cyberaugen-Basissystem
+                <part>Blitzkompensation</part>
+                <part>Infrarotsicht</part>
+                <part>Restlichtverstärkung</part>
+                <part>Smartlink</part>
+            </cyberware>
+            <cyberware>Kompositknochen (Plastik)</cyberware>
+            <cyberware rating="2">Reaktionsverbesserung</cyberware>
+            <cyberware>Riggerkontrolle</cyberware>
+            <cyberware>Schmuggelbehälter</cyberware>
+            <cyberware>Schmuggelbehälter</cyberware>
+            <cyberware>Tastverbindung</cyberware>
+            <gear>Fairlight Caliban
+                <part>Sim-Modul (für BTL/heißes Sim modifiziert)</part>
+                <part rating="5">Aufspüren</part>
+                <part rating="5">Befehl</part>
+                <part rating="5">ECCM</part>
+                <part rating="5">Schleicher</part>
+                <part rating="4">Verschlüsselung</part>
+            </gear>
+            <gear rating="3" detail="Clearsight">Autosoft</gear>
+            <gear rating="3" detail="Elektronische Kriegsführung">Autosoft</gear>
+            <gear rating="3" detail="Steuerung">Autosoft</gear>
+            <gear rating="3" detail="Abwehr">Autosoft</gear>
+            <gear rating="3" detail="Zielerfassung">Autosoft</gear>
+            <vehicle>Eurocar Westwind 3K (Sportwagen)</vehicle>
+            <vehicle>GMC Bulldog Step-Van (Kleinlaster)<weapon>Ingram White Knight</weapon></vehicle>
+            <weapon>Ares Predator IV</weapon>
+            <gear>Tarnholster</gear>
+            <gear amount="150" detail="Schwere Pistolen">Explosivgeschosse</gear>
+            <contact rating="2" amount="3">Mechaniker</contact>
+            <contact rating="4" amount="1">Mr. Johnson</contact>
+            <contact rating="2" amount="2">Schieber</contact>
+            <notes>Kommlink mit Prozessor 5, Signal 5, Firewall 5, System 5; Autosofts Steuerung für Bodenfahrzeuge,
+                Zielerfassung für Schwere Waffen, Verteidigung als Abwehr; Westwind und Step-Van mit Pilot 4, Signal 4, Firewall 4, Prozessor 4, Step-Van mit
+                Riggeradaption und 2 Gurten zu 100 Schuss Explosivmunition.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="134">
+        <name>Sprawl-Ganger</name>
+        <description>Zäher Ork von der Straße, der mit Fäusten, Messer und Kette sein Ganggebiet verteidigt.</description>
+        <source>SR4</source>
+        <gp metatype="20" attributes="220" skills="144" qualities="0" resources="6" contacts="10"/>
+        <character metatype="Ork" BOD="7" AGI="4" REA="3" STR="6" CHA="2" INT="3" LOG="3" WIL="4" EDG="4">
+            <quality>Mut</quality>
+            <quality detail="Ganggebiet">Vertrautes Terrain</quality>
+            <quality>Zähigkeit</quality>
+            <quality>Gezeichnet</quality>
+            <quality>Ungebildet</quality>
+            <skill rating="4">Beschatten</skill>
+            <skill rating="2" detail="Motorrad">Bodenfahrzeuge</skill>
+            <skill rating="3">Einschüchtern</skill>
+            <group rating="3">Feuerwaffen</group>
+            <skill rating="3" detail="Straße">Gebräuche</skill>
+            <skill rating="3">Laufen</skill>
+            <group rating="4">Nahkampf</group>
+            <skill rating="2" detail="Stadt">Survival</skill>
+            <knowledge rating="2" detail="STREET">BTL-Dealer</knowledge>
+            <knowledge rating="4" detail="STREET">Gang-Identifizierung</knowledge>
+            <knowledge rating="5" detail="STREET">Ganggebiete</knowledge>
+            <knowledge rating="2" detail="STREET">Örtliche Umgebung</knowledge>
+            <knowledge rating="3" detail="HOBBY">Stadtkrieg-Statistiken</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <language rating="2">Spanisch</language>
+            <resources rating="6"/>
+            <armor>Panzerjacke</armor>
+            <vehicle>Harley-Davidson Scorpion (Chopper)</vehicle>
+            <gear rating="4" detail="Führerschein">Gefälschte Lizenz</gear>
+            <gear rating="3" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="2">LOW</lifestyle>
+            <gear rating="1">Brille
+                <part>Bildverbindung</part>
+            </gear>
+            <cyberware>Datenbuchse</cyberware>
+            <cyberware rating="1">Kunstmuskeln</cyberware>
+            <gear>Sony Emperor
+                <part>Redcap Nix</part>
+                <part>Sim-Modul (für BTL/heißes Sim modifiziert)</part>
+                <part rating="2">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="1">Editieren</part>
+                <part rating="1">Schmöker</part>
+            </gear>
+            <gear>AR-Handschuhe</gear>
+            <gear>Miracle Shooter</gear>
+            <gear amount="2">VR-Spiele</gear>
+            <gear>Virtuelles Haustier</gear>
+            <weapon>Teleskopschlagstock</weapon>
+            <weapon>Überlebensmesser</weapon>
+            <weapon>Kampfaxt</weapon>
+            <weapon>Remington Roomsweeper</weapon>
+            <gear amount="80" detail="Schwere Pistolen">Flechettegeschosse</gear>
+            <contact rating="1" amount="1">BTL-Dealer</contact>
+            <contact rating="2" amount="1">Ganganführer</contact>
+            <contact rating="2" amount="3">Gangmitglied</contact>
+            <notes>Miracle Shooter für 1 Jahr.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="135">
+        <name>Straßensamurai</name>
+        <description>Vercyberter Profi-Kämpfer mit zwei Cyberarmen, Reflexbooster und einem eigenen Ehrenkodex.</description>
+        <source>SR4</source>
+        <gp metatype="0" attributes="200" skills="150" qualities="0" resources="39" contacts="11"/>
+        <character metatype="Mensch" BOD="4" AGI="5" REA="4" STR="5" CHA="2" INT="3" LOG="2" WIL="3" EDG="2">
+            <quality>Hohe Schmerztoleranz 2</quality>
+            <quality>Mut</quality>
+            <quality detail="Stimulanzmittel">Abhängigkeit (Leicht)</quality>
+            <quality detail="Gold">Allergie (Ungewöhnlich, Leicht)</quality>
+            <quality detail="Hacking">Inkompetenz</quality>
+            <group rating="3">Athletik</group>
+            <skill rating="1" detail="Motorrad">Bodenfahrzeuge</skill>
+            <skill rating="4">Infiltration</skill>
+            <skill rating="4">Klingenwaffen</skill>
+            <skill rating="4">Pistolen</skill>
+            <skill rating="5">Schnellfeuerwaffen</skill>
+            <skill rating="3">Schwere Waffen</skill>
+            <skill rating="2">Verhandlung</skill>
+            <skill rating="5">Waffenloser Kampf</skill>
+            <skill rating="1" detail="Sehen">Wahrnehmung</skill>
+            <knowledge rating="3" detail="PROFESSIONAL">Feuerwaffenentwurf</knowledge>
+            <knowledge rating="4" detail="STREET">Geheime Unterschlupfe</knowledge>
+            <knowledge rating="3" detail="HOBBY">Zen-Meditation</knowledge>
+            <language detail="muttersprache">Spanisch</language>
+            <language rating="2" detail="Stadtsprache">Englisch</language>
+            <language rating="2">Japanisch</language>
+            <resources rating="39"/>
+            <armor>Panzerweste<part rating="2">Elektrische Isolierung</part></armor>
+            <gear detail="Waffenbau">Werkzeugkiste</gear>
+            <vehicle>Suzuki Mirage (Rennmaschine)</vehicle>
+            <gear>DocWagon-Vertrag (Gold)</gear>
+            <gear rating="2" amount="5" detail="Waffenlizenzen und Implantatlizenz">Gefälschte Lizenz</gear>
+            <gear rating="4" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="3">LOW</lifestyle>
+            <cyberware rating="3" detail="ALPHAWARE">Cyberaugen-Basissystem
+                <part>Blitzkompensation</part>
+                <part>Infrarotsicht</part>
+                <part>Restlichtverstärkung</part>
+                <part>Smartlink</part>
+            </cyberware>
+            <cyberware>Schutzgläser</cyberware>
+            <limb rating="5" amount="5" detail="ARM_RIGHT">Ganzer Arm (offensichtlich)
+                <part rating="2">Panzerungsverbesserung</part>
+                <part rating="3">Geschicklichkeitsverbesserung</part>
+                <part rating="2">Stärkeverbesserung</part>
+                <part>Sporn (einziehbar)</part>
+                <part>Schockhand</part>
+            </limb>
+            <limb rating="5" amount="5" detail="ARM_LEFT">Ganzer Arm (offensichtlich)
+                <part rating="2">Panzerungsverbesserung</part>
+                <part rating="3">Geschicklichkeitsverbesserung</part>
+                <part rating="2">Stärkeverbesserung</part>
+                <part>Schmuggelbehälter</part>
+            </limb>
+            <cyberware rating="2" detail="ALPHAWARE">Reflexbooster</cyberware>
+            <gear>Hermes Ikon
+                <part>Redcap Nix</part>
+                <part>Sim-Modul</part>
+                <part rating="2">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="1">Editieren</part>
+                <part rating="2">Schmöker</part>
+            </gear>
+            <gear>AR-Handschuhe</gear>
+            <weapon>Überlebensmesser</weapon>
+            <weapon>Ares Predator IV</weapon>
+            <weapon>Ares Predator IV</weapon>
+            <gear amount="2">Tarnholster</gear>
+            <gear amount="300" detail="Schwere Pistolen">Explosivgeschosse</gear>
+            <weapon>Ingram Smartgun X
+                <part detail="BARREL">Schallunterdrücker</part>
+            </weapon>
+            <gear amount="320" detail="Maschinenpistolen">Standardmunition</gear>
+            <weapon>Stoner-Ares M202</weapon>
+            <gear amount="200" detail="Mittlere Maschinengewehre">Standardmunition</gear>
+            <contact rating="3" amount="3">Schieber</contact>
+            <contact rating="2" amount="3">Straßendoc</contact>
+            <notes>Beide Cyberarme maßgefertigt; Stoner-Ares M202 mit internem Smartgunsystem; Ingram Smartgun X laut GRW mit Gasventilsystem 3 statt des
+                mitgelieferten Gasventilsystems 2; DocWagon-Vertrag für
+                1 Jahr; die fünf gefälschten Lizenzen gelten für zwei Ares Predator IV, Katana, Ingram Smartgun X und
+                Reflexbooster.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="136">
+        <name>Straßenschamanin</name>
+        <description>Troll-Schamanin mit Schutzpatron Ratte, die die Gassen und Geister des Sprawls kennt wie niemand sonst.</description>
+        <source>SR4</source>
+        <gp metatype="40" attributes="225" skills="120" qualities="-5" magic="12" resources="1" contacts="7"/>
+        <character metatype="Troll" BOD="5" AGI="3" REA="3" STR="5" CHA="4" INT="4" LOG="4" WIL="4" MAG="5" EDG="2">
+            <quality>Zauberer</quality>
+            <quality detail="Ratte">Schutzpatron</quality>
+            <quality>Gremlins 1</quality>
+            <quality>Kampflähmung</quality>
+            <skill rating="2">Askennen</skill>
+            <skill rating="2">Ausweichen</skill>
+            <skill rating="3">Binden</skill>
+            <skill rating="2">Fingerfertigkeit</skill>
+            <skill rating="5">Herbeirufen</skill>
+            <group rating="3">Hexerei</group>
+            <skill rating="3">Infiltration</skill>
+            <skill rating="1" detail="Stadt">Survival</skill>
+            <skill rating="2">Verbannen</skill>
+            <skill rating="2">Wahrnehmung</skill>
+            <knowledge rating="2" detail="STREET">Geheime Unterschlupfe</knowledge>
+            <knowledge rating="5" detail="ACADEMIC">Geisterkunde</knowledge>
+            <knowledge rating="2" detail="HOBBY">Goblin-Rock</knowledge>
+            <knowledge rating="4" detail="ACADEMIC">Magietheorie</knowledge>
+            <knowledge rating="3" detail="STREET">ÖPNV-Routen</knowledge>
+            <knowledge rating="4" detail="STREET">Örtliche Suppenküchen</knowledge>
+            <knowledge rating="4" detail="STREET">Örtliche Umgebung</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <spell>Heilen</spell>
+            <spell>Manablitz</spell>
+            <spell>Verbesserte Unsichtbarkeit</spell>
+            <spell>Verwirrung</spell>
+            <resources rating="1"/>
+            <armor>Lederjacke/-mantel</armor>
+            <gear>Gasmaske</gear>
+            <gear rating="4">Medkit</gear>
+            <lifestyle amount="2">SQUATTER</lifestyle>
+            <gear>Meta Link
+                <part>Vector Xim</part>
+                <part rating="1">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="1">Editieren</part>
+                <part rating="1">Schmöker</part>
+            </gear>
+            <gear rating="1">Sichtgerät</gear>
+            <weapon>Überlebensmesser</weapon>
+            <contact rating="2" amount="2">Schieber</contact>
+            <contact rating="1" amount="2">Squatter</contact>
+            <notes>Magisches Refugium (Stufe 5); Sichtgerät mit Sichtverbindung.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="137">
+        <name>Technomancer</name>
+        <description>Lebt mit seiner Resonanz in der Matrix und braucht dafür weder teures Kommlink noch Programme.</description>
+        <source>SR4</source>
+        <gp metatype="0" attributes="230" skills="134" qualities="-10" magic="35" resources="3" contacts="8"/>
+        <character metatype="Mensch" BOD="2" AGI="3" REA="4" STR="2" CHA="3" INT="5" LOG="5" WIL="3" RES="5" EDG="2">
+            <quality>Resistenz gegen Signalspitzen</quality>
+            <quality>Technomancer</quality>
+            <quality>Kampflähmung</quality>
+            <quality>Schwaches Immunsystem</quality>
+            <skill rating="2">Ausweichen</skill>
+            <group rating="3">Cracken</group>
+            <group rating="3">Elektronik</group>
+            <skill rating="1" detail="Leichte Pistolen">Pistolen</skill>
+            <group rating="4">Tasken</group>
+            <skill rating="2">Verhandlung</skill>
+            <skill rating="3">Wahrnehmung</skill>
+            <knowledge rating="5" detail="ACADEMIC">Betriebssysteme</knowledge>
+            <knowledge rating="3" detail="HOBBY">Comicbücher</knowledge>
+            <knowledge rating="3" detail="STREET">Data Havens</knowledge>
+            <knowledge rating="3" detail="PROFESSIONAL">IC-Identifikation</knowledge>
+            <knowledge rating="4" detail="PROFESSIONAL">Konzern-Matrix-Sicherheitsprozeduren</knowledge>
+            <knowledge rating="2" detail="ACADEMIC">Matrixtheorie</knowledge>
+            <language detail="muttersprache">Spanisch</language>
+            <language rating="4" detail="Stadtsprache">Englisch</language>
+            <language rating="3">Japanisch</language>
+            <language rating="2">Kantonesisch</language>
+            <complexform rating="2">Analyse</complexform>
+            <complexform rating="4">Angriff</complexform>
+            <complexform rating="4">Aufspüren</complexform>
+            <complexform rating="5">Ausnutzen</complexform>
+            <complexform rating="3">Editieren</complexform>
+            <complexform rating="3">Entschlüsselung</complexform>
+            <complexform rating="3">Panzerung</complexform>
+            <complexform rating="3">Schmöker</complexform>
+            <complexform rating="3">Scannen</complexform>
+            <complexform rating="5">Schleicher</complexform>
+            <resources rating="3"/>
+            <armor>Gefütterter Mantel</armor>
+            <vehicle>Dodge Scoot (Scooter)</vehicle>
+            <gear rating="4" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="3">LOW</lifestyle>
+            <gear>Meta Link
+                <part>Vector Xim</part>
+            </gear>
+            <weapon>Colt America L36</weapon>
+            <gear>Versteckte Armhalterung</gear>
+            <gear amount="60" detail="Leichte Pistolen">Standardmunition</gear>
+            <contact rating="2" amount="2">Blogger</contact>
+            <contact rating="2" amount="2">Schieber</contact>
+            <notes>Colt America L36 mit internem Smartgunsystem; das GRW nennt 5 Streifen zu 11 Schuss, Munition gibt es nur in Packungen zu 10.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="138">
+        <name>Vollstrecker</name>
+        <description>Troll-Schläger der Mafia, der Schulden eintreibt und mit seiner Erscheinung schon die halbe Arbeit erledigt.</description>
+        <source>SR4</source>
+        <gp metatype="40" attributes="190" skills="160" qualities="-10" resources="11" contacts="9"/>
+        <character metatype="Troll" BOD="9" AGI="3" REA="3" STR="9" CHA="2" INT="3" LOG="2" WIL="3" EDG="2">
+            <quality detail="BTL">Abhängigkeit (Leicht)</quality>
+            <quality>Gezeichnet</quality>
+            <skill rating="3">Ausweichen</skill>
+            <skill rating="3">Beschatten</skill>
+            <skill rating="1" detail="Pkw">Bodenfahrzeuge</skill>
+            <skill rating="3">Einschüchtern</skill>
+            <skill rating="3">Fälschen</skill>
+            <group rating="4">Feuerwaffen</group>
+            <skill rating="3">Fingerfertigkeit</skill>
+            <skill rating="1" detail="Mafia">Gebräuche</skill>
+            <group rating="4">Nahkampf</group>
+            <skill rating="2">Überreden</skill>
+            <knowledge rating="4" detail="STREET">Ganggebiete</knowledge>
+            <knowledge rating="5" detail="PROFESSIONAL">Geldeintreiben</knowledge>
+            <knowledge rating="2" detail="STREET">Mafia-Unterschlupfe</knowledge>
+            <knowledge rating="2" detail="STREET">Mafiapolitik</knowledge>
+            <knowledge rating="2" detail="HOBBY">Rennsport-Wetten</knowledge>
+            <language detail="muttersprache">Englisch</language>
+            <resources rating="11"/>
+            <armor>Gefütterter Mantel</armor>
+            <gear rating="4" detail="Tarnidentität">Gefälschte SIN</gear>
+            <gear rating="4" detail="Waffenlizenz (Ares Predator IV)">Gefälschte Lizenz</gear>
+            <lifestyle amount="1">MIDDLE</lifestyle>
+            <gear rating="2">Brille
+                <part>Bildverbindung</part>
+                <part>Smartlink</part>
+            </gear>
+            <cyberware>Datenbuchse</cyberware>
+            <cyberware rating="2">Reflexbooster</cyberware>
+            <gear>Transys Avalon
+                <part>Renraku Ichi</part>
+                <part>Sim-Modul (für BTL/heißes Sim modifiziert)</part>
+                <part rating="2">Analyse</part>
+                <part rating="2">Editieren</part>
+                <part rating="2">Schmöker</part>
+            </gear>
+            <gear>AR-Handschuhe</gear>
+            <gear rating="2" detail="Italienisch">Linguasoft</gear>
+            <gear amount="3">BTL-Aufzeichnung</gear>
+            <weapon>Monofilamentschwert</weapon>
+            <weapon>Schockhandschuh</weapon>
+            <weapon>Ares Predator IV</weapon>
+            <gear>Tarnholster</gear>
+            <gear amount="150" detail="Schwere Pistolen">Explosivgeschosse</gear>
+            <weapon>Remington 990</weapon>
+            <gear amount="40" detail="Schrotflinten">Flechettegeschosse</gear>
+            <contact rating="1" amount="1">BTL-Dealer</contact>
+            <contact rating="3" amount="1">Mafia-Consiglieri</contact>
+            <contact rating="1" amount="2">Mafia-Soldat</contact>
+            <notes>Remington 990 mit internem Smartgunsystem; die drei BTL-Chips sind verschiedene Aufzeichnungen.</notes>
+        </character>
+    </archetype>
+
+    <archetype page="139">
+        <name>Waffenexpertin</name>
+        <description>Kampfkünstlerin und Büchsenmacherin, die jede Waffe beherrscht, baut und repariert.</description>
+        <source>SR4</source>
+        <gp metatype="30" attributes="180" skills="142" qualities="10" resources="26" contacts="12"/>
+        <character metatype="Elf" BOD="3" AGI="4" REA="4" STR="3" CHA="4" INT="3" LOG="3" WIL="3" EDG="3">
+            <quality>Glück</quality>
+            <quality>Mut</quality>
+            <quality detail="Stimulanzmittel">Abhängigkeit (Leicht)</quality>
+            <quality detail="Salzwasser">Allergie (Gewöhnlich, Leicht)</quality>
+            <skill rating="2">Ausweichen</skill>
+            <group rating="4">Feuerwaffen</group>
+            <group rating="3">Nahkampf</group>
+            <skill rating="2">Projektilwaffen</skill>
+            <skill rating="2">Schwere Waffen</skill>
+            <skill rating="3">Sprengstoffe</skill>
+            <skill rating="2">Verhandlung</skill>
+            <skill rating="5">Waffenbau</skill>
+            <skill rating="2">Wurfwaffen</skill>
+            <knowledge rating="2" detail="ACADEMIC">Chemie</knowledge>
+            <knowledge rating="4" detail="PROFESSIONAL">Feuerwaffenentwurf</knowledge>
+            <knowledge rating="4" detail="ACADEMIC">Ingenieurswissenschaften</knowledge>
+            <knowledge rating="3" detail="PROFESSIONAL">Klingenwaffenentwurf</knowledge>
+            <knowledge rating="2" detail="HOBBY">Waffengeschichten</knowledge>
+            <language detail="muttersprache">Arabisch</language>
+            <language rating="3">Englisch</language>
+            <resources rating="26"/>
+            <gear amount="5">Flash-Pack</gear>
+            <armor>Panzerjacke</armor>
+            <gear detail="Waffenbau">Werkzeugkiste</gear>
+            <gear detail="Waffenbau">Werkzeugladen</gear>
+            <gear rating="3" amount="2" detail="Waffenlizenzen">Gefälschte Lizenz</gear>
+            <gear rating="3" detail="Tarnidentität">Gefälschte SIN</gear>
+            <lifestyle amount="1">MIDDLE</lifestyle>
+            <gear rating="2">Kontaktlinsen
+                <part>Bildverbindung</part>
+                <part>Smartlink</part>
+            </gear>
+            <gear>Novatech Airware
+                <part>Renraku Ichi</part>
+                <part>Sim-Modul</part>
+                <part rating="2">Analyse</part>
+                <part rating="1">Befehl</part>
+                <part rating="2">Editieren</part>
+                <part rating="2">Schmöker</part>
+            </gear>
+            <weapon>Betäubungsschlagstock</weapon>
+            <weapon>Überlebensmesser</weapon>
+            <weapon>Katana</weapon>
+            <weapon>Katana</weapon>
+            <weapon>Kampfaxt</weapon>
+            <weapon>Mittlere Armbrust</weapon>
+            <gear amount="20">Bolzen</gear>
+            <weapon>Wurfmesser</weapon>
+            <weapon>Shuriken</weapon>
+            <gear amount="10" detail="Standard">Splittergranate</gear>
+            <weapon>Ares Predator IV</weapon>
+            <gear>Schnellziehholster</gear>
+            <gear amount="150" detail="Schwere Pistolen">Explosivgeschosse</gear>
+            <weapon>Yamaha Sakura Fubuki<part detail="TOP">Smartgunsystem, extern</part></weapon>
+            <gear>Tarnholster</gear>
+            <gear amount="80" detail="Leichte Pistolen">Standardmunition</gear>
+            <weapon>Walter MA-2100</weapon>
+            <gear amount="40" detail="Scharfschützengewehre">Standardmunition</gear>
+            <weapon>Aztechnology Striker</weapon>
+            <contact rating="2" amount="2">Schieber</contact>
+            <contact rating="2" amount="2">Söldner</contact>
+            <contact rating="2" amount="2">Waffenhändler</contact>
+            <notes>Je 10 Wurfmesser und Shuriken (im Bogen je ein Eintrag); die Lizenzen gelten für Ares Predator IV und
+                Yamaha Sakura Fubuki; das GRW nennt beim Yamaha nur „Smartgunsystem“, eingetragen ist das externe.</notes>
+        </character>
+    </archetype>
+
+</archetypes>

@@ -3,13 +3,10 @@ package de.shalorian.chummer.view.dialog;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.option.RuleOptions;
-import de.shalorian.chummer.model.npc.NpcTemplate;
-import de.shalorian.chummer.model.npc.NpcTemplateLoader;
+import de.shalorian.chummer.model.template.DocumentTemplate;
+import de.shalorian.chummer.model.template.Templates;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
-import java.text.Collator;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -19,22 +16,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Dialog „Neu“: ein Charakter (Name, Metatyp) oder eine Schergengruppe (Name, leer oder aus einer GRW-Vorlage,
- * ADR-062). Wählt man eine Vorlage, übernimmt das Namensfeld ihren Namen, solange es nicht selbst geändert wurde.
+ * Dialog „Neu“: ein leerer Charakter (Name, Metatyp), eine leere Schergengruppe (Name) oder ein Dokument aus einer
+ * Vorlage der Regelwerke (Archetyp, Schergengruppe; ADR-063). Die Vorlagen-Auswahl gruppiert nach Art, zeigt die Quelle
+ * in Klammern und als Tooltip Regelwerk und Seite. Wählt man eine Vorlage, übernimmt das Namensfeld ihren Namen,
+ * solange es nicht selbst geändert wurde.
  */
 public class NewCharacterDialogController {
-
-  private static final String EMPTY_TEMPLATE = "Leer";
 
   @FXML
   private ToggleButton characterBtn;
   @FXML
   private ToggleButton groupBtn;
+  @FXML
+  private ToggleButton templateBtn;
   @FXML
   private TextField nameField;
   @FXML
@@ -44,7 +42,7 @@ public class NewCharacterDialogController {
   @FXML
   private Label templateLabel;
   @FXML
-  private ComboBox<@Nullable NpcTemplate> templateBox;
+  private ComboBox<DocumentTemplate> templateBox;
   @FXML
   private Label templateInfo;
   @FXML
@@ -62,49 +60,38 @@ public class NewCharacterDialogController {
     metatypeBox.getItems().setAll(MetatypeDataLoader.getAllMetatypes());
     metatypeBox.setConverter(new MetatypeStringConverter());
     metatypeBox.setValue(MetatypeDataLoader.find("Mensch"));
-    Collator collator = Collator.getInstance(Locale.GERMAN);
-    templateBox.getItems().add(null);
-    // neue Gruppen haben nur das Grundregelwerk aktiv (ADR-061); Vorlagen anderer Regelwerke erscheinen nicht
-    RuleOptions defaults = new RuleOptions();
-    templateBox.getItems().addAll(NpcTemplateLoader.getAll().stream().filter(defaults::allows)
-        .sorted(Comparator.comparing(NpcTemplate::name, collator)).toList());
-    templateBox.setConverter(new StringConverter<>() {
-      @Override
-      public String toString(@Nullable NpcTemplate template) {
-        return template == null ? EMPTY_TEMPLATE : template.name() + " (Stufe " + template.rating() + ")";
-      }
-
-      @Override
-      public @Nullable NpcTemplate fromString(String text) {
-        return null;
-      }
-    });
-    templateBox.setValue(null);
+    // neue Dokumente haben nur das Grundregelwerk aktiv (ADR-061); Vorlagen anderer Regelwerke erscheinen nicht
+    templateBox.getItems().setAll(Templates.available(new RuleOptions()));
+    templateBox.setCellFactory(_ -> new TemplateCell());
+    templateBox.setButtonCell(new TemplateCell());
     templateBox.valueProperty().addListener((_, before, template) -> {
-      templateInfo.setText(template == null ? "" : template.description() + " (" + template.source() + " S. "
-          + template.page() + ")");
+      templateInfo.setText(template == null ? "" : template.description());
       String current = nameField.getText().trim();
       if (template != null && (current.isEmpty() || (before != null && current.equals(before.name())))) {
         nameField.setText(template.name());
       }
     });
-    characterBtn.setOnAction(_ -> showKind(false));
-    groupBtn.setOnAction(_ -> showKind(true));
-    showKind(false);
-    createButton.disableProperty().bind(
-        Bindings.createBooleanBinding(() -> nameField.getText().trim().isEmpty(), nameField.textProperty()));
+    characterBtn.setOnAction(_ -> showKind(characterBtn));
+    groupBtn.setOnAction(_ -> showKind(groupBtn));
+    templateBtn.setOnAction(_ -> showKind(templateBtn));
+    showKind(characterBtn);
+    createButton.disableProperty().bind(Bindings.createBooleanBinding(
+        () -> nameField.getText().trim().isEmpty() || (templateBtn.isSelected() && templateBox.getValue() == null),
+        nameField.textProperty(), templateBox.valueProperty(), templateBtn.selectedProperty()));
   }
 
-  private void showKind(boolean group) {
-    characterBtn.setSelected(!group);
-    groupBtn.setSelected(group);
-    for (Node node : List.of(metatypeLabel, metatypeBox)) {
-      node.setVisible(!group);
-      node.setManaged(!group);
+  private void showKind(@NonNull ToggleButton chosen) {
+    for (ToggleButton button : List.of(characterBtn, groupBtn, templateBtn)) {
+      button.setSelected(button.equals(chosen));
     }
-    for (Node node : List.of(templateLabel, templateBox, templateInfo)) {
-      node.setVisible(group);
-      node.setManaged(group);
+    show(List.of(metatypeLabel, metatypeBox), chosen.equals(characterBtn));
+    show(List.of(templateLabel, templateBox, templateInfo), chosen.equals(templateBtn));
+  }
+
+  private static void show(@NonNull List<Node> nodes, boolean visible) {
+    for (Node node : nodes) {
+      node.setVisible(visible);
+      node.setManaged(visible);
     }
   }
 
@@ -127,7 +114,7 @@ public class NewCharacterDialogController {
     return confirmed;
   }
 
-  /** Ob eine Schergengruppe statt eines Charakters angelegt werden soll. */
+  /** Ob eine leere Schergengruppe angelegt werden soll. */
   public boolean isNpcGroup() {
     return groupBtn.isSelected();
   }
@@ -140,8 +127,8 @@ public class NewCharacterDialogController {
     return metatypeBox.getValue();
   }
 
-  /** Gewählte GRW-Vorlage, {@code null} für eine leere Gruppe. */
-  public @Nullable NpcTemplate getSelectedTemplate() {
-    return templateBox.getValue();
+  /** Gewählte Vorlage, wenn „Vorlagen“ aktiv ist, sonst {@code null}. */
+  public @Nullable DocumentTemplate getSelectedTemplate() {
+    return templateBtn.isSelected() ? templateBox.getValue() : null;
   }
 }

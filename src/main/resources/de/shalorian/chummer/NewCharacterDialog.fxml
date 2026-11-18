@@ -13,6 +13,7 @@
     <HBox spacing="8">
         <ToggleButton fx:id="characterBtn" text="Charakter" styleClass="toggle-button"/>
         <ToggleButton fx:id="groupBtn" text="Schergengruppe" styleClass="toggle-button"/>
+        <ToggleButton fx:id="templateBtn" text="Vorlagen" styleClass="toggle-button"/>
     </HBox>
 
     <GridPane hgap="14" vgap="12">

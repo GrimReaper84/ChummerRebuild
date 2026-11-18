@@ -1,0 +1,415 @@
+{
+  "name" : "Initiierter Magier",
+  "metatype" : "Elf",
+  "created" : true,
+  "nuyenBP" : 0,
+  "physicalDamage" : 0,
+  "stunDamage" : 0,
+  "selectedQualities" : [ {
+    "name" : "Zauberer",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Abhängigkeit (Leicht)",
+    "gratis" : false,
+    "choice" : "SimSinn"
+  }, {
+    "name" : "Abhängigkeit (Leicht)",
+    "gratis" : false,
+    "choice" : "Stimulanzmittel"
+  }, {
+    "name" : "Allergie (Gewöhnlich, Leicht)",
+    "gratis" : false,
+    "choice" : "Sonnenlicht"
+  }, {
+    "name" : "Immunabstoßung",
+    "gratis" : false,
+    "choice" : ""
+  } ],
+  "attributes" : {
+    "STR" : 3,
+    "AGI" : 4,
+    "LOG" : 4,
+    "BOD" : 3,
+    "WIL" : 4,
+    "CHA" : 4,
+    "INT" : 3,
+    "REA" : 4
+  },
+  "edge" : 2,
+  "edgeBurned" : 0,
+  "edgeSpent" : 0,
+  "magic" : 5,
+  "resonance" : null,
+  "skills" : [ {
+    "name" : "Klingenwaffen",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Pistolen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Ausweichen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Wahrnehmung",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Gebräuche",
+    "rating" : 2,
+    "specialization" : "Straße",
+    "exoticTarget" : null
+  }, {
+    "name" : "Binden",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Herbeirufen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Verbannen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Antimagie",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Spruchzauberei",
+    "rating" : 5,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Astralkampf",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  } ],
+  "knowledgeSkills" : [ {
+    "name" : "Konzern-Sicherheitstaktiken",
+    "category" : "PROFESSIONAL",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Lone-Star-Vorgehensweisen",
+    "category" : "PROFESSIONAL",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Magietheorie",
+    "category" : "ACADEMIC",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Magische Phänomene",
+    "category" : "ACADEMIC",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Söldner-Treffpunkte",
+    "category" : "STREET",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Stadtkrieg-Wetten",
+    "category" : "HOBBY",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Englisch",
+    "category" : "LANGUAGE",
+    "rating" : 0,
+    "nativeLanguage" : true,
+    "specialization" : null
+  }, {
+    "name" : "Latein",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Sperethiel",
+    "category" : "LANGUAGE",
+    "rating" : 4,
+    "nativeLanguage" : false,
+    "specialization" : null
+  } ],
+  "contacts" : [ {
+    "name" : "Schieber",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  }, {
+    "name" : "Talismankrämer",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  } ],
+  "decoupledGroups" : [ "Einfluss", "Hexerei", "Nahkampf", "Feuerwaffen" ],
+  "karmaLog" : [ {
+    "description" : "Karma aus Runs",
+    "amount" : 40,
+    "date" : "2072-03-01",
+    "category" : "MANUAL"
+  }, {
+    "description" : "Initiation Grad 1",
+    "amount" : -13,
+    "date" : "2072-03-01",
+    "category" : "MAGIC_RESONANCE"
+  }, {
+    "description" : "Kraftfokus binden",
+    "amount" : -8,
+    "date" : "2072-03-01",
+    "category" : "MAGIC_RESONANCE"
+  } ],
+  "nuyenLog" : [ {
+    "description" : "Startkapital (Lebensstil Unterschicht)",
+    "amount" : 750,
+    "date" : "2072-03-01",
+    "category" : "START"
+  } ],
+  "biography" : {
+    "alias" : "",
+    "sex" : "",
+    "age" : "",
+    "eyes" : "",
+    "height" : "",
+    "weight" : "",
+    "skin" : "",
+    "hair" : "",
+    "description" : "",
+    "background" : "",
+    "concept" : "Hermetischer Zauberer an vorderster Front, mit Kampfzaubern und Schutzsprüchen statt Bücherstube.",
+    "notes" : "Laut GRW S. 128 außerdem: Magisches Refugium (Kraft 5); Mage-Sight-Brille mit 10 m Kabel.",
+    "playerName" : "",
+    "gameNotes" : "",
+    "portrait" : null
+  },
+  "tradition" : "HERMETIC",
+  "spellNames" : [ "Blitzstrahl", "Levitieren", "Manaball", "Manablitz", "Panzerung", "Physische Barriere", "Reflexe Steigern", "Stoß" ],
+  "complexForms" : [ ],
+  "adeptPowers" : [ ],
+  "adeptMagic" : 0,
+  "initiation" : {
+    "grade" : 1,
+    "techniques" : [ "Zentrierung" ]
+  },
+  "spirits" : [ {
+    "name" : "Feuergeist",
+    "force" : 4,
+    "services" : 2,
+    "bound" : true
+  } ],
+  "cyberware" : [ ],
+  "armor" : [ {
+    "name" : "Gefütterter Mantel",
+    "equipped" : true,
+    "price" : null,
+    "mods" : [ ]
+  } ],
+  "weapons" : [ {
+    "name" : "Katana",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  }, {
+    "name" : "Yamaha Sakura Fubuki",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  } ],
+  "gear" : [ {
+    "name" : "Mage-Sight-Brille",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Stimulanz-Patch",
+    "rating" : 3,
+    "quantity" : 4,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gefälschte SIN",
+    "rating" : 3,
+    "quantity" : 1,
+    "extra" : "Tarnidentität",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Novatech Airware",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ {
+      "name" : "Mangadyne Deva",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Sim-Modul (für BTL/heißes Sim modifiziert)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : 250,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Analyse",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Befehl",
+      "rating" : 1,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Editieren",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Schmöker",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Simrig",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Schnellziehholster",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Standardmunition",
+    "rating" : 0,
+    "quantity" : 200,
+    "extra" : "Leichte Pistolen",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Kraftfokus",
+    "rating" : 1,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : true,
+    "focusActive" : false
+  } ],
+  "vehicles" : [ ],
+  "lifestyle" : {
+    "level" : "LOW",
+    "months" : 2,
+    "missedMonths" : 0,
+    "debt" : 0
+  },
+  "reputation" : {
+    "streetCredBonus" : 0,
+    "notorietyBonus" : 0,
+    "burnedStreetCred" : 0,
+    "awarenessAdjustment" : 0
+  },
+  "rules" : {
+    "limbArmorAverage" : false,
+    "lateAwakening" : false,
+    "missedLifestylePayments" : false,
+    "books" : [ ]
+  }
+}

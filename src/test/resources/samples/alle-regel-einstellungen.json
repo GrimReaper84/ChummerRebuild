@@ -1,0 +1,743 @@
+{
+  "name" : "Alle Regel-Einstellungen",
+  "metatype" : "Mensch",
+  "created" : false,
+  "nuyenBP" : 16,
+  "physicalDamage" : 0,
+  "stunDamage" : 0,
+  "selectedQualities" : [ {
+    "name" : "Gummi-Gelenke",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Schlechte Verbindung",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Unauffälligkeit",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Allergie (Ungewöhnlich, Leicht)",
+    "gratis" : false,
+    "choice" : "Gold"
+  }, {
+    "name" : "Inkompetenz",
+    "gratis" : false,
+    "choice" : "Erste Hilfe"
+  }, {
+    "name" : "Schwaches Immunsystem",
+    "gratis" : false,
+    "choice" : ""
+  } ],
+  "attributes" : {
+    "STR" : 2,
+    "AGI" : 5,
+    "LOG" : 4,
+    "BOD" : 2,
+    "WIL" : 3,
+    "CHA" : 3,
+    "INT" : 4,
+    "REA" : 5
+  },
+  "edge" : 4,
+  "edgeBurned" : 0,
+  "edgeSpent" : 0,
+  "magic" : null,
+  "resonance" : null,
+  "skills" : [ {
+    "name" : "Klingenwaffen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Knüppel",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Waffenloser Kampf",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Schnellfeuerwaffen",
+    "rating" : 2,
+    "specialization" : "Maschinenpistolen",
+    "exoticTarget" : null
+  }, {
+    "name" : "Akrobatik",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Klettern",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Laufen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Schwimmen",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Beschatten",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Infiltration",
+    "rating" : 4,
+    "specialization" : "Stadt",
+    "exoticTarget" : null
+  }, {
+    "name" : "Verkleiden",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Wahrnehmung",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Gebräuche",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Computer",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Datensuche",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Hardware",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Software",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  } ],
+  "knowledgeSkills" : [ {
+    "name" : "Finanzen",
+    "category" : "PROFESSIONAL",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Gehobene Küche",
+    "category" : "HOBBY",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Geheime Unterschlupfe",
+    "category" : "STREET",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Konzernpolitik",
+    "category" : "PROFESSIONAL",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Moderne Literatur",
+    "category" : "ACADEMIC",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Sicherheitssysteme",
+    "category" : "PROFESSIONAL",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Japanisch",
+    "category" : "LANGUAGE",
+    "rating" : 0,
+    "nativeLanguage" : true,
+    "specialization" : null
+  }, {
+    "name" : "Deutsch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Englisch",
+    "category" : "LANGUAGE",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Französisch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Spanisch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  } ],
+  "contacts" : [ {
+    "name" : "Schieber",
+    "description" : null,
+    "connection" : 3,
+    "loyalty" : 2
+  }, {
+    "name" : "Mr. Johnson",
+    "description" : null,
+    "connection" : 3,
+    "loyalty" : 2
+  } ],
+  "decoupledGroups" : [ "Einfluss", "Heimlichkeit", "Feuerwaffen" ],
+  "karmaLog" : [ ],
+  "nuyenLog" : [ ],
+  "biography" : {
+    "alias" : "",
+    "sex" : "",
+    "age" : "",
+    "eyes" : "",
+    "height" : "",
+    "weight" : "",
+    "skin" : "",
+    "hair" : "",
+    "description" : "",
+    "background" : "",
+    "concept" : "Infiltrationsspezialist, der unbemerkt in Anlagen eindringt und mit Daten oder Prototypen wieder verschwindet.",
+    "notes" : "",
+    "playerName" : "",
+    "gameNotes" : "",
+    "portrait" : null
+  },
+  "tradition" : "HERMETIC",
+  "spellNames" : [ ],
+  "complexForms" : [ ],
+  "adeptPowers" : [ ],
+  "adeptMagic" : 0,
+  "initiation" : {
+    "grade" : 0,
+    "techniques" : [ ]
+  },
+  "spirits" : [ ],
+  "cyberware" : [ {
+    "name" : "Cyberaugen-Basissystem",
+    "grade" : "STANDARD",
+    "rating" : 3,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ {
+      "name" : "Blitzkompensation",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Infrarotsicht",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Restlichtverstärkung",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Sichtvergrößerung",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Smartlink",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    } ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Reaktionsverbesserung",
+    "grade" : "STANDARD",
+    "rating" : 2,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Sporn (einziehbar)",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  } ],
+  "armor" : [ {
+    "name" : "Panzerjacke",
+    "equipped" : true,
+    "price" : null,
+    "mods" : [ ]
+  }, {
+    "name" : "Chamäleonanzug",
+    "equipped" : true,
+    "price" : null,
+    "mods" : [ ]
+  } ],
+  "weapons" : [ {
+    "name" : "Monofilamentschwert",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  }, {
+    "name" : "Schockhandschuh",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  }, {
+    "name" : "Ingram Smartgun X",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  } ],
+  "gear" : [ {
+    "name" : "Flash-Pack",
+    "rating" : 0,
+    "quantity" : 5,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Rauchgranate",
+    "rating" : 0,
+    "quantity" : 5,
+    "extra" : "Standard",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Störsender, Bereich",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "White-Noise-Generator",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Nanitencreme-Verkleidung (kleiner Behälter)",
+    "rating" : 0,
+    "quantity" : 2,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Enterhakenkanone",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Kletterausrüstung",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Camouflageseil",
+    "rating" : 0,
+    "quantity" : 200,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Katalysatorstab",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Kletterhandschuhe",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gecko-Tape-Handschuhe",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gasmaske",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Drahtzange",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Monofilament-Kettensäge",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Automatischer Dietrich",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Magschlossknacker",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Magschlosskarten-Kopierer",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Medkit",
+    "rating" : 6,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gefälschte SIN",
+    "rating" : 4,
+    "quantity" : 2,
+    "extra" : "Tarnidentität",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Hermes Ikon",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ {
+      "name" : "Novatech Navi",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Sim-Modul",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : 100,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Analyse",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Befehl",
+      "rating" : 1,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Editieren",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Schmöker",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Elektroden",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "AR-Handschuhe",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Linguasoft",
+    "rating" : 2,
+    "quantity" : 1,
+    "extra" : "Kantonesisch",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Standardmunition",
+    "rating" : 0,
+    "quantity" : 320,
+    "extra" : "Maschinenpistolen",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  } ],
+  "vehicles" : [ ],
+  "lifestyle" : {
+    "level" : "HIGH",
+    "months" : 1,
+    "missedMonths" : 0,
+    "debt" : 0
+  },
+  "reputation" : {
+    "streetCredBonus" : 0,
+    "notorietyBonus" : 0,
+    "burnedStreetCred" : 0,
+    "awarenessAdjustment" : 0
+  },
+  "rules" : {
+    "limbArmorAverage" : true,
+    "lateAwakening" : true,
+    "missedLifestylePayments" : true,
+    "books" : [ "SM" ]
+  }
+}

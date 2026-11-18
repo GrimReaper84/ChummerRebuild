@@ -8,7 +8,7 @@
             fx:controller="de.shalorian.chummer.view.MainWindowController"
             styleClass="root-pane">
     <top>
-        <MenuBar styleClass="menu-bar">
+        <MenuBar fx:id="menuBar" styleClass="menu-bar">
             <Menu text="Datei">
                 <MenuItem fx:id="menuNew"    text="Neu"               onAction="#onNew"/>
                 <SeparatorMenuItem/>

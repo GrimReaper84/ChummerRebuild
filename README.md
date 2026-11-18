@@ -86,10 +86,11 @@ JDK 25; Installer und portables ZIP übernehmen JavaFX aus der JDK in ihr Laufze
 
 ```bash
 ./gradlew build        # kompilieren und testen
-./gradlew run          # Anwendung starten
+./gradlew run          # Anwendung starten (mit Beta-Menü: Archetypen, Schergen, Testfälle)
 ./gradlew jpackage     # Installer für das aktuelle Betriebssystem (build/jpackage)
 ./gradlew runtimeZip   # portables ZIP für das aktuelle Betriebssystem (build/portable)
 ./gradlew generateIcons  # Icons neu zeichnen (nur nach Änderungen an GenerateIcons)
+./gradlew generateSamples  # Testfälle des Beta-Menüs neu erzeugen (src/test/resources/samples)
 ```
 
 ## Mitmachen

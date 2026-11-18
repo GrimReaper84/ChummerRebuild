@@ -1,0 +1,798 @@
+{
+  "name" : "Rigger-Ausbau",
+  "metatype" : "Zwerg",
+  "created" : false,
+  "nuyenBP" : 50,
+  "physicalDamage" : 0,
+  "stunDamage" : 0,
+  "selectedQualities" : [ {
+    "name" : "Talentiert",
+    "gratis" : false,
+    "choice" : "Flugzeuge"
+  }, {
+    "name" : "Allergie (Ungewöhnlich, Mittel)",
+    "gratis" : false,
+    "choice" : "Gold"
+  }, {
+    "name" : "Niedrige Schmerztoleranz",
+    "gratis" : false,
+    "choice" : ""
+  }, {
+    "name" : "Schwaches Immunsystem",
+    "gratis" : false,
+    "choice" : ""
+  } ],
+  "attributes" : {
+    "STR" : 3,
+    "AGI" : 4,
+    "LOG" : 4,
+    "BOD" : 3,
+    "WIL" : 3,
+    "CHA" : 2,
+    "INT" : 5,
+    "REA" : 4
+  },
+  "edge" : 3,
+  "edgeBurned" : 0,
+  "edgeSpent" : 0,
+  "magic" : null,
+  "resonance" : null,
+  "skills" : [ {
+    "name" : "Schnellfeuerwaffen",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Wahrnehmung",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Elektronische Kriegsführung",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Computer",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Datensuche",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Hardware",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Software",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Fahrzeugmechanik",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Luftfahrtmechanik",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Schlosser",
+    "rating" : 2,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Bodenfahrzeuge",
+    "rating" : 4,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Flugzeuge",
+    "rating" : 6,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Geschütze",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  }, {
+    "name" : "Läufer",
+    "rating" : 3,
+    "specialization" : null,
+    "exoticTarget" : null
+  } ],
+  "knowledgeSkills" : [ {
+    "name" : "Computertheorie",
+    "category" : "ACADEMIC",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Geheime Unterschlupfe",
+    "category" : "STREET",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Krankenhausrouten",
+    "category" : "STREET",
+    "rating" : 4,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Örtliche Schrottplätze",
+    "category" : "STREET",
+    "rating" : 5,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Piratensender",
+    "category" : "HOBBY",
+    "rating" : 4,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "SciFi-SimSinn",
+    "category" : "HOBBY",
+    "rating" : 3,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Japanisch",
+    "category" : "LANGUAGE",
+    "rating" : 0,
+    "nativeLanguage" : true,
+    "specialization" : null
+  }, {
+    "name" : "Kantonesisch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : null
+  }, {
+    "name" : "Englisch",
+    "category" : "LANGUAGE",
+    "rating" : 2,
+    "nativeLanguage" : false,
+    "specialization" : "Stadtsprache"
+  } ],
+  "contacts" : [ {
+    "name" : "Schieber",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  }, {
+    "name" : "Mechaniker",
+    "description" : null,
+    "connection" : 2,
+    "loyalty" : 2
+  } ],
+  "decoupledGroups" : [ "Mechanik", "Feuerwaffen", "Cracken" ],
+  "karmaLog" : [ ],
+  "nuyenLog" : [ ],
+  "biography" : {
+    "alias" : "",
+    "sex" : "",
+    "age" : "",
+    "eyes" : "",
+    "height" : "",
+    "weight" : "",
+    "skin" : "",
+    "hair" : "",
+    "description" : "",
+    "background" : "",
+    "concept" : "Rigger, der über seine Riggerkontrolle eine ganze Flotte bewaffneter und unbewaffneter Drohnen lenkt.",
+    "notes" : "Laut GRW S. 125 außerdem: Kommlink mit Prozessor 5, Signal 5, Firewall 5, System 5; Autosofts Steuerung für Bodenfahrzeuge und\n                Flugzeuge, Zielerfassung für Schnellfeuerwaffen und Schwere Waffen, Verteidigung als Abwehr; Step-Van und Drohnen mit\n                Pilot 4, Signal 4, Firewall 4, Prozessor 4, Step-Van mit Riggeradaption; Munition der Drohnenwaffen\n                (je 2 Gurte und 100 Schuss bzw. 10 Streifen Explosivmunition).",
+    "playerName" : "",
+    "gameNotes" : "",
+    "portrait" : null
+  },
+  "tradition" : "HERMETIC",
+  "spellNames" : [ ],
+  "complexForms" : [ ],
+  "adeptPowers" : [ ],
+  "adeptMagic" : 0,
+  "initiation" : {
+    "grade" : 0,
+    "techniques" : [ ]
+  },
+  "spirits" : [ ],
+  "cyberware" : [ {
+    "name" : "Datenbuchse",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Cyberaugen-Basissystem",
+    "grade" : "STANDARD",
+    "rating" : 2,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ {
+      "name" : "Blitzkompensation",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Infrarotsicht",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    }, {
+      "name" : "Restlichtverstärkung",
+      "grade" : "STANDARD",
+      "rating" : 0,
+      "choice" : "",
+      "price" : null,
+      "installed" : [ ],
+      "commlink" : null,
+      "location" : null,
+      "attached" : true,
+      "body" : 0,
+      "strength" : 0,
+      "agility" : 0,
+      "pairedCopy" : false,
+      "pair" : 0
+    } ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Riggerkontrolle",
+    "grade" : "STANDARD",
+    "rating" : 0,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  }, {
+    "name" : "Reaktionsverbesserung",
+    "grade" : "STANDARD",
+    "rating" : 2,
+    "choice" : "",
+    "price" : null,
+    "installed" : [ ],
+    "commlink" : null,
+    "location" : null,
+    "attached" : true,
+    "body" : 0,
+    "strength" : 0,
+    "agility" : 0,
+    "pairedCopy" : false,
+    "pair" : 0
+  } ],
+  "armor" : [ {
+    "name" : "Panzerjacke",
+    "equipped" : true,
+    "price" : null,
+    "mods" : [ ]
+  } ],
+  "weapons" : [ {
+    "name" : "HK MP-5 TX",
+    "rating" : 0,
+    "accessories" : [ ],
+    "arrows" : [ ],
+    "ammo" : ""
+  } ],
+  "gear" : [ {
+    "name" : "Werkzeugkiste",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "Fahrzeugmechanik",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Werkzeugladen",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "Fahrzeugmechanik",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Automatischer Dietrich",
+    "rating" : 1,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Magschlossknacker",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Gefälschte SIN",
+    "rating" : 3,
+    "quantity" : 1,
+    "extra" : "Tarnidentität",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Transys Avalon",
+    "rating" : 0,
+    "quantity" : 1,
+    "extra" : "",
+    "packPrice" : null,
+    "installed" : [ {
+      "name" : "Sim-Modul (für BTL/heißes Sim modifiziert)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : 250,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Aufspüren",
+      "rating" : 5,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Befehl",
+      "rating" : 5,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "ECCM",
+      "rating" : 5,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Schleicher",
+      "rating" : 4,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Verschlüsselung",
+      "rating" : 5,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Autosoft",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "Clearsight",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Autosoft",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "Elektronische Kriegsführung",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Autosoft",
+    "rating" : 4,
+    "quantity" : 2,
+    "extra" : "Steuerung",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Autosoft",
+    "rating" : 4,
+    "quantity" : 1,
+    "extra" : "Abwehr",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Autosoft",
+    "rating" : 4,
+    "quantity" : 2,
+    "extra" : "Zielerfassung",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  }, {
+    "name" : "Explosivgeschosse",
+    "rating" : 0,
+    "quantity" : 200,
+    "extra" : "Maschinenpistolen",
+    "packPrice" : null,
+    "installed" : [ ],
+    "running" : false,
+    "active" : false,
+    "bound" : false,
+    "focusActive" : false
+  } ],
+  "vehicles" : [ {
+    "name" : "GMC Bulldog Step-Van (Kleinlaster)",
+    "riggerAdapter" : true,
+    "mounts" : [ ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Fahrzeug)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  }, {
+    "name" : "Lockheed Optic-X (Klein)",
+    "riggerAdapter" : false,
+    "mounts" : [ ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Stationär/kleine Drohne)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  }, {
+    "name" : "GM-Nissan Doberman (Mittel)",
+    "riggerAdapter" : false,
+    "mounts" : [ {
+      "included" : true,
+      "weapon" : {
+        "name" : "Ingram White Knight",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }
+    } ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Mittlere Drohne)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Autosoft",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "Clearsight",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Autosoft",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "Zielerfassung",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ {
+      "name" : "Prozessor-Modul",
+      "rating" : 4,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Signal-Modul",
+      "rating" : 4,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "damage" : 0
+  }, {
+    "name" : "GM-Nissan Doberman (Mittel)",
+    "riggerAdapter" : false,
+    "mounts" : [ {
+      "included" : true,
+      "weapon" : {
+        "name" : "Ingram White Knight",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }
+    } ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Mittlere Drohne)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Autosoft",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "Clearsight",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    }, {
+      "name" : "Autosoft",
+      "rating" : 3,
+      "quantity" : 1,
+      "extra" : "Zielerfassung",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  }, {
+    "name" : "MCT-Nissan Roto-Drohne (Mittel)",
+    "riggerAdapter" : false,
+    "mounts" : [ {
+      "included" : false,
+      "weapon" : {
+        "name" : "HK 227-X",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }
+    } ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Mittlere Drohne)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  }, {
+    "name" : "MCT-Nissan Roto-Drohne (Mittel)",
+    "riggerAdapter" : false,
+    "mounts" : [ {
+      "included" : false,
+      "weapon" : {
+        "name" : "HK 227-X",
+        "rating" : 0,
+        "accessories" : [ ],
+        "arrows" : [ ],
+        "ammo" : ""
+      }
+    } ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Mittlere Drohne)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  }, {
+    "name" : "Shiawase Kanmushi (Mikrodrohne)",
+    "riggerAdapter" : false,
+    "mounts" : [ ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Mikro)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  }, {
+    "name" : "Lone Star iBall (Minidrohne)",
+    "riggerAdapter" : false,
+    "mounts" : [ ],
+    "includedGear" : [ {
+      "name" : "Sensorpaket (Hand/Minidrohne)",
+      "rating" : 0,
+      "quantity" : 1,
+      "extra" : "",
+      "packPrice" : null,
+      "installed" : [ ],
+      "running" : false,
+      "active" : false,
+      "bound" : false,
+      "focusActive" : false
+    } ],
+    "gear" : [ ],
+    "matrixUpgrades" : [ ],
+    "damage" : 0
+  } ],
+  "lifestyle" : {
+    "level" : "LOW",
+    "months" : 1,
+    "missedMonths" : 0,
+    "debt" : 0
+  },
+  "reputation" : {
+    "streetCredBonus" : 0,
+    "notorietyBonus" : 0,
+    "burnedStreetCred" : 0,
+    "awarenessAdjustment" : 0
+  },
+  "rules" : {
+    "limbArmorAverage" : false,
+    "lateAwakening" : false,
+    "missedLifestylePayments" : false,
+    "books" : [ ]
+  }
+}
