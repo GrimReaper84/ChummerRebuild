@@ -30,7 +30,7 @@
 | Metavarianten                                          | ❌      | Entfernt 2026-11-12: nicht im GRW (Runner-Kompendium), samt ihrer 5 RC-Qualities; `<variant>` bleibt im Loader |
 | Metatyp-BP-Kosten fließen in BP-Bilanz                 | ✅      | Alle 5 Grundrassen (0/20/25/30/40) gegen GRW-Tabelle S. 105 verifiziert, 2026-08-04 |
 | Rassen-Attributspannen korrekt (alle 5 Grundrassen)    | ✅      | Zwerg BOD (2-7) und Ork INT (1-6) am 2026-08-04 korrigiert, Rest stimmte bereits |
-| Bewegungsrate (Walking/Running) | ✅ | 2026-11-15 (ADR-059): Gehen/Laufen je Metatyp (S. 177) und Sprinten im Tab Zustand |
+| Bewegungsrate (Walking/Running) | ✅ | 2026-11-15 (ADR-059): Gehen/Laufen je Metatyp (S. 177) und Sprinten, seit ADR-065 im Bereich „Cheat-Sheet“ |
 | Metatyp-Kategorie (Metahuman, Shapeshifter, Critter …) | ❌      | Nicht modelliert                                                        |
 
 ---
@@ -51,7 +51,7 @@
 | Edgepunkte ausgeben/zurückgewinnen/auffrischen, Edge verheizen | ✅ | 2026-11-15 (ADR-057): im Status-Panel, nur Karrieremodus, gespeichert; Verheizen senkt das Attribut dauerhaft, auch unter das Metatyp-Minimum bis 0 (S. 98/99), Rückkauf über normale Steigerung |
 | Sonderattribute: MAG (Magie)                                                | ✅      | Wie EDG, aber nur sichtbar/freigeschaltet wenn Quality mit `GRANTS_MAGIC` vorhanden (`Character.hasMagic()`) |
 | Sonderattribute: RES (Resonanz)                                             | ✅      | Analog MAG, über `GRANTS_RESONANCE` (`Character.hasResonance()`)                              |
-| Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ✅      | Tab „Zustand“, siehe Abschnitt 16              |
+| Abgeleitetes Attribut: INI (Initiative = INT + REA)                         | ✅      | Status-Panel, siehe Abschnitt 16               |
 | Abgeleitetes Attribut: ESS (Essenz = 6 − Implantate)                        | ✅     | `Character.getEssence()` nach GRW-Kombinationsregel (S. 111), 2 Nachkommastellen, 2026-09-27 |
 
 ---
@@ -296,7 +296,7 @@
 
 | Feature                                            | Status | Anmerkung |
 |----------------------------------------------------|--------|-----------|
-| Physische Initiative = INT + REA (+ Modifikatoren) | ✅      | Initiativeattribut (GRW S. 172) mit wirksamen Werten, gekappt auf ⌊1,5 × (REA-Max + INT-Max)⌋ (S. 91), Verletzungsmodifikator abgezogen; Tab „Zustand“, 2026-11-12 |
+| Physische Initiative = INT + REA (+ Modifikatoren) | ✅      | Initiativeattribut (GRW S. 172) mit wirksamen Werten, gekappt auf ⌊1,5 × (REA-Max + INT-Max)⌋ (S. 91), Verletzungsmodifikator abgezogen; seit ADR-065 im Status-Panel, 2026-11-12 |
 | Astrale Initiative = INT × 2                       | ✅      | GRW S. 227, 3 Durchgänge, nur mit Astralzugang (Gabe Zauberer; Magieradept nicht, S. 116) |
 | Matrix-Initiative (mit Commlink oder Technomancer) | ✅      | 2026-11-13 (ADR-054): AR = körperlich (S. 265); VR kalt Prozessor + INT / 2, heiß + 1 / 3 (S. 276), braucht Sim-Modul und Neuralinterface (S. 258); Technomancer (INT × 2) + 1 / 3 (S. 279) |
 | Initiative Passes anzeigen                         | ✅      | 1 + Gesteigerte Reflexe (S. 230); Reflexbooster noch nicht; astral 3 |
@@ -337,7 +337,7 @@
 | Tastaturkürzel (Ctrl+N/O/S/Shift+S/Q)                                | ✅      |           |
 | Seitenleiste, Kopf- und Fußzeile, Status-Panel (statisch umschaltbar) | ✅      | UI-Rework 2026-11-12, ADR-049 |
 | Einheitliche Optik (Farbvariablen, Schriften, Kartenstil, Icon)      | ✅      | UI-Rework 2026-11-12, ADR-049 |
-| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ✅      | 2026-11-18 (ADR-061): sieben Proben (Attributproben, Sprinten, Wahrnehmung, Ausweichen), Karte „PROBEN“ |
+| Häufige Proben im Status, einzeln ein-/ausblendbar                   | ✅      | 2026-11-18 (ADR-061): sieben Proben, Karte „PROBEN“; seit ADR-065 Attributproben fest im Status, Wahrnehmung/Ausweichen/Bewegung wählbar im Cheat-Sheet |
 | Einstellung: spätes Erwachen erlauben (latente Charaktere)          | ✅      | 2026-11-18 (ADR-061): Regel-Einstellung je Charakter |
 | Einstellung für Regelauslegungen: Gliedpanzerung als Durchschnitt statt Summe | ✅      | 2026-11-18 (ADR-061): Regel-Einstellung je Charakter; Berechnung nur in `Implants#getLimbArmor` |
 | Einstellungsdialog (Anzeige global, Regeln je Charakter)            | ✅      | 2026-11-18 (ADR-061): Menü Einstellungen › „Einstellungen…“; „Status statisch“ dort statt im Menü |
@@ -347,6 +347,8 @@
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
 | Drucken / Export / Charakterbogen                                    | ❌      | **Niedrige Priorität** (2026-08-04): keine Charakterbogen-Vorlage/Formular im GRW-Text gefunden — reines Tool-Feature ohne Regelwerk-Bezug |
 | Spielleiter-Modus (Korrekturen ohne Kosten und Sperren) | ✅ | 2026-11-15 (ADR-060): Menü Einstellungen, nicht gespeichert, GRW-Obergrenzen bleiben |
+| Status-Panel und Zustandstab ohne Doppelungen                        | ✅      | 2026-11-19 (ADR-065): Monitor/Initiative/Attributproben nur im Status, Bereich „Cheat-Sheet“ mit wählbaren Inhalten |
+| Mehrere Charaktere gleichzeitig öffnen                               | ❌      | Nutzerwunsch 2026-11-19: Roadmap 17, vor dem Release |
 | Kategorie-Dropdowns alphabetisch                                     | ✅      | Nutzervorgabe 2026-10-08: zentral in `CatalogSelectDialogController.refreshCategoryOptions()` (deutsche Sortierung, "Alle" oben); ersetzt die GRW-Reihenfolge der Ausrüstungs-/Waffen-Pläne |
 | Icon für "Pfeile hinzufügen" (Waffen-Tab)                           | ❌      | **Notiz (Nutzerwunsch 2026-10-08):** das Bullseye-Icon passt nicht; ein anderes FontAwesome-Icon suchen oder den Button als Text-Button belassen |
 | Einstellbare Zahlendarstellung (QoL)                                 | ✅      | 2026-11-18 (ADR-061): Tausenderpunkt und Dezimaltrennzeichen, zentral über `utils.Numbers` |
@@ -393,7 +395,7 @@ Stand 2026-11-19, aus den Tabellen oben gezählt (❌ sind überwiegend bewusst 
 | Initiative             |  4 |  0 |  0 |
 | Zustandsmonitor        |  4 |  0 |  0 |
 | Persistenz             |  9 |  0 |  0 |
-| UI/Bedienbarkeit       | 16 |  0 |  2 |
+| UI/Bedienbarkeit       | 17 |  0 |  3 |
 | NSCs und Critter       |  5 |  0 |  1 |
 
 ---
@@ -428,6 +430,11 @@ README-Roadmap sind erledigt; es folgen:
     ihren Kräften (2026-11-19, ADR-064).
 15. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge
     (Abschnitt 13); nur, wenn das Werkzeug das abbilden soll.
+16. ✅ **Status-Panel und Zustandstab entdoppeln (2026-11-19, ADR-065):** Zustandsmonitor mit Überzahl, Initiative und
+    Attributproben nur im Status; der Bereich „Zustand“ wird zum „Cheat-Sheet“ mit wählbaren Inhalten (eigener Tab in
+    den Einstellungen).
+17. **Mehrere Charaktere gleichzeitig öffnen** (Nutzerwunsch 2026-11-19): bisher ersetzt jedes Öffnen bzw. „Neu“ das
+    offene Dokument; z.B. Tabs oder eigene Fenster je Dokument, Rückfrage bei ungespeicherten Änderungen je Dokument.
 
 **Release:** Das erste Release (Tag `v1.0.0`) kommt erst, wenn alle Funktionen des Grundregelwerks umgesetzt sind
 (Nutzerentscheidung 2026-11-11); die Release-Technik steht seit ADR-043. Vor dem Tag: erster Lauf von `release.yml` auf

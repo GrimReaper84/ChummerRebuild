@@ -1053,7 +1053,7 @@
     -fx-background-color: -cr-accent-bg-hover;
 }
 
-/* ── Zustandsmonitor-Kästchen (Bereich "Zustand", Status) ── */
+/* ── Zustandsmonitor-Kästchen (Fahrzeuge, Status) ── */
 
 .cm-box {
     -fx-min-width: 30px;
@@ -1076,19 +1076,52 @@
     -fx-cursor: default;
 }
 
-.cm-box-overflow {
-    -fx-border-style: dashed;
-}
-
 .cm-box-filled {
     -fx-background-color: -cr-danger;
     -fx-border-color: -cr-danger;
     -fx-text-fill: -cr-text;
 }
 
-.cm-box-filled-stun {
-    -fx-background-color: -cr-stun;
-    -fx-border-color: -cr-stun;
+/* Tabs des Einstellungsdialogs (ADR-065, Klasse settings-tabs); ohne eigene Regeln erschiene das helle Modena-Theme */
+.settings-tabs > .tab-header-area > .tab-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -cr-border transparent;
+}
+
+.settings-tabs > .tab-header-area {
+    -fx-padding: 0 0 8 0;
+}
+
+.settings-tabs > .tab-content-area {
+    -fx-background-color: transparent;
+}
+
+.settings-tabs .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6 6 0 0;
+    -fx-padding: 6 14 6 14;
+}
+
+.settings-tabs .tab:hover {
+    -fx-background-color: -cr-hover;
+}
+
+.settings-tabs .tab:selected {
+    -fx-background-color: -cr-accent-bg;
+    -fx-border-color: transparent transparent -cr-accent transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.settings-tabs .tab .tab-label {
+    -fx-text-fill: -cr-muted;
+}
+
+.settings-tabs .tab:selected .tab-label {
+    -fx-text-fill: -cr-text;
+}
+
+.settings-tabs .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
 }
 
 /* Kleine Kästchen der Status-Übersicht; im Karrieremodus klickbar */
@@ -1123,6 +1156,11 @@
 .cm-mini-stun {
     -fx-background-color: -cr-stun;
     -fx-border-color: -cr-stun;
+}
+
+/* Ungefüllte Überzahl-Kästchen im Status (GRW S. 192/193) */
+.cm-mini-overflow {
+    -fx-border-style: dashed;
 }
 
 /* Verbrauchtes Gruppen-Edge (Schergen-Bogen): Akzent statt Schadensfarbe */

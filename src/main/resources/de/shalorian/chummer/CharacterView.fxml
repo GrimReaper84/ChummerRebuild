@@ -94,8 +94,8 @@
       </ScrollPane>
 
 
-      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="conditionPage">
-        <VBox styleClass="attr-container" fx:id="conditionContainer">
+      <ScrollPane fitToWidth="true" styleClass="attr-scroll" fx:id="cheatSheetPage">
+        <VBox styleClass="attr-container" fx:id="cheatSheetContainer">
           <padding>
             <Insets bottom="20" left="36" right="36" top="8"/>
           </padding>

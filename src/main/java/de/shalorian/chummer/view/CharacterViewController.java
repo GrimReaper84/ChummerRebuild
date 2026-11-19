@@ -4,7 +4,7 @@ import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogEntry;
-import de.shalorian.chummer.model.character.condition.StatusTest;
+import de.shalorian.chummer.model.character.condition.CheatSheetItem;
 import de.shalorian.chummer.model.character.initiation.TechniqueKind;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
@@ -22,8 +22,8 @@ import de.shalorian.chummer.view.shell.SlidePanel;
 import de.shalorian.chummer.view.tab.AdeptTabBuilder;
 import de.shalorian.chummer.view.tab.AttributeTabBuilder;
 import de.shalorian.chummer.view.tab.BiographyTabBuilder;
+import de.shalorian.chummer.view.tab.CheatSheetTabBuilder;
 import de.shalorian.chummer.view.tab.CharacterTabHost;
-import de.shalorian.chummer.view.tab.ConditionTabBuilder;
 import de.shalorian.chummer.view.tab.ContactTabBuilder;
 import de.shalorian.chummer.view.tab.CyberwareTabBuilder;
 import de.shalorian.chummer.view.tab.IncrementWiring;
@@ -111,7 +111,7 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private VBox qualitiesContainer;
   @FXML
-  private VBox conditionContainer;
+  private VBox cheatSheetContainer;
   @FXML
   private VBox contactsContainer;
   @FXML
@@ -140,7 +140,7 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private Node qualitiesPage;
   @FXML
-  private Node conditionPage;
+  private Node cheatSheetPage;
   @FXML
   private Node magicPage;
   @FXML
@@ -176,8 +176,6 @@ public class CharacterViewController implements CharacterTabHost {
   @FXML
   private ToggleButton sortByAlphabetBtn;
   private @Nullable Character character;
-  /** Proben im Status-Panel (Anzeige-Einstellung, vom Hauptfenster gesetzt). */
-  private @NonNull Set<StatusTest> statusTests = Set.of();
   private @NonNull Consumer<Character> onCharacterReplaced = _ -> { };
   private final @NonNull TabServices services =
       new TabServices(() -> nameLabel.getScene().getWindow(), this::onLogChanged, this::currentRuleOptions);
@@ -193,7 +191,7 @@ public class CharacterViewController implements CharacterTabHost {
   @SuppressWarnings("NullAway.Init")
   private ContactTabBuilder contactTab;
   @SuppressWarnings("NullAway.Init")
-  private ConditionTabBuilder conditionTab;
+  private CheatSheetTabBuilder cheatSheetTab;
   @SuppressWarnings("NullAway.Init")
   private BiographyTabBuilder biographyTab;
   @SuppressWarnings("NullAway.Init")
@@ -227,7 +225,7 @@ public class CharacterViewController implements CharacterTabHost {
         sortByAlphabetBtn, sortByCategoryBtn, this, wiring);
     qualityTab = new QualityTabBuilder(qualitiesContainer, this);
     contactTab = new ContactTabBuilder(contactsContainer, this, wiring);
-    conditionTab = new ConditionTabBuilder(conditionContainer, this);
+    cheatSheetTab = new CheatSheetTabBuilder(cheatSheetContainer);
     biographyTab = new BiographyTabBuilder(biographyContainer, this);
     magicTabBuilder = new MagicTabBuilder(magicContainer, this);
     adeptTabBuilder = new AdeptTabBuilder(adeptContainer, this, wiring);
@@ -281,9 +279,9 @@ public class CharacterViewController implements CharacterTabHost {
     return Objects.requireNonNull(slidePanel, "configureStatus wurde nicht aufgerufen");
   }
 
-  /** Proben, die das Status-Panel zeigt (Anzeige-Einstellung); wirkt beim nächsten Aufbau der Übersicht. */
-  public void setStatusTests(@NonNull Set<StatusTest> statusTests) {
-    this.statusTests = Set.copyOf(statusTests);
+  /** Inhalte des Bereichs „Cheat-Sheet“ (Anzeige-Einstellung, ADR-065); wirken beim nächsten Aufbau des Bereichs. */
+  public void setCheatSheetItems(@NonNull Set<CheatSheetItem> cheatSheetItems) {
+    cheatSheetTab.setItems(cheatSheetItems);
   }
 
   public boolean isStatusStatic() {
@@ -312,7 +310,7 @@ public class CharacterViewController implements CharacterTabHost {
     }
     footerLabel.setText(FooterText.of(character));
     setWarnStyle(footerLabel, character.isCreationOverspent());
-    Node overview = StatusOverviewBuilder.build(character, services(), statusTests, this::refreshRows);
+    Node overview = StatusOverviewBuilder.build(character, services(), this::refreshRows);
     if (statusStatic) {
       statusPage.setContent(overview);
     } else {
@@ -331,7 +329,7 @@ public class CharacterViewController implements CharacterTabHost {
     pages.put(CharacterSection.ATTRIBUTES, attributesPage);
     pages.put(CharacterSection.SKILLS, skillsPage);
     pages.put(CharacterSection.QUALITIES, qualitiesPage);
-    pages.put(CharacterSection.CONDITION, conditionPage);
+    pages.put(CharacterSection.CHEAT_SHEET, cheatSheetPage);
     pages.put(CharacterSection.MAGIC, magicPage);
     pages.put(CharacterSection.ADEPT, adeptPage);
     pages.put(CharacterSection.TECHNOMANCER, technomancerPage);
@@ -434,7 +432,7 @@ public class CharacterViewController implements CharacterTabHost {
     skillTab.setCharacter(character);
     qualityTab.setCharacter(character);
     contactTab.setCharacter(character);
-    conditionTab.setCharacter(character);
+    cheatSheetTab.setCharacter(character);
     biographyTab.setCharacter(character);
     magicTabBuilder.setCharacter(character);
     adeptTabBuilder.setCharacter(character);
@@ -538,7 +536,7 @@ public class CharacterViewController implements CharacterTabHost {
     adeptTabBuilder.build();
     attributeTab.build();
     skillTab.build();
-    conditionTab.build();
+    cheatSheetTab.build();
     refreshRows();
   }
 
@@ -555,7 +553,7 @@ public class CharacterViewController implements CharacterTabHost {
     // (Cyber-Nahkampfwaffen, auch in Cybergliedmaßen).
     attributeTab.build();
     skillTab.build();
-    conditionTab.build();
+    cheatSheetTab.build();
     if (character != null) {
       streetGear.rebuildWeapons(character);
     }
@@ -584,7 +582,7 @@ public class CharacterViewController implements CharacterTabHost {
     skillTab.refresh();
     qualityTab.refresh();
     contactTab.refresh();
-    conditionTab.refresh();
+    cheatSheetTab.refresh();
     adeptTabBuilder.refresh();
     magicTabBuilder.refresh();
     technomancerTabBuilder.refresh();
@@ -685,7 +683,7 @@ public class CharacterViewController implements CharacterTabHost {
     skillTab.build();
     buildQualitiesTab();
     contactTab.build();
-    conditionTab.build();
+    cheatSheetTab.build();
     biographyTab.build();
     magicTabBuilder.build();
     adeptTabBuilder.build();

@@ -88,7 +88,7 @@ Wirkungssummen liegen in `Implants` (Unterobjekt von `Character`), die Implantat
 **Warum:** Nutzerentscheidungen 2026-11-12 (Kapazität und Einzelkauf, dauerhafte Wirkungen, sperren statt warnen,
 Preise wie im C#, Kommlink mit Einbau); `docs/plaene/archiv/implantate_plan.md`.
 
-### ADR-049: UI-Rework: Seitenleiste, Status-Panel, Kartenstil (2026-11-12)
+### ADR-049: UI-Rework: Seitenleiste, Status-Panel, Kartenstil (2026-11-12) — teilweise überholt durch ADR-065
 Der Charakterbogen hat statt Tabs eine gruppierte Seitenleiste (Charakter, Magie & Resonanz, Ausrüstung, Netzwerk &
 Protokoll; die Ebene Straßenausrüstung entfällt), eine schmale Kopfzeile (Name, Metatyp, Ressourcen-BP, Abschließen)
 und eine Fußzeile `BP | Nuyen | Essenz` bei der Erschaffung bzw. `Karma | Nuyen | Essenz` in der Karriere. Die
@@ -256,7 +256,7 @@ Lebensstil-Zahlungen und manuelle Einträge bleiben echte Buchungen.
 **Warum:** Nutzerwunsch 2026-11-15 nach Vorbild des Fallout-Builders (dort „GM free edit“); Korrekturen am Tisch
 sollen nicht an Regelsperren oder Guthaben scheitern. `docs/plaene/archiv/gm_modus_plan.md`.
 
-### ADR-061: Einstellungen und Regelwerke (2026-11-18)
+### ADR-061: Einstellungen und Regelwerke (2026-11-18) — teilweise überholt durch ADR-065
 Menü Einstellungen → „Einstellungen…“ öffnet einen Dialog mit zwei Bereichen. **Anzeige** gilt für alle Charaktere
 (Java-Preferences): Tausender gruppieren an/aus, Dezimalkomma oder -punkt (das jeweils andere Zeichen gruppiert die Tausender),
 „Status statisch anzeigen“ (zieht aus dem Menü in den Dialog, ADR-049) und sieben Proben für eine Karte „PROBEN“ im
@@ -332,6 +332,19 @@ Essenz (6 + 1W6), angesetzt mit 9.
 **Warum:** Ein Bogen für alle NSCs, kein eigener Charaktertyp; die Spielleitung passt Critter im Rahmen des GRW an und
 führt Rudel wie Schergen. Nur die Kräfte zu rechnen, die Pools und Panzerung ändern, hält die übrigen Regeln dort, wo
 sie hingehören: bei der Spielleitung.
+
+### ADR-065: Status-Panel und Cheat-Sheet statt Bereich „Zustand“ (2026-11-19)
+Zustandsmonitor und Initiative stehen nur noch im Status-Panel (überholt den eigenen Tab aus ADR-045). Die
+Überzahl-Kästchen (S. 192/193) hängen dort hinter „‖“ an der körperlichen Reihe, sind gestrichelt und im Karrieremodus
+klickbar. Die vier Attributproben (S. 166/167) stehen fest als Karte im Status. Der Höchstwert der Initiative steht im
+Tooltip. Der Bereich „Zustand“ heißt jetzt „Cheat-Sheet“ und zeigt nur, was in den Einstellungen gewählt ist:
+Wahrnehmung, Ausweichen und Bewegung (Gehen, Laufen, Sprinten, S. 177). Sprinten hat keinen eigenen Haken mehr, die
+Karte „PROBEN“ im Status entfällt (überholt die Proben im Status aus ADR-061). Ohne Auswahl zeigt der Bereich einen
+Hinweis. Der Einstellungsdialog hat drei Tabs: Anzeige, Cheat-Sheet, Regeln. Die Preferences-Schlüssel der Haken
+bleiben (`display.statusTest.<Konstante>`), damit Wahrnehmung und Ausweichen gewählt bleiben.
+**Warum:** Nutzerbefund und -entscheidungen 2026-11-19: Beide Stellen zeigten weitgehend dasselbe. Der Status ist von
+jedem Bereich aus erreichbar und damit der Ort für das, was man am Tisch ständig braucht. Weitere optionale Anzeigen
+sollen in einem eigenen Einstellungs-Tab Platz haben. `docs/plaene/archiv/status_entdoppeln_plan.md`.
 
 ## Architektur und Code
 
@@ -420,7 +433,7 @@ Kurzwirkung im Dialog und Tooltip.
 **Warum:** GRW als Wahrheitsquelle (ADR-002); Nutzerentscheidungen 2026-11-11 (übersetzen, entfernen, Metavarianten
 unverändert). Die Prüfung mit Begründung an einer Stelle (`getQualityBlockReason`) dient Dialog und Modell zugleich.
 
-### ADR-045: Würfelpools, Zustandsmonitor, Initiative (2026-11-12) — teilweise überholt durch ADR-046
+### ADR-045: Würfelpools, Zustandsmonitor, Initiative (2026-11-12) — teilweise überholt durch ADR-046 und ADR-065
 Pools aus Fertigkeitswert und wirksamem Attribut (S. 146), ohne Wert Attribut − 1 nur bei den nicht kursiven
 Fertigkeiten der Tabelle S. 146 und nicht bei Ahnungslosigkeit durch Handicaps (S. 120/122). Der Verletzungsmodifikator
 (S. 193) ist in allen angezeigten Pools und Initiativen schon eingerechnet. Schaden wird nur im Karrieremodus

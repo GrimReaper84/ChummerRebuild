@@ -1,6 +1,6 @@
 package de.shalorian.chummer.view.dialog;
 
-import de.shalorian.chummer.model.character.condition.StatusTest;
+import de.shalorian.chummer.model.character.condition.CheatSheetItem;
 import de.shalorian.chummer.model.character.option.RuleOptions;
 import de.shalorian.chummer.model.character.rulebook.RulebookData;
 import de.shalorian.chummer.model.character.rulebook.RulebookDataLoader;
@@ -16,20 +16,18 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Einstellungsdialog (ADR-061): Anzeige für alle Charaktere, Regeln nur für den offenen Charakter. Ohne Charakter ist
- * der Regelbereich deaktiviert, nicht ausgeblendet. „Übernehmen“ schreibt die Regeln direkt in die
- * {@link RuleOptions} des Charakters; die Anzeige-Werte holt der Aufrufer über {@link #getResult()}.
+ * Einstellungsdialog (ADR-061) mit drei Tabs (ADR-065): Anzeige und Cheat-Sheet gelten für alle Charaktere, Regeln nur
+ * für den offenen Charakter. Ohne Charakter ist der Regelbereich deaktiviert, nicht ausgeblendet. „Übernehmen“
+ * schreibt die Regeln direkt in die {@link RuleOptions} des Charakters; die Anzeige-Werte holt der Aufrufer über
+ * {@link #getResult()}.
  */
 public class SettingsDialogController {
-
-  private static final int TEST_COLUMNS = 2;
 
   @FXML
   private CheckBox groupThousandsBox;
@@ -40,7 +38,7 @@ public class SettingsDialogController {
   @FXML
   private CheckBox statusStaticBox;
   @FXML
-  private GridPane testsGrid;
+  private VBox cheatSheetBox;
   @FXML
   private VBox rulesContent;
   @FXML
@@ -56,7 +54,7 @@ public class SettingsDialogController {
   @FXML
   private VBox booksBox;
 
-  private final Map<StatusTest, CheckBox> testBoxes = new EnumMap<>(StatusTest.class);
+  private final Map<CheatSheetItem, CheckBox> cheatSheetBoxes = new EnumMap<>(CheatSheetItem.class);
   private final Map<String, CheckBox> bookBoxes = new LinkedHashMap<>();
   private @Nullable Stage stage;
   private @Nullable RuleOptions ruleOptions;
@@ -64,12 +62,10 @@ public class SettingsDialogController {
 
   @FXML
   public void initialize() {
-    int index = 0;
-    for (StatusTest test : StatusTest.values()) {
-      CheckBox box = new CheckBox(test.getDisplayName());
-      testBoxes.put(test, box);
-      testsGrid.add(box, index % TEST_COLUMNS, index / TEST_COLUMNS);
-      index++;
+    for (CheatSheetItem item : CheatSheetItem.values()) {
+      CheckBox box = new CheckBox(item.getDisplayName());
+      cheatSheetBoxes.put(item, box);
+      cheatSheetBox.getChildren().add(box);
     }
     // ein Trennzeichen ist immer gewählt: ein zweiter Klick auf den gewählten Knopf hebt die Wahl nicht auf
     decimalCommaBtn.setOnAction(_ -> decimalCommaBtn.setSelected(true));
@@ -103,7 +99,7 @@ public class SettingsDialogController {
     groupThousandsBox.setSelected(display.numberStyle().groupThousands());
     (display.numberStyle().decimalComma() ? decimalCommaBtn : decimalPointBtn).setSelected(true);
     statusStaticBox.setSelected(display.statusStatic());
-    testBoxes.forEach((test, box) -> box.setSelected(display.statusTests().contains(test)));
+    cheatSheetBoxes.forEach((item, box) -> box.setSelected(display.cheatSheetItems().contains(item)));
     boolean hasCharacter = ruleOptions != null;
     noCharacterHint.setVisible(!hasCharacter);
     noCharacterHint.setManaged(!hasCharacter);
@@ -127,14 +123,14 @@ public class SettingsDialogController {
 
   @FXML
   private void onApply() {
-    Set<StatusTest> tests = EnumSet.noneOf(StatusTest.class);
-    testBoxes.forEach((test, box) -> {
+    Set<CheatSheetItem> items = EnumSet.noneOf(CheatSheetItem.class);
+    cheatSheetBoxes.forEach((item, box) -> {
       if (box.isSelected()) {
-        tests.add(test);
+        items.add(item);
       }
     });
     result = new SettingsResult(new NumberStyle(groupThousandsBox.isSelected(), decimalCommaBtn.isSelected()),
-        statusStaticBox.isSelected(), tests);
+        statusStaticBox.isSelected(), items);
     if (ruleOptions != null) {
       ruleOptions.setLimbArmorAverage(limbArmorAverageBox.isSelected());
       ruleOptions.setLateAwakening(lateAwakeningBox.isSelected());

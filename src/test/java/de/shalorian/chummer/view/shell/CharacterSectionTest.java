@@ -15,7 +15,7 @@ class CharacterSectionTest {
 
   @Test
   void characterGroupStartsWithStatus() {
-    assertEquals(List.of("Status", "Biografie", "Attribute", "Fertigkeiten", "Gaben & Handicaps", "Zustand"),
+    assertEquals(List.of("Status", "Biografie", "Attribute", "Fertigkeiten", "Gaben & Handicaps", "Cheat-Sheet"),
         titles(SectionGroup.CHARACTER));
   }
 

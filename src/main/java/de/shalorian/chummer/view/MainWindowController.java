@@ -3,7 +3,7 @@ package de.shalorian.chummer.view;
 import de.shalorian.chummer.App;
 import de.shalorian.chummer.AppInfo;
 import de.shalorian.chummer.model.character.Character;
-import de.shalorian.chummer.model.character.condition.StatusTest;
+import de.shalorian.chummer.model.character.condition.CheatSheetItem;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.npc.NpcGroup;
 import de.shalorian.chummer.model.npc.NpcStatblock;
@@ -72,8 +72,11 @@ public class MainWindowController {
   private static final String STATUS_STATIC_KEY = "character.statusStatic";
   private static final String GROUP_THOUSANDS_KEY = "display.groupThousands";
   private static final String DECIMAL_COMMA_KEY = "display.decimalComma";
-  /** Vorsilbe der Schlüssel für die Proben im Status, dahinter der Name der {@link StatusTest}-Konstante. */
-  private static final String STATUS_TEST_KEY_PREFIX = "display.statusTest.";
+  /**
+   * Vorsilbe der Schlüssel für die Inhalte des Cheat-Sheets, dahinter der Name der {@link CheatSheetItem}-Konstante.
+   * Der Wert stammt aus der Zeit der Proben im Status (ADR-061) und bleibt, damit gewählte Haken erhalten bleiben.
+   */
+  private static final String CHEAT_SHEET_KEY_PREFIX = "display.statusTest.";
   private final @NonNull ViewPreferences preferences = ViewPreferences.user();
   /** Position des Status-Knopfs, gemeinsam für alle Charaktere und gemerkt zwischen den Starts. */
   private final @NonNull FloatingButtonPosition statusButtonPosition =
@@ -143,21 +146,21 @@ public class MainWindowController {
     NumberStyle numberStyle = new NumberStyle(
         preferences.getBoolean(GROUP_THOUSANDS_KEY, NumberStyle.DEFAULT.groupThousands()),
         preferences.getBoolean(DECIMAL_COMMA_KEY, NumberStyle.DEFAULT.decimalComma()));
-    Set<StatusTest> tests = EnumSet.noneOf(StatusTest.class);
-    for (StatusTest test : StatusTest.values()) {
-      if (preferences.getBoolean(STATUS_TEST_KEY_PREFIX + test.name(), false)) {
-        tests.add(test);
+    Set<CheatSheetItem> items = EnumSet.noneOf(CheatSheetItem.class);
+    for (CheatSheetItem item : CheatSheetItem.values()) {
+      if (preferences.getBoolean(CHEAT_SHEET_KEY_PREFIX + item.name(), false)) {
+        items.add(item);
       }
     }
-    return new SettingsResult(numberStyle, preferences.getBoolean(STATUS_STATIC_KEY, false), tests);
+    return new SettingsResult(numberStyle, preferences.getBoolean(STATUS_STATIC_KEY, false), items);
   }
 
   private void storeDisplaySettings(@NonNull SettingsResult settings) {
     preferences.putBoolean(GROUP_THOUSANDS_KEY, settings.numberStyle().groupThousands());
     preferences.putBoolean(DECIMAL_COMMA_KEY, settings.numberStyle().decimalComma());
     preferences.putBoolean(STATUS_STATIC_KEY, settings.statusStatic());
-    for (StatusTest test : StatusTest.values()) {
-      preferences.putBoolean(STATUS_TEST_KEY_PREFIX + test.name(), settings.statusTests().contains(test));
+    for (CheatSheetItem item : CheatSheetItem.values()) {
+      preferences.putBoolean(CHEAT_SHEET_KEY_PREFIX + item.name(), settings.cheatSheetItems().contains(item));
     }
   }
 
@@ -195,7 +198,7 @@ public class MainWindowController {
         currentGroupView.rebuild();
       }
       if (currentView != null) {
-        currentView.setStatusTests(result.statusTests());
+        currentView.setCheatSheetItems(result.cheatSheetItems());
         if (currentView.isStatusStatic() != result.statusStatic()) {
           currentView.setStatusStatic(result.statusStatic());
         }
@@ -330,7 +333,7 @@ public class MainWindowController {
     CharacterViewController charCtrl = viewLoader.getController();
     SettingsResult display = displaySettings();
     charCtrl.configureStatus(display.statusStatic(), statusButtonPosition);
-    charCtrl.setStatusTests(display.statusTests());
+    charCtrl.setCheatSheetItems(display.cheatSheetItems());
     charCtrl.setCharacter(character);
     charCtrl.setOnCharacterReplaced(restored -> {
       currentCharacter = restored;

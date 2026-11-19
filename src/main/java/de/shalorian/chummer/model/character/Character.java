@@ -10,7 +10,7 @@ import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
 import de.shalorian.chummer.model.character.condition.AttributeTest;
-import de.shalorian.chummer.model.character.condition.StatusTest;
+import de.shalorian.chummer.model.character.condition.CheatSheetItem;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.ImplantEffectType;
 import de.shalorian.chummer.model.character.cyberware.Implants;
@@ -1836,17 +1836,13 @@ public class Character {
   }
 
   /**
-   * Pool einer Probe für das Status-Panel: Attributprobe, Sprint-Pool bzw. Fertigkeitspool; leer, wenn die Probe nicht
-   * möglich ist (z.B. kein Defaulting).
+   * Pool eines Eintrags im Cheat-Sheet (Wahrnehmung, Ausweichen); leer, wenn die Probe nicht möglich ist (z.B. kein
+   * Defaulting), und für Bewegung, die keinen eigenen Pool hat (ADR-065).
    */
-  public @NonNull Optional<DicePool> getStatusTestPool(@NonNull StatusTest test) {
-    AttributeTest attributeTest = test.getAttributeTest();
-    if (attributeTest != null) {
-      return Optional.of(getAttributeTestPool(attributeTest));
-    }
-    String skillName = test.getSkillName();
+  public @NonNull Optional<DicePool> getCheatSheetPool(@NonNull CheatSheetItem item) {
+    String skillName = item.getSkillName();
     if (skillName == null) {
-      return getSprintPool();
+      return Optional.empty();
     }
     Skill skill = getSkill(skillName);
     return skill == null ? Optional.empty() : getSkillDicePool(skill);
@@ -2281,7 +2277,7 @@ public class Character {
 
   /**
    * Verletzungsmodifikator einer einzelnen Spalte bei {@code damagedBoxes} gefüllten Kästchen, siehe {@link
-   * #getWoundModifier()}. Dient auch der Beschriftung der Kästchen im Zustand-Tab.
+   * #getWoundModifier()}. Dient auch den Trennern im Zustandsmonitor des Status-Panels.
    *
    * @return 0 oder negativ
    */

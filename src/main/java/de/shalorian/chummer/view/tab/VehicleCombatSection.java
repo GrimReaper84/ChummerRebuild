@@ -15,7 +15,6 @@ import de.shalorian.chummer.model.character.vehicle.VehiclePoolCell;
 import de.shalorian.chummer.model.character.vehicle.VehiclePoolRow;
 import de.shalorian.chummer.model.character.vehicle.VehiclePools;
 import de.shalorian.chummer.view.grid.ConditionBoxes;
-import java.util.List;
 import java.util.Optional;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -80,13 +79,13 @@ final class VehicleCombatSection {
     return label;
   }
 
-  /** Kästchen n setzt den Schaden auf n, ein Klick auf das letzte gefüllte leert es (wie im Zustand-Tab). */
+  /** Kästchen n setzt den Schaden auf n, ein Klick auf das letzte gefüllte leert es (wie im Status-Panel). */
   private static @NonNull VBox damage(@NonNull Character character, @NonNull Vehicle vehicle,
       @NonNull Runnable onDamageChanged) {
     Label title = new Label("Schaden (%d / %d)".formatted(vehicle.getDamage(), vehicle.getConditionMonitor()));
     title.getStyleClass().add(STYLE_DETAIL_KEY);
-    GridPane grid = ConditionBoxes.grid(vehicle.getConditionMonitor(), 0, vehicle.getDamage(), BOXES_PER_ROW,
-        character.isCreated(), _ -> "", List.of(), List.of(), newDamage -> {
+    GridPane grid = ConditionBoxes.grid(vehicle.getConditionMonitor(), vehicle.getDamage(), BOXES_PER_ROW,
+        character.isCreated(), newDamage -> {
           vehicle.setDamage(newDamage);
           onDamageChanged.run();
         });

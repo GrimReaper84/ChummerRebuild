@@ -2,13 +2,21 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+import static de.shalorian.chummer.view.tab.StatusCards.CARD_GAP;
+import static de.shalorian.chummer.view.tab.StatusCards.CARD_WIDTH;
+import static de.shalorian.chummer.view.tab.StatusCards.card;
+import static de.shalorian.chummer.view.tab.StatusCards.columns;
+import static de.shalorian.chummer.view.tab.StatusCards.figure;
+import static de.shalorian.chummer.view.tab.StatusCards.poolRow;
+import static de.shalorian.chummer.view.tab.StatusCards.styled;
+import static de.shalorian.chummer.view.tab.StatusCards.titled;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.MatrixAccess;
 import de.shalorian.chummer.model.character.armor.SpecialProtection;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
-import de.shalorian.chummer.model.character.condition.StatusTest;
+import de.shalorian.chummer.model.character.condition.AttributeTest;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.situation.SituationalPool;
 import de.shalorian.chummer.model.character.skill.DicePool;
@@ -16,8 +24,6 @@ import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.grid.MonitorBoxRow;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.IntConsumer;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -26,7 +32,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -34,22 +39,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 /**
- * Status-Übersicht des Charakters als Karten: Kopf (Name, Metatyp, Modus), Initiative, Zustandsmonitor, Panzerung,
- * Essenz, Sonderattribute (mit dem Durchschnitt angeschlossener Cybergliedmaßen) und Hinweise ({@link StatusHints}).
- * Sie wird bei jeder Änderung neu gebaut und im Slide-Panel oder als statischer Bereich gezeigt (Plan UI-Rework,
- * Abschnitt 6). Im Karrieremodus trägt ein Klick auf ein Kästchen
- * des Zustandsmonitors Schaden ein wie im Bereich „Zustand“; bei der Erschaffung sind die Kästchen gesperrt.
+ * Status-Übersicht des Charakters als Karten: Kopf (Name, Metatyp, Modus), Initiative, Zustandsmonitor mit Überzahl
+ * (GRW S. 192/193), Panzerung, Essenz, Sonderattribute (mit dem Durchschnitt angeschlossener Cybergliedmaßen),
+ * Attributproben (S. 166/167), situative Pools und Hinweise ({@link StatusHints}). Zustandsmonitor und Initiative
+ * stehen nur hier (ADR-065). Sie wird bei jeder Änderung neu gebaut und im Slide-Panel oder als statischer Bereich
+ * gezeigt (Plan UI-Rework, Abschnitt 6). Im Karrieremodus trägt ein Klick auf ein Kästchen des Zustandsmonitors
+ * Schaden ein; bei der Erschaffung sind die Kästchen gesperrt.
  */
 public final class StatusOverviewBuilder {
 
   private static final EssenceStringConverter ESSENCE_FORMAT = new EssenceStringConverter();
-  private static final double CARD_GAP = 12;
-  /** Bevorzugte Breite der Übersicht; das Slide-Panel misst sie und ist mindestens so breit. */
-  private static final double WIDTH = 400;
   private static final String CREATION_HINT = "Schaden erst im Karrieremodus eintragbar";
   private static final String EDGE_CREATION_HINT = "Edgepunkte erst im Karrieremodus nutzbar";
 
@@ -60,22 +62,19 @@ public final class StatusOverviewBuilder {
    * Baut die Übersicht für {@code character}.
    *
    * @param services        Rückfragen (Edge verheizen)
-   * @param tests           Proben, die als Karte „PROBEN“ erscheinen (Anzeige-Einstellung); leer = keine Karte
    * @param onDamageChanged nach einem Klick auf ein Kästchen, auf die Edge-Knöpfe bzw. nach der Wahl des aktiven
    *                        Kommlinks aufgerufen, damit alle Anzeigen nachziehen
    */
   public static @NonNull Node build(@NonNull Character character, @NonNull TabServices services,
-      @NonNull Set<StatusTest> tests, @NonNull Runnable onDamageChanged) {
+      @NonNull Runnable onDamageChanged) {
     VBox root = new VBox(CARD_GAP);
-    root.setPrefWidth(WIDTH);
+    root.setPrefWidth(CARD_WIDTH);
     root.getChildren().addAll(header(character), initiative(character, onDamageChanged), conditionMonitor(character, onDamageChanged),
         protectionAndEssence(character), specialAttributes(character, services, onDamageChanged));
+    root.getChildren().add(attributeTests(character));
     List<SituationalPool> pools = character.getSituationalPools();
     if (!pools.isEmpty()) {
       root.getChildren().add(situationalPools(pools));
-    }
-    if (!tests.isEmpty()) {
-      root.getChildren().add(statusTests(character, tests));
     }
     List<String> hints = StatusHints.of(character);
     if (!hints.isEmpty()) {
@@ -93,30 +92,15 @@ public final class StatusOverviewBuilder {
     return card(titled("SITUATIVE POOLS", rows));
   }
 
-  /** Gewählte Proben in fester Reihenfolge, Aufschlüsselung im Tooltip; „–“, wenn die Probe nicht möglich ist. */
-  private static @NonNull Node statusTests(@NonNull Character c, @NonNull Set<StatusTest> tests) {
+  /** Die vier Attributproben (GRW S. 166/167), immer sichtbar; Aufschlüsselung und Seite im Tooltip. */
+  private static @NonNull Node attributeTests(@NonNull Character c) {
     VBox rows = new VBox(4);
-    for (StatusTest test : StatusTest.values()) {
-      if (!tests.contains(test)) {
-        continue;
-      }
-      Optional<DicePool> pool = c.getStatusTestPool(test);
-      rows.getChildren().add(poolRow(test.getDisplayName(), pool.map(p -> String.valueOf(p.dice())).orElse("–"),
-          pool.map(DicePool::breakdown).orElse(null)));
+    for (AttributeTest test : AttributeTest.values()) {
+      DicePool pool = c.getAttributeTestPool(test);
+      rows.getChildren().add(poolRow(test.getDisplayName(), String.valueOf(pool.dice()),
+          "%s (GRW S. %d)".formatted(pool.breakdown(), test.getPage())));
     }
-    return card(titled("PROBEN", rows));
-  }
-
-  /** Zeile „Anlass … Würfel“ der Pool-Karten, Aufschlüsselung im Tooltip. */
-  private static @NonNull HBox poolRow(@NonNull String caption, @NonNull String diceText, @Nullable String breakdown) {
-    Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
-    HBox row = new HBox(8, styled(new Label(caption), "key-caption"), spacer, styled(new Label(diceText), "key-figure"));
-    row.setAlignment(Pos.CENTER_LEFT);
-    if (breakdown != null) {
-      Tooltip.install(row, new Tooltip(breakdown));
-    }
-    return row;
+    return card(titled("ATTRIBUTPROBEN", rows));
   }
 
   private static @NonNull Node header(@NonNull Character c) {
@@ -132,7 +116,9 @@ public final class StatusOverviewBuilder {
         c.getAugmentedAttributeValue(AttributeType.INT)) + (wound == 0 ? "" : " − " + -wound + " Verletzung");
     String astral = c.hasAstralAccess() ? String.valueOf(c.getAstralInitiative()) : "–";
     GridPane grid = columns(3);
-    grid.add(figure(String.valueOf(c.getInitiative()), composition, false), 0, 0);
+    Node initiative = figure(String.valueOf(c.getInitiative()), composition, false);
+    Tooltip.install(initiative, new Tooltip("Höchstwert %d (GRW S. 172)".formatted(c.getInitiativeMaximum())));
+    grid.add(initiative, 0, 0);
     grid.add(figure(String.valueOf(c.getInitiativePasses()), "Durchgänge", c.getInitiativePasses() > 1), 1, 0);
     grid.add(figure(astral, c.hasAstralAccess()
         ? "Astral, " + Character.ASTRAL_INITIATIVE_PASSES + " Durchgänge" : "Astral", false), 2, 0);
@@ -204,25 +190,26 @@ public final class StatusOverviewBuilder {
       title.getChildren().addAll(spacer, styled(new Label("Verletzung " + wound), "warn-text"));
     }
     VBox box = new VBox(10, title,
-        monitorRow(c, "Körperlich", physicalText, physicalBoxes, physicalDamage, "cm-mini-physical",
-            c::setPhysicalDamage, onDamageChanged),
-        monitorRow(c, "Geistig", stunText, c.getStunBoxes(), c.getStunDamage(), "cm-mini-stun",
+        monitorRow(c, "Körperlich", physicalText, physicalBoxes, c.getPhysicalOverflowBoxes(), physicalDamage,
+            "cm-mini-physical", c::setPhysicalDamage, onDamageChanged),
+        monitorRow(c, "Geistig", stunText, c.getStunBoxes(), 0, c.getStunDamage(), "cm-mini-stun",
             c::setStunDamage, onDamageChanged));
     return card(box);
   }
 
   /**
    * Eine Spalte des Monitors; Kästchen n steht für n Schaden. Ein Klick setzt den Schaden auf n, ein Klick auf das
-   * letzte gefüllte Kästchen nimmt eines zurück (wie im Bereich „Zustand“).
+   * letzte gefüllte Kästchen nimmt eines zurück. Die körperliche Spalte hängt die Überzahl-Kästchen an
+   * ({@code overflowBoxes}, GRW S. 192/193), die geistige hat keine.
    */
   private static @NonNull Node monitorRow(@NonNull Character c, @NonNull String label, @NonNull String values,
-      int boxes, int damage, @NonNull String filledStyle, @NonNull IntConsumer setDamage,
+      int boxes, int overflowBoxes, int damage, @NonNull String filledStyle, @NonNull IntConsumer setDamage,
       @NonNull Runnable onDamageChanged) {
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
     HBox caption = new HBox(styled(new Label(label), "attr-name"), spacer, styled(new Label(values), "key-caption"));
     // Trenner hinter dem Kästchen, mit dem der Verletzungsmodifikator steigt (S. 193, mit Schmerztoleranz u.Ä.)
-    FlowPane row = MonitorBoxRow.build(boxes, damage, filledStyle, c.isCreated(),
+    FlowPane row = MonitorBoxRow.build(boxes, overflowBoxes, damage, filledStyle, c.isCreated(),
         box -> c.getColumnWoundModifier(box) != c.getColumnWoundModifier(box - 1), value -> {
           setDamage.accept(value);
           onDamageChanged.run();
@@ -350,40 +337,4 @@ public final class StatusOverviewBuilder {
     return box;
   }
 
-  private static @NonNull VBox titled(@NonNull String title, @NonNull Node content) {
-    return new VBox(8, styled(new Label(title), "card-title"), content);
-  }
-
-  private static @NonNull Node figure(@NonNull String value, @NonNull String caption, boolean accent) {
-    Label number = styled(new Label(value), "key-figure");
-    if (accent) {
-      number.getStyleClass().add("key-figure-accent");
-    }
-    Label text = styled(new Label(caption), "key-caption");
-    text.setWrapText(true);
-    return new VBox(0, number, text);
-  }
-
-  private static @NonNull Node card(@NonNull Node content) {
-    VBox card = new VBox(content);
-    card.getStyleClass().add("card");
-    return card;
-  }
-
-  /** Raster mit {@code count} gleich breiten Spalten. */
-  private static @NonNull GridPane columns(int count) {
-    GridPane grid = new GridPane();
-    grid.setHgap(8);
-    for (int i = 0; i < count; i++) {
-      ColumnConstraints column = new ColumnConstraints();
-      column.setPercentWidth(100.0 / count);
-      grid.getColumnConstraints().add(column);
-    }
-    return grid;
-  }
-
-  private static <T extends Label> @NonNull T styled(@NonNull T label, @NonNull String styleClass) {
-    label.getStyleClass().add(styleClass);
-    return label;
-  }
 }

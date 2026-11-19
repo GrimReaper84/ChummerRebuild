@@ -5,38 +5,49 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.shalorian.chummer.view.dialog.SettingsDialogController"
-      spacing="16" styleClass="dialog-pane" prefWidth="520">
+      spacing="16" styleClass="dialog-pane" prefWidth="560">
     <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
 
     <Label text="Einstellungen" styleClass="dialog-title"/>
 
-    <VBox spacing="10" styleClass="card">
-        <Label text="ANZEIGE (GILT FÜR ALLE CHARAKTERE)" styleClass="card-title"/>
-        <CheckBox fx:id="groupThousandsBox" text="Tausender gruppieren (1.500 bzw. 1,500 statt 1500)"/>
-        <HBox spacing="8" alignment="CENTER_LEFT">
-            <Label text="Dezimaltrennzeichen:" styleClass="field-label"/>
-            <fx:define><ToggleGroup fx:id="decimalGroup"/></fx:define>
-            <ToggleButton fx:id="decimalCommaBtn" text="Komma (5,80)" toggleGroup="$decimalGroup"
-                          styleClass="toggle-button"/>
-            <ToggleButton fx:id="decimalPointBtn" text="Punkt (5.80)" toggleGroup="$decimalGroup"
-                          styleClass="toggle-button"/>
-        </HBox>
-        <CheckBox fx:id="statusStaticBox" text="Status statisch anzeigen"/>
-        <Label text="Proben im Status:" styleClass="field-label"/>
-        <GridPane fx:id="testsGrid" hgap="24" vgap="6"/>
-    </VBox>
-
-    <VBox spacing="10" styleClass="card">
-        <Label fx:id="rulesTitle" text="REGELN" styleClass="card-title"/>
-        <Label fx:id="noCharacterHint" text="Erst einen Charakter öffnen" styleClass="key-caption"/>
-        <VBox fx:id="rulesContent" spacing="10">
-            <CheckBox fx:id="limbArmorAverageBox" text="Gliedpanzerung als Durchschnitt der fünf Körperteile (statt Summe)"/>
-            <CheckBox fx:id="lateAwakeningBox" text="Spätes Erwachen erlauben (latente Charaktere)"/>
-            <CheckBox fx:id="missedPaymentsBox" text="Versäumte Lebensstilzahlungen (Würfelwurf, Abstieg, Schulden)"/>
-            <Label text="Regelwerke:" styleClass="field-label"/>
-            <VBox fx:id="booksBox" spacing="6"/>
-        </VBox>
-    </VBox>
+    <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="settings-tabs">
+        <Tab text="Anzeige">
+            <VBox spacing="10" styleClass="card">
+                <Label text="GILT FÜR ALLE CHARAKTERE" styleClass="card-title"/>
+                <CheckBox fx:id="groupThousandsBox" text="Tausender gruppieren (1.500 bzw. 1,500 statt 1500)"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Dezimaltrennzeichen:" styleClass="field-label"/>
+                    <fx:define><ToggleGroup fx:id="decimalGroup"/></fx:define>
+                    <ToggleButton fx:id="decimalCommaBtn" text="Komma (5,80)" toggleGroup="$decimalGroup"
+                                  styleClass="toggle-button"/>
+                    <ToggleButton fx:id="decimalPointBtn" text="Punkt (5.80)" toggleGroup="$decimalGroup"
+                                  styleClass="toggle-button"/>
+                </HBox>
+                <CheckBox fx:id="statusStaticBox" text="Status statisch anzeigen"/>
+            </VBox>
+        </Tab>
+        <Tab text="Cheat-Sheet">
+            <VBox spacing="10" styleClass="card">
+                <Label text="GILT FÜR ALLE CHARAKTERE" styleClass="card-title"/>
+                <Label text="Diese Inhalte zeigt der Bereich „Cheat-Sheet“ im Charakterbogen:" styleClass="key-caption"
+                       wrapText="true"/>
+                <VBox fx:id="cheatSheetBox" spacing="6"/>
+            </VBox>
+        </Tab>
+        <Tab text="Regeln">
+            <VBox spacing="10" styleClass="card">
+                <Label fx:id="rulesTitle" text="REGELN" styleClass="card-title"/>
+                <Label fx:id="noCharacterHint" text="Erst einen Charakter öffnen" styleClass="key-caption"/>
+                <VBox fx:id="rulesContent" spacing="10">
+                    <CheckBox fx:id="limbArmorAverageBox" text="Gliedpanzerung als Durchschnitt der fünf Körperteile (statt Summe)"/>
+                    <CheckBox fx:id="lateAwakeningBox" text="Spätes Erwachen erlauben (latente Charaktere)"/>
+                    <CheckBox fx:id="missedPaymentsBox" text="Versäumte Lebensstilzahlungen (Würfelwurf, Abstieg, Schulden)"/>
+                    <Label text="Regelwerke:" styleClass="field-label"/>
+                    <VBox fx:id="booksBox" spacing="6"/>
+                </VBox>
+            </VBox>
+        </Tab>
+    </TabPane>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button text="Abbrechen" onAction="#onCancel" styleClass="btn-secondary"/>

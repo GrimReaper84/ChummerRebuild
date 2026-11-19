@@ -14,7 +14,7 @@ public enum CharacterSection {
   ATTRIBUTES("Attribute", SectionGroup.CHARACTER),
   SKILLS("Fertigkeiten", SectionGroup.CHARACTER),
   QUALITIES("Gaben & Handicaps", SectionGroup.CHARACTER),
-  CONDITION("Zustand", SectionGroup.CHARACTER),
+  CHEAT_SHEET("Cheat-Sheet", SectionGroup.CHARACTER),
   MAGIC("Magie", SectionGroup.MAGIC_RESONANCE),
   ADEPT("Adeptenkräfte", SectionGroup.MAGIC_RESONANCE),
   TECHNOMANCER("Technomancer", SectionGroup.MAGIC_RESONANCE),
