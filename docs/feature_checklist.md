@@ -140,7 +140,7 @@
 | Zauber-Katalog                                         | ✅      | Alle 84 GRW-Zauber (Strassengrimoire S. 238–249, am Bild geprüft 2026-11-12; Heilung 12, Illusion 15, Kampf 18, Manipulation 22, Wahrnehmung 17), Entzug als (K÷2)±x. Offen: Zauber mit Platzhalter ([Attribut], [Critter], [Lebensform], [Objekt]) brauchen eine Auswahl, damit mehrere Ausprägungen lernbar sind; Zusatzband-Zauber (Straßenmagie) bewusst nicht |
 | Zauber hinzufügen (3 BP / 5 Karma)                     | ✅      | Fixpreis pro Zauber in beiden Modi, Karrieremodus mit Karma-Bestätigungsdialog                                                                                                                                                                                       |
 | Zauber-Cap bei Erstellung (2×höchstes Spellcasting-Rating) | ✅  | `Character.canAddSpellAtCreation()`, kein Cap im Karrieremodus                                                                                                                                                                                                       |
-| Geister (gebunden/herbeigerufen)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Magie, 6 Geisterarten mit Werten (S. 347/348), fünf je Tradition (S. 213); Erschaffung 1 BP je Dienst, Kraft = Magie, Dienste ≤ Herbeirufen, gebundene ≤ Charisma (S. 112); Karriere nur eintragen |
+| Geister (gebunden/herbeigerufen)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Magie, 6 Geisterarten mit Werten (S. 347/348), fünf je Tradition (S. 213); Erschaffung 1 BP je Dienst, Kraft = Magie, Dienste ≤ Herbeirufen, gebundene ≤ Charisma (S. 112); Karriere nur eintragen; optionale Kräfte wählbar, Eintrag aufklappbar (ADR-068) |
 | Schutzpatrone | ✅ | 2026-11-13 (ADR-055): 19 Patrone (S. 234–237, am Bild) als Auswahl der Gabe, beide Vorteile, „nach Wahl“ beim Kauf (Katze, Drachentöter), rechnende Nachteile; Rollenspiel-Nachteile als Text; Vorteile/Nachteile im Detail des Auswahldialogs |
 | Situative Würfelpools | ✅ | 2026-11-13 (ADR-055): Foki (stärkster je Probe, S. 233), Patrone und sieben Adeptenkräfte (Kampfsinn, Magieresistenz, Natürliche Immunität, Beschleunigte Heilung, Großer Sprung, Körpersprache, Kritischer Schlag auf waffenlosen Schaden, sichtbar an der festen Zeile „Waffenloser Angriff“ im Waffen-Tab, S. 188) als Liste im Magie-/Adepten-Tab und Status |
 | Magische Aktionsfertigkeiten (Spruchzauberei/Ritualzauberei) | ✅ | Neu in `skills.xml`, eigene `SkillCategory.MAGICAL`, immer im Skills-Tab sichtbar (für alle Charaktere), aber nur für Magier steigerbar — `+`-Button deaktiviert ohne Gabe "Magier" (`Character.canRaiseSkill()`, GRW S. 208), gilt in Erstellung **und** Karrieremodus |
@@ -163,7 +163,7 @@
 | Komplexe Formen (1 GP/Stufenpunkt, Karma wie Wissensfertigkeit) | ✅ | `ComplexForm`/`ComplexFormDataLoader` (alle 21 GRW-Programme S. 271–273 inkl. Panzerung, Seiten am Bild geprüft 2026-11-12), 1 GP pro Stufenpunkt (GRW S. 112, Beispiel Panzerung 4 = 4 GP), Karma 2 neu / neue Stufe; Stufen-Cap = wirksamer Resonanzwert in Erstellung und Karriere (`canRaiseComplexForm()`), inkl. Tests |
 | Anzahl-Cap Komplexe Formen bei Erstellung (Logik × 2) | ✅ | GRW S. 112, `Character.canAddComplexFormAtCreation()`, Hinweis im Technomancer-Tab, 2026-11-12 |
 | Lebende Persona | ✅ | 2026-11-13 (ADR-054): Firewall WIL, Prozessor INT (+1 in VR), Signal RES ÷ 2 aufgerundet, System LOG, je ≤ RES; Biofeedback-Filter CHA (S. 279, am Bild) |
-| Sprites (registriert/kompiliert)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Technomancer, 5 Sprite-Arten mit Werten (S. 282); Erschaffung 1 BP je Dienst, Stufe = Resonanz, Dienste ≤ Kompilieren, registrierte ≤ Charisma (S. 113); Karriere nur eintragen |
+| Sprites (registriert/kompiliert)                       | ✅      | 2026-11-12 (ADR-053): Abschnitt im Bereich Technomancer, 5 Sprite-Arten mit Werten (S. 282); Erschaffung 1 BP je Dienst, Stufe = Resonanz, Dienste ≤ Kompilieren, registrierte ≤ Charisma (S. 113); Karriere nur eintragen; optionale Komplexe Formen wählbar (ADR-068) |
 | Wandlung (Submersion)                      | ✅      | 2026-11-12 (ADR-052): gleicher Bereich, Titel „Wandlung“, fünf Echos (S. 284), Firewall-/System-Upgrade und Neurofilter bis 3×, Wirkung als Hinweis. Offen: Lebende Persona als Rechnung |
 
 ---
@@ -368,7 +368,7 @@
 | Top-Runner | ❌ | Nutzerentscheidung 2026-11-18: als normalen Charakter bauen |
 | Bogen-Export für Schergengruppen und Critter | ❌ | Nutzerentscheidung 2026-11-19: nach dem Charakterbogen, eigener Punkt |
 | Critter mit Kräften und Schwächen | ✅ | 2026-11-19 (ADR-064): 19 GRW-Critter (S. 343–351) als Vorlage, einzeln oder als Rudel auf dem Schergen-Bogen; Werte ±3 (S. 337), Kräfte und Schwächen mit Tooltip, natürliche Waffen und Panzer gerechnet |
-| Kräftekatalog für Critter, Geister und Sprites | ✅ | 2026-11-19 (ADR-064): `critter_powers.xml` (48 Kräfte, S. 283, 337–342, 348, 351), Wirkung im Geister-Tooltip |
+| Kräftekatalog für Critter, Geister und Sprites | ✅ | 2026-11-19 (ADR-064): `critter_powers.xml` (48 Kräfte, S. 283, 337–342, 348, 351), Wirkung als Tooltip je Kraft im aufgeklappten Geist (ADR-068) |
 
 ---
 
@@ -443,7 +443,12 @@ README-Roadmap sind erledigt; es folgen:
 Windows und macOS (bisher nur Linux lokal gebaut), Installer und portables ZIP einmal von Hand starten, die UI
 nach `docs/beta_checkliste.md` durchklicken (Beta-Menü mit `./gradlew run`).
 
-**Nach dem Release (zurückgestellt, Reihenfolge offen):** Fahrzeugkampf-Manöver (Abschnitt 14), Zubehör an
+**Nach dem Release:** Als erster Punkt kommt die **Erschaffung mit Karma** statt BP (Nutzerentscheidung 2026-11-19):
+Erschaffungsart im Dialog „Neu“ wählbar, Kosten nach Karma statt BP, eigene Grenzen. Die Regeln stehen im
+Runner-Kompendium (Seiten beim Planen am Buch prüfen), das C#-Original kennt die Erschaffungsart. Dafür muss das
+Buch über die Regelwerk-Auswahl (ADR-061) zuschaltbar sein.
+
+**Danach (zurückgestellt, Reihenfolge offen):** Fahrzeugkampf-Manöver (Abschnitt 14), Zubehör an
 Fahrzeugwaffen, Lagerorte und Eigennamen für Ausrüstung, Waffen, Rüstung und Fahrzeuge (Abschnitte 13/14),
 DIY/Hacked/Schwarzmarkt (Abschnitt 13), Cyberguns (Abschnitt 10, GRW ohne Kosten), Zusatzbände über die
 Regelwerk-Auswahl (ADR-061; Kandidaten: Waffenmodifikationen, Lebensstil-Ausbaustufen, Arsenal-Fahrzeuge).

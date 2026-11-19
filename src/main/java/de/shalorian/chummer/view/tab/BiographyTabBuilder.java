@@ -121,7 +121,7 @@ public final class BiographyTabBuilder {
         bio.setPortrait(PortraitImage.toStoredPng(Files.readAllBytes(file.toPath())));
         show.run();
       } catch (IOException e) {
-        host.services().warn("Portrait", "Das Bild ließ sich nicht lesen: " + e.getMessage());
+        host.services().warn("Portrait", "Das Bild ließ sich nicht lesen: " + e.getMessage() + ".");
       }
     });
     remove.setOnAction(_ -> {

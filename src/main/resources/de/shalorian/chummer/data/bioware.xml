@@ -91,7 +91,7 @@
         <excludes>Kompositknochen (Plastik)</excludes>
         <excludes>Kompositknochen (Aluminium)</excludes>
         <excludes>Kompositknochen (Titan)</excludes>
-        <note>KON + Stufe bei Schadenswiderstand; waffenloser Schaden körperlich (Tabelle S. 394).</note>
+        <note>KON + Stufe bei Schadenswiderstand; waffenloser Schaden körperlich (Tabelle GRW S. 394).</note>
         <source>SR4</source>
         <page>394</page>
     </item>

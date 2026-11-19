@@ -8,7 +8,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_ABBR;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_AUG;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_AUG_BOOSTED;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
@@ -20,6 +19,7 @@ import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.CharacterAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.attribute.SpecialAttributeType;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.grid.AttributeRowLabel;
 import de.shalorian.chummer.view.grid.GridSupport;
@@ -42,12 +42,6 @@ import org.tbee.javafx.scene.layout.MigPane;
 public final class AttributeTabBuilder {
 
   /**
-   * Platzhalter für den augmentierten Attributwert bzw. das augmentierte Metatyp-Maximum, solange es noch keine Essenz-/Cyberware-Berechnung gibt
-   * (Roadmap Stufe 2, Cyberware/Bioware). Struktur (eigene Spalte + Klammerzusatz im Bereichs-Label, analog zum alten WinForms-UI) ist bereits
-   * vorbereitet — bei Einführung der echten Berechnung wird hier nur dieser Platzhalter ersetzt.
-   */
-  private static final String ATTRIBUTE_AUGMENTED_PLACEHOLDER = "—";
-  /**
    * Feste Breite der Attribut-"Wert"-Spalte — einzige Rating-Spalte, die zweistellig werden kann (Metatyp-Varianten erlauben Attributmaxima bis 10,
    * siehe {@code max="10"} in den Metatyp-XML-Dateien). Alle anderen Rating-Spalten (Fertigkeiten, Wissensfertigkeiten, Kontakte, Gruppen) sind durch
    * {@code MAX_RATING = 6} einstellig und brauchen daher keine feste Breite — ohne diese Ausnahme würde die Spalte beim Überschreiten von 9 sichtbar
@@ -58,13 +52,16 @@ public final class AttributeTabBuilder {
 
   private final @NonNull VBox attributeGridHost;
   private final @NonNull IncrementWiring wiring;
+  private final @NonNull CharacterTabHost host;
   private final @NonNull List<Runnable> attrRefreshers = new ArrayList<>();
   private final @NonNull List<Runnable> specialAttrRefreshers = new ArrayList<>();
   private @Nullable Character character;
 
-  public AttributeTabBuilder(@NonNull VBox attributeGridHost, @NonNull IncrementWiring wiring) {
+  public AttributeTabBuilder(@NonNull VBox attributeGridHost, @NonNull IncrementWiring wiring,
+      @NonNull CharacterTabHost host) {
     this.attributeGridHost = attributeGridHost;
     this.wiring = wiring;
+    this.host = host;
   }
 
   /** Charakter, den dieser Tab anzeigt; vor dem ersten Aufbau zu setzen. */
@@ -262,12 +259,12 @@ public final class AttributeTabBuilder {
 
           @Override
           public void increment() {
-            attr.setValue(attr.getValue() + 1);
+            changeValue(character, attr, 1);
           }
 
           @Override
           public void decrement() {
-            attr.setValue(attr.getValue() - 1);
+            changeValue(character, attr, -1);
           }
 
           @Override
@@ -278,12 +275,34 @@ public final class AttributeTabBuilder {
   }
 
   /**
+   * Ändert den Wert um {@code delta}. Intuition und Logik bestimmen die freien Wissenspunkte (GRW S. 109): Ändert sich
+   * dadurch, was die Wissensfertigkeiten an BP kosten, erklärt ein kurzer Hinweis, warum mehr oder weniger als 10 BP
+   * gebucht werden.
+   */
+  private void changeValue(@NonNull Character character, @NonNull CharacterAttribute attr, int delta) {
+    int knowledgeBefore = character.getKnowledgeSkillOverflowBP();
+    attr.setValue(attr.getValue() + delta);
+    // BP zählen nur bei der Erschaffung; im Spielleiter-Modus wird nichts gebucht
+    if (character.isCreated() || character.isGmMode()) {
+      return;
+    }
+    int knowledgeChange = character.getKnowledgeSkillOverflowBP() - knowledgeBefore;
+    if (knowledgeChange > 0) {
+      host.services().warn("Freie Wissenspunkte", "Die Wissensfertigkeiten kosten jetzt %d BP mehr."
+          .formatted(knowledgeChange));
+    } else if (knowledgeChange < 0) {
+      host.services().warn("Freie Wissenspunkte", "Die Wissensfertigkeiten kosten jetzt %d BP weniger."
+          .formatted(-knowledgeChange));
+    }
+  }
+
+  /**
    * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Aug-Platzhalter, Bereich, BP-/Karma-Kosten) in ein MigPane ein und verdrahtet sie über
    * {@link IncrementWiring#wire}. Gemeinsam genutzt von {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
    * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am alten WinForms-{@code panAttributes}
    * (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den wirksamen Wert von
    * {@code augmentedType} (bei jedem Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht), verstärkt
-   * in der Akzentfarbe, bzw. {@link #ATTRIBUTE_AUGMENTED_PLACEHOLDER} bei Sonderattributen ({@code null}); der Klammerzusatz im Bereichs-Label zeigt das
+   * in der Akzentfarbe, bzw. {@link Numbers#NO_VALUE} bei Sonderattributen ({@code null}); der Klammerzusatz im Bereichs-Label zeigt das
    * augmentierte Maximum ({@link Character#getAugmentedMaximum(AttributeType)}, GRW S. 91), bei Sonderattributen keinen.
    */
   private void addAttributeGridRow(@NonNull MigPane grid, int row,
@@ -292,19 +311,17 @@ public final class AttributeTabBuilder {
       @NonNull Character character) {
     Label attrNameLabel = new Label(label.displayName());
     Label abbrLabel = new Label(label.abbreviation());
-    Button minus = new Button("−");
+    Button minus = RowControls.minusButton();
     Label valueLabel = new Label();
-    Button plus = new Button("+");
-    Label augLabel = new Label(ATTRIBUTE_AUGMENTED_PLACEHOLDER);
+    Button plus = RowControls.plusButton();
+    Label augLabel = new Label(Numbers.NO_VALUE);
     Label rangeLabel = new Label(label.min() + " / " + label.max()
         + (label.augmentedMaxText().isEmpty() ? "" : " (" + label.augmentedMaxText() + ")"));
     Label bpLabel = new Label();
 
     attrNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
     abbrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
     valueLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
     augLabel.getStyleClass().add(STYLE_ATTR_AUG);
     rangeLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     bpLabel.getStyleClass().add(STYLE_ATTR_BP);
@@ -348,7 +365,7 @@ public final class AttributeTabBuilder {
       @NonNull AttributeType type) {
     int augmented = character.getAugmentedAttributeValue(type);
     return augmented == character.getAttribute(type).getValue()
-        ? ATTRIBUTE_AUGMENTED_PLACEHOLDER
+        ? Numbers.NO_VALUE
         : String.valueOf(augmented);
   }
 }

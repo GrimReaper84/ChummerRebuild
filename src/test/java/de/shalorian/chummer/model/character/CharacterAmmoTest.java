@@ -70,9 +70,9 @@ class CharacterAmmoTest {
     Weapon predator = weapon("Ares Predator IV");
     Gear apds = ammo("APDS-Geschosse", "Schwere Pistolen");
     equipment.loadAmmo(predator, apds);
-    assertEquals("–5", equipment.getWeaponArmorPiercingText(predator));
+    assertEquals("−5", equipment.getWeaponArmorPiercingText(predator));
     equipment.removeGear(apds);
     assertNull(equipment.getLoadedAmmo(predator));
-    assertEquals("–1", equipment.getWeaponArmorPiercingText(predator));
+    assertEquals("−1", equipment.getWeaponArmorPiercingText(predator));
   }
 }

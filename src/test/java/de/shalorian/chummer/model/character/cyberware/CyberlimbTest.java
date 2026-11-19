@@ -58,7 +58,7 @@ class CyberlimbTest {
         hand.installProblem(data("Kunstmuskeln"), 1));
     assertNull(hand.installProblem(data("Sporn (einziehbar)"), 0));
     hand.install(part("Sporn (einziehbar)", 0));
-    assertEquals("Kapazität reicht nicht: Handklinge (einziehbar) braucht 3, frei sind 1 von 4",
+    assertEquals("Kapazität reicht nicht: Handklinge (einziehbar) braucht 3, frei sind 1 von 4.",
         hand.installProblem(data("Handklinge (einziehbar)"), 0));
     Cyberware skull = limb("Schädel (offensichtlich)", BodyLocation.SKULL, LimbAttributes.STANDARD);
     assertEquals("Schädel (offensichtlich) hat keine eigenen Attribute",

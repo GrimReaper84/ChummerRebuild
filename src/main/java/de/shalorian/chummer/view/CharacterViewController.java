@@ -220,7 +220,7 @@ public class CharacterViewController implements CharacterTabHost {
 
   @FXML
   public void initialize() {
-    attributeTab = new AttributeTabBuilder(attributeGridHost, wiring);
+    attributeTab = new AttributeTabBuilder(attributeGridHost, wiring, this);
     skillTab = new SkillTabBuilder(skillsScroll, skillsContainer, knowledgeSkillsContainer, skillSortToggleGroup,
         sortByAlphabetBtn, sortByCategoryBtn, this, wiring);
     qualityTab = new QualityTabBuilder(qualitiesContainer, this);

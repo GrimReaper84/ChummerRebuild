@@ -29,8 +29,6 @@ import org.jspecify.annotations.Nullable;
  * (Lasermarkierer, externes Smartgunsystem), wählt der Spieler die Halterung.
  */
 public class AccessorySelectDialogController extends CatalogSelectDialogController<AccessoryData> {
-
-  private static final String NO_VALUE = "–";
   private static final String WITHOUT_MOUNT = "Ohne Halterung";
 
   @FXML
@@ -142,7 +140,7 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
     if (selected == null || weapon == null) {
       for (Label label : List.of(mountsLabel, recoilLabel, availabilityLabel, costLabel,
           sourceLabel)) {
-        label.setText(NO_VALUE);
+        label.setText(Numbers.NO_VALUE);
       }
       noteLabel.setText("");
       problemLabel.setText("");

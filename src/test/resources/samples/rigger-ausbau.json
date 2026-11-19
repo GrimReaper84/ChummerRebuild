@@ -1,6 +1,10 @@
 {
   "name" : "Rigger-Ausbau",
   "metatype" : "Zwerg",
+  "critter" : null,
+  "critterPowers" : [ ],
+  "critterWeaknesses" : [ ],
+  "critterSkills" : { },
   "created" : false,
   "nuyenBP" : 50,
   "physicalDamage" : 0,

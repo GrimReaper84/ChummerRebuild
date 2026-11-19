@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param reach         Nahkampf-Reichweite ("–", "1", "2"), leer bei Fernkampfwaffen
  * @param damage        Schadenscode als GRW-Text
- * @param armorPiercing Panzerbrechend (PB), z.B. "–1", "+5", "–Hälfte"
+ * @param armorPiercing Panzerbrechend (PB), z.B. "−1", "+5", "−Hälfte"
  * @param mode          Feuermodi (EM/HM/SM/AM), leer ohne Tabellenspalte
  * @param recoil        Rückstoßkompensation laut Tabelle "x (y)", {@link Recoil#NONE} ohne Tabellenspalte
  * @param ammo          Munition mit Nachlademethode, z.B. "15 (s)"

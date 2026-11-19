@@ -191,7 +191,7 @@ public class Implants {
         .map(Skill::getName)
         .toList();
     return hasRecorderChoice(ImplantSelection.SKILL, members)
-        ? "Eine Fertigkeit der Gruppe hat bereits einen Reflexrekorder" : null;
+        ? "Eine Fertigkeit der Gruppe hat bereits einen Reflexrekorder." : null;
   }
 
   private boolean hasRecorderChoice(@NonNull ImplantSelection selection, @NonNull List<String> choices) {

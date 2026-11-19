@@ -73,7 +73,7 @@ class SkillsoftTest {
   void loadedLimit() {
     Character c = character();
     Gear first = soft(c, "Aktionssoft", 2, "Pistolen");
-    assertEquals("Aktionssofts brauchen Talentleitungen (S. 389)", c.getSkillsoftLoadProblem(first));
+    assertEquals("Aktionssofts brauchen Talentleitungen (GRW S. 389).", c.getSkillsoftLoadProblem(first));
     implant(c, "Talentleitungen", 2);
     assertNull(c.getSkillsoftLoadProblem(first));
     first.setRunning(true);
@@ -82,7 +82,7 @@ class SkillsoftTest {
     second.setRunning(true);
     Gear third = soft(c, "Aktionssoft", 1, "Ausweichen");
     assertEquals(4, c.getLoadedActivesoftRating());
-    assertEquals("Talentleitungen ausgelastet: 4 von 4 Stufen geladen (S. 389)", c.getSkillsoftLoadProblem(third));
+    assertEquals("Talentleitungen ausgelastet: 4 von 4 Stufen geladen (GRW S. 389)", c.getSkillsoftLoadProblem(third));
   }
 
   @Test

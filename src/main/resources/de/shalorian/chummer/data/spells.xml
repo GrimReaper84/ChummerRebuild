@@ -33,7 +33,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–2</dv>
+        <dv>(K÷2)−2</dv>
         <source>SR4</source>
         <page>239</page>
     </spell>
@@ -45,7 +45,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Toxinschaden)–4</dv>
+        <dv>(Toxinschaden)−4</dv>
         <source>SR4</source>
         <page>239</page>
     </spell>
@@ -57,7 +57,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Toxinschaden)–2</dv>
+        <dv>(Toxinschaden)−2</dv>
         <source>SR4</source>
         <page>239</page>
     </spell>
@@ -69,7 +69,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Schaden)–2</dv>
+        <dv>(Schaden)−2</dv>
         <source>SR4</source>
         <page>239</page>
     </spell>
@@ -81,7 +81,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Krankheitsschaden)–2</dv>
+        <dv>(Krankheitsschaden)−2</dv>
         <source>SR4</source>
         <page>239</page>
     </spell>
@@ -93,7 +93,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–2</dv>
+        <dv>(K÷2)−2</dv>
         <source>SR4</source>
         <page>239</page>
     </spell>
@@ -117,7 +117,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>240</page>
     </spell>
@@ -129,7 +129,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Schaden)–4</dv>
+        <dv>(Schaden)−4</dv>
         <source>SR4</source>
         <page>240</page>
     </spell>
@@ -141,7 +141,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>P</duration>
-        <dv>(Überzähliger Schaden)–2</dv>
+        <dv>(Überzähliger Schaden)−2</dv>
         <source>SR4</source>
         <page>240</page>
     </spell>
@@ -153,7 +153,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–3</dv>
+        <dv>(K÷2)−3</dv>
         <source>SR4</source>
         <page>240</page>
     </spell>
@@ -375,7 +375,7 @@
         <range>B</range>
         <damage>K</damage>
         <duration>S</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>243</page>
     </spell>
@@ -459,7 +459,7 @@
         <range>B</range>
         <damage>G</damage>
         <duration>S</duration>
-        <dv>(K÷2)–2</dv>
+        <dv>(K÷2)−2</dv>
         <source>SR4</source>
         <page>244</page>
     </spell>
@@ -495,7 +495,7 @@
         <range>B</range>
         <damage>G</damage>
         <duration>S</duration>
-        <dv>(K÷2)–3</dv>
+        <dv>(K÷2)−3</dv>
         <source>SR4</source>
         <page>244</page>
     </spell>
@@ -507,7 +507,7 @@
         <range>BF</range>
         <damage>G</damage>
         <duration>S</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>244</page>
     </spell>
@@ -531,7 +531,7 @@
         <range>B</range>
         <damage>K</damage>
         <duration>S</duration>
-        <dv>(K÷2)–2</dv>
+        <dv>(K÷2)−2</dv>
         <source>SR4</source>
         <page>244</page>
     </spell>
@@ -714,7 +714,7 @@
         <range>BF (F)</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>245</page>
     </spell>
@@ -885,7 +885,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>248</page>
     </spell>
@@ -897,7 +897,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>248</page>
     </spell>
@@ -909,7 +909,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>248</page>
     </spell>
@@ -957,7 +957,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>248</page>
     </spell>
@@ -1005,7 +1005,7 @@
         <range>B</range>
         <damage>–</damage>
         <duration>A</duration>
-        <dv>(K÷2)–1</dv>
+        <dv>(K÷2)−1</dv>
         <source>SR4</source>
         <page>249</page>
     </spell>

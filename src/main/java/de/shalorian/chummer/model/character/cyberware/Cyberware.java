@@ -111,7 +111,7 @@ public class Cyberware {
         ? rating >= CyberwareData.MIN_RATING && rating <= data.maxRating()
         : rating == 0;
     if (!validRating) {
-      return "Stufe %d ist nicht zulässig (max. %d)".formatted(rating, data.maxRating());
+      return "Stufe %d ist nicht zulässig (max. %d).".formatted(rating, data.maxRating());
     }
     if ((data.selection() == ImplantSelection.NONE) != choice.isEmpty()) {
       return data.selection() == ImplantSelection.NONE ? "Auswahl nicht vorgesehen" : "Auswahl fehlt";
@@ -120,7 +120,7 @@ public class Cyberware {
       return data.hasVariablePrice() ? "Preis fehlt" : "Preis nicht wählbar";
     }
     if (chosenPrice != null && !data.isValidPrice(chosenPrice)) {
-      return "Preis %s liegt außerhalb von %s–%s".formatted(Numbers.nuyen(chosenPrice), Numbers.integer(data.priceMin()), Numbers.nuyen(data.priceMax()));
+      return "Preis %s liegt außerhalb von %s–%s.".formatted(Numbers.nuyen(chosenPrice), Numbers.integer(data.priceMin()), Numbers.nuyen(data.priceMax()));
     }
     return limbProblem();
   }
@@ -366,7 +366,7 @@ public class Cyberware {
     int needed = capacityNeed(child, childRating);
     int free = getCapacity() - getUsedCapacity();
     if (needed > free) {
-      return "Kapazität reicht nicht: %s braucht %d, frei sind %d von %d".formatted(child.name(), needed, free,
+      return "Kapazität reicht nicht: %s braucht %d, frei sind %d von %d.".formatted(child.name(), needed, free,
           getCapacity());
     }
     return null;

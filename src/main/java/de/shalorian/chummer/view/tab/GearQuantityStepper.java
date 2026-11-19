@@ -1,11 +1,11 @@
 package de.shalorian.chummer.view.tab;
 
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_VALUE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearData;
+import de.shalorian.chummer.view.grid.RowControls;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -30,12 +30,10 @@ final class GearQuantityStepper {
   static @NonNull HBox create(@NonNull Gear gear, @NonNull Character character,
       @NonNull CharacterTabHost host, @NonNull Runnable onChanged) {
     GearData data = gear.getData();
-    Button minus = new Button("−");
+    Button minus = RowControls.minusButton();
     Label quantity = new Label(data.unit().format(gear.getQuantity()));
-    Button plus = new Button("+");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    Button plus = RowControls.plusButton();
     quantity.getStyleClass().add(STYLE_DETAIL_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
     minus.setDisable(!gear.canRemovePack());
     minus.setOnAction(_ -> {
       if (gear.canRemovePack()) {

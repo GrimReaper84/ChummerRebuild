@@ -61,16 +61,14 @@ record GearDetails(
     @NonNull String processorLimit
 ) {
 
-  private static final String NO_VALUE = "–";
-
   static @NonNull GearDetails of(@NonNull Gear gear) {
     GearData data = gear.getData();
     MatrixStats stats = gear.getMatrixStats();
     return new GearDetails(
         gear.getDisplayName(),
         data.category().getDisplayName(),
-        data.hasRating() ? String.valueOf(gear.getRating()) : NO_VALUE,
-        data.deviceRating() > 0 ? String.valueOf(data.deviceRating()) : NO_VALUE,
+        data.hasRating() ? String.valueOf(gear.getRating()) : Numbers.NO_VALUE,
+        data.deviceRating() > 0 ? String.valueOf(data.deviceRating()) : Numbers.NO_VALUE,
         data.extraLabel(),
         gear.getExtra(),
         data.unit().format(gear.getQuantity()),
@@ -100,7 +98,7 @@ record GearDetails(
   }
 
   private static @NonNull String orNoValue(int value) {
-    return value > 0 ? String.valueOf(value) : NO_VALUE;
+    return value > 0 ? String.valueOf(value) : Numbers.NO_VALUE;
   }
 
   /** z.B. "4" oder "3 (−1 Prozessorlimit)". */

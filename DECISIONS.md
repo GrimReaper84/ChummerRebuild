@@ -378,6 +378,18 @@ Fertigkeiten mit Wert. Der Export von Schergengruppen und Crittern kommt später
 **Warum:** Nutzerentscheidungen 2026-11-19. Der Fallout-Bogen (dort ADR-039) hat sich bewährt, und das GRW-Layout
 kennen Spieler. `docs/plaene/archiv/charakterbogen_plan.md`.
 
+### ADR-068: Optionale Kräfte von Geistern und Sprites, aufklappbare Einträge (2026-11-19)
+Beim Hinzufügen eines Geistes bzw. Sprites werden die optionalen Kräfte bzw. Komplexen Formen gewählt, je 3 volle Punkte
+Kraft bzw. Stufe eine (GRW S. 347, 282). Jede Option höchstens einmal, nur aus der Liste der Art; die Grenze gilt auch im
+Spielleiter-Modus. Gewählte Optionen stehen danach fest und haben keinen Entfernen-Knopf. Fehlen Optionen (Dateien von
+vorher), lassen sie sich im aufgeklappten Eintrag nachtragen, bis die Zahl erreicht ist. Gespeichert in
+`SpiritEntry.options`; unbekannte Namen fallen beim Laden weg. Der große Tooltip am Namen entfällt: Jeder Eintrag lässt
+sich aufklappen (nicht gespeichert) und zeigt Werteblock, Bewegung, Fertigkeiten, Kräfte und Optionen, jede Kraft mit
+ihrer Wirkung als eigenem Tooltip. Der PDF-Bogen zeigt die Optionen im Namen, z.B. „Feuergeist (Grauen)“.
+**Warum:** Beta-Befund und Nutzerentscheidung 2026-11-19: Der Tooltip zeigte alle Kräfte samt Wirkung und war zu groß;
+das GRW lässt die Optionen bei der Beschwörung wählen. Das C#-Original kennt keine Optionen.
+`docs/plaene/archiv/geister_optionen_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

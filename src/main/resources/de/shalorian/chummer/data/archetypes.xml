@@ -811,7 +811,7 @@
             <gear detail="Waffenbau">Werkzeugkiste</gear>
             <vehicle>Suzuki Mirage (Rennmaschine)</vehicle>
             <gear>DocWagon-Vertrag (Gold)</gear>
-            <gear rating="2" amount="5" detail="Waffenlizenzen und Implantatlizenz">Gefälschte Lizenz</gear>
+            <gear rating="4" amount="5" detail="Waffenlizenzen und Implantatlizenz">Gefälschte Lizenz</gear>
             <gear rating="4" detail="Tarnidentität">Gefälschte SIN</gear>
             <lifestyle amount="3">LOW</lifestyle>
             <cyberware rating="3" detail="ALPHAWARE">Cyberaugen-Basissystem
@@ -1059,7 +1059,7 @@
             <gear amount="5">Flash-Pack</gear>
             <armor>Panzerjacke</armor>
             <gear detail="Waffenbau">Werkzeugkiste</gear>
-            <gear detail="Waffenbau">Werkzeugladen</gear>
+            <gear detail="Waffenbau">Werkstatt</gear>
             <gear rating="3" amount="2" detail="Waffenlizenzen">Gefälschte Lizenz</gear>
             <gear rating="3" detail="Tarnidentität">Gefälschte SIN</gear>
             <lifestyle amount="1">MIDDLE</lifestyle>

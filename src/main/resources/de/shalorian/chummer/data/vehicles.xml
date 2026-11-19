@@ -652,7 +652,7 @@
         <cost>4000</cost>
         <gear>Sensorpaket (Große Drohne)</gear>
         <gear rating="4">Medkit</gear>
-        <note>Mobile Stabilisierungseinheit: stabilisiert einen angeschlossenen Charakter automatisch (siehe S. 295).</note>
+        <note>Mobile Stabilisierungseinheit: stabilisiert einen angeschlossenen Charakter automatisch (siehe GRW S. 295).</note>
         <source>SR4</source>
         <page>397</page>
     </item>

@@ -44,7 +44,7 @@ final class LivingPersonaSection {
         detailKey("VR-Initiative"), detailValue(ch.getMatrixInitiative() + " / " + ch.getMatrixInitiativePasses()
             + " Durchgänge"));
     Label hint = new Label("Kein Persona-Attribut liegt über der Resonanz (" + persona.resonance()
-        + "); in VR immer heißes Sim (S. 279).");
+        + "); in VR immer heißes Sim (GRW S. 279).");
     hint.getStyleClass().add(STYLE_ATTR_RANGE);
     hint.setWrapText(true);
     box.getChildren().setAll(title, grid, hint);

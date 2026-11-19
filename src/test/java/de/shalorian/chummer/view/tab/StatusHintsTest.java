@@ -47,7 +47,7 @@ class StatusHintsTest {
     c.setNuyenBP(50);
     implant(c, "Kunstmuskeln", 4);
     implant(c, "Reflexbooster", 1);
-    assertEquals(List.of("Essenz darf bei der Erschaffung nicht auf 0 oder darunter fallen"), StatusHints.of(c));
+    assertEquals(List.of("Essenz bei der Erschaffung auf 0 oder darunter"), StatusHints.of(c));
   }
 
   @Test

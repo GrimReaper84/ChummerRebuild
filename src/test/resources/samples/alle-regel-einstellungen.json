@@ -1,6 +1,10 @@
 {
   "name" : "Alle Regel-Einstellungen",
   "metatype" : "Mensch",
+  "critter" : null,
+  "critterPowers" : [ ],
+  "critterWeaknesses" : [ ],
+  "critterSkills" : { },
   "created" : false,
   "nuyenBP" : 16,
   "physicalDamage" : 0,

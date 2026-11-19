@@ -44,7 +44,7 @@ class CharacterStoreCombatRoundtripTest {
     Gear ammo = loaded.getEquipment().getLoadedAmmo(loadedWeapon);
     assertNotNull(ammo);
     assertEquals("APDS-Geschosse", ammo.getName());
-    assertEquals("–5", loaded.getEquipment().getWeaponArmorPiercingText(loadedWeapon));
+    assertEquals("−5", loaded.getEquipment().getWeaponArmorPiercingText(loadedWeapon));
   }
 
   @Test

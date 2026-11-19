@@ -130,7 +130,7 @@ public final class VehiclePools {
 
   /** Hineinspringen nur mit Riggeradapter (S. 396). */
   private @NonNull VehiclePoolCell adapter(@NonNull VehiclePoolCell cell) {
-    return vehicle.hasRiggerAdapter() ? cell : VehiclePoolCell.none("kein Riggeradapter (S. 396)");
+    return vehicle.hasRiggerAdapter() ? cell : VehiclePoolCell.none("kein Riggeradapter (GRW S. 396)");
   }
 
   private @NonNull VehiclePoolCell riggerInitiative() {
@@ -141,7 +141,7 @@ public final class VehiclePools {
 
   private @NonNull VehiclePoolCell autonomousAttack() {
     return vehicle.getAutosoftRating("Zielerfassung") == 0
-        ? VehiclePoolCell.none("keine Zielerfassung-Autosoft (S. 202)")
+        ? VehiclePoolCell.none("keine Zielerfassung-Autosoft (GRW S. 202)")
         : withAutosoft(PILOT, pilot, "Zielerfassung");
   }
 

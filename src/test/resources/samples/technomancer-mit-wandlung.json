@@ -1,6 +1,10 @@
 {
   "name" : "Technomancer mit Wandlung",
   "metatype" : "Mensch",
+  "critter" : null,
+  "critterPowers" : [ ],
+  "critterWeaknesses" : [ ],
+  "critterSkills" : { },
   "created" : true,
   "nuyenBP" : 0,
   "physicalDamage" : 0,

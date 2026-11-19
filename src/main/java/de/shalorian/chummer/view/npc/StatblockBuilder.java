@@ -40,6 +40,7 @@ import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.QualitySelectDialogController;
 import de.shalorian.chummer.view.dialog.SpellSelectDialogController;
 import de.shalorian.chummer.view.dialog.WeaponSelectDialogController;
+import de.shalorian.chummer.view.grid.IntegerSpinner;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.io.IOException;
 import java.util.List;
@@ -54,7 +55,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -114,7 +115,8 @@ final class StatblockBuilder {
     Button edit = new Button(editing ? "Fertig" : "Bearbeiten");
     edit.getStyleClass().add(STYLE_BTN_SECONDARY);
     edit.setOnAction(_ -> onEditToggle.run());
-    HBox head = new HBox(8, styled(new Label(title), "card-title"), metatypeNode(), spacer, edit);
+    edit.setMinWidth(Region.USE_PREF_SIZE);
+    HBox head = new HBox(8, fixed(styled(new Label(title), "card-title")), metatypeNode(), spacer, edit);
     head.setAlignment(Pos.CENTER_LEFT);
     box.getChildren().add(head);
     if (hint != null) {
@@ -161,33 +163,31 @@ final class StatblockBuilder {
     return box;
   }
 
+  /** Kürzel über Wert, umbrechend: In einer schmalen Karte rutschen die letzten Werte in eine zweite Reihe. */
   private @NonNull Node attributeGrid() {
-    GridPane grid = new GridPane();
-    grid.setHgap(10);
-    grid.setVgap(2);
-    int col = 0;
+    FlowPane cells = new FlowPane(10, 6);
     for (AttributeType type : ATTRIBUTES) {
-      grid.add(header(type.getAbbreviation()), col, 0);
-      grid.add(editing ? attributeSpinner(type) : value(attributeText(type)), col++, 1);
+      cells.getChildren().add(cell(type.getAbbreviation(), editing ? attributeSpinner(type) : value(attributeText(type))));
     }
     if (critter != null) {
-      grid.add(header("EDG"), col, 0);
-      grid.add(editing ? magicSpinner(c.getEdge()) : value(String.valueOf(c.getEdge().getValue())), col++, 1);
+      cells.getChildren().add(cell("EDG",
+          editing ? magicSpinner(c.getEdge()) : value(String.valueOf(c.getEdge().getValue()))));
     }
     SpecialAttribute magic = c.getMagicOrResonance();
     if (magic != null) {
-      grid.add(header(c.hasMagic() ? "M" : "RES"), col, 0);
-      grid.add(editing ? magicSpinner(magic) : value(String.valueOf(c.getEffectiveMagicOrResonanceValue())), col++, 1);
+      cells.getChildren().add(cell(c.hasMagic() ? "M" : "RES",
+          editing ? magicSpinner(magic) : value(String.valueOf(c.getEffectiveMagicOrResonanceValue()))));
     }
-    grid.add(header("ESS"), col, 0);
-    grid.add(value(critter != null ? critter.getData().essence() : Numbers.essence(c.getEssence())), col++, 1);
-    grid.add(header("INI"), col, 0);
-    grid.add(value(String.valueOf(c.getInitiative())), col++, 1);
-    grid.add(header("ID"), col, 0);
-    grid.add(value(String.valueOf(c.getInitiativePasses())), col++, 1);
-    grid.add(header("ZM"), col, 0);
-    grid.add(value(String.valueOf(statblock.getMonitorBoxes())), col, 1);
-    return grid;
+    cells.getChildren().addAll(
+        cell("ESS", value(critter != null ? critter.getData().essence() : Numbers.essence(c.getEssence()))),
+        cell("INI", value(String.valueOf(c.getInitiative()))),
+        cell("ID", value(String.valueOf(c.getInitiativePasses()))),
+        cell("ZM", value(String.valueOf(statblock.getMonitorBoxes()))));
+    return cells;
+  }
+
+  private static @NonNull Node cell(@NonNull String abbreviation, @NonNull Node content) {
+    return new VBox(2, header(abbreviation), content);
   }
 
   /** „3“ bzw. „5 (7)“, wenn Implantate oder Kräfte den Wert verändern. */
@@ -199,8 +199,7 @@ final class StatblockBuilder {
 
   private @NonNull Node attributeSpinner(@NonNull AttributeType type) {
     var attribute = c.getAttribute(type);
-    Spinner<Integer> spinner = new Spinner<>(attribute.getMin(), attribute.getMax(), attribute.getValue());
-    spinner.setPrefWidth(64);
+    Spinner<Integer> spinner = IntegerSpinner.create(attribute.getMin(), attribute.getMax(), attribute.getValue());
     spinner.valueProperty().addListener((_, _, value) -> {
       attribute.setValue(value);
       onChanged.run();
@@ -209,8 +208,7 @@ final class StatblockBuilder {
   }
 
   private @NonNull Node magicSpinner(@NonNull SpecialAttribute magic) {
-    Spinner<Integer> spinner = new Spinner<>(magic.getMin(), magic.getMax(), magic.getValue());
-    spinner.setPrefWidth(64);
+    Spinner<Integer> spinner = IntegerSpinner.create(magic.getMin(), magic.getMax(), magic.getValue());
     spinner.valueProperty().addListener((_, _, value) -> {
       magic.setValue(value);
       onChanged.run();
@@ -271,8 +269,7 @@ final class StatblockBuilder {
     names.getItems().setAll(c.getIndividualSkills().stream().map(Skill::getName).toList());
     names.setPromptText("Fertigkeit");
     // bis zum Höchstwert mit Talentiert; beim Hinzufügen auf das Maximum der Fertigkeit begrenzt
-    Spinner<Integer> rating = new Spinner<>(1, Skill.MAX_RATING + 1, 3);
-    rating.setPrefWidth(64);
+    Spinner<Integer> rating = IntegerSpinner.create(1, Skill.MAX_RATING + 1, 3);
     TextField spec = new TextField();
     spec.setPromptText("Spezialisierung");
     spec.setPrefWidth(130);
@@ -292,8 +289,7 @@ final class StatblockBuilder {
     ComboBox<String> groups = new ComboBox<>();
     groups.getItems().setAll(c.getCoupledGroupNames());
     groups.setPromptText("Fertigkeitsgruppe");
-    Spinner<Integer> rating = new Spinner<>(1, Skill.MAX_RATING, 3);
-    rating.setPrefWidth(64);
+    Spinner<Integer> rating = IntegerSpinner.create(1, Skill.MAX_RATING, 3);
     Button add = addButton(() -> {
       if (groups.getValue() != null) {
         setGroupRating(groups.getValue(), rating.getValue());
@@ -308,8 +304,7 @@ final class StatblockBuilder {
     ComboBox<KnowledgeSkillCategory> category = new ComboBox<>();
     category.getItems().setAll(KnowledgeSkillCategory.values());
     category.setValue(KnowledgeSkillCategory.STREET);
-    Spinner<Integer> rating = new Spinner<>(1, KnowledgeSkill.MAX_RATING, 2);
-    rating.setPrefWidth(64);
+    Spinner<Integer> rating = IntegerSpinner.create(1, KnowledgeSkill.MAX_RATING, 2);
     Button add = addButton(() -> {
       String text = name.getText().trim();
       if (text.isEmpty() || category.getValue() == null
@@ -333,8 +328,7 @@ final class StatblockBuilder {
     int base = traits.getData().skills().stream().filter(s -> s.name().equals(name)).mapToInt(s -> s.rating())
         .findFirst().orElse(rating);
     AttributeRange range = CritterMetatype.range(base);
-    Spinner<Integer> spinner = new Spinner<>(range.min(), range.max(), rating);
-    spinner.setPrefWidth(64);
+    Spinner<Integer> spinner = IntegerSpinner.create(range.min(), range.max(), rating);
     spinner.valueProperty().addListener((_, _, value) -> {
       traits.setSpecialSkill(name, value);
       onChanged.run();
@@ -350,12 +344,12 @@ final class StatblockBuilder {
     }
     SpecialAttribute magic = c.getMagicOrResonance();
     if (magic != null && !traits.getPowers().isEmpty()) {
-      lines.getChildren().add(styled(new Label("Hält bis zu %d Kräfte zugleich aufrecht (Magie, S. 337)"
+      lines.getChildren().add(styled(new Label("Hält bis zu %d Kräfte zugleich aufrecht (Magie, GRW S. 337)"
           .formatted(c.getEffectiveMagicOrResonanceValue())), "key-caption"));
     }
     if (magic != null && !c.isMagician()) {
       lines.getChildren().add(styled(new Label("Ohne die Gabe Zauberer keine Zauber, Beschwörung oder Projektion"
-          + " (S. 337)"), "key-caption"));
+          + " (GRW S. 337)"), "key-caption"));
     }
     if (editing) {
       lines.getChildren().add(traitAdder(CritterPowerDataLoader.getAll().values().stream()
@@ -494,7 +488,7 @@ final class StatblockBuilder {
     if (!equipment.getArmor().isEmpty()) {
       int penalty = equipment.getArmorEncumbrancePenalty();
       lines.getChildren().add(styled(new Label("Gesamt %d/%d%s".formatted(c.getArmorBallistic(), c.getArmorImpact(),
-          penalty == 0 ? "" : ", Behinderung " + penalty + " auf GES und REA")), "key-caption"));
+          penalty == 0 ? "" : ", Behinderung " + Numbers.integer(penalty) + " auf GES und REA")), "key-caption"));
     }
     if (editing) {
       lines.getChildren().add(dialogButton("Panzerung", this::addArmor));
@@ -635,6 +629,9 @@ final class StatblockBuilder {
       remove.run();
       onChanged.run();
     });
+    // der Text bricht um, statt den Entfernen-Knopf aus der schmalen Karte zu drängen
+    HBox.setHgrow(label, Priority.ALWAYS);
+    button.setMinWidth(Region.USE_PREF_SIZE);
     return row(label, button);
   }
 
@@ -662,7 +659,7 @@ final class StatblockBuilder {
   }
 
   private static @NonNull Node section(@NonNull String title, @NonNull Node content) {
-    return new VBox(2, styled(new Label(title), "attr-name"), content);
+    return new VBox(2, fixed(styled(new Label(title), "attr-name")), content);
   }
 
   private static @NonNull HBox row(@NonNull Node... nodes) {
@@ -672,11 +669,20 @@ final class StatblockBuilder {
   }
 
   private static @NonNull Label header(@NonNull String text) {
-    return styled(new Label(text), "key-caption");
+    return fixed(styled(new Label(text), "key-caption"));
   }
 
+  /** Werte und Zeilen brechen in einer schmalen Karte um, statt mit „…“ abgeschnitten zu werden. */
   private static @NonNull Label value(@NonNull String text) {
-    return new Label(text);
+    Label label = new Label(text);
+    label.setWrapText(true);
+    return label;
+  }
+
+  /** Überschriften und Kürzel schrumpfen nicht unter ihre Textbreite. */
+  private static @NonNull Label fixed(@NonNull Label label) {
+    label.setMinWidth(Region.USE_PREF_SIZE);
+    return label;
   }
 
 }

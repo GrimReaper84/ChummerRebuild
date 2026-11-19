@@ -24,7 +24,7 @@ class QualityCareerTest {
     }
     c.setCreated(true);
     for (String name : List.of("Adept", "Zauberer", "Magieradept", "Technomancer")) {
-      assertEquals("Nur bei der Erschaffung wählbar (S. 313)", c.getQualityBlockReason(quality(name), false), name);
+      assertEquals("Nur bei der Erschaffung wählbar (GRW S. 313)", c.getQualityBlockReason(quality(name), false), name);
     }
     assertNull(c.getQualityBlockReason(quality("Beidhändigkeit"), false));
   }

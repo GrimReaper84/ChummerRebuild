@@ -14,7 +14,7 @@
         <name>Adler</name>
         <bonus kind="SPELL_CATEGORY" detail="Wahrnehmung" dice="2"/>
         <bonus kind="SPIRIT_TYPE" detail="Luftgeist" dice="2"/>
-        <drawback>Bekommt das Handicap Allergie (Schadstoffe, leicht, S. 119) ohne Generierungspunkte dafür.</drawback>
+        <drawback>Bekommt das Handicap Allergie (Schadstoffe, leicht, GRW S. 119) ohne Generierungspunkte dafür.</drawback>
         <source>SR4</source>
         <page>235</page>
     </mentor>

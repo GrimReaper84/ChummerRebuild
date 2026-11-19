@@ -112,7 +112,7 @@ public final class InitiationTabBuilder {
       @NonNull TechniqueKind kind) {
     List<Label> hints = new ArrayList<>();
     if (!ch.isCreated()) {
-      hints.add(styled(new Label(kind.getProcessName() + " ist erst im Karrieremodus möglich (S. 112)."),
+      hints.add(styled(new Label(kind.getProcessName() + " ist erst im Karrieremodus möglich (GRW S. 112)."),
           STYLE_ATTR_RANGE));
     }
     if (initiation.getGrade() > 0) {

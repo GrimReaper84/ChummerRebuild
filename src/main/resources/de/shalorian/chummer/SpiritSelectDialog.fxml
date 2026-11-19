@@ -41,6 +41,10 @@
                GridPane.columnIndex="0" GridPane.rowIndex="4"/>
         <Label fx:id="statsLabel" wrapText="true" styleClass="attr-range"
                GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Label text="Optional:" styleClass="field-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.valignment="TOP"/>
+        <VBox fx:id="optionsBox" spacing="4"
+              GridPane.columnIndex="1" GridPane.rowIndex="5"/>
     </GridPane>
 
     <Label fx:id="problemLabel" wrapText="true" styleClass="attr-range" maxWidth="Infinity"/>

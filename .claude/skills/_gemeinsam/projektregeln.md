@@ -226,7 +226,8 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
 | Auswahl-Dialog | Subklasse von `CatalogSelectDialogController<T>` + eigene FXML (Vorbild `ComplexFormSelectDialog`) |
 | Tab-Inhalt | eigener `XTabBuilder` in `view.tab` (Vorbild `ContactTabBuilder`): Konstruktor mit FXML-Container(n), `CharacterTabHost` und ggf. `IncrementWiring`; `setCharacter`, `build()` baut komplett neu auf, `refresh()` für Zeilen-Refresher. Wirkt eine Änderung auf andere Tabs, eine fachliche Rückmeldung in `CharacterTabHost` ergänzen (z.B. `onImplantsChanged`) und im `CharacterViewController` entscheiden, was neu gebaut wird; Tabs rufen sich nie gegenseitig auf |
 | Dialoge, Hinweise, Abbuchung | `host.services()` (`TabServices`): `openDialog`, `warn`, `confirmYesNo`, `karmaChargeFailed` (optional mit Zusatzhinweis)/`nuyenChargeFailed`, `bookKarma`/`bookNuyen` |
-| +/−-Zeile | `IncrementWiring.wire(...)` bzw. `wireFree(...)` mit einer `RowModel`-Implementierung |
+| +/−-Zeile | `IncrementWiring.wire(...)` bzw. `wireFree(...)` mit einer `RowModel`-Implementierung; Knöpfe und Anzeigen nur über `RowControls.create()` bzw. `RowControls.minusButton()`/`plusButton()` |
+| Zahlen-Spinner (Schergen- und Critter-Bogen) | `IntegerSpinner.create(min, max, wert)`: feste Breite, schrumpft nicht, damit die Zahl sichtbar bleibt |
 | Zustandsmonitor-Kästchen | `view.grid.MonitorBoxRow.build(...)` (Status-Panel, Schergen-Bogen) |
 | NSC-Werteblock | `model.npc.NpcStatblock`: ein `Character` im Spielleiter-Modus plus Ausrüstungstext (ADR-062); Anzeige über `view.npc.StatblockBuilder` |
 | Critter | `model.critter.CritterTemplate.statblock(...)`: Metatyp aus dem Katalog (`CritterMetatype`, ±3), Merkmale in `CritterTraits` am `Character` (ADR-064) |
@@ -290,6 +291,15 @@ Regeln, sonst erscheint das helle Modena-Theme.
   Kartentitel. Keine neuen Zwischengrößen ohne Grund.
 - Zahlen in Anzeigetexten nur über `utils.Numbers` (`nuyen`, `integer`, `decimal`, `essence`), nie per Verkettung
   wie `+ " ¥"`; das Format ist eine Anzeige-Einstellung (Standard ohne Tausenderpunkt, Dezimalkomma, ADR-061).
+- **Zeichen und Schreibweisen (Nutzervorgaben 2026-11-19):**
+  - Minus immer „−“ (U+2212): negative Zahlen über `Numbers.integer`, Vorzeichen über `Numbers.signed` („+2“/„−2“),
+    auch in Katalogtexten (PB, Entzug). Der Halbgeviertstrich „–“ ist nur Bis-Strich („20–100“) und Platzhalter für
+    fehlende Werte (`Numbers.NO_VALUE`), nie Minus; „-“ (Bindestrich) nie als Minus in der Anzeige.
+  - Seitenangaben in sichtbaren Texten als „GRW S. n“. Die Quellenspalte der Katalogdetails bleibt „SR4 S. n“.
+  - Satzzeichen: Ist eine Textzeile als Satz formuliert (Hinweis, Warnung, Dialogtext, Problemtext), endet sie mit
+    Punkt. Tooltips sind standardmäßig Stichpunkte ohne Punkt, ebenso kurze Zustandszeilen wie „Kein Einbau möglich“.
+- **Dialoge:** Wurzel `dialog-pane` mit `spacing="14"` und Innenabstand 20/24/20/24; einen Titel im Inhalt
+  (`dialog-title`) nur bei Dialogen mit mehreren Bereichen (Neu, Einstellungen).
 
 **Bausteine (CSS-Klassen):**
 - Flächen: `.card` (+ `.card-title`, klein, fett, `muted`), `.hint-card` (+ `.hint-card-title`, `.hint-text`)

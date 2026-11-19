@@ -57,7 +57,7 @@
         <avail>20</avail>
         <legality>V</legality>
         <multiple/>
-        <note>Sprengladung im Kopf mit Wirkung wie eine Granate (S. 370).</note>
+        <note>Sprengladung im Kopf mit Wirkung wie eine Granate (GRW S. 370).</note>
         <limbcapacity>3</limbcapacity>
         <source>SR4</source>
         <page>386</page>
@@ -184,7 +184,7 @@
         <essence>0.3</essence>
         <cost>6000</cost>
         <avail>10</avail>
-        <note>Implantatversion des Ultraschallsensors (S. 379).</note>
+        <note>Implantatversion des Ultraschallsensors (GRW S. 379).</note>
         <limbcapacity>2</limbcapacity>
         <source>SR4</source>
         <page>386</page>
@@ -320,7 +320,7 @@
         <rating>3</rating>
         <avail>Rating * 3</avail>
         <capacitycost>Rating</capacitycost>
-        <note>Stufe als Zusatzwürfel bei Wahrnehmung über das Sehen (S. 379).</note>
+        <note>Stufe als Zusatzwürfel bei Wahrnehmung über das Sehen (GRW S. 379).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -342,7 +342,7 @@
         <avail>8</avail>
         <legality>E</legality>
         <capacitycost>3</capacitycost>
-        <note>Verbindung zu Smartgun-Waffen (S. 368).</note>
+        <note>Verbindung zu Smartgun-Waffen (GRW S. 368).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -368,7 +368,7 @@
         <rating>3</rating>
         <avail>Rating * 3</avail>
         <capacitycost>Rating</capacitycost>
-        <note>Stufe als Zusatzwürfel bei Wahrnehmung über das Gehör (S. 379).</note>
+        <note>Stufe als Zusatzwürfel bei Wahrnehmung über das Gehör (GRW S. 379).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -422,7 +422,7 @@
         <cost>750</cost>
         <avail>8</avail>
         <capacitycost>2</capacitycost>
-        <note>Implantatversion des Richtungsdetektors (S. 380).</note>
+        <note>Implantatversion des Richtungsdetektors (GRW S. 380).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -434,7 +434,7 @@
         <rating>6</rating>
         <avail>Rating * 3</avail>
         <capacitycost>Rating</capacitycost>
-        <note>Implantatversion des selektiven Geräuschfilters (S. 380).</note>
+        <note>Implantatversion des selektiven Geräuschfilters (GRW S. 380).</note>
         <source>SR4</source>
         <page>388</page>
     </item>
@@ -460,7 +460,7 @@
         <essence>0.5</essence>
         <cost>1500</cost>
         <avail>8</avail>
-        <note>Implantatversion der Enterhakenkanone (S. 383).</note>
+        <note>Implantatversion der Enterhakenkanone (GRW S. 383).</note>
         <limbcapacity>5</limbcapacity>
         <source>SR4</source>
         <page>389</page>
@@ -608,7 +608,7 @@
         <essence>0.5</essence>
         <cost>5000</cost>
         <avail>8</avail>
-        <note>Implantatversion des Simrigs (S. 374).</note>
+        <note>Implantatversion des Simrigs (GRW S. 374).</note>
         <effect type="dni">1</effect>
         <effect type="simmodule">1</effect>
         <source>SR4</source>
@@ -621,7 +621,7 @@
         <cost>Rating * 2000</cost>
         <rating>5</rating>
         <avail>Rating * 4</avail>
-        <note>Nutzt Aktionssofts bis zur eigenen Stufe (S. 376), zusammen höchstens bis zur doppelten Stufe.</note>
+        <note>Nutzt Aktionssofts bis zur eigenen Stufe (GRW S. 376), zusammen höchstens bis zur doppelten Stufe.</note>
         <effect type="skillwires">Rating</effect>
         <source>SR4</source>
         <page>389</page>
@@ -886,7 +886,7 @@
         <limbcapacity>4</limbcapacity>
         <fitsin>arm, lowerarm</fitsin>
         <installonly/>
-        <note>Wirkt wie ein Gyrostabilisator der Stufe 3 (S. 367), nicht zusätzlich zu einem solchen.</note>
+        <note>Wirkt wie ein Gyrostabilisator der Stufe 3 (GRW S. 367), nicht zusätzlich zu einem solchen.</note>
         <source>SR4</source>
         <page>391</page>
     </item>
@@ -914,7 +914,7 @@
         <limbcapacity>8</limbcapacity>
         <fitsin>arm, lowerarm</fitsin>
         <installonly/>
-        <note>Wie die Versteckte Armhalterung (S. 368), aber vollständig verborgen.</note>
+        <note>Wie die Versteckte Armhalterung (GRW S. 368), aber vollständig verborgen.</note>
         <source>SR4</source>
         <page>391</page>
     </item>

@@ -6,11 +6,8 @@ import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_ABBR;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
@@ -183,10 +180,11 @@ final class KnowledgeSkillSection {
       @NonNull KnowledgeSkill skill, @NonNull Character character) {
     Label nameLabelDummy = new Label(skill.getName());
     Label categoryLabel = new Label(skill.getCategory().getDisplayName());
-    Button minus = new Button("−");
-    Label ratingLabel = new Label();
-    Button plus = new Button("+");
-    Label costLabel = new Label();
+    RowControls controls = RowControls.create();
+    Button minus = controls.minus();
+    Label ratingLabel = controls.valueLabel();
+    Button plus = controls.plus();
+    Label costLabel = controls.costLabel();
     Label specLabel = new Label();
     Button specBtn = new Button("Spez.");
     Button removeBtn = new Button("Entfernen");
@@ -194,10 +192,6 @@ final class KnowledgeSkillSection {
 
     nameLabelDummy.getStyleClass().add(STYLE_ATTR_NAME);
     categoryLabel.getStyleClass().add(STYLE_ATTR_ABBR);
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
-    costLabel.getStyleClass().add(STYLE_ATTR_BP);
     specLabel.getStyleClass().add(STYLE_ATTR_NAME);
     specBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
@@ -218,7 +212,7 @@ final class KnowledgeSkillSection {
     knowledgeSkillRefreshers.add(poolRefresh);
     poolRefresh.run();
 
-    wiring.wire(knowledgeSkillRefreshers, new RowControls(ratingLabel, costLabel, minus, plus),
+    wiring.wire(knowledgeSkillRefreshers, controls,
         character.isCreated(), new RowModel() {
           @Override
           public int value() {

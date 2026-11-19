@@ -45,7 +45,7 @@ public final class NpcRules {
       return null;
     }
     String what = attributes && skills ? "Attribute und Fertigkeiten" : attributes ? "Attribute" : "Fertigkeiten";
-    return "Ein Anführer sollte in der Summe mindestens %d Punkte mehr %s haben als ein Scherge (S. 325)"
+    return "Ein Anführer sollte in der Summe mindestens %d Punkte mehr %s haben als ein Scherge (GRW S. 325)."
         .formatted(LEADER_MARGIN, what);
   }
 

@@ -27,8 +27,6 @@ import org.jspecify.annotations.Nullable;
  */
 public class ArmorModSelectDialogController extends CatalogSelectDialogController<ArmorModData> {
 
-  private static final String NO_VALUE = "–";
-
   @FXML
   private ComboBox<Integer> ratingBox;
   @FXML
@@ -145,10 +143,10 @@ public class ArmorModSelectDialogController extends CatalogSelectDialogControlle
   private void updatePreview() {
     ArmorModData selected = itemListView.getSelectionModel().getSelectedItem();
     if (selected == null || target == null) {
-      effectLabel.setText(NO_VALUE);
-      availabilityLabel.setText(NO_VALUE);
-      costLabel.setText(NO_VALUE);
-      sourceLabel.setText(NO_VALUE);
+      effectLabel.setText(Numbers.NO_VALUE);
+      availabilityLabel.setText(Numbers.NO_VALUE);
+      costLabel.setText(Numbers.NO_VALUE);
+      sourceLabel.setText(Numbers.NO_VALUE);
       noteLabel.setText("");
       problemLabel.setText("");
       okButton.setDisable(true);

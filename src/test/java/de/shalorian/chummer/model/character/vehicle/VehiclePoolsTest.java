@@ -66,7 +66,7 @@ class VehiclePoolsTest {
     Vehicle crawler = vehicle("Aztechnology Crawler (Klein)");
     VehiclePoolCell attack = row(rigger(), crawler, "Angriff").autonomous();
     assertNull(attack.pool());
-    assertEquals("keine Zielerfassung-Autosoft (S. 202)", attack.note());
+    assertEquals("keine Zielerfassung-Autosoft (GRW S. 202)", attack.note());
   }
 
   @Test
@@ -90,7 +90,7 @@ class VehiclePoolsTest {
     Character c = rigger();
     Vehicle car = vehicle("Honda Spirit (Kleinwagen)");
     VehiclePoolRow attack = row(c, car, "Angriff");
-    assertEquals("kein Riggeradapter (S. 396)", attack.jumpedIn().note());
+    assertEquals("kein Riggeradapter (GRW S. 396)", attack.jumpedIn().note());
     assertEquals("nur Drohnen handeln autonom", attack.autonomous().note());
     assertNull(row(c, car, "Initiative").jumpedIn().pool());
     assertNull(row(c, car, "Schadenswiderstand").autonomous().pool());

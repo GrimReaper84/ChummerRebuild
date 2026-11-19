@@ -28,8 +28,6 @@ import org.jspecify.annotations.Nullable;
  */
 public class ArmorSelectDialogController extends CatalogSelectDialogController<ArmorData> {
 
-  private static final String NO_VALUE = "–";
-
   @FXML
   private Label protectionLabel;
   @FXML
@@ -90,10 +88,10 @@ public class ArmorSelectDialogController extends CatalogSelectDialogController<A
     ArmorData selected = itemListView.getSelectionModel().getSelectedItem();
     showPriceField(selected != null && selected.hasVariablePrice());
     if (selected == null) {
-      protectionLabel.setText(NO_VALUE);
-      availabilityLabel.setText(NO_VALUE);
-      costLabel.setText(NO_VALUE);
-      sourceLabel.setText(NO_VALUE);
+      protectionLabel.setText(Numbers.NO_VALUE);
+      availabilityLabel.setText(Numbers.NO_VALUE);
+      costLabel.setText(Numbers.NO_VALUE);
+      sourceLabel.setText(Numbers.NO_VALUE);
       okButton.setDisable(true);
       return;
     }

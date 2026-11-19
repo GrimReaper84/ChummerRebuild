@@ -4,7 +4,6 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
@@ -18,6 +17,7 @@ import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.model.character.lifestyle.MissedPaymentResult;
 import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.LifestyleLevelStringConverter;
+import de.shalorian.chummer.view.grid.RowControls;
 import java.util.concurrent.ThreadLocalRandom;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -234,12 +234,10 @@ public final class StreetGearTabBuilder {
 
   private @NonNull HBox buildLifestyleMonthsStepper(@NonNull Character character) {
     Lifestyle lifestyle = character.getEquipment().getLifestyle();
-    Button minus = new Button("−");
+    Button minus = RowControls.minusButton();
     Label value = new Label(String.valueOf(lifestyle.getMonths()));
-    Button plus = new Button("+");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    Button plus = RowControls.plusButton();
     value.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
     // Der Tab wird nach jeder Änderung neu aufgebaut, daher bleibt dieser Zustand aktuell.
     minus.setDisable(lifestyle.getMonths() <= Lifestyle.MIN_MONTHS);
     minus.setOnAction(_ -> {

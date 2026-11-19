@@ -6,12 +6,9 @@ import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_ABBR;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 
 import de.shalorian.chummer.model.character.Character;
@@ -146,27 +143,24 @@ public final class TechnomancerTabBuilder {
     Label nameLabel = new Label(complexForm.getName());
     Label categoryLabel = new Label(complexForm.getData().category());
     Label skillLabel = new Label(complexForm.getData().skill());
-    Button minus = new Button("−");
-    Label ratingLabel = new Label();
-    Button plus = new Button("+");
-    Label costLabel = new Label();
+    RowControls controls = RowControls.create();
+    Button minus = controls.minus();
+    Label ratingLabel = controls.valueLabel();
+    Button plus = controls.plus();
+    Label costLabel = controls.costLabel();
     Label sourceLabel = new Label(complexForm.getData().source());
     Button removeBtn = new Button("Entfernen");
 
     nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
     categoryLabel.getStyleClass().add(STYLE_ATTR_ABBR);
     skillLabel.getStyleClass().add(STYLE_ATTR_RANGE);
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
-    costLabel.getStyleClass().add(STYLE_ATTR_BP);
     sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
     boolean career = character.isCreated();
 
-    wiring.wire(complexFormRefreshers, new RowControls(ratingLabel, costLabel, minus, plus),
+    wiring.wire(complexFormRefreshers, controls,
         career, new RowModel() {
           @Override
           public int value() {
@@ -243,7 +237,7 @@ public final class TechnomancerTabBuilder {
       return;
     }
     if (!ch.canAddComplexForm()) {
-      host.services().warn("Keine Resonanz", "Ohne Resonanzwert kann keine Komplexe Form gelernt werden");
+      host.services().warn("Keine Resonanz", "Ohne Resonanzwert kann keine Komplexe Form gelernt werden.");
       return;
     }
     if (!ch.canAddComplexFormAtCreation()) {

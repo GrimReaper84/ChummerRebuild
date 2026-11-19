@@ -5,8 +5,8 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.shalorian.chummer.view.dialog.NewCharacterDialogController"
-      spacing="20" styleClass="dialog-pane">
-    <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
+      spacing="14" styleClass="dialog-pane">
+    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
 
     <Label text="Neu" styleClass="dialog-title"/>
 

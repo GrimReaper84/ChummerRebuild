@@ -1,6 +1,10 @@
 {
   "name" : "Überzogene Erschaffung",
   "metatype" : "Zwerg",
+  "critter" : null,
+  "critterPowers" : [ ],
+  "critterWeaknesses" : [ ],
+  "critterSkills" : { },
   "created" : false,
   "nuyenBP" : 15,
   "physicalDamage" : 0,

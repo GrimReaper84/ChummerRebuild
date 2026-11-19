@@ -25,7 +25,7 @@
     </HBox>
   </bottom>
   <center>
-    <StackPane fx:id="contentHost" styleClass="content-host"/>
+    <StackPane fx:id="contentHost"/>
   </center>
   <fx:define>
     <!-- Seiten des Charakterbogens; SectionNavigator zeigt jeweils eine im Inhaltsbereich -->
@@ -52,7 +52,7 @@
         <fx:define>
           <ToggleGroup fx:id="skillSortToggleGroup"/>
         </fx:define>
-        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="skills-toolbar">
+        <HBox alignment="CENTER_LEFT" spacing="8">
           <ToggleButton fx:id="sortByCategoryBtn" text="Nach Kategorie" selected="true"
             styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
           <ToggleButton fx:id="sortByAlphabetBtn" text="Nach Alphabet"
@@ -201,7 +201,7 @@
         </Separator>
 
         <!-- Karma -->
-        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
+        <VBox HBox.hgrow="ALWAYS" spacing="10">
           <HBox alignment="CENTER_LEFT" spacing="10">
             <Button onAction="#onAddKarma" styleClass="btn-secondary" fx:id="addKarmaBtn">
               <graphic><FontIcon iconLiteral="fas-plus"/></graphic>
@@ -219,7 +219,7 @@
           <TableView VBox.vgrow="ALWAYS" fx:id="karmaTable"/>
         </VBox>
 
-        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="log-section">
+        <VBox HBox.hgrow="ALWAYS" spacing="10">
           <HBox alignment="CENTER_LEFT" spacing="10">
             <Button onAction="#onAddNuyen" styleClass="btn-secondary" fx:id="addNuyenBtn">
               <graphic><FontIcon iconLiteral="fas-plus"/></graphic>

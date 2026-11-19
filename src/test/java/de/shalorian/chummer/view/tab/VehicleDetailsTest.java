@@ -57,7 +57,7 @@ class VehicleDetailsTest {
   @Test
   void handlingShowsSignLikeTheRulebook() {
     assertEquals("+3", VehicleDetails.of(vehicle("Eurocar Westwind 3K (Sportwagen)")).handling());
-    assertEquals("-2", VehicleDetails.of(vehicle("Mitsubishi Nightsky (Limousine)")).handling());
+    assertEquals("−2", VehicleDetails.of(vehicle("Mitsubishi Nightsky (Limousine)")).handling());
   }
 
   @Test

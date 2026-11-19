@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.npc.NpcGroup;
 import de.shalorian.chummer.model.npc.NpcStatblock;
 import de.shalorian.chummer.model.npc.ProfessionalRating;
 import de.shalorian.chummer.persistence.CharacterStore;
+import de.shalorian.chummer.view.grid.IntegerSpinner;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.util.Objects;
 import javafx.fxml.FXML;
@@ -17,8 +18,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -84,14 +86,12 @@ public class NpcGroupViewController {
       g.setName(text);
       onNameChanged.run();
     });
-    Spinner<Integer> rating = new Spinner<>(0, ProfessionalRating.MAX_RATING, g.getProfessionalRating());
-    rating.setPrefWidth(70);
+    Spinner<Integer> rating = IntegerSpinner.create(0, ProfessionalRating.MAX_RATING, g.getProfessionalRating());
     rating.valueProperty().addListener((_, _, value) -> {
       g.setProfessionalRating(value);
       rebuild();
     });
-    Spinner<Integer> members = new Spinner<>(1, NpcGroup.MAX_MEMBERS, g.getMemberCount());
-    members.setPrefWidth(70);
+    Spinner<Integer> members = IntegerSpinner.create(1, NpcGroup.MAX_MEMBERS, g.getMemberCount());
     members.valueProperty().addListener((_, _, value) -> {
       g.setMemberCount(value);
       rebuild();
@@ -99,7 +99,8 @@ public class NpcGroupViewController {
     CheckBox leader = new CheckBox("Anführer");
     leader.setSelected(g.getLeader() != null);
     leader.selectedProperty().addListener((_, _, on) -> toggleLeader(g, on, leader));
-    HBox row = new HBox(10, styled(new Label("Professionalitätsstufe"), "attr-name"), rating,
+    // umbrechend statt gequetscht: in einem schmalen Fenster rutschen Mitglieder und Anführer in die nächste Reihe
+    FlowPane row = new FlowPane(10, 6, styled(new Label("Professionalitätsstufe"), "attr-name"), rating,
         styled(new Label(ProfessionalRating.of(g.getProfessionalRating()).getDisplayName()), "key-caption"),
         styled(new Label("Mitglieder"), "attr-name"), members, leader);
     row.setAlignment(Pos.CENTER_LEFT);
@@ -134,6 +135,13 @@ public class NpcGroupViewController {
   private @NonNull Node statblocks(@NonNull NpcGroup g, @NonNull TabServices s) {
     GridPane grid = new GridPane();
     grid.setHgap(12);
+    // zwei gleich breite Spalten, auch ohne Anführer: die Schergenkarte springt beim Umschalten nicht in der Breite
+    for (int column = 0; column < 2; column++) {
+      ColumnConstraints constraints = new ColumnConstraints();
+      constraints.setPercentWidth(50);
+      constraints.setFillWidth(true);
+      grid.getColumnConstraints().add(constraints);
+    }
     grid.add(StatblockBuilder.build(g.getGrunt(), "SCHERGEN", null, editGrunt, () -> {
       editGrunt = !editGrunt;
       rebuild();

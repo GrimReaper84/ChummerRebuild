@@ -7,7 +7,6 @@ import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
@@ -136,10 +135,8 @@ public final class AdeptTabBuilder {
   private @NonNull HBox buildMagicSplitRow(@NonNull Character ch) {
     Label title = new Label("Magie für Kräfte:");
     title.getStyleClass().add(STYLE_ATTR_NAME);
-    Button minus = new Button("−");
-    Button plus = new Button("+");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    Button minus = RowControls.minusButton();
+    Button plus = RowControls.plusButton();
     Label value = new Label();
     value.getStyleClass().add(STYLE_ATTR_VALUE);
     Label unused = new Label();
@@ -204,10 +201,8 @@ public final class AdeptTabBuilder {
     Label nameLabel = new Label(power.displayName());
     nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
     nameLabel.setTooltip(new Tooltip(power.getData().note()));
-    Button minus = new Button("−");
-    Button plus = new Button("+");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
+    Button minus = RowControls.minusButton();
+    Button plus = RowControls.plusButton();
     boolean leveled = power.getData().leveled();
     minus.setVisible(leveled);
     plus.setVisible(leveled);

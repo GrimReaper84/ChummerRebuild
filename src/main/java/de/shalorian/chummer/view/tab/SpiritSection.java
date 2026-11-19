@@ -24,15 +24,19 @@ import de.shalorian.chummer.model.critter.CritterPowerDataLoader;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.SpiritSelectDialogController;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -44,15 +48,18 @@ import org.tbee.javafx.scene.layout.MigPane;
 /**
  * Abschnitt Geister (im Bereich Magie) bzw. Sprites (im Bereich Technomancer), GRW S. 112/113, 222, 281/282: Kopf mit
  * Zahl der gebundenen bzw. registrierten Einträge gegen Charisma und BP bei der Erschaffung, je Eintrag Art, Kraft bzw.
- * Stufe, Dienste mit +/−, Zustand und Entfernen; der Tooltip am Namen zeigt Werte, Fertigkeiten und Kräfte aus dem
- * Katalog, darunter Hinweise auf Einträge, die nicht mehr den Regeln entsprechen. Nach jeder Änderung baut sich der
- * Abschnitt selbst neu und meldet BP über {@link CharacterTabHost}; der Tab baut ihn bei {@code refresh()} neu.
+ * Stufe, Dienste mit +/−, Zustand und Entfernen, darunter Hinweise auf Einträge, die nicht mehr den Regeln entsprechen.
+ * Aufgeklappt zeigt ein Eintrag Werteblock, Bewegung, Fertigkeiten, Kräfte (Wirkung als Tooltip je Kraft), die
+ * gewählten optionalen Kräfte bzw. Komplexen Formen und Schwächen; fehlende Optionen lassen sich dort nachtragen. Nach
+ * jeder Änderung baut sich der Abschnitt selbst neu und meldet BP über {@link CharacterTabHost}; der Tab baut ihn bei {@code refresh()} neu.
  */
 final class SpiritSection {
 
   private final @NonNull SpiritKind kind;
   private final @NonNull CharacterTabHost host;
   private final @NonNull VBox box = new VBox();
+  /** Aufgeklappte Einträge (Identität); bleibt beim Neuaufbau erhalten, wird nicht gespeichert. */
+  private final @NonNull Set<Spirit> expanded = Collections.newSetFromMap(new IdentityHashMap<>());
 
   SpiritSection(@NonNull SpiritKind kind, @NonNull CharacterTabHost host) {
     this.kind = kind;
@@ -95,13 +102,17 @@ final class SpiritSection {
       box.getChildren().add(empty);
       return box;
     }
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][]");
+    expanded.retainAll(entries);
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
-    addHeaderRow(grid, kind.getDisplayName(), kind.getPowerName(), "Dienste", "Zustand", "Werte", "");
+    addHeaderRow(grid, "", kind.getDisplayName(), kind.getPowerName(), "Dienste", "Zustand", "Werte", "");
     int row = 1;
     for (Spirit spirit : entries) {
       addRow(grid, row++, ch, spirit);
+      if (expanded.contains(spirit)) {
+        grid.add(details(ch, spirit), "cell 1 " + row++ + " 6 1");
+      }
     }
     box.getChildren().add(withRightFiller(grid));
     return box;
@@ -111,8 +122,17 @@ final class SpiritSection {
     Spirits spirits = ch.getSpirits();
     SpiritData data = spirit.getData();
     String category = data.categoryIn(ch.getTradition());
+    boolean open = expanded.contains(spirit);
+    Button toggle = actionButton(open ? "Zuklappen" : "Aufklappen",
+        open ? FontAwesomeSolid.CHEVRON_DOWN : FontAwesomeSolid.CHEVRON_RIGHT);
+    toggle.setOnAction(_ -> {
+      if (!expanded.remove(spirit)) {
+        expanded.add(spirit);
+      }
+      build(ch);
+    });
     Label name = styled(new Label(category == null ? data.name() : data.name() + " · " + category), STYLE_ATTR_NAME);
-    name.setTooltip(new Tooltip(details(data, spirit.getForce())));
+    name.setTooltip(new Tooltip(data.source() + " S. " + data.page()));
     Label force = styled(new Label(String.valueOf(spirit.getForce())), STYLE_ATTR_VALUE);
 
     Button minus = actionButton("Dienst weniger", FontAwesomeSolid.MINUS);
@@ -137,36 +157,78 @@ final class SpiritSection {
       spirits.remove(spirit);
       changed(ch);
     });
-    addRowCells(grid, row, name, force, serviceBox, state, stats, remove);
+    addRowCells(grid, row, toggle, name, force, serviceBox, state, stats, remove);
   }
 
-  /** Werte, Bewegung, Fertigkeiten, Komplexe Formen, Kräfte mit Wirkung, Optionen und Schwächen für den Tooltip. */
-  private static @NonNull String details(@NonNull SpiritData data, int force) {
-    List<String> lines = new ArrayList<>();
-    lines.add(data.statsText(force));
+  /**
+   * Aufgeklappter Teil: Werteblock, Bewegung, Fertigkeiten und Komplexe Formen mit Kraft bzw. Stufe, Kräfte und gewählte
+   * Optionen als einzelne Labels mit der Wirkung als Tooltip (gemeinsamer Kräftekatalog, ADR-064) und Schwächen; fehlen
+   * Optionen, eine Auswahl zum Nachtragen. Die Quelle steht im Tooltip am Namen.
+   */
+  private @NonNull Node details(@NonNull Character ch, @NonNull Spirit spirit) {
+    SpiritData data = spirit.getData();
+    int force = spirit.getForce();
+    VBox details = new VBox(6);
+    details.getChildren().add(detailText(data.statsText(force)));
     if (!data.movement().isEmpty()) {
-      lines.add("Bewegung: " + data.movement());
+      details.getChildren().add(detailText("Bewegung: " + data.movement()));
     }
-    lines.add("Fertigkeiten (" + force + "): " + String.join(", ", data.skills()));
+    details.getChildren().add(detailText("Fertigkeiten (" + force + "): " + String.join(", ", data.skills())));
     if (!data.complexForms().isEmpty()) {
-      lines.add("Komplexe Formen (" + force + "): " + String.join(", ", data.complexForms()));
+      details.getChildren().add(detailText("Komplexe Formen (" + force + "): " + String.join(", ", data.complexForms())));
     }
-    lines.add("Kräfte: " + String.join(", ", data.powers()));
-    lines.add("Optional, %d wählbar: %s".formatted(data.optionalCount(force), String.join(", ", data.optional())));
+    details.getChildren().add(powerLine("Kräfte", data.powers()));
+    String optionsTitle = "%s (%d von %d)".formatted(kind.getOptionsName(), spirit.getOptions().size(),
+        data.optionalCount(force));
+    details.getChildren().add(spirit.getOptions().isEmpty() ? detailText(optionsTitle + ": keine")
+        : powerLine(optionsTitle, spirit.getOptions()));
+    if (spirit.getMissingOptionCount() > 0) {
+      details.getChildren().add(optionAdder(ch, spirit));
+    }
     if (!data.weaknesses().isEmpty()) {
-      lines.add("Schwächen: " + String.join(", ", data.weaknesses()));
+      details.getChildren().add(detailText("Schwächen: " + String.join(", ", data.weaknesses())));
     }
-    // Wirkung jeder Kraft aus dem gemeinsamen Kräftekatalog (critter_powers.xml, ADR-064)
-    List<String> names = new ArrayList<>(data.powers());
-    names.addAll(data.optional());
-    for (String power : names) {
+    return details;
+  }
+
+  /** {@code title} mit Doppelpunkt und je Kraft ein Label; Kräfte aus dem Katalog tragen ihre Wirkung als Tooltip. */
+  private static @NonNull Node powerLine(@NonNull String title, @NonNull List<String> powers) {
+    FlowPane line = new FlowPane(6, 4, detailText(title + ":"));
+    for (int i = 0; i < powers.size(); i++) {
+      String power = powers.get(i);
+      Label label = styled(new Label(i < powers.size() - 1 ? power + "," : power), STYLE_ATTR_NAME);
       CritterPowerData powerData = CritterPowerDataLoader.findForEntry(power);
       if (powerData != null) {
-        lines.add("• " + powerData.name() + ": " + powerData.note());
+        label.setTooltip(new Tooltip(powerData.describe()));
       }
+      line.getChildren().add(label);
     }
-    lines.add(data.source() + " S. " + data.page());
-    return String.join("\n", lines);
+    return line;
+  }
+
+  /** Nachtragen einer fehlenden Option; einmal gewählte bleiben (GRW S. 347, 282). */
+  private @NonNull Node optionAdder(@NonNull Character ch, @NonNull Spirit spirit) {
+    ComboBox<String> choice = new ComboBox<>();
+    choice.getItems().setAll(spirit.getData().optional().stream().filter(o -> !spirit.getOptions().contains(o))
+        .toList());
+    choice.setPromptText(kind.getOptionsName());
+    Button add = new Button("Nachtragen");
+    add.getStyleClass().add(STYLE_BTN_SECONDARY);
+    add.disableProperty().bind(choice.valueProperty().isNull());
+    add.setOnAction(_ -> {
+      ch.getSpirits().addMissingOption(spirit, choice.getValue());
+      changed(ch);
+    });
+    HBox row = new HBox(8, choice, add);
+    row.setAlignment(Pos.CENTER_LEFT);
+    return row;
+  }
+
+  private static @NonNull Label detailText(@NonNull String text) {
+    Label label = styled(new Label(text), STYLE_ATTR_RANGE);
+    label.setWrapText(true);
+    label.setMaxWidth(640);
+    return label;
   }
 
   private void changeServices(@NonNull Character ch, @NonNull Spirit spirit, int services) {

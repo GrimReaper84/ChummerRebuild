@@ -50,8 +50,6 @@ import org.jspecify.annotations.Nullable;
  * Equipment#isAvailableForInstall}). Ohne Zielgerät sind reine Einbauten deaktiviert.
  */
 public class GearSelectDialogController extends CatalogSelectDialogController<GearData> {
-
-  private static final String NO_VALUE = "–";
   /** Obergrenze des Mengen-Spinners in Packungen. */
   private static final int MAX_PACKS = 999;
 
@@ -331,7 +329,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     if (selected == null) {
       for (Label label : List.of(categoryLabel, unitLabel, availabilityLabel, costLabel,
           sourceLabel)) {
-        label.setText(NO_VALUE);
+        label.setText(Numbers.NO_VALUE);
       }
       noteLabel.setText("");
       okButton.setDisable(true);
@@ -352,7 +350,7 @@ public class GearSelectDialogController extends CatalogSelectDialogController<Ge
     availabilityLabel.setText(availability);
     // Preis nur für einen gültigen Gegenstand; Gear rechnet und prüft selbst.
     Gear selection = buildSelection();
-    costLabel.setText(selection == null ? NO_VALUE : Numbers.nuyen(selection.getNuyenCost()));
+    costLabel.setText(selection == null ? Numbers.NO_VALUE : Numbers.nuyen(selection.getNuyenCost()));
     sourceLabel.setText(selected.source() + " S. " + selected.page());
     String problem = purchaseProblem(selected, rating);
     noteLabel.setText(problem != null ? problem : noteText(selected));

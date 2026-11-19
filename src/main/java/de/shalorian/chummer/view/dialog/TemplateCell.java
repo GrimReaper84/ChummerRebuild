@@ -27,7 +27,7 @@ final class TemplateCell extends ListCell<DocumentTemplate> {
     if (empty || template == null) {
       return;
     }
-    Label label = new Label(template.name() + " (" + template.source() + ")");
+    String text = template.name() + " (" + template.source() + ")";
     // nur in der aufgeklappten Liste: die Zelle des Auswahlfelds selbst hat keine ListView und Index -1
     List<DocumentTemplate> items = getListView() == null ? List.of() : getListView().getItems();
     int index = getIndex();
@@ -36,9 +36,12 @@ final class TemplateCell extends ListCell<DocumentTemplate> {
     if (firstOfKind) {
       Label header = new Label(template.kind().getDisplayName());
       header.getStyleClass().add("key-caption");
+      Label label = new Label(text);
+      // ein Label als Grafik übernimmt die Schriftfarbe der Zelle nicht von selbst (auch nicht beim Hover)
+      label.textFillProperty().bind(textFillProperty());
       setGraphic(new VBox(2, header, label));
     } else {
-      setGraphic(label);
+      setText(text);
     }
     setTooltip(new Tooltip(bookName(template.source()) + ", S. " + template.page()));
   }

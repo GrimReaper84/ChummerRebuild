@@ -87,10 +87,10 @@ public class Gear {
       return data.variableCost() ? "Preis fehlt" : "Preis ist fest";
     }
     if (chosenPackPrice != null && chosenPackPrice < data.packCostFor(rating)) {
-      return "Preis liegt unter dem Mindestpreis " + Numbers.nuyen(data.packCostFor(rating));
+      return "Preis liegt unter dem Mindestpreis " + Numbers.nuyen(data.packCostFor(rating)) + ".";
     }
     if (chosenPackPrice != null && chosenPackPrice > MAX_CHOSEN_PACK_PRICE) {
-      return "Preis liegt über " + Numbers.nuyen(MAX_CHOSEN_PACK_PRICE);
+      return "Preis liegt über " + Numbers.nuyen(MAX_CHOSEN_PACK_PRICE) + ".";
     }
     return quantityProblem(quantity);
   }

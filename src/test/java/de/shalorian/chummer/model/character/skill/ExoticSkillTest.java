@@ -81,7 +81,7 @@ class ExoticSkillTest {
     assertThrows(IllegalStateException.class, () -> c.removeExoticSkill(whip));
     Skill halberd = c.addExoticSkill(ExoticSkills.MELEE, "Hellebarde");
     c.setCreated(true);
-    assertEquals("Im Karrieremodus wird nur gesteigert", c.getExoticSkillRemovalProblem(halberd));
+    assertEquals("Im Karrieremodus wird nur gesteigert.", c.getExoticSkillRemovalProblem(halberd));
   }
 
   @Test

@@ -32,7 +32,7 @@ public final class StatusHints {
         hints.add("Ressourcengeld um " + Numbers.nuyen(-nuyen) + " überzogen");
       }
       if (character.isEssenceBelowCreationMinimum()) {
-        hints.add("Essenz darf bei der Erschaffung nicht auf 0 oder darunter fallen");
+        hints.add("Essenz bei der Erschaffung auf 0 oder darunter");
       }
     }
     String adeptProblem = character.getAdeptPowers().getProblem();

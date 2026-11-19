@@ -204,7 +204,7 @@ public final class CyberwareTabBuilder {
       Label averages = styled(new Label(averagesText(ch.getImplants().getLimbAverages(),
           ch.getImplants().getLimbArmor())), STYLE_ATTR_RANGE);
       averages.setTooltip(new Tooltip("Abgerundeter Durchschnitt über beide Arme, beide Beine und den Torso, für "
-          + "Aktionen des ganzen Körpers (S. 389/390); Proben mit einem bestimmten Glied nutzen dessen Werte"));
+          + "Aktionen des ganzen Körpers (GRW S. 389/390); Proben mit einem bestimmten Glied nutzen dessen Werte"));
       header.getChildren().add(averages);
     }
     header.getChildren().addAll(spacer, addBtn);
@@ -253,7 +253,7 @@ public final class CyberwareTabBuilder {
         : "keine eigenen Attribute"), STYLE_ATTR_RANGE);
     String unarmed = limb.getUnarmedDamageText();
     if (unarmed != null) {
-      valuesLabel.setTooltip(new Tooltip("Waffenlos mit diesem Glied: " + unarmed + " (S. 390)"));
+      valuesLabel.setTooltip(new Tooltip("Waffenlos mit diesem Glied: " + unarmed + " (GRW S. 390)"));
     }
     Label gradeLabel = styled(new Label(limb.getGrade().getDisplayName()), STYLE_ATTR_ABBR);
     Label essenceLabel = styled(new Label(ESSENCE_FORMAT.toString(limb.getEssenceCost().doubleValue())),
@@ -323,7 +323,7 @@ public final class CyberwareTabBuilder {
         onCyberwareChanged();
         if (ch.isEssenceBelowCreationMinimum()) {
           host.services().warn("Essenz zu niedrig",
-              "Bei der Charaktererschaffung darf die Essenz nicht auf 0 oder darunter fallen");
+              "Bei der Charaktererschaffung darf die Essenz nicht auf 0 oder darunter fallen.");
         }
       });
     } catch (IOException _) {
@@ -568,7 +568,7 @@ public final class CyberwareTabBuilder {
         onCyberwareChanged();
         if (ch.isEssenceBelowCreationMinimum()) {
           host.services().warn("Essenz zu niedrig",
-              "Bei der Charaktererschaffung darf die Essenz nicht auf 0 oder darunter fallen");
+              "Bei der Charaktererschaffung darf die Essenz nicht auf 0 oder darunter fallen.");
         }
       });
     } catch (IOException _) {

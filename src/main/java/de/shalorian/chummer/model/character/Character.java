@@ -750,7 +750,7 @@ public class Character {
       return "Keine Exotik-Instanz: " + skill.getName();
     }
     if (created && !gmMode) {
-      return "Im Karrieremodus wird nur gesteigert";
+      return "Im Karrieremodus wird nur gesteigert.";
     }
     return getSelectedQualities().stream()
         .filter(q -> q.choice().equals(skill.getName()))
@@ -1142,7 +1142,7 @@ public class Character {
       for (Skill s : skills.values()) {
         String g = s.getGroupName();
         if (g != null && s.getCategory() == doubled && isGroupCoupled(g) && getGroupRating(g) > 0) {
-          return "Fertigkeitsgruppe %s hat bereits einen Wert".formatted(g);
+          return "Fertigkeitsgruppe %s hat bereits einen Wert.".formatted(g);
         }
       }
     }
@@ -1150,7 +1150,7 @@ public class Character {
       return null;
     }
     if (created && !ruleOptions.isLateAwakening() && isAwakeningQuality(data)) {
-      return "Nur bei der Erschaffung wählbar (S. 313)";
+      return "Nur bei der Erschaffung wählbar (GRW S. 313)";
     }
     if (!created && !gratis) {
       if (data.type() == QualityType.POSITIVE
@@ -1215,7 +1215,7 @@ public class Character {
         }
         // Inkompetenz: die Fertigkeit darf nicht erworben sein (GRW S. 120).
         yield data.bonuses().contains(QualityBonusType.INCOMPETENT) && skill.getRating() > 0
-            ? "Fertigkeit hat bereits einen Wert" : null;
+            ? "Fertigkeit hat bereits einen Wert." : null;
       }
     };
   }
@@ -1990,11 +1990,11 @@ public class Character {
       return null;
     }
     if (getSkillwireRating() == 0) {
-      return "Aktionssofts brauchen Talentleitungen (S. 389)";
+      return "Aktionssofts brauchen Talentleitungen (GRW S. 389).";
     }
     int loaded = getLoadedActivesoftRating();
     if (loaded + soft.getRating() > getActivesoftCapacity()) {
-      return "Talentleitungen ausgelastet: %d von %d Stufen geladen (S. 389)".formatted(loaded, getActivesoftCapacity());
+      return "Talentleitungen ausgelastet: %d von %d Stufen geladen (GRW S. 389)".formatted(loaded, getActivesoftCapacity());
     }
     return null;
   }

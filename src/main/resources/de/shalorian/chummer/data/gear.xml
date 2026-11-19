@@ -919,7 +919,7 @@
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <note>Standardprogramm; Fertigkeit: Computer; Beschreibung S. 271.</note>
+        <note>Standardprogramm; Fertigkeit: Computer; Beschreibung GRW S. 271.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -929,7 +929,7 @@
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <note>Standardprogramm; Fertigkeit: je nach gesteuertem Gerät; Beschreibung S. 271.</note>
+        <note>Standardprogramm; Fertigkeit: je nach gesteuertem Gerät; Beschreibung GRW S. 271.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -939,7 +939,7 @@
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <note>Standardprogramm; Fertigkeit: Computer; Beschreibung S. 271.</note>
+        <note>Standardprogramm; Fertigkeit: Computer; Beschreibung GRW S. 271.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -949,7 +949,7 @@
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <note>Standardprogramm; Fertigkeit: keine; wirkt auf den Prozessor; Beschreibung S. 271.</note>
+        <note>Standardprogramm; Fertigkeit: keine; wirkt auf den Prozessor; Beschreibung GRW S. 271.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -959,7 +959,7 @@
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <note>Standardprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung S. 272.</note>
+        <note>Standardprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -969,7 +969,7 @@
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <note>Standardprogramm; Fertigkeit: Datensuche; Beschreibung S. 272.</note>
+        <note>Standardprogramm; Fertigkeit: Datensuche; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -979,7 +979,7 @@
         <rating>1-6</rating>
         <cost>Rating * 50</cost>
         <costhigh>Rating * 100</costhigh>
-        <note>Standardprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung S. 272.</note>
+        <note>Standardprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -991,7 +991,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Hacking oder Matrixkampf; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: Hacking oder Matrixkampf; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1003,7 +1003,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Computer; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: Computer; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1015,7 +1015,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1027,7 +1027,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1039,7 +1039,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Matrixkampf; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: Matrixkampf; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1051,7 +1051,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1063,7 +1063,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1075,7 +1075,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 272.</note>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung GRW S. 272.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1087,7 +1087,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung S. 273.</note>
+        <note>Hackingprogramm; Fertigkeit: Elektronische Kriegsführung; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1099,7 +1099,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Computer; Beschreibung S. 273.</note>
+        <note>Hackingprogramm; Fertigkeit: Computer; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1111,7 +1111,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung S. 273.</note>
+        <note>Hackingprogramm; Fertigkeit: keine; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1123,7 +1123,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 273.</note>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1135,7 +1135,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Elektronische Kriegsführung oder Hacking; Beschreibung S. 273.</note>
+        <note>Hackingprogramm; Fertigkeit: Elektronische Kriegsführung oder Hacking; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1147,7 +1147,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Matrixkampf; Beschreibung S. 273.</note>
+        <note>Hackingprogramm; Fertigkeit: Matrixkampf; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1159,7 +1159,7 @@
         <legality>E</legality>
         <cost>Rating * 500</cost>
         <costhigh>Rating * 1000</costhigh>
-        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung S. 273.</note>
+        <note>Hackingprogramm; Fertigkeit: Hacking; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1170,7 +1170,7 @@
         <avail>Rating * 3</avail>
         <cost>Rating * 1000</cost>
         <costhigh>Rating * 2500</costhigh>
-        <note>Stufe = Pilot; ein laufender Agent zählt gegen das Prozessorlimit; Beschreibung S. 273.</note>
+        <note>Stufe = Pilot; ein laufender Agent zählt gegen das Prozessorlimit; Beschreibung GRW S. 273.</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1195,7 +1195,7 @@
         <cost>Rating * 200</cost>
         <costhigh>Rating * 500</costhigh>
         <matrixattribute>FIREWALL</matrixattribute>
-        <note>Hebt die Firewall eines Geräts auf die Paketstufe; nur mit Betriebssystem (Regel S. 260).</note>
+        <note>Hebt die Firewall eines Geräts auf die Paketstufe; nur mit Betriebssystem (Regel GRW S. 260).</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1206,7 +1206,7 @@
         <cost>Rating * 200</cost>
         <costhigh>Rating * 500</costhigh>
         <matrixattribute>SYSTEM</matrixattribute>
-        <note>Hebt das System eines Geräts auf die Paketstufe, höchstens bis zum Prozessor; nur mit Betriebssystem (Regel S. 260).</note>
+        <note>Hebt das System eines Geräts auf die Paketstufe, höchstens bis zum Prozessor; nur mit Betriebssystem (Regel GRW S. 260).</note>
         <source>SR4</source>
         <page>376</page>
     </item>
@@ -1684,7 +1684,7 @@
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>1</capacity>
-        <note>Signal 0. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <note>Signal 0. Im GRW ohne Preis und Verfügbarkeit (Tabelle GRW S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>
@@ -1694,7 +1694,7 @@
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>1</capacity>
-        <note>Signal 2. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <note>Signal 2. Im GRW ohne Preis und Verfügbarkeit (Tabelle GRW S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>
@@ -1704,7 +1704,7 @@
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>3</capacity>
-        <note>Signal 3. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <note>Signal 3. Im GRW ohne Preis und Verfügbarkeit (Tabelle GRW S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>
@@ -1714,7 +1714,7 @@
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>5</capacity>
-        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle GRW S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>
@@ -1724,7 +1724,7 @@
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>6</capacity>
-        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle GRW S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>
@@ -1734,7 +1734,7 @@
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>8</capacity>
-        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <note>Signal 4. Im GRW ohne Preis und Verfügbarkeit (Tabelle GRW S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>
@@ -1744,7 +1744,7 @@
         <cost>0</cost>
         <accepts>Sensor-Funktionen</accepts>
         <capacity>12</capacity>
-        <note>Signal 5. Im GRW ohne Preis und Verfügbarkeit (Tabelle S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
+        <note>Signal 5. Im GRW ohne Preis und Verfügbarkeit (Tabelle GRW S. 381 nennt nur Kapazität und Signal); bezahlt werden die eingebauten Sensor-Funktionen.</note>
         <source>SR4</source>
         <page>381</page>
     </item>

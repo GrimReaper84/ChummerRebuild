@@ -85,7 +85,7 @@ class NpcRulesTest {
     Objects.requireNonNull(leader.getSkill("Pistolen")).setRating(6);
     // Attribute +3, Fertigkeiten +3
     assertEquals("Ein Anführer sollte in der Summe mindestens 4 Punkte mehr Attribute und Fertigkeiten haben als ein "
-        + "Scherge (S. 325)", NpcRules.leaderHint(grunt, leader));
+        + "Scherge (GRW S. 325).", NpcRules.leaderHint(grunt, leader));
     leader.getAttribute(AttributeType.STR).setValue(3);
     String onlySkills = NpcRules.leaderHint(grunt, leader);
     assertNotNull(onlySkills);

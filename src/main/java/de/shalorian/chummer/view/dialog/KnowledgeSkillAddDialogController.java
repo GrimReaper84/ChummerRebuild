@@ -70,7 +70,7 @@ public class KnowledgeSkillAddDialogController {
   private void onOk() {
     String name = nameBox.getEditor().getText() == null ? "" : nameBox.getEditor().getText().trim();
     if (name.isEmpty()) {
-      errorLabel.setText("Name darf nicht leer sein");
+      errorLabel.setText("Der Name darf nicht leer sein.");
       return;
     }
     Character ch = character;

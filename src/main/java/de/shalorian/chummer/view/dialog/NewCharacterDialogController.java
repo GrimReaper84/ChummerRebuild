@@ -74,6 +74,9 @@ public class NewCharacterDialogController {
     characterBtn.setOnAction(_ -> showKind(characterBtn));
     groupBtn.setOnAction(_ -> showKind(groupBtn));
     templateBtn.setOnAction(_ -> showKind(templateBtn));
+    // Beschreibung nur mit gewählter Vorlage: leer brächte sie den Zeilenabstand des Rasters mit
+    templateInfo.visibleProperty().bind(templateBtn.selectedProperty().and(templateInfo.textProperty().isNotEmpty()));
+    templateInfo.managedProperty().bind(templateInfo.visibleProperty());
     showKind(characterBtn);
     createButton.disableProperty().bind(Bindings.createBooleanBinding(
         () -> nameField.getText().trim().isEmpty() || (templateBtn.isSelected() && templateBox.getValue() == null),
@@ -85,7 +88,7 @@ public class NewCharacterDialogController {
       button.setSelected(button.equals(chosen));
     }
     show(List.of(metatypeLabel, metatypeBox), chosen.equals(characterBtn));
-    show(List.of(templateLabel, templateBox, templateInfo), chosen.equals(templateBtn));
+    show(List.of(templateLabel, templateBox), chosen.equals(templateBtn));
   }
 
   private static void show(@NonNull List<Node> nodes, boolean visible) {

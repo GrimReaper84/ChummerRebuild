@@ -42,7 +42,7 @@ class CharacterStoreSpiritRoundtripTest {
   void spiritsRoundtrip() throws IOException {
     Character original = career("Zauberer");
     original.getSpirits().add(new Spirit(Objects.requireNonNull(SpiritDataLoader.findByName("Feuergeist")), 5, 3,
-        true));
+        true, List.of("Grauen")));
     original.getSpirits().add(new Spirit(Objects.requireNonNull(SpiritDataLoader.findByName("Luftgeist")), 4, 1,
         false));
 
@@ -55,6 +55,8 @@ class CharacterStoreSpiritRoundtripTest {
     assertEquals(5, spirits.getFirst().getForce());
     assertEquals(3, spirits.getFirst().getServices());
     assertFalse(spirits.get(1).isBound());
+    assertEquals(List.of("Grauen"), spirits.getFirst().getOptions());
+    assertEquals(List.of(), spirits.get(1).getOptions());
   }
 
   @Test
@@ -69,5 +71,21 @@ class CharacterStoreSpiritRoundtripTest {
     Character loaded = CharacterStore.load(tempFile());
 
     assertEquals(List.of("Kurier-Sprite"), loaded.getSpirits().getAll().stream().map(Spirit::getName).toList());
+    // ältere Dateien kennen keine Optionen
+    assertEquals(List.of(), loaded.getSpirits().getAll().getFirst().getOptions());
+  }
+
+  @Test
+  void unknownOptionsAreSkipped() throws IOException {
+    Files.writeString(tempFile().toPath(), """
+        {"name":"Neu","metatype":"Mensch",
+         "selectedQualities":[{"name":"Technomancer"}],
+         "spirits":[{"name":"Kurier-Sprite","force":6,"services":2,"bound":true,
+                     "options":["Befehl","Gibt es nicht","Befehl"]}]}
+        """, StandardCharsets.UTF_8);
+
+    Character loaded = CharacterStore.load(tempFile());
+
+    assertEquals(List.of("Befehl"), loaded.getSpirits().getAll().getFirst().getOptions());
   }
 }

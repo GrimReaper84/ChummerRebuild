@@ -20,6 +20,7 @@ import de.shalorian.chummer.model.character.condition.AttributeTest;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.situation.SituationalPool;
 import de.shalorian.chummer.model.character.skill.DicePool;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.grid.MonitorBoxRow;
 import java.util.ArrayList;
@@ -230,7 +231,7 @@ public final class StatusOverviewBuilder {
     if (wound < 0) {
       Region spacer = new Region();
       HBox.setHgrow(spacer, Priority.ALWAYS);
-      title.getChildren().addAll(spacer, styled(new Label("Verletzung " + wound), "warn-text"));
+      title.getChildren().addAll(spacer, styled(new Label("Verletzung " + Numbers.integer(wound)), "warn-text"));
     }
     VBox box = new VBox(10, title,
         monitorRow(c, "Körperlich", physicalText, physicalBoxes, c.getPhysicalOverflowBoxes(), physicalDamage,
@@ -266,7 +267,7 @@ public final class StatusOverviewBuilder {
 
   private static @NonNull Node protectionAndEssence(@NonNull Character c) {
     int penalty = c.getEquipment().getArmorEncumbrancePenalty();
-    String armorCaption = "Ballistik / Stoß · " + (penalty == 0 ? "keine Behinderung" : "Behinderung " + penalty);
+    String armorCaption = "Ballistik / Stoß · " + (penalty == 0 ? "keine Behinderung" : "Behinderung " + Numbers.integer(penalty));
     VBox armorBox = titled("PANZERUNG",
         figure(c.getArmorBallistic() + " / " + c.getArmorImpact(), armorCaption, false));
     armorBox.getChildren().addAll(armorExtras(c));
@@ -320,7 +321,7 @@ public final class StatusOverviewBuilder {
           c.refreshEdge();
           onChanged.run();
         });
-    Button burn = edgeButton("Edge verheizen (S. 99): Edge dauerhaft −1", FontAwesomeSolid.FIRE, !career || edge == 0,
+    Button burn = edgeButton("Edge verheizen (GRW S. 99): Edge dauerhaft −1", FontAwesomeSolid.FIRE, !career || edge == 0,
         () -> {
           if (services.confirmYesNo("Edge verheizen", "Edge dauerhaft um 1 senken?",
               "Das Edgeattribut sinkt von %d auf %d (GRW S. 99).".formatted(edge, edge - 1))) {

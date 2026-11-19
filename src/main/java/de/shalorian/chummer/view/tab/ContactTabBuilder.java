@@ -5,8 +5,6 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
@@ -145,7 +143,7 @@ public final class ContactTabBuilder {
       useIcon(burn, FontAwesomeSolid.FIRE);
       burn.setOnAction(_ -> {
         if (ch.canBurnStreetCred() && host.services().confirmYesNo("Straßenruf opfern",
-            "2 Punkte Straßenruf dauerhaft opfern?", "Der Schlechte Ruf sinkt dafür um 1 (S. 308).")) {
+            "2 Punkte Straßenruf dauerhaft opfern?", "Der Schlechte Ruf sinkt dafür um 1 (GRW S. 308).")) {
           ch.burnStreetCred();
           host.refreshRows();
         }
@@ -177,12 +175,10 @@ public final class ContactTabBuilder {
       addRowCells(grid, row, nameLabel, value, new Label(), new Label(), new Label(), breakdown);
       return;
     }
-    Button minus = new Button("−");
+    Button minus = RowControls.minusButton();
     Label gmValue = new Label();
-    Button plus = new Button("+");
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
+    Button plus = RowControls.plusButton();
     gmValue.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
     wiring.wireFree(contactRefreshers, new RowControls(gmValue, new Label(), minus, plus), gm);
     addRowCells(grid, row, nameLabel, value, minus, gmValue, plus, breakdown);
   }
@@ -260,26 +256,20 @@ public final class ContactTabBuilder {
       @NonNull Character character) {
     Label nameLabelDummy = new Label(contact.getName());
     Button editBtn = new Button("Bearbeiten");
-    Button connectionMinus = new Button("−");
-    Label connectionValue = new Label();
-    Button connectionPlus = new Button("+");
-    Label connectionCost = new Label();
-    Button loyaltyMinus = new Button("−");
-    Label loyaltyValue = new Label();
-    Button loyaltyPlus = new Button("+");
-    Label loyaltyCost = new Label();
+    RowControls connectionControls = RowControls.create();
+    Button connectionMinus = connectionControls.minus();
+    Label connectionValue = connectionControls.valueLabel();
+    Button connectionPlus = connectionControls.plus();
+    Label connectionCost = connectionControls.costLabel();
+    RowControls loyaltyControls = RowControls.create();
+    Button loyaltyMinus = loyaltyControls.minus();
+    Label loyaltyValue = loyaltyControls.valueLabel();
+    Button loyaltyPlus = loyaltyControls.plus();
+    Label loyaltyCost = loyaltyControls.costLabel();
     Button removeBtn = new Button("Entfernen");
 
     nameLabelDummy.getStyleClass().add(STYLE_ATTR_NAME);
     editBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    connectionMinus.getStyleClass().add(STYLE_ATTR_BTN);
-    connectionValue.getStyleClass().add(STYLE_ATTR_VALUE);
-    connectionPlus.getStyleClass().add(STYLE_ATTR_BTN);
-    connectionCost.getStyleClass().add(STYLE_ATTR_BP);
-    loyaltyMinus.getStyleClass().add(STYLE_ATTR_BTN);
-    loyaltyValue.getStyleClass().add(STYLE_ATTR_VALUE);
-    loyaltyPlus.getStyleClass().add(STYLE_ATTR_BTN);
-    loyaltyCost.getStyleClass().add(STYLE_ATTR_BP);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
 
     Runnable tooltipRefresh = () -> {
@@ -389,16 +379,16 @@ public final class ContactTabBuilder {
 
     if (career) {
       wiring.wireFree(contactRefreshers,
-          new RowControls(connectionValue, connectionCost, connectionMinus, connectionPlus),
+          connectionControls,
           connectionModel);
       wiring.wireFree(contactRefreshers,
-          new RowControls(loyaltyValue, loyaltyCost, loyaltyMinus, loyaltyPlus), loyaltyModel);
+          loyaltyControls, loyaltyModel);
     } else {
       wiring.wire(contactRefreshers,
-          new RowControls(connectionValue, connectionCost, connectionMinus, connectionPlus), false,
+          connectionControls, false,
           connectionModel, character, LogCategory.CONTACT);
       wiring.wire(contactRefreshers,
-          new RowControls(loyaltyValue, loyaltyCost, loyaltyMinus, loyaltyPlus), false, loyaltyModel,
+          loyaltyControls, false, loyaltyModel,
           character, LogCategory.CONTACT);
     }
 

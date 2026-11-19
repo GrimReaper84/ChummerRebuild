@@ -190,7 +190,7 @@ class CharacterImplantEffectsTest {
 
     Character d = mensch();
     add(d, "Reflexrekorder (Fertigkeit)", "Pistolen");
-    assertEquals("Eine Fertigkeit der Gruppe hat bereits einen Reflexrekorder",
+    assertEquals("Eine Fertigkeit der Gruppe hat bereits einen Reflexrekorder.",
         d.getImplants().getAddProblem(data("Reflexrekorder (Fertigkeitsgruppe)"), "Feuerwaffen"));
     // aus einer Speicherdatei mit beiden zählt nur einer
     add(d, "Reflexrekorder (Fertigkeitsgruppe)", "Feuerwaffen");

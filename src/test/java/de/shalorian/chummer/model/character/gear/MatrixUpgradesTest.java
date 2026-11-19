@@ -38,7 +38,7 @@ class MatrixUpgradesTest {
   @Test
   void softwareHasNoPlusTwoLimitButNeedsAnOperatingSystem() {
     assertNull(MatrixUpgrades.problem(find("System-Paket"), 6, BASE, List.of()));
-    assertEquals("Ein Softwarepaket braucht ein Betriebssystem",
+    assertEquals("Ein Softwarepaket braucht ein Betriebssystem.",
         MatrixUpgrades.problem(find("Firewall-Paket"), 4, new MatrixBase(3, 3, 0, 0), List.of()));
   }
 

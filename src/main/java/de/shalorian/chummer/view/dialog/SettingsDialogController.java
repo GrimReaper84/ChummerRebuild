@@ -70,8 +70,8 @@ public class SettingsDialogController {
     // ein Trennzeichen ist immer gewählt: ein zweiter Klick auf den gewählten Knopf hebt die Wahl nicht auf
     decimalCommaBtn.setOnAction(_ -> decimalCommaBtn.setSelected(true));
     decimalPointBtn.setOnAction(_ -> decimalPointBtn.setSelected(true));
-    limbArmorAverageBox.setTooltip(new Tooltip("Auslegung zu GRW S. 390; Standard ist die Summe wie im alten Chummer"));
-    lateAwakeningBox.setTooltip(new Tooltip("Hebt die Sperre aus GRW S. 313 im Karrieremodus auf"));
+    limbArmorAverageBox.setTooltip(new Tooltip("Auslegung zu GRW S. 390; Standard: Summe wie im alten Chummer"));
+    lateAwakeningBox.setTooltip(new Tooltip("Aufhebung der Sperre aus GRW S. 313 im Karrieremodus"));
     missedPaymentsBox.setTooltip(new Tooltip("Monat aussetzen im Karrieremodus nach GRW S. 312"));
     for (RulebookData book : RulebookDataLoader.getAll()) {
       CheckBox box = new CheckBox(book.name() + " (" + book.code() + ")");

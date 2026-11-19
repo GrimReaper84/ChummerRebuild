@@ -5,9 +5,9 @@ import org.jspecify.annotations.NonNull;
 /** Geist (Zauberer, GRW S. 112, 219–222) oder Sprite (Technomancer, S. 113, 281/282), mit den Texten je Art. */
 public enum SpiritKind {
   SPIRIT("spirit", "Geist", "Geister", "Kraft", "gebunden", "herbeigerufen", "Binden", "Herbeirufen", "Magie",
-      "Nur für Zauberer und Magieradepten"),
+      "Nur für Zauberer und Magieradepten", "Optionale Kräfte"),
   SPRITE("sprite", "Sprite", "Sprites", "Stufe", "registriert", "kompiliert", "Registrieren", "Kompilieren", "Resonanz",
-      "Nur für Technomancer");
+      "Nur für Technomancer", "Optionale Komplexe Formen");
 
   private final @NonNull String code;
   private final @NonNull String displayName;
@@ -19,10 +19,12 @@ public enum SpiritKind {
   private final @NonNull String skillName;
   private final @NonNull String attributeName;
   private final @NonNull String unavailableText;
+  private final @NonNull String optionsName;
 
   SpiritKind(@NonNull String code, @NonNull String displayName, @NonNull String pluralName,
       @NonNull String powerName, @NonNull String boundName, @NonNull String unboundName, @NonNull String bindVerb,
-      @NonNull String skillName, @NonNull String attributeName, @NonNull String unavailableText) {
+      @NonNull String skillName, @NonNull String attributeName, @NonNull String unavailableText,
+      @NonNull String optionsName) {
     this.code = code;
     this.displayName = displayName;
     this.pluralName = pluralName;
@@ -33,6 +35,12 @@ public enum SpiritKind {
     this.skillName = skillName;
     this.attributeName = attributeName;
     this.unavailableText = unavailableText;
+    this.optionsName = optionsName;
+  }
+
+  /** „Optionale Kräfte“ bzw. „Optionale Komplexe Formen“ (GRW S. 347 bzw. 282). */
+  public @NonNull String getOptionsName() {
+    return optionsName;
   }
 
   /** „Magie“ bzw. „Resonanz“: bestimmt Kraft bzw. Stufe bei der Erschaffung. */

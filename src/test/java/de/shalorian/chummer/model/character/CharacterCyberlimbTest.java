@@ -255,7 +255,7 @@ class CharacterCyberlimbTest {
     Cyberware right = addLimb(c, "Unterschenkel (synthetisch)", BodyLocation.LEG_RIGHT, LimbAttributes.STANDARD);
     Cyberware container = part("Großer Schmuggelbehälter", 0);
     c.getImplants().installInLimb(right, container);
-    assertEquals("Im zweiten Bein: Kapazität reicht nicht: Sprunghydraulik braucht 3, frei sind 1 von 6",
+    assertEquals("Im zweiten Bein: Kapazität reicht nicht: Sprunghydraulik braucht 3, frei sind 1 von 6.",
         c.getImplants().getLimbInstallProblem(left, data("Sprunghydraulik"), 3));
     c.getImplants().uninstallFromLimb(right, container);
     int before = left.getNuyenCost() + right.getNuyenCost();

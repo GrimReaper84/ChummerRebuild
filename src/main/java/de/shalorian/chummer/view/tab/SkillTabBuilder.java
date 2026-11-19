@@ -7,8 +7,6 @@ import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_ABBR;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BTN;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
@@ -304,17 +302,13 @@ public final class SkillTabBuilder {
     }
 
     if (coupled) {
-      Button minus = new Button("−");
-      Label ratingLabel = new Label();
-      Button plus = new Button("+");
-      Label bpLabel = new Label();
+      RowControls controls = RowControls.create();
+      Button minus = controls.minus();
+      Label ratingLabel = controls.valueLabel();
+      Button plus = controls.plus();
+      Label bpLabel = controls.costLabel();
 
-      minus.getStyleClass().add(STYLE_ATTR_BTN);
-      ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-      plus.getStyleClass().add(STYLE_ATTR_BTN);
-      bpLabel.getStyleClass().add(STYLE_ATTR_BP);
-
-      wiring.wire(skillRefreshers, new RowControls(ratingLabel, bpLabel, minus, plus),
+      wiring.wire(skillRefreshers, controls,
           character.isCreated(), new RowModel() {
             @Override
             public int value() {
@@ -420,20 +414,17 @@ public final class SkillTabBuilder {
     }
     Label skillNameLabel = new Label(skill.getName());
     Label attrLabel = new Label(skill.getLinkedAttribute());
-    Button minus = new Button("−");
-    Label ratingLabel = new Label();
-    Button plus = new Button("+");
-    Label bpLabel = new Label();
+    RowControls controls = RowControls.create();
+    Button minus = controls.minus();
+    Label ratingLabel = controls.valueLabel();
+    Button plus = controls.plus();
+    Label bpLabel = controls.costLabel();
     Label specLabel = new Label();
     Button specBtn = new Button("Spez.");
     Label poolLabel = DicePoolLabel.create();
 
     skillNameLabel.getStyleClass().add(coupled ? "attr-name-coupled" : STYLE_ATTR_NAME);
     attrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
-    minus.getStyleClass().add(STYLE_ATTR_BTN);
-    ratingLabel.getStyleClass().add(STYLE_ATTR_VALUE);
-    plus.getStyleClass().add(STYLE_ATTR_BTN);
-    bpLabel.getStyleClass().add(STYLE_ATTR_BP);
     specLabel.getStyleClass().add(STYLE_ATTR_NAME);
     specBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
 
@@ -468,7 +459,7 @@ public final class SkillTabBuilder {
       skillRefreshers.add(refresh);
       refresh.run();
     } else {
-      wiring.wire(skillRefreshers, new RowControls(ratingLabel, bpLabel, minus, plus),
+      wiring.wire(skillRefreshers, controls,
           career, new RowModel() {
             @Override
             public int value() {
@@ -574,8 +565,8 @@ public final class SkillTabBuilder {
       Label title = new Label("Talentsofts");
       title.getStyleClass().add(STYLE_SECTION_TITLE);
       Label wires = new Label(character.getSkillwireRating() == 0
-          ? "Keine Talentleitungen: Aktionssofts wirken nicht (S. 389)."
-          : "Talentleitungen Stufe %d, Aktionssofts geladen %d von %d Stufen (S. 389). Laden im Tab Ausrüstung."
+          ? "Keine Talentleitungen: Aktionssofts wirken nicht (GRW S. 389)."
+          : "Talentleitungen Stufe %d, Aktionssofts geladen %d von %d Stufen (GRW S. 389). Laden im Tab Ausrüstung."
               .formatted(character.getSkillwireRating(), character.getLoadedActivesoftRating(),
                   character.getActivesoftCapacity()));
       wires.getStyleClass().add(STYLE_DETAIL_HINT);

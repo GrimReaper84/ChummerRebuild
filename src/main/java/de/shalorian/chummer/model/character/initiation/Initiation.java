@@ -65,7 +65,7 @@ public class Initiation {
       return "Nur mit Magie oder Resonanz";
     }
     if (!owner.isCreated() && !owner.isGmMode()) {
-      return kind.getProcessName() + " erst im Karrieremodus (S. 112)";
+      return kind.getProcessName() + " erst im Karrieremodus (GRW S. 112)";
     }
     return null;
   }
@@ -122,7 +122,7 @@ public class Initiation {
     }
     boolean pureAdept = owner.hasAdeptPowers() && !owner.isMagician();
     if (data.noAdept() && pureAdept) {
-      return "Adepten können diese Metamagie nicht lernen";
+      return "Adepten können diese Metamagie nicht lernen.";
     }
     if (data.adeptOnly() && !owner.hasAdeptPowers()) {
       return "Nur für Adepten und Magieradepten";

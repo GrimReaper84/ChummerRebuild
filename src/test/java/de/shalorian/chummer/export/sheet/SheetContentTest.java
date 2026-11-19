@@ -10,6 +10,9 @@ import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearDataLoader;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.skill.Skill;
+import de.shalorian.chummer.model.character.spirit.Spirit;
+import de.shalorian.chummer.model.character.spirit.SpiritData;
+import de.shalorian.chummer.model.character.spirit.SpiritDataLoader;
 import de.shalorian.chummer.model.template.ArchetypeLoader;
 import de.shalorian.chummer.utils.Numbers;
 import java.util.List;
@@ -155,5 +158,13 @@ class SheetContentTest {
     content.implants().forEach(row -> assertEquals(SheetLayout.IMPLANT_COLUMNS.size(), row.size()));
     content.gear().forEach(row -> assertEquals(SheetLayout.GEAR_COLUMNS.size(), row.size()));
     content.armor().forEach(row -> assertEquals(SheetLayout.ARMOR_COLUMNS.size(), row.size()));
+  }
+
+  @Test
+  void spiritRowShowsChosenOptions() {
+    Character c = Objects.requireNonNull(ArchetypeLoader.findByName("Kampfmagier")).create();
+    SpiritData fire = Objects.requireNonNull(SpiritDataLoader.findByName("Feuergeist"));
+    c.getSpirits().add(new Spirit(fire, c.getSpirits().getCreationForce(), 1, true, List.of("Grauen")));
+    assertEquals("Feuergeist (Grauen)", SheetContent.of(c).spirits().getFirst().getFirst());
   }
 }

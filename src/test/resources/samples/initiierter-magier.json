@@ -1,6 +1,10 @@
 {
   "name" : "Initiierter Magier",
   "metatype" : "Elf",
+  "critter" : null,
+  "critterPowers" : [ ],
+  "critterWeaknesses" : [ ],
+  "critterSkills" : { },
   "created" : true,
   "nuyenBP" : 0,
   "physicalDamage" : 0,

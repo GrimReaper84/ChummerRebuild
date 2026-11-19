@@ -53,12 +53,12 @@ class CharacterSpiritsTest {
   void creationLimits() {
     Character c = mage(4, 2, 2);
     Spirits spirits = c.getSpirits();
-    assertEquals("Kraft bei der Erschaffung = Magie (4)", spirits.getAddProblem(data("Erdgeist"), 3, 1, true));
+    assertEquals("Kraft bei der Erschaffung = Magie (4)", spirits.getAddProblem(data("Erdgeist"), 3, 1, true, List.of()));
     assertEquals("Bei der Erschaffung 1 bis 2 Dienste (Herbeirufen 2)",
-        spirits.getAddProblem(data("Erdgeist"), 4, 3, true));
+        spirits.getAddProblem(data("Erdgeist"), 4, 3, true, List.of()));
     spirits.add(new Spirit(data("Erdgeist"), 4, 2, true));
     spirits.add(new Spirit(data("Wassergeist"), 4, 1, true));
-    assertEquals("Höchstens 2 Geister gebunden (Charisma)", spirits.getAddProblem(data("Luftgeist"), 4, 1, true));
+    assertEquals("Höchstens 2 Geister gebunden (Charisma)", spirits.getAddProblem(data("Luftgeist"), 4, 1, true, List.of()));
     // herbeigerufene zählen nicht und kosten nichts
     int bp = c.getSpentBP();
     spirits.add(new Spirit(data("Luftgeist"), 4, 0, false));
@@ -70,16 +70,16 @@ class CharacterSpiritsTest {
   @Test
   void summoningSkillZeroBlocksBoundSpirits() {
     Character c = mage(3, 0, 3);
-    assertEquals("Erst Herbeirufen steigern", c.getSpirits().getAddProblem(data("Erdgeist"), 3, 1, true));
+    assertEquals("Erst Herbeirufen steigern", c.getSpirits().getAddProblem(data("Erdgeist"), 3, 1, true, List.of()));
   }
 
   @Test
   void traditionDecidesSpiritTypes() {
     Character c = mage(3, 3, 3);
     assertEquals("Die Tradition Hermetisch ruft keinen Geist des Tieres",
-        c.getSpirits().getAddProblem(data("Geist des Tieres"), 3, 1, true));
+        c.getSpirits().getAddProblem(data("Geist des Tieres"), 3, 1, true, List.of()));
     c.setTradition(Tradition.SHAMANIC);
-    assertNull(c.getSpirits().getAddProblem(data("Geist des Tieres"), 3, 1, true));
+    assertNull(c.getSpirits().getAddProblem(data("Geist des Tieres"), 3, 1, true, List.of()));
     assertEquals(5, c.getSpirits().getTypes(SpiritKind.SPIRIT).size());
     assertTrue(c.getSpirits().getTypes(SpiritKind.SPIRIT).stream().noneMatch(d -> d.name().equals("Feuergeist")));
   }
@@ -88,13 +88,13 @@ class CharacterSpiritsTest {
   void spritesFollowResonanceCompilingAndCharisma() {
     Character c = technomancer(4, 3, 1);
     Spirits spirits = c.getSpirits();
-    assertEquals("Stufe bei der Erschaffung = Resonanz (4)", spirits.getAddProblem(data("Daten-Sprite"), 3, 1, true));
+    assertEquals("Stufe bei der Erschaffung = Resonanz (4)", spirits.getAddProblem(data("Daten-Sprite"), 3, 1, true, List.of()));
     assertEquals("Bei der Erschaffung 1 bis 3 Dienste (Kompilieren 3)",
-        spirits.getAddProblem(data("Daten-Sprite"), 4, 4, true));
+        spirits.getAddProblem(data("Daten-Sprite"), 4, 4, true, List.of()));
     spirits.add(new Spirit(data("Daten-Sprite"), 4, 3, true));
     assertEquals("Höchstens 1 Sprites registriert (Charisma)",
-        spirits.getAddProblem(data("Kurier-Sprite"), 4, 1, true));
-    assertEquals("Nur für Zauberer und Magieradepten", spirits.getAddProblem(data("Erdgeist"), 4, 1, true));
+        spirits.getAddProblem(data("Kurier-Sprite"), 4, 1, true, List.of()));
+    assertEquals("Nur für Zauberer und Magieradepten", spirits.getAddProblem(data("Erdgeist"), 4, 1, true, List.of()));
   }
 
   @Test
@@ -102,7 +102,7 @@ class CharacterSpiritsTest {
     Character c = mage(5, 1, 2);
     c.setCreated(true);
     Spirits spirits = c.getSpirits();
-    assertNull(spirits.getAddProblem(data("Feuergeist"), 7, 4, true));
+    assertNull(spirits.getAddProblem(data("Feuergeist"), 7, 4, true, List.of()));
     Spirit fire = new Spirit(data("Feuergeist"), 7, 4, true);
     spirits.add(fire);
     assertEquals(0, spirits.getBpCost());
@@ -158,5 +158,47 @@ class CharacterSpiritsTest {
     assertTrue(c.getQualityRemovalConsequences(gift).contains("Geist Erdgeist wird mit entfernt"));
     c.removeQuality(gift);
     assertTrue(c.getSpirits().getAll().isEmpty());
+  }
+
+  @Test
+  void optionsAreCheckedWhenAdding() {
+    Character c = mage(5, 3, 3);
+    Spirits spirits = c.getSpirits();
+    assertEquals("Optionale Kräfte: bei Kraft 5 höchstens 1",
+        spirits.getAddProblem(data("Erdgeist"), 5, 1, true, List.of("Grauen", "Verwirrung")));
+    assertEquals("Übler Atem gehört nicht zu Erdgeist",
+        spirits.getAddProblem(data("Erdgeist"), 5, 1, true, List.of("Übler Atem")));
+    assertNull(spirits.getAddProblem(data("Erdgeist"), 5, 1, true, List.of("Grauen")));
+    assertThrows(IllegalArgumentException.class,
+        () -> spirits.add(new Spirit(data("Erdgeist"), 5, 1, true, List.of("Grauen", "Verwirrung"))));
+  }
+
+  @Test
+  void duplicateOptionIsRejected() {
+    Character c = mage(6, 3, 3);
+    assertEquals("Grauen ist doppelt gewählt",
+        c.getSpirits().getOptionsProblem(data("Erdgeist"), 6, List.of("Grauen", "Grauen")));
+  }
+
+  @Test
+  void spriteOptionsAreComplexForms() {
+    Character c = technomancer(3, 3, 3);
+    assertEquals("Optionale Komplexe Formen: bei Stufe 3 höchstens 1",
+        c.getSpirits().getOptionsProblem(data("Kurier-Sprite"), 3, List.of("Befehl", "Scannen")));
+    c.getSpirits().add(new Spirit(data("Kurier-Sprite"), 3, 1, true, List.of("Befehl")));
+    assertEquals(List.of("Befehl"), c.getSpirits().getAll().getFirst().getOptions());
+  }
+
+  @Test
+  void missingOptionsCanBeAddedUpToTheLimitOnly() {
+    Character c = mage(6, 3, 3);
+    Spirit spirit = new Spirit(data("Erdgeist"), 6, 1, true);
+    c.getSpirits().add(spirit);
+    assertEquals(2, spirit.getMissingOptionCount());
+    c.getSpirits().addMissingOption(spirit, "Grauen");
+    c.getSpirits().addMissingOption(spirit, "Verwirrung");
+    assertEquals(List.of("Grauen", "Verwirrung"), spirit.getOptions());
+    assertEquals(0, spirit.getMissingOptionCount());
+    assertThrows(IllegalArgumentException.class, () -> c.getSpirits().addMissingOption(spirit, "Verschleierung"));
   }
 }

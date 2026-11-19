@@ -4,6 +4,8 @@ import de.shalorian.chummer.view.tab.TabServices;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -134,12 +136,30 @@ public final class DocumentTabs {
   private @NonNull ButtonType ask(@NonNull OpenDocument document) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Änderungen gehen sonst verloren.", SAVE, DISCARD, CANCEL);
     TabServices.applyDialogStyle(alert);
+    applyLinuxButtonOrder(alert);
     if (pane.getScene() != null) {
       alert.initOwner(pane.getScene().getWindow());
     }
     alert.setTitle("Ungespeicherte Änderungen");
     alert.setHeaderText("„%s“ speichern?".formatted(document.name()));
     return alert.showAndWait().orElse(CANCEL);
+  }
+
+  /**
+   * JavaFX ordnet unter Linux „Verwerfen, Speichern, Abbrechen“. GTK-Desktops (GNOME, Cinnamon, MATE, Xfce) erwarten
+   * Verwerfen links und Speichern ganz rechts wie macOS, KDE die Windows-Reihenfolge „Speichern, Verwerfen,
+   * Abbrechen“. Unter Windows und macOS stimmt die eingebaute Reihenfolge schon.
+   */
+  private static void applyLinuxButtonOrder(@NonNull Alert alert) {
+    if (!System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("linux")) {
+      return;
+    }
+    String desktop = Objects.requireNonNullElse(System.getenv("XDG_CURRENT_DESKTOP"), "");
+    String order = desktop.toUpperCase(Locale.ROOT).contains("KDE")
+        ? ButtonBar.BUTTON_ORDER_WINDOWS : ButtonBar.BUTTON_ORDER_MAC_OS;
+    if (alert.getDialogPane().lookup(".button-bar") instanceof ButtonBar bar) {
+      bar.setButtonOrder(order);
+    }
   }
 
   private static @NonNull OpenDocument document(@NonNull Tab tab) {

@@ -45,8 +45,6 @@ public record VehicleDetails(
     @NonNull String matrix
 ) {
 
-  private static final String NO_VALUE = "–";
-
   public static @NonNull VehicleDetails of(@NonNull Vehicle vehicle) {
     VehicleData data = vehicle.getData();
     int occupied = vehicle.getMountedWeapons().size();
@@ -88,7 +86,7 @@ public record VehicleDetails(
     if (vehicle.isRiggerAdapterIncluded()) {
       return "mitgeliefert";
     }
-    return vehicle.isRiggerAdapterPurchased() ? "eingebaut" : NO_VALUE;
+    return vehicle.isRiggerAdapterPurchased() ? "eingebaut" : Numbers.NO_VALUE;
   }
 
   /** z.B. "14000 ¥" bzw. mit Ausstattung "14000 ¥ (gesamt 16500 ¥)". */
@@ -111,6 +109,6 @@ public record VehicleDetails(
   }
 
   private static @NonNull String orDash(@NonNull String text) {
-    return text.isEmpty() ? NO_VALUE : text;
+    return text.isEmpty() ? Numbers.NO_VALUE : text;
   }
 }

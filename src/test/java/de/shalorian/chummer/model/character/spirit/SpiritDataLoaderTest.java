@@ -75,6 +75,8 @@ class SpiritDataLoaderTest {
     assertEquals(0, data("Erdgeist").optionalCount(2));
     assertEquals(1, data("Erdgeist").optionalCount(5));
     assertEquals(2, data("Kurier-Sprite").optionalCount(6));
+    assertEquals(2, data("Erdgeist").optionalCount(6));
+    assertEquals(1, data("Kurier-Sprite").optionalCount(3));
     assertTrue(data("Daten-Sprite").complexForms().contains("Schmöker"));
   }
 }

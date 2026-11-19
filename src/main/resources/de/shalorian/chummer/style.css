@@ -442,6 +442,19 @@
     -fx-text-fill: -cr-text;
 }
 
+/* Tastaturfokus: Die eigenen Hintergründe ersetzen Modenas Fokusring, deshalb zeigt der Rahmen den Fokus. Nur bei
+   Tastaturbedienung (:focus-visible), nicht nach einem Mausklick. Auf Akzent-Hintergrund in Textfarbe, sonst im Akzent.
+   .attr-btn steht weiter unten und hat eine eigene Regel dort. */
+.btn-secondary:focus-visible,
+.toggle-button:focus-visible {
+    -fx-border-color: -cr-accent;
+}
+
+.btn-primary:focus-visible,
+.toggle-button:selected:focus-visible {
+    -fx-border-color: -cr-text;
+}
+
 /* ── Character View ──────────────────────────────────── */
 
 .character-view {
@@ -478,11 +491,6 @@
     -fx-text-fill: -cr-accent;
 }
 
-.bp-total {
-    -fx-font-size: 13px;
-    -fx-text-fill: -cr-muted;
-}
-
 .bp-value-warn {
     -fx-text-fill: -cr-danger;
 }
@@ -499,6 +507,13 @@
     -fx-background-color: -cr-bg;
     -fx-background: -cr-bg;
     -fx-border-color: transparent;
+}
+
+/* Modena setzt bei Fokus negative Insets: der Hintergrund ragt dann über den Rand und verdeckt Trennlinien daneben. */
+.attr-scroll,
+.attr-scroll:focused {
+    -fx-background-color: -cr-bg;
+    -fx-background-insets: 0;
 }
 
 .attr-scroll .viewport {
@@ -564,6 +579,10 @@
 
 .attr-btn:disabled {
     -fx-opacity: 0.3;
+}
+
+.attr-btn:focus-visible {
+    -fx-border-color: -cr-accent;
 }
 
 .attr-value {
@@ -649,12 +668,6 @@
     -fx-background-color: -cr-hover;
     -fx-text-fill: -cr-danger;
     -fx-border-color: -cr-danger;
-}
-
-.decoupled-label {
-    -fx-font-size: 11px;
-    -fx-text-fill: -cr-muted;
-    -fx-padding: 0 0 0 4;
 }
 
 /* ── Charakter abschließen ───────────────────────────── */
@@ -1051,6 +1064,15 @@
 
 .dialog-pane .button-bar .button:default:hover {
     -fx-background-color: -cr-accent-bg-hover;
+}
+
+/* Tastaturfokus wie bei den übrigen Buttons (s.o.) */
+.dialog-pane .button-bar .button:focus-visible {
+    -fx-border-color: -cr-accent;
+}
+
+.dialog-pane .button-bar .button:default:focus-visible {
+    -fx-border-color: -cr-text;
 }
 
 /* ── Zustandsmonitor-Kästchen (Fahrzeuge, Status) ── */

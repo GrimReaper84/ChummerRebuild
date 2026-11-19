@@ -374,7 +374,7 @@ final class WeaponTabBuilder {
     details.getChildren().addAll(title, grid);
     if (data.isPermanent()) {
       details.getChildren().add(
-          detailHint("Fest eingebaut, kann nicht mehr entfernt werden (GRW S. 367)"));
+          detailHint("Fest eingebaut, kann nicht mehr entfernt werden (GRW S. 367)."));
     }
     if (!data.note().isEmpty()) {
       Label note = detailHint(data.note());

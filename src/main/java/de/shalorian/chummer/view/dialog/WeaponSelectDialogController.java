@@ -34,8 +34,6 @@ import org.jspecify.annotations.Nullable;
  */
 public class WeaponSelectDialogController extends CatalogSelectDialogController<WeaponData> {
 
-  private static final String NO_VALUE = "–";
-
   @FXML
   private ComboBox<Integer> ratingBox;
   @FXML
@@ -162,7 +160,7 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
     if (selected == null) {
       for (Label label : List.of(damageLabel, armorPiercingLabel, modeLabel, recoilLabel, ammoLabel,
           availabilityLabel, costLabel, sourceLabel)) {
-        label.setText(NO_VALUE);
+        label.setText(Numbers.NO_VALUE);
       }
       okButton.setDisable(true);
       return;
@@ -189,7 +187,7 @@ public class WeaponSelectDialogController extends CatalogSelectDialogController<
   }
 
   private static @NonNull String orDash(@NonNull String text) {
-    return text.isEmpty() ? NO_VALUE : text;
+    return text.isEmpty() ? Numbers.NO_VALUE : text;
   }
 
   /** Die aktuelle Auswahl als Waffe, oder {@code null}, solange nichts Kaufbares gewählt ist. */

@@ -149,10 +149,10 @@ public class Weapon {
   public @Nullable String mountProblem(@NonNull AccessoryData accessory) {
     WeaponCategory category = data.category();
     if (!category.acceptsAccessories()) {
-      return "Nahkampf- und Wurfwaffen haben kein Zubehör";
+      return "Nahkampf- und Wurfwaffen haben kein Zubehör.";
     }
     if (category.isProjectile() && !accessory.projectile()) {
-      return "An Projektilwaffen passen nur Lasermarkierer oder Smartgunsystem (GRW S. 357)";
+      return "An Projektilwaffen passen nur Lasermarkierer oder Smartgunsystem (GRW S. 357).";
     }
     AccessoryRule rule = accessory.rule();
     if (rule != null && !rule.allows(data)) {
@@ -161,7 +161,7 @@ public class Weapon {
     if (rule != null && rule.isOnePerWeapon()) {
       String holder = ruleHolder(rule);
       if (holder != null) {
-        return "Die Waffe hat bereits " + holder;
+        return "Die Waffe hat bereits " + holder + ".";
       }
     }
     if (accessory.needsMount() && freeMounts(accessory).isEmpty()) {

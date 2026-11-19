@@ -93,7 +93,7 @@ class GmModeTest {
     Character c = character();
     c.raiseGroup("Elektronik");
     c.setGmMode(true);
-    assertEquals("Fertigkeitsgruppe Elektronik hat bereits einen Wert",
+    assertEquals("Fertigkeitsgruppe Elektronik hat bereits einen Wert.",
         c.getQualityBlockReason(quality("Ungebildet"), false));
   }
 
@@ -102,7 +102,7 @@ class GmModeTest {
     Character c = character();
     c.setCreated(true);
     QualityData mage = quality("Zauberer");
-    assertEquals("Nur bei der Erschaffung wählbar (S. 313)", c.getQualityBlockReason(mage, false));
+    assertEquals("Nur bei der Erschaffung wählbar (GRW S. 313)", c.getQualityBlockReason(mage, false));
     c.setGmMode(true);
     assertNull(c.getQualityBlockReason(mage, false));
     c.addQuality(mage, false);
@@ -115,7 +115,7 @@ class GmModeTest {
     Skill whip = c.addExoticSkill(ExoticSkills.MELEE, "Monofilamentpeitsche");
     Skill spellcasting = skill(c, "Spruchzauberei");
     c.setCreated(true);
-    assertEquals("Im Karrieremodus wird nur gesteigert", c.getExoticSkillRemovalProblem(whip));
+    assertEquals("Im Karrieremodus wird nur gesteigert.", c.getExoticSkillRemovalProblem(whip));
     assertFalse(c.canRaiseSkill(spellcasting)); // Mundaner
     c.setGmMode(true);
     assertNull(c.getExoticSkillRemovalProblem(whip));

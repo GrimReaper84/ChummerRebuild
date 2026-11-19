@@ -180,7 +180,7 @@ public class CharacterStore {
         .toList();
     data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
     data.spirits = character.getSpirits().getAll().stream()
-        .map(s -> new SpiritEntry(s.getName(), s.getForce(), s.getServices(), s.isBound()))
+        .map(s -> new SpiritEntry(s.getName(), s.getForce(), s.getServices(), s.isBound(), s.getOptions()))
         .toList();
     Reputation reputation = character.getReputation();
     data.reputation = new ReputationData(reputation.getStreetCredBonus(), reputation.getNotorietyBonus(),
@@ -855,13 +855,17 @@ public class CharacterStore {
     character.getInitiation().restore(data.initiation.grade, techniques);
   }
 
-  /** Stellt Geister und Sprites ohne Grenzprüfung wieder her; unbekannte Arten und ungültige Werte überspringen. */
+  /**
+   * Stellt Geister und Sprites ohne Grenzprüfung wieder her; unbekannte Arten und ungültige Werte überspringen, ebenso
+   * Optionen, die nicht (mehr) zur Art gehören.
+   */
   private static void applySpirits(@NonNull Character character, @NonNull CharacterData data) {
     List<Spirit> spirits = new ArrayList<>();
     for (SpiritEntry entry : data.spirits) {
       SpiritData spiritData = SpiritDataLoader.findByName(entry.name);
       if (spiritData != null && entry.force >= 1 && entry.services >= 0) {
-        spirits.add(new Spirit(spiritData, entry.force, entry.services, entry.bound));
+        List<String> options = entry.options.stream().filter(spiritData.optional()::contains).distinct().toList();
+        spirits.add(new Spirit(spiritData, entry.force, entry.services, entry.bound, options));
       }
     }
     character.getSpirits().restore(spirits);

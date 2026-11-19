@@ -46,8 +46,8 @@ class SpellDataLoaderTest {
     // GRW S. 238: Entzug = halbe Kraftstufe (abgerundet) plus Modifikator; Flammenwerfer S. 243
     assertEquals("(K÷2)+3", SpellDataLoader.findByName("Flammenwerfer").dv());
     assertEquals("(K÷2)", SpellDataLoader.findByName("Entzünden").dv());
-    assertEquals("(K÷2)–1", SpellDataLoader.findByName("Energieschlag").dv());
-    assertEquals("(Schaden)–2", SpellDataLoader.findByName("Heilen").dv());
+    assertEquals("(K÷2)−1", SpellDataLoader.findByName("Energieschlag").dv());
+    assertEquals("(Schaden)−2", SpellDataLoader.findByName("Heilen").dv());
   }
 
   @Test

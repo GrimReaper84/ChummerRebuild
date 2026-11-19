@@ -44,7 +44,7 @@ class WeaponDataLoaderTest {
 
     assertEquals(WeaponCategory.HEAVY_PISTOLS, predator.category());
     assertEquals("5K", predator.damage());
-    assertEquals("–1", predator.armorPiercing());
+    assertEquals("−1", predator.armorPiercing());
     assertEquals("HM", predator.mode());
     assertEquals("–", predator.recoil().displayText());
     assertEquals("15 (s)", predator.ammo());
@@ -60,7 +60,7 @@ class WeaponDataLoaderTest {
     assertEquals(WeaponCategory.BLADES, katana.category());
     assertEquals("1", katana.reach());
     assertEquals("(STR÷2+3)K", katana.damage());
-    assertEquals("–1", katana.armorPiercing());
+    assertEquals("−1", katana.armorPiercing());
     assertEquals("4E", katana.availability().displayText(0));
     assertEquals(1000, katana.costFor(0));
     assertEquals("", katana.mode());

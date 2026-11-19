@@ -27,8 +27,6 @@ import org.jspecify.annotations.Nullable;
  */
 public class VehicleSelectDialogController extends CatalogSelectDialogController<VehicleData> {
 
-  private static final String NO_VALUE = "–";
-
   @FXML
   private Label categoryLabel;
   @FXML
@@ -104,7 +102,7 @@ public class VehicleSelectDialogController extends CatalogSelectDialogController
       for (Label label : List.of(categoryLabel, handlingLabel, accelLabel, speedLabel, pilotLabel,
           bodyLabel, armorLabel, sensorLabel, includedLabel, noteLabel, availabilityLabel, costLabel,
           sourceLabel)) {
-        label.setText(NO_VALUE);
+        label.setText(Numbers.NO_VALUE);
       }
       okButton.setDisable(true);
       return;
@@ -118,7 +116,7 @@ public class VehicleSelectDialogController extends CatalogSelectDialogController
     armorLabel.setText(String.valueOf(selected.armor()));
     sensorLabel.setText(String.valueOf(selected.sensor()));
     includedLabel.setText(String.join(", ", new Vehicle(selected).describeIncludedEquipment()));
-    noteLabel.setText(selected.note().isEmpty() ? NO_VALUE : selected.note());
+    noteLabel.setText(selected.note().isEmpty() ? Numbers.NO_VALUE : selected.note());
     String availability = selected.availability().displayText(0);
     if (!isAvailable(selected)) {
       availability += " (bei Erschaffung max. " + Availability.MAX_AVAILABILITY_AT_CREATION + ")";

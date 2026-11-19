@@ -164,7 +164,7 @@ final class ArmorTabBuilder {
     Runnable refreshSummary = () -> {
       protectionLabel.setText("Schutz: " + character.getArmorBallistic() + "/" + character.getArmorImpact());
       int penalty = character.getEquipment().getArmorEncumbrancePenalty();
-      encumbranceLabel.setText(penalty == 0 ? "Keine Behinderung" : "Behinderung: " + penalty + " (GES/REA)");
+      encumbranceLabel.setText(penalty == 0 ? "Keine Behinderung" : "Behinderung: " + Numbers.integer(penalty) + " (GES/REA)");
       setWarnStyle(encumbranceLabel, penalty < 0);
     };
     refreshers.add(refreshSummary);

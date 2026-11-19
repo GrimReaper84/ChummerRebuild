@@ -3,6 +3,7 @@ package de.shalorian.chummer.model.character.vehicle;
 import de.shalorian.chummer.model.character.CatalogEntry;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.rulebook.Sourced;
+import de.shalorian.chummer.utils.Numbers;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
 
@@ -58,6 +59,6 @@ public record VehicleData(
 
   /** Handling wie in der GRW-Tabelle mit Vorzeichen, z.B. {@code "+1"}, {@code "0"}, {@code "-2"}. */
   public @NonNull String handlingText() {
-    return handling > 0 ? "+" + handling : String.valueOf(handling);
+    return Numbers.signed(handling);
   }
 }

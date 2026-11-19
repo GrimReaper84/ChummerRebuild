@@ -60,7 +60,7 @@ public final class LogTabBuilder {
     TableColumn<LogEntry, String> amountCol = new TableColumn<>("Menge");
     amountCol.setCellValueFactory(c -> {
       int a = c.getValue().amount();
-      return new SimpleStringProperty(a > 0 ? "+" + Numbers.integer(a) : Numbers.integer(a));
+      return new SimpleStringProperty(Numbers.signed(a));
     });
     amountCol.setPrefWidth(70);
     amountCol.getStyleClass().add("number-cell");

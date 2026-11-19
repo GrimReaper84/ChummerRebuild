@@ -8,9 +8,9 @@ import org.jspecify.annotations.NonNull;
  */
 public enum TechniqueKind {
   METAMAGIC("metamagic", "Initiation", "Initiationsgrad", "Metamagie", "eine Metamagie", "Metamagien", "Magie", "232",
-      "Zugang zu den Metaebenen des Astralraums (mit Astralprojektion, S. 233)"),
+      "Zugang zu den Metaebenen des Astralraums (mit Astralprojektion, GRW S. 233)"),
   ECHO("echo", "Wandlung", "Wandlungsgrad", "Echo", "ein Echo", "Echos", "Resonanz", "284",
-      "Zugang zu den Resonanzräumen der Matrix (S. 284)");
+      "Zugang zu den Resonanzräumen der Matrix (GRW S. 284)");
 
   private final @NonNull String code;
   private final @NonNull String processName;

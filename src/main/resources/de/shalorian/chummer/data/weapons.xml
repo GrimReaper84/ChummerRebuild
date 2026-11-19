@@ -35,7 +35,7 @@
         <category>Klingenwaffen</category>
         <reach>2</reach>
         <damage>(STR÷2+4)K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <avail>8</avail>
         <legality>E</legality>
         <cost>600</cost>
@@ -48,7 +48,7 @@
         <category>Klingenwaffen</category>
         <reach>1</reach>
         <damage>(STR÷2+3)K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <avail>4</avail>
         <legality>E</legality>
         <cost>1000</cost>
@@ -72,7 +72,7 @@
         <category>Klingenwaffen</category>
         <reach>1</reach>
         <damage>(STR÷2+3)K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <avail>8</avail>
         <legality>E</legality>
         <cost>750</cost>
@@ -98,7 +98,7 @@
         <category>Klingenwaffen</category>
         <reach>–</reach>
         <damage>(STR÷2+1)K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <cost>50</cost>
         <source>SR4</source>
         <page>361</page>
@@ -124,7 +124,7 @@
         <category>Knüppel</category>
         <reach>1</reach>
         <damage>6G(e)</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <avail>4</avail>
         <legality>E</legality>
         <cost>400</cost>
@@ -183,7 +183,7 @@
         <category>Exotische Nahkampfwaffen</category>
         <reach>2</reach>
         <damage>(STR÷2+2)K</damage>
-        <ap>–2</ap>
+        <ap>−2</ap>
         <avail>4</avail>
         <legality>E</legality>
         <cost>1000</cost>
@@ -196,7 +196,7 @@
         <category>Exotische Nahkampfwaffen</category>
         <reach>2</reach>
         <damage>8K</damage>
-        <ap>–4</ap>
+        <ap>−4</ap>
         <avail>12</avail>
         <legality>V</legality>
         <cost>3000</cost>
@@ -222,7 +222,7 @@
         <category>Exotische Nahkampfwaffen</category>
         <reach>–</reach>
         <damage>6G(e)</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <cost>0</cost>
         <builtin/>
         <note>Der angelegte Taserschild als Nahkampfwaffe; Elektroschock, 20 Ladungen.</note>
@@ -237,7 +237,7 @@
         <category>Waffenlos</category>
         <reach>–</reach>
         <damage>5G(e)</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <avail>3</avail>
         <legality>E</legality>
         <cost>200</cost>
@@ -255,7 +255,7 @@
         <ap>–</ap>
         <cost>0</cost>
         <builtin/>
-        <note>Schlag oder Tritt ohne Waffe mit Waffenlosem Kampf; Kritischer Schlag erhöht den Schaden (S. 231).</note>
+        <note>Schlag oder Tritt ohne Waffe mit Waffenlosem Kampf; Kritischer Schlag erhöht den Schaden (GRW S. 231).</note>
         <source>SR4</source>
         <page>188</page>
     </item>
@@ -271,7 +271,7 @@
         <ap>–</ap>
         <cost>0</cost>
         <builtin/>
-        <note>Einziehbare Klinge an der Handkante aus dem Implantat Handklinge; mit Klingenwaffen geführt (S. 148).</note>
+        <note>Einziehbare Klinge an der Handkante aus dem Implantat Handklinge; mit Klingenwaffen geführt (GRW S. 148).</note>
         <source>SR4</source>
         <page>391</page>
     </item>
@@ -284,7 +284,7 @@
         <ap>–</ap>
         <cost>0</cost>
         <builtin/>
-        <note>Einziehbare Klingen unter den Fingernägeln aus dem Implantat Nagelmesser; mit Klingenwaffen geführt (S. 148).</note>
+        <note>Einziehbare Klingen unter den Fingernägeln aus dem Implantat Nagelmesser; mit Klingenwaffen geführt (GRW S. 148).</note>
         <source>SR4</source>
         <page>391</page>
     </item>
@@ -294,10 +294,10 @@
         <category>Waffenlos</category>
         <reach>–</reach>
         <damage>6G(e)</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <cost>0</cost>
         <builtin/>
-        <note>Elektroschock aus Polstern in Knöcheln oder Handfläche; Waffenloser Kampf (S. 149), 10 Ladungen.</note>
+        <note>Elektroschock aus Polstern in Knöcheln oder Handfläche; Waffenloser Kampf (GRW S. 149), 10 Ladungen.</note>
         <source>SR4</source>
         <page>391</page>
     </item>
@@ -310,7 +310,7 @@
         <ap>–</ap>
         <cost>0</cost>
         <builtin/>
-        <note>Einziehbare Klingen aus Handgelenk oder Knöcheln aus dem Implantat Sporn; mit Klingenwaffen geführt (S. 148).</note>
+        <note>Einziehbare Klingen aus Handgelenk oder Knöcheln aus dem Implantat Sporn; mit Klingenwaffen geführt (GRW S. 148).</note>
         <source>SR4</source>
         <page>391</page>
     </item>
@@ -320,7 +320,7 @@
         <category>Waffenlos</category>
         <reach>–</reach>
         <damage>6G(e)</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <cost>0</cost>
         <builtin/>
         <note>Aus der Panzerungsmodifikation Schockstreifen; Angriff mit Waffenlosem Kampf, 10 Ladungen.</note>
@@ -374,7 +374,7 @@
         <name>Schwere Armbrust</name>
         <category>Armbrüste</category>
         <damage>7K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <range>Schwere Armbrust</range>
         <avail>8</avail>
         <legality>E</legality>
@@ -415,7 +415,7 @@
         <name>Defiance EX Schocker</name>
         <category>Taser</category>
         <damage>8G(e)</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>4 (m)</ammo>
@@ -429,7 +429,7 @@
         <name>Yamaha Pulsar</name>
         <category>Taser</category>
         <damage>6G(e)</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>4 (m)</ammo>
@@ -548,7 +548,7 @@
         <name>Ares Predator IV</name>
         <category>Schwere Pistolen</category>
         <damage>5K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>15 (s)</ammo>
@@ -582,7 +582,7 @@
         <name>Colt Manhunter</name>
         <category>Schwere Pistolen</category>
         <damage>5K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>16 (s)</ammo>
@@ -599,7 +599,7 @@
         <name>Remington Roomsweeper</name>
         <category>Schwere Pistolen</category>
         <damage>5K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>8 (m)</ammo>
@@ -616,7 +616,7 @@
         <name>Ruger Super Warhawk</name>
         <category>Schwere Pistolen</category>
         <damage>6K</damage>
-        <ap>–2</ap>
+        <ap>−2</ap>
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>6 (tr)</ammo>
@@ -758,7 +758,7 @@
         <name>AK-97</name>
         <category>Sturmgewehre</category>
         <damage>6K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM/SM/AM</mode>
         <rc>–</rc>
         <ammo>38 (s)</ammo>
@@ -774,7 +774,7 @@
         <name>Ares Alpha</name>
         <category>Sturmgewehre</category>
         <damage>6K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM/SM/AM</mode>
         <rc>2</rc>
         <ammo>42 (s)</ammo>
@@ -792,7 +792,7 @@
         <name>FN HAR</name>
         <category>Sturmgewehre</category>
         <damage>6K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM/SM/AM</mode>
         <rc>2</rc>
         <ammo>35 (s)</ammo>
@@ -810,7 +810,7 @@
         <name>HK XM30</name>
         <category>Sturmgewehre</category>
         <damage>6K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM/SM/AM</mode>
         <rc>(1)</rc>
         <ammo>30 (s)</ammo>
@@ -832,7 +832,7 @@
         <name>Ruger 100</name>
         <category>Sportgewehre</category>
         <damage>7K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>5 (m)</ammo>
@@ -850,7 +850,7 @@
         <name>PJSS Elefantenbüchse</name>
         <category>Sportgewehre</category>
         <damage>9K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>EM</mode>
         <rc>(1)</rc>
         <ammo>2 (k)</ammo>
@@ -869,7 +869,7 @@
         <name>Ranger Arms SM-4</name>
         <category>Scharfschützengewehre</category>
         <damage>8K</damage>
-        <ap>–3</ap>
+        <ap>−3</ap>
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>15 (s)</ammo>
@@ -888,7 +888,7 @@
         <name>Walter MA-2100</name>
         <category>Scharfschützengewehre</category>
         <damage>7K</damage>
-        <ap>–3</ap>
+        <ap>−3</ap>
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>10 (m)</ammo>
@@ -924,7 +924,7 @@
         <name>Remington 990</name>
         <category>Schrotflinten</category>
         <damage>7K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>HM</mode>
         <rc>(1)</rc>
         <ammo>8 (m)</ammo>
@@ -960,7 +960,7 @@
         <name>Fichetti Pain Inducer</name>
         <category>Spezielle Waffen</category>
         <damage>Speziell</damage>
-        <ap>–Hälfte</ap>
+        <ap>−Hälfte</ap>
         <mode>EM</mode>
         <rc>–</rc>
         <ammo>Speziell</ammo>
@@ -976,7 +976,7 @@
         <name>Parashield Pfeilpistole</name>
         <category>Spezielle Waffen</category>
         <damage>Droge/Toxin</damage>
-        <ap>–2</ap>
+        <ap>−2</ap>
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>5 (s)</ammo>
@@ -992,7 +992,7 @@
         <name>Parashield Pfeilgewehr</name>
         <category>Spezielle Waffen</category>
         <damage>Droge/Toxin</damage>
-        <ap>–2</ap>
+        <ap>−2</ap>
         <mode>HM</mode>
         <rc>–</rc>
         <ammo>10 (s)</ammo>
@@ -1010,7 +1010,7 @@
         <name>Ingram White Knight</name>
         <category>Leichte Maschinengewehre</category>
         <damage>6K</damage>
-        <ap>–1</ap>
+        <ap>−1</ap>
         <mode>SM/AM</mode>
         <rc>5 (6)</rc>
         <ammo>50 (s) oder 100 (gurt)</ammo>
@@ -1029,7 +1029,7 @@
         <name>Stoner-Ares M202</name>
         <category>Mittlere Maschinengewehre</category>
         <damage>6K</damage>
-        <ap>–2</ap>
+        <ap>−2</ap>
         <mode>AM</mode>
         <rc>–</rc>
         <ammo>50 (s) oder 100 (gurt)</ammo>
@@ -1047,7 +1047,7 @@
         <name>Ultimax HMG-2</name>
         <category>Schwere Maschinengewehre</category>
         <damage>7K</damage>
-        <ap>–3</ap>
+        <ap>−3</ap>
         <mode>AM</mode>
         <rc>3 (10)</rc>
         <ammo>50 (s) oder 100 (gurt)</ammo>
@@ -1068,7 +1068,7 @@
         <name>Panther XXL</name>
         <category>Sturmkanonen</category>
         <damage>10K</damage>
-        <ap>–5</ap>
+        <ap>−5</ap>
         <mode>EM</mode>
         <rc>(1)</rc>
         <ammo>15 (s)</ammo>

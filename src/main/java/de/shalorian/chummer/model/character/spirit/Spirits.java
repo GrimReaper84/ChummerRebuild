@@ -75,8 +75,9 @@ public class Spirits {
     return (int) getEntries(kind).stream().filter(Spirit::isBound).count();
   }
 
-  /** Warum dieser Eintrag nicht hinzugefügt werden kann, oder {@code null}. */
-  public @Nullable String getAddProblem(@NonNull SpiritData data, int force, int services, boolean bound) {
+  /** Warum dieser Eintrag mit {@code options} nicht hinzugefügt werden kann, oder {@code null}. */
+  public @Nullable String getAddProblem(@NonNull SpiritData data, int force, int services, boolean bound,
+      @NonNull List<String> options) {
     SpiritKind kind = data.kind();
     if (!isAvailable(kind)) {
       return kind.getUnavailableText();
@@ -94,7 +95,47 @@ public class Spirits {
     if (bound && countBound(kind) >= getBoundLimit()) {
       return boundLimitText(kind);
     }
-    return bound ? creationServicesProblem(kind, services) : null;
+    String servicesProblem = bound ? creationServicesProblem(kind, services) : null;
+    return servicesProblem != null ? servicesProblem : getOptionsProblem(data, force, options);
+  }
+
+  /**
+   * Warum {@code options} für diese Art bei {@code force} nicht gehen, oder {@code null}: je 3 volle Punkte Kraft bzw.
+   * Stufe eine Option (GRW S. 347, 282), nur aus der Liste der Art, jede höchstens einmal. Gilt auch im
+   * Spielleiter-Modus, weil es eine Eigenschaft des Geistes ist, keine Kostenfrage.
+   */
+  public @Nullable String getOptionsProblem(@NonNull SpiritData data, int force, @NonNull List<String> options) {
+    int allowed = data.optionalCount(force);
+    if (options.size() > allowed) {
+      return "%s: bei %s %d höchstens %d".formatted(data.kind().getOptionsName(), data.kind().getPowerName(), force,
+          allowed);
+    }
+    for (int i = 0; i < options.size(); i++) {
+      String option = options.get(i);
+      if (!data.optional().contains(option)) {
+        return option + " gehört nicht zu " + data.name();
+      }
+      if (options.indexOf(option) != i) {
+        return option + " ist doppelt gewählt";
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Trägt bei {@code spirit} eine fehlende Option nach, z.B. für Dateien aus der Zeit vor der Auswahl. Einmal gewählte
+   * Optionen bleiben (GRW S. 347, 282); es geht nur, solange weniger gewählt sind als erlaubt.
+   *
+   * @throws IllegalArgumentException wenn {@link #getOptionsProblem} für die erweiterte Liste einen Grund liefert
+   */
+  public void addMissingOption(@NonNull Spirit spirit, @NonNull String option) {
+    List<String> extended = new ArrayList<>(spirit.getOptions());
+    extended.add(option);
+    String problem = getOptionsProblem(spirit.getData(), spirit.getForce(), extended);
+    if (problem != null) {
+      throw new IllegalArgumentException(problem);
+    }
+    spirit.addOption(option);
   }
 
   /**
@@ -103,7 +144,8 @@ public class Spirits {
    * @throws IllegalArgumentException wenn {@link #getAddProblem} einen Grund liefert
    */
   public void add(@NonNull Spirit spirit) {
-    String problem = getAddProblem(spirit.getData(), spirit.getForce(), spirit.getServices(), spirit.isBound());
+    String problem = getAddProblem(spirit.getData(), spirit.getForce(), spirit.getServices(), spirit.isBound(),
+        spirit.getOptions());
     if (problem != null) {
       throw new IllegalArgumentException(problem);
     }

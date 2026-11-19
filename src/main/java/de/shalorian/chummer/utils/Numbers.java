@@ -14,6 +14,11 @@ import org.jspecify.annotations.NonNull;
  */
 public final class Numbers {
 
+  /** Platzhalter für einen fehlenden Wert (Halbgeviertstrich), wie in den Tabellen des GRW. */
+  public static final String NO_VALUE = "–";
+  /** Minuszeichen der Anzeige (U+2212). */
+  public static final char MINUS = '−';
+
   private static volatile @NonNull NumberStyle style = NumberStyle.DEFAULT;
 
   private Numbers() {
@@ -26,6 +31,11 @@ public final class Numbers {
   /** Ganzzahl, z.B. {@code "1500"} bzw. {@code "1.500"}. */
   public static @NonNull String integer(long value) {
     return format("#,##0", value);
+  }
+
+  /** Ganzzahl mit Vorzeichen, z.B. {@code "+2"}, {@code "−2"} oder {@code "0"} (Modifikatoren, Buchungen). */
+  public static @NonNull String signed(long value) {
+    return value > 0 ? "+" + integer(value) : integer(value);
   }
 
   /** Nuyen-Betrag mit Währungszeichen, z.B. {@code "1500 ¥"}. */
@@ -48,12 +58,13 @@ public final class Numbers {
   }
 
   /**
-   * Liest eine eingegebene Ganzzahl; Tausendertrennzeichen des aktuellen Stils werden übergangen.
+   * Liest eine eingegebene Ganzzahl; Tausendertrennzeichen des aktuellen Stils werden übergangen, das Minuszeichen
+   * „−“ der Anzeige gilt wie „-“.
    *
    * @throws NumberFormatException wenn der Text keine Ganzzahl ist
    */
   public static int parseInteger(@NonNull String text) {
-    return Integer.parseInt(text.trim().replace(String.valueOf(style.groupingSeparator()), ""));
+    return Integer.parseInt(text.trim().replace(String.valueOf(style.groupingSeparator()), "").replace(MINUS, '-'));
   }
 
   private static @NonNull String format(@NonNull String pattern, @NonNull Object value) {
@@ -61,7 +72,8 @@ public final class Numbers {
     DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.ROOT);
     symbols.setDecimalSeparator(current.decimalSeparator());
     symbols.setGroupingSeparator(current.groupingSeparator());
-    symbols.setMinusSign('-');
+    // Ein Minus für die ganze Anzeige: das typografische „−“, wie in Hinweisen und Verletzungsmodifikatoren
+    symbols.setMinusSign(MINUS);
     // DecimalFormat ist nicht threadsicher, daher pro Aufruf neu; günstig genug für Anzeigetexte.
     DecimalFormat format = new DecimalFormat(pattern, symbols);
     format.setGroupingUsed(current.groupThousands());

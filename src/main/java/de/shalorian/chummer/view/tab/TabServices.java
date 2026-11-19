@@ -148,7 +148,7 @@ public final class TabServices {
   public void showDialogLoadError() {
     Notifications.create()
         .title("Fehler")
-        .text("Dialog konnte nicht geöffnet werden")
+        .text("Der Dialog konnte nicht geöffnet werden.")
         .position(Pos.BOTTOM_RIGHT)
         .owner(owner.get())
         .graphic(notificationIcon(FontAwesomeSolid.EXCLAMATION_CIRCLE))

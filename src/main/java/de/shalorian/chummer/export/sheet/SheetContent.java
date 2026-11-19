@@ -85,8 +85,6 @@ public record SheetContent(
     @NonNull List<List<String>> initiation,
     @NonNull List<String> notes
 ) {
-
-  private static final String DASH = "–";
   /** Deutsche Sortierung (Umlaute an ihrer Stelle im Alphabet), wie in den Listen der App. */
   private static final Collator GERMAN = Collator.getInstance(Locale.GERMAN);
 
@@ -153,11 +151,11 @@ public record SheetContent(
             new SheetField("Essenz", Numbers.essence(c.getEssence())),
             new SheetField("Initiative", Numbers.integer(c.getInitiativeAttribute())),
             new SheetField(magicOrResonance == null ? "Magie/Resonanz" : magicOrResonance.getType().getDisplayName(),
-                magicOrResonance == null ? DASH : Numbers.integer(c.getEffectiveMagicOrResonanceValue())))),
+                magicOrResonance == null ? Numbers.NO_VALUE : Numbers.integer(c.getEffectiveMagicOrResonanceValue())))),
         new SheetBlock("Kampf und Matrix", List.of(
             new SheetField("Aktuelles Edge", ""),
-            new SheetField("Astrale INI", c.hasAstralAccess() ? Numbers.integer(c.getAstralInitiative()) : DASH),
-            new SheetField("Matrix INI", online ? Numbers.integer(c.getMatrixInitiative()) : DASH),
+            new SheetField("Astrale INI", c.hasAstralAccess() ? Numbers.integer(c.getAstralInitiative()) : Numbers.NO_VALUE),
+            new SheetField("Matrix INI", online ? Numbers.integer(c.getMatrixInitiative()) : Numbers.NO_VALUE),
             new SheetField("INI-Durchgänge", passes))));
   }
 
@@ -204,7 +202,7 @@ public record SheetContent(
   /** Würfel, mit Spezialisierung zusätzlich der Pool im Spezialgebiet: „7 (9)“; „–“ ohne mögliche Probe. */
   private static @NonNull String poolText(@NonNull Optional<DicePool> pool, boolean specialized) {
     return pool.map(p -> p.dice() + (specialized ? " (" + Character.withSpecialization(p) + ")" : ""))
-        .orElse(DASH);
+        .orElse(Numbers.NO_VALUE);
   }
 
   private static @NonNull List<String> qualityRow(@NonNull CharacterQuality quality) {
@@ -329,9 +327,12 @@ public record SheetContent(
     return rows;
   }
 
+  /** Name mit den gewählten optionalen Kräften bzw. Komplexen Formen in Klammern, z.B. „Feuergeist (Grauen)“. */
   private static @NonNull List<String> spiritRow(@NonNull Spirit spirit) {
     var kind = spirit.getData().kind();
-    return List.of(spirit.getName(), spirit.isBound() ? kind.getBoundName() : kind.getUnboundName(),
+    String name = spirit.getOptions().isEmpty() ? spirit.getName()
+        : spirit.getName() + " (" + String.join(", ", spirit.getOptions()) + ")";
+    return List.of(name, spirit.isBound() ? kind.getBoundName() : kind.getUnboundName(),
         Numbers.integer(spirit.getForce()), Numbers.integer(spirit.getServices()));
   }
 

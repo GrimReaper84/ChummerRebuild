@@ -1,5 +1,6 @@
 package de.shalorian.chummer.model.character.weapon;
 
+import de.shalorian.chummer.utils.Numbers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.NonNull;
@@ -32,7 +33,6 @@ public record AmmoEffect(int damageModifier, int apModifier, @Nullable String da
   /** Ersatz-Schadenscode, z.B. „6G(e)“. */
   private static final Pattern REPLACEMENT = Pattern.compile("\\d+[KG](\\([ef]\\))?");
   private static final String FLECHETTE_MARK = "(f)";
-  private static final String NONE = "–";
 
   /**
    * Wirkung aus den Tabellenspalten, oder {@code null}, wenn die Munition die Werte der Waffe übernimmt („wie Taser“,
@@ -59,7 +59,7 @@ public record AmmoEffect(int damageModifier, int apModifier, @Nullable String da
     if (SIGNED.matcher(ap).matches()) {
       apModifier = signed(ap);
     } else if (!isNone(ap)) {
-      replaceAp = ap.replace('−', '–'); // Schreibweise der Waffentabelle (–Hälfte)
+      replaceAp = ap;
     }
     return new AmmoEffect(damageModifier, apModifier, damageType, replaceDamage, replaceAp,
         name.startsWith("Flechette"), armorType);
@@ -82,7 +82,7 @@ public record AmmoEffect(int damageModifier, int apModifier, @Nullable String da
   }
 
   /**
-   * PB der Waffe mit dieser Munition („–“ zählt als 0); eine nicht numerische PB der Waffe (z.B. „–Hälfte“) bleibt
+   * PB der Waffe mit dieser Munition („–“ zählt als 0); eine nicht numerische PB der Waffe (z.B. „−Hälfte“) bleibt
    * unverändert.
    *
    * @param weaponDamage Schaden der Waffe, für die Flechette-Ausnahme
@@ -103,7 +103,7 @@ public record AmmoEffect(int damageModifier, int apModifier, @Nullable String da
       return weaponAp;
     }
     int total = base + apModifier;
-    return total == 0 ? NONE : (total < 0 ? "–" + -total : "+" + total);
+    return total == 0 ? Numbers.NO_VALUE : Numbers.signed(total);
   }
 
   /** Flechettegeschosse in einer Waffe, deren Schaden Flechette schon einrechnet (S. 369). */
@@ -112,7 +112,7 @@ public record AmmoEffect(int damageModifier, int apModifier, @Nullable String da
   }
 
   private static boolean isNone(@NonNull String text) {
-    return text.isEmpty() || text.equals(NONE) || text.equals("-") || text.equals("−");
+    return text.isEmpty() || text.equals(Numbers.NO_VALUE) || text.equals("-") || text.equals("−");
   }
 
   private static int signed(@NonNull String text) {

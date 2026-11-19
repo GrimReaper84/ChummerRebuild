@@ -21,7 +21,7 @@
         <avail>6</avail>
         <legality>E</legality>
         <cost>500</cost>
-        <note>Verringert die Abweichung von Minigranaten/Raketen von 3W6 bzw. 4W6 auf 2W6 (S. 367).</note>
+        <note>Verringert die Abweichung von Minigranaten/Raketen von 3W6 bzw. 4W6 auf 2W6 (GRW S. 367).</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -79,7 +79,7 @@
         <rule>GYROSTABILIZER</rule>
         <avail>7</avail>
         <cost>3000</cost>
-        <note>Gleicht bis zu 6 Punkte Abzüge durch Rückstoß und Bewegung aus; selbst kein RK-Wert (S. 367).</note>
+        <note>Gleicht bis zu 6 Punkte Abzüge durch Rückstoß und Bewegung aus; selbst kein RK-Wert (GRW S. 367).</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -136,7 +136,7 @@
         <rule>SPEEDLOADER</rule>
         <avail>2</avail>
         <cost>25</cost>
-        <note>Siehe Tabelle Feuerwaffen nachladen, S. 369.</note>
+        <note>Siehe Tabelle Feuerwaffen nachladen, GRW S. 369.</note>
         <source>SR4</source>
         <page>368</page>
     </item>
@@ -181,7 +181,7 @@
         <mount>Aufmontiert</mount>
         <avail>3</avail>
         <cost>300</cost>
-        <note>Kann mit Sichtverstärkungen (S. 379) ausgerüstet werden.</note>
+        <note>Kann mit Sichtverstärkungen (GRW S. 379) ausgerüstet werden.</note>
         <source>SR4</source>
         <page>368</page>
     </item>

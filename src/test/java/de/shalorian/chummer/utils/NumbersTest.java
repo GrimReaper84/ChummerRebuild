@@ -19,7 +19,7 @@ class NumbersTest {
     assertEquals("1500", Numbers.integer(1500));
     assertEquals("150000 ¥", Numbers.nuyen(150_000));
     assertEquals("0 ¥", Numbers.nuyen(0));
-    assertEquals("-2000", Numbers.integer(-2000));
+    assertEquals("−2000", Numbers.integer(-2000));
     assertEquals("5,80", Numbers.essence(5.8));
     assertEquals("0,105", Numbers.essence(0.105));
     assertEquals("1,25", Numbers.decimal(new BigDecimal("1.250")));
@@ -32,7 +32,7 @@ class NumbersTest {
     assertEquals("1.500", Numbers.integer(1500));
     assertEquals("150.000 ¥", Numbers.nuyen(150_000));
     assertEquals("999", Numbers.integer(999));
-    assertEquals("-2.000", Numbers.integer(-2000));
+    assertEquals("−2.000", Numbers.integer(-2000));
     assertEquals("5,80", Numbers.essence(5.8));
   }
 

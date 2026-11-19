@@ -5,6 +5,9 @@ import de.shalorian.chummer.model.character.spirit.Spirit;
 import de.shalorian.chummer.model.character.spirit.SpiritData;
 import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.spirit.Spirits;
+import de.shalorian.chummer.model.critter.CritterPowerData;
+import de.shalorian.chummer.model.critter.CritterPowerDataLoader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.fxml.FXML;
@@ -13,6 +16,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -21,6 +26,8 @@ import org.jspecify.annotations.Nullable;
  * Hinzufügen eines Geistes (GRW S. 112, 213, 222) bzw. Sprites (S. 113, 281/282): Art (nur die der eigenen Tradition
  * bzw. alle Sprites), Kraft bzw. Stufe, Dienste und ob er gebunden bzw. registriert ist. Bei der Erschaffung ist die
  * Kraft fest Magie bzw. Resonanz; die Grenzen prüft {@link Spirits#getAddProblem}, der Grund steht im Hinweisfeld.
+ * Dazu die optionalen Kräfte bzw. Komplexen Formen, je 3 volle Punkte Kraft bzw. Stufe eine (GRW S. 347, 282): Ist die
+ * Zahl erreicht, sind die übrigen deaktiviert; sinkt die Kraft, fallen die zuletzt gewählten weg.
  */
 public class SpiritSelectDialogController extends CatalogSelectDialogController<SpiritData> {
 
@@ -40,6 +47,8 @@ public class SpiritSelectDialogController extends CatalogSelectDialogController<
   @FXML
   private Label statsLabel;
   @FXML
+  private VBox optionsBox;
+  @FXML
   private Label problemLabel;
   @FXML
   private Button okButton;
@@ -48,6 +57,11 @@ public class SpiritSelectDialogController extends CatalogSelectDialogController<
   private @Nullable Character character;
   private @NonNull SpiritKind kind = SpiritKind.SPIRIT;
   private @Nullable Spirit result;
+  /** Art, für die {@link #optionChecks} gebaut sind; ein Wechsel baut sie neu und leert die Auswahl. */
+  private @Nullable SpiritData optionsFor;
+  private final @NonNull List<CheckBox> optionChecks = new ArrayList<>();
+  /** Die Auswahl in Reihenfolge der Klicks; die zuletzt gewählte fällt zuerst weg. */
+  private final @NonNull List<String> chosenOptions = new ArrayList<>();
 
   @FXML
   @Override
@@ -107,10 +121,13 @@ public class SpiritSelectDialogController extends CatalogSelectDialogController<
       categoryLabel.setText("");
       statsLabel.setText("");
       problemLabel.setText("");
+      optionsBox.getChildren().clear();
+      optionsFor = null;
       okButton.setDisable(true);
       return;
     }
     int force = forceSpinner.getValue() == null ? 1 : forceSpinner.getValue();
+    refreshOptions(selected, force);
     String category = selected.categoryIn(character.getTradition());
     categoryLabel.setText(category == null ? "" : category);
     statsLabel.setText(selected.statsText(force));
@@ -124,7 +141,47 @@ public class SpiritSelectDialogController extends CatalogSelectDialogController<
       return "Werte fehlen";
     }
     return character.getSpirits().getAddProblem(data, forceSpinner.getValue(), servicesSpinner.getValue(),
-        boundCheck.isSelected());
+        boundCheck.isSelected(), List.copyOf(chosenOptions));
+  }
+
+  /** Baut die Auswahl bei einer anderen Art neu, kürzt sie auf die erlaubte Zahl und sperrt die übrigen. */
+  private void refreshOptions(@NonNull SpiritData data, int force) {
+    if (!data.equals(optionsFor)) {
+      optionsFor = data;
+      chosenOptions.clear();
+      optionChecks.clear();
+      for (String option : data.optional()) {
+        CheckBox check = new CheckBox(option);
+        CritterPowerData power = CritterPowerDataLoader.findForEntry(option);
+        if (power != null) {
+          check.setTooltip(new Tooltip(power.describe()));
+        }
+        check.setOnAction(_ -> {
+          if (check.isSelected()) {
+            chosenOptions.add(option);
+          } else {
+            chosenOptions.remove(option);
+          }
+          onListUpdated();
+        });
+        optionChecks.add(check);
+      }
+    }
+    int allowed = data.optionalCount(force);
+    while (chosenOptions.size() > allowed) {
+      chosenOptions.removeLast();
+    }
+    Label hint = new Label(allowed == 0
+        ? "%s erst ab %s 3".formatted(kind.getOptionsName(), kind.getPowerName())
+        : "%d wählbar".formatted(allowed));
+    hint.getStyleClass().add("key-caption");
+    optionsBox.getChildren().setAll(hint);
+    for (CheckBox check : optionChecks) {
+      boolean chosen = chosenOptions.contains(check.getText());
+      check.setSelected(chosen);
+      check.setDisable(!chosen && chosenOptions.size() >= allowed);
+      optionsBox.getChildren().add(check);
+    }
   }
 
   @FXML
@@ -133,7 +190,8 @@ public class SpiritSelectDialogController extends CatalogSelectDialogController<
     if (selected == null || problem(selected) != null) {
       return;
     }
-    result = new Spirit(selected, forceSpinner.getValue(), servicesSpinner.getValue(), boundCheck.isSelected());
+    result = new Spirit(selected, forceSpinner.getValue(), servicesSpinner.getValue(), boundCheck.isSelected(),
+        List.copyOf(chosenOptions));
     if (stage != null) {
       stage.close();
     }

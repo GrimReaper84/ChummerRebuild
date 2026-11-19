@@ -57,8 +57,6 @@ public record WeaponDetails(
     @NonNull String note
 ) {
 
-  private static final String NO_VALUE = "–";
-
   public static @NonNull WeaponDetails of(@NonNull Weapon weapon, @NonNull Character character) {
     Equipment equipment = character.getEquipment();
     WeaponData data = weapon.getData();
@@ -80,7 +78,7 @@ public record WeaponDetails(
    * VehiclePools}, GRW S. 287).
    */
   static @NonNull WeaponDetails ofMounted(@NonNull Weapon weapon) {
-    return build(weapon, NO_VALUE, null, 0, null, weapon.getData().damage(), "", weapon.getData().armorPiercing(), "",
+    return build(weapon, Numbers.NO_VALUE, null, 0, null, weapon.getData().damage(), "", weapon.getData().armorPiercing(), "",
         weapon.getRangeBands(0));
   }
 
@@ -135,6 +133,6 @@ public record WeaponDetails(
   }
 
   private static @NonNull String orDash(@NonNull String text) {
-    return text.isEmpty() ? NO_VALUE : text;
+    return text.isEmpty() ? Numbers.NO_VALUE : text;
   }
 }

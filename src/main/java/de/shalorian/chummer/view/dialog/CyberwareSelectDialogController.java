@@ -57,8 +57,6 @@ import org.jspecify.annotations.Nullable;
  * normalen Kauf.
  */
 public class CyberwareSelectDialogController extends CatalogSelectDialogController<CyberwareData> {
-
-  private static final String NO_VALUE = "–";
   private static final EssenceStringConverter ESSENCE_FORMAT = new EssenceStringConverter();
 
   @FXML
@@ -367,13 +365,13 @@ public class CyberwareSelectDialogController extends CatalogSelectDialogControll
 
   private void updatePreview() {
     CyberwareData selected = itemListView.getSelectionModel().getSelectedItem();
-    availabilityLabel.setText(selected == null ? NO_VALUE : availabilityText(selected));
-    sourceLabel.setText(selected == null ? NO_VALUE : sourceText(selected));
+    availabilityLabel.setText(selected == null ? Numbers.NO_VALUE : availabilityText(selected));
+    sourceLabel.setText(selected == null ? Numbers.NO_VALUE : sourceText(selected));
     Cyberware preview = buildSelection();
     noteLabel.setText(selected == null ? "" : noteText(selected));
     if (preview == null) {
-      essenceLabel.setText(NO_VALUE);
-      costLabel.setText(NO_VALUE);
+      essenceLabel.setText(Numbers.NO_VALUE);
+      costLabel.setText(Numbers.NO_VALUE);
       okButton.setDisable(true);
       return;
     }

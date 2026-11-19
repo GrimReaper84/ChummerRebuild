@@ -8,6 +8,7 @@ import de.shalorian.chummer.model.npc.NpcGroup;
 import de.shalorian.chummer.model.npc.NpcRules;
 import de.shalorian.chummer.model.npc.NpcStatblock;
 import de.shalorian.chummer.model.npc.ProfessionalRating;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.grid.MonitorBoxRow;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.util.List;
@@ -67,7 +68,7 @@ final class CombatPanelBuilder {
     Label notes = styled(new Label("Eine Initiativeprobe für alle Schergen, der Anführer würfelt selbst und handelt bei "
         + "Gleichstand zuerst. Ausgeschaltet überlebt, wer zuletzt geistigen oder höchstens KON körperlichen Schaden "
         + "erlitt (Anführer: KON × 1,5). Die Professionalitätsstufe gilt als Würfelpool-Modifikator gegen soziale "
-        + "Fertigkeiten (S. 324/325)."), "key-caption");
+        + "Fertigkeiten (GRW S. 324/325)."), "key-caption");
     notes.setWrapText(true);
     box.getChildren().add(notes);
     return box;
@@ -105,7 +106,7 @@ final class CombatPanelBuilder {
     int damage = Math.min(combatant.getDamage(), boxes);
     int wound = NpcRules.woundModifier(damage);
     String state = combatant.isKnockedOut(boxes) ? "ausgeschaltet"
-        : wound < 0 ? "Verletzung " + wound : "unverletzt";
+        : wound < 0 ? "Verletzung " + Numbers.integer(wound) : "unverletzt";
     Label stateLabel = styled(new Label(state), combatant.isKnockedOut(boxes) || wound < 0 ? "warn-text" : "key-caption");
     Node row = MonitorBoxRow.build(boxes, damage, "cm-mini-physical", true,
         box -> NpcRules.woundModifier(box) != NpcRules.woundModifier(box - 1), value -> {

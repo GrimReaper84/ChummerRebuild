@@ -14,6 +14,7 @@ import de.shalorian.chummer.model.character.vehicle.Vehicle;
 import de.shalorian.chummer.model.character.vehicle.VehiclePoolCell;
 import de.shalorian.chummer.model.character.vehicle.VehiclePoolRow;
 import de.shalorian.chummer.model.character.vehicle.VehiclePools;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.grid.ConditionBoxes;
 import java.util.Optional;
 import javafx.geometry.Pos;
@@ -33,7 +34,6 @@ import org.tbee.javafx.scene.layout.MigPane;
 final class VehicleCombatSection {
 
   private static final int BOXES_PER_ROW = 10;
-  private static final String NO_VALUE = "–";
 
   private VehicleCombatSection() {
   }
@@ -48,10 +48,10 @@ final class VehicleCombatSection {
     Label title = new Label("Würfelpools (GRW S. 287)");
     title.getStyleClass().add(STYLE_DETAIL_KEY);
     Optional<DicePool> driver = VehiclePools.driverPool(character, vehicle);
-    Label driverValue = detailValue(driver.map(p -> String.valueOf(p.dice())).orElse(NO_VALUE));
+    Label driverValue = detailValue(driver.map(p -> String.valueOf(p.dice())).orElse(Numbers.NO_VALUE));
     driverValue.setTooltip(new Tooltip(driver.map(DicePool::breakdown)
         .orElse(vehicle.getData().skill() + " ohne Fertigkeitswert nicht möglich")));
-    HBox driverRow = new HBox(8, detailKey("Fahrzeugprobe als Fahrer (S. 198)"), driverValue);
+    HBox driverRow = new HBox(8, detailKey("Fahrzeugprobe als Fahrer (GRW S. 198)"), driverValue);
     driverRow.setAlignment(Pos.CENTER_LEFT);
 
     MigPane grid = new MigPane("", "[]24[center]24[center]24[center]");
@@ -64,7 +64,7 @@ final class VehicleCombatSection {
     VBox box = new VBox(6, title, driverRow, grid,
         detailHint("Fahrzeugfertigkeit: " + vehicle.getData().skill() + ". Werte mit Aufschlüsselung im Tooltip."));
     if (vehicle.hasRiggerAdapter() && !character.getMatrixAccess().isVirtual()) {
-      Label vr = detailHint("Hineinspringen geht nur in VR (S. 286): "
+      Label vr = detailHint("Hineinspringen geht nur in VR (GRW S. 286): "
           + Optional.ofNullable(character.getMatrixAccessHint()).orElse("VR fehlt"));
       vr.setWrapText(true);
       box.getChildren().add(vr);
@@ -74,7 +74,7 @@ final class VehicleCombatSection {
 
   private static @NonNull Label cell(@NonNull VehiclePoolCell cell) {
     DicePool pool = cell.pool();
-    Label label = detailValue(pool == null ? NO_VALUE : String.valueOf(pool.dice()));
+    Label label = detailValue(pool == null ? Numbers.NO_VALUE : String.valueOf(pool.dice()));
     label.setTooltip(new Tooltip(pool == null ? cell.note() : pool.breakdown()));
     return label;
   }

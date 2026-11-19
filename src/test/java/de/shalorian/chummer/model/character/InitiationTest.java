@@ -45,7 +45,7 @@ class InitiationTest {
   @Test
   void onlyInCareerMode() {
     Character c = withGift("Zauberer", 3);
-    assertEquals("Initiation erst im Karrieremodus (S. 112)", c.getInitiation().getRaiseProblem());
+    assertEquals("Initiation erst im Karrieremodus (GRW S. 112)", c.getInitiation().getRaiseProblem());
     assertThrows(IllegalStateException.class, () -> c.getInitiation().raiseGrade());
     Character noMagic = new Character("Test", MetatypeDataLoader.find("Mensch"));
     assertNull(noMagic.getInitiation().getKind());
@@ -123,7 +123,7 @@ class InitiationTest {
   void adeptRestrictions() {
     Initiation adept = career("Adept", 4).getInitiation();
     adept.raiseGrade();
-    assertEquals("Adepten können diese Metamagie nicht lernen", adept.getLearnProblem(technique("Abschirmung")));
+    assertEquals("Adepten können diese Metamagie nicht lernen.", adept.getLearnProblem(technique("Abschirmung")));
     assertNull(adept.getLearnProblem(technique("Adeptenzentrierung")));
 
     Initiation mystic = career("Magieradept", 4).getInitiation();

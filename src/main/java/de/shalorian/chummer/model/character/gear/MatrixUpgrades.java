@@ -36,7 +36,7 @@ public final class MatrixUpgrades {
     }
     int original = base.valueOf(attribute);
     if (!attribute.isHardware() && original == 0) {
-      return "Ein Softwarepaket braucht ein Betriebssystem";
+      return "Ein Softwarepaket braucht ein Betriebssystem.";
     }
     if (rating <= original) {
       return "%s %d bringt nichts: %s ist schon %d".formatted(upgrade.name(), rating, attribute.getDisplayName(),

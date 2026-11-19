@@ -54,7 +54,7 @@ public class ContactEditDialogController {
   private void onOk() {
     String name = nameField.getText() == null ? "" : nameField.getText().trim();
     if (name.isEmpty()) {
-      errorLabel.setText("Name darf nicht leer sein");
+      errorLabel.setText("Der Name darf nicht leer sein.");
       return;
     }
     String description = descriptionArea.getText();

@@ -166,7 +166,7 @@ public class Vehicle {
   /** Warum kein Riggeradapter eingebaut werden kann, oder {@code null}. */
   public @Nullable String riggerAdapterProblem() {
     if (isRiggerAdapterIncluded()) {
-      return "Drohnen sind bereits mit einem Riggeradapter ausgestattet (GRW S. 398)";
+      return "Drohnen sind bereits mit einem Riggeradapter ausgestattet (GRW S. 398).";
     }
     if (riggerAdapterPurchased) {
       return getName() + " hat bereits einen Riggeradapter";
@@ -288,7 +288,7 @@ public class Vehicle {
    */
   public @Nullable String weaponProblem(@NonNull WeaponMount mount, @NonNull WeaponData weapon) {
     if (mount.getWeapon() != null) {
-      return "Die Waffenhalterung ist bereits belegt";
+      return "Die Waffenhalterung ist bereits belegt.";
     }
     if (!weapon.category().fitsVehicleMount()) {
       return weapon.name() + " passt nicht in eine Waffenhalterung (nur ein LMG oder eine kleinere"

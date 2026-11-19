@@ -3,7 +3,7 @@
 <weaknesses>
     <weakness>
         <name>Allergie</name>
-        <note>Unbehagen oder Schaden durch eine Substanz oder Bedingung, in Stufen wie das Handicap Allergie (S. 119).</note>
+        <note>Unbehagen oder Schaden durch eine Substanz oder Bedingung, in Stufen wie das Handicap Allergie (GRW S. 119).</note>
         <source>SR4</source>
         <page>343</page>
     </weakness>
@@ -27,7 +27,7 @@
     </weakness>
     <weakness>
         <name>Ungebildet</name>
-        <note>Kaum an die Hightech-Gesellschaft angepasst, wirkt wie das Handicap Ungebildet (S. 121).</note>
+        <note>Kaum an die Hightech-Gesellschaft angepasst, wirkt wie das Handicap Ungebildet (GRW S. 121).</note>
         <source>SR4</source>
         <page>343</page>
     </weakness>
