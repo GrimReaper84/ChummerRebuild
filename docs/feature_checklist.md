@@ -345,7 +345,7 @@
 | Bestätigungsdialog bei Karma-Ausgaben                                | ✅      |           |
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
-| Drucken / Export / Charakterbogen                                    | ❌      | **Niedrige Priorität** (2026-08-04): keine Charakterbogen-Vorlage/Formular im GRW-Text gefunden — reines Tool-Feature ohne Regelwerk-Bezug |
+| Drucken / Export / Charakterbogen                                    | ✅      | 2026-11-19 (ADR-067): PDF nach dem GRW-Bogen (S. 406/407) mit Pools, Bleistiftfelder leer, Fortsetzungsseiten; gedruckt wird aus dem PDF-Viewer |
 | Spielleiter-Modus (Korrekturen ohne Kosten und Sperren) | ✅ | 2026-11-15 (ADR-060): Menü Einstellungen, nicht gespeichert, GRW-Obergrenzen bleiben |
 | Status-Panel und Zustandstab ohne Doppelungen                        | ✅      | 2026-11-19 (ADR-065): Monitor/Initiative/Attributproben nur im Status, Bereich „Cheat-Sheet“ mit wählbaren Inhalten |
 | Mehrere Charaktere gleichzeitig öffnen                               | ✅      | 2026-11-19 (ADR-066): Tabs im Hauptfenster, Stern und Rückfrage bei ungespeicherten Änderungen |
@@ -366,6 +366,7 @@
 | Kampfverwaltung für Schergen | ✅ | Monitor je Mitglied (S. 324), Gruppen-Edge, Führungsprobe, Fluchthinweis (S. 325) |
 | Beispiel-Schergen des GRW als Vorlage | ✅ | sieben Gruppen (S. 325–328), `npcs.xml` |
 | Top-Runner | ❌ | Nutzerentscheidung 2026-11-18: als normalen Charakter bauen |
+| Bogen-Export für Schergengruppen und Critter | ❌ | Nutzerentscheidung 2026-11-19: nach dem Charakterbogen, eigener Punkt |
 | Critter mit Kräften und Schwächen | ✅ | 2026-11-19 (ADR-064): 19 GRW-Critter (S. 343–351) als Vorlage, einzeln oder als Rudel auf dem Schergen-Bogen; Werte ±3 (S. 337), Kräfte und Schwächen mit Tooltip, natürliche Waffen und Panzer gerechnet |
 | Kräftekatalog für Critter, Geister und Sprites | ✅ | 2026-11-19 (ADR-064): `critter_powers.xml` (48 Kräfte, S. 283, 337–342, 348, 351), Wirkung im Geister-Tooltip |
 
@@ -396,8 +397,8 @@ Stand 2026-11-19, aus den Tabellen oben gezählt (❌ sind überwiegend bewusst 
 | Initiative             |  4 |  0 |  0 |
 | Zustandsmonitor        |  4 |  0 |  0 |
 | Persistenz             |  9 |  0 |  0 |
-| UI/Bedienbarkeit       | 18 |  0 |  3 |
-| NSCs und Critter       |  5 |  0 |  1 |
+| UI/Bedienbarkeit       | 19 |  0 |  2 |
+| NSCs und Critter       |  5 |  0 |  2 |
 
 ---
 
@@ -426,7 +427,7 @@ README-Roadmap sind erledigt; es folgen:
 12. ✅ **Einstellungen (2026-11-18, ADR-061):** Einstellungsdialog mit Zahlenformat, Proben im Status, Status statisch
     (Anzeige, global) sowie Gliedpanzerung als Durchschnitt, spätes Erwachen, versäumte Lebensstilzahlungen und
     Regelwerk-Auswahl (Regeln, je Charakter).
-13. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
+13. ✅ **Charakterbogen (2026-11-19, ADR-067):** PDF-Export nach dem GRW-Bogen mit Würfelpools und Fortsetzungsseiten.
 14. **NSCs:** ✅ Teil 1 Schergengruppen mit GRW-Vorlagen und Kampfverwaltung (2026-11-18, ADR-062); Teil 2 Critter mit
     ihren Kräften (2026-11-19, ADR-064).
 15. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge

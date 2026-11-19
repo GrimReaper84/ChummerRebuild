@@ -13,11 +13,11 @@ import org.jspecify.annotations.NonNull;
  * @param protection Schutz samt Zubehör, bei Helmen und Schilden als Bonus („+1/+2“)
  * @param special    Sonderschutz durch Modifikationen ({@link Armor#getSpecialProtections()}, GRW S. 372)
  */
-record ArmorDetails(@NonNull String name, @NonNull String category, @NonNull String protection,
+public record ArmorDetails(@NonNull String name, @NonNull String category, @NonNull String protection,
                     @NonNull String availability, @NonNull String price, @NonNull String source,
                     @NonNull List<SpecialProtection> special, @NonNull String state) {
 
-  static @NonNull ArmorDetails of(@NonNull Armor armor) {
+  public static @NonNull ArmorDetails of(@NonNull Armor armor) {
     ArmorData data = armor.getData();
     String prefix = data.category().isBonus() ? "+" : "";
     return new ArmorDetails(

@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
  *                      Nahkampfwaffen
  * @param note          Tabellenhinweis der Waffe (z.B. integrierte Unterlaufwaffe), sonst leer
  */
-record WeaponDetails(
+public record WeaponDetails(
     @NonNull String name,
     @NonNull String category,
     @NonNull String skill,
@@ -59,7 +59,7 @@ record WeaponDetails(
 
   private static final String NO_VALUE = "–";
 
-  static @NonNull WeaponDetails of(@NonNull Weapon weapon, @NonNull Character character) {
+  public static @NonNull WeaponDetails of(@NonNull Weapon weapon, @NonNull Character character) {
     Equipment equipment = character.getEquipment();
     WeaponData data = weapon.getData();
     String damage = equipment.getWeaponDamageText(weapon);

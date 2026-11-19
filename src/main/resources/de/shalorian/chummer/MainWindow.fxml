@@ -16,6 +16,7 @@
                 <SeparatorMenuItem/>
                 <MenuItem fx:id="menuSave"   text="Speichern"         onAction="#onSave"/>
                 <MenuItem fx:id="menuSaveAs" text="Speichern unter …" onAction="#onSaveAs"/>
+                <MenuItem fx:id="menuExportSheet" text="Charakterbogen exportieren (PDF) …" onAction="#onExportSheet"/>
                 <MenuItem fx:id="menuClose"  text="Schließen"         onAction="#onClose"/>
                 <SeparatorMenuItem/>
                 <MenuItem fx:id="menuExit"   text="Beenden"           onAction="#onExit"/>

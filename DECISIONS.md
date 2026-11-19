@@ -361,6 +361,23 @@ Tabs, die Regeln auf den aktiven Charakter.
 an über 450 Stellen setzte, und kann keine Änderung übersehen. Eine Liste zuletzt geöffneter Dateien ist
 zurückgestellt. `docs/plaene/archiv/mehrere_dokumente_plan.md`.
 
+### ADR-067: Charakterbogen als PDF (2026-11-19)
+Datei › „Charakterbogen exportieren (PDF) …“ (Strg+P, nur für Charaktere) schreibt einen eigenen Bogen mit PDFBox.
+Anordnung nach dem GRW-Bogen (PDF-Seiten 407/408, gedruckt S. 406/407), ohne dessen Artwork, schwarz-weiß und
+druckfreundlich, mit eingebetteten Schriften Inter und Chakra Petch:
+- **Seite 1:** Charakterdaten, Portrait oder leerer Rahmen, vier Attributblöcke, Fertigkeiten mit Würfelpool, Gaben &
+  Handicaps, Aussehen, Attributproben, Zustandsmonitor mit Marker im Kästchen und gestrichelter Überzahl.
+- **Seite 2:** Connections, Implantate, Kommlink mit Programmen, Ausrüstung, Fern- und Nahkampf mit Pool, Panzerung,
+  Fahrzeug, Zauber/Adeptenkräfte/Komplexe Formen, Geister/Sprites.
+- **Fortsetzungsseiten:** Listenreste, situative Pools, Foki, Initiation und Notizen; eine gekürzte Beschreibung steht
+  dort vollständig.
+
+Bleistiftfelder bleiben leer: Nuyen, Karma aktuell, aktuelles Edge und die Schadenskästchen. Karma gesamt und Ruf
+werden eingetragen. Die Werte stammen von einer schadenfreien Kopie des Charakters, auf dem Bogen stehen nur
+Fertigkeiten mit Wert. Der Export von Schergengruppen und Crittern kommt später.
+**Warum:** Nutzerentscheidungen 2026-11-19. Der Fallout-Bogen (dort ADR-039) hat sich bewährt, und das GRW-Layout
+kennen Spieler. `docs/plaene/archiv/charakterbogen_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

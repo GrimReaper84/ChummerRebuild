@@ -2,6 +2,8 @@ package de.shalorian.chummer.view;
 
 import de.shalorian.chummer.App;
 import de.shalorian.chummer.AppInfo;
+import de.shalorian.chummer.export.sheet.CharacterSheetPdf;
+import de.shalorian.chummer.export.sheet.SheetContent;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.condition.CheatSheetItem;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
@@ -27,10 +29,13 @@ import de.shalorian.chummer.view.document.NpcGroupDocument;
 import de.shalorian.chummer.view.document.OpenDocument;
 import de.shalorian.chummer.view.shell.FloatingButtonPosition;
 import de.shalorian.chummer.view.tab.TabServices;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import javafx.application.Platform;
@@ -76,6 +81,8 @@ public class MainWindowController {
   @FXML
   private MenuItem menuSaveAs;
   @FXML
+  private MenuItem menuExportSheet;
+  @FXML
   private MenuItem menuClose;
   @FXML
   private MenuItem menuExit;
@@ -95,6 +102,7 @@ public class MainWindowController {
   /** Position des Status-Knopfs, gemeinsam für alle Charaktere und gemerkt zwischen den Starts. */
   private final @NonNull FloatingButtonPosition statusButtonPosition =
       new FloatingButtonPosition(preferences, "character.statusButtonPosition");
+  private static final String PDF_EXT = ".pdf";
   private final @NonNull DocumentTabs documents = new DocumentTabs(this::save, this::onDocumentsChanged);
 
   private @Nullable Stage stage;
@@ -125,6 +133,7 @@ public class MainWindowController {
     menuSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
     menuSaveAs.setAccelerator(
         new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
+    menuExportSheet.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
     menuClose.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
     menuExit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
     documentArea.getChildren().add(documents.node());
@@ -339,6 +348,41 @@ public class MainWindowController {
     }
   }
 
+  /**
+   * Exportiert den Charakter des aktiven Tabs als PDF-Bogen (ADR-067). Der Bogen entsteht erst im Speicher, damit ein
+   * Fehler eine vorhandene Datei nicht beschädigt; der Charakter selbst ändert sich nicht.
+   */
+  @FXML
+  private void onExportSheet() {
+    if (!(documents.active() instanceof CharacterDocument active)) {
+      return;
+    }
+    FileChooser chooser = buildChooser("Charakterbogen exportieren", "PDF", PDF_EXT);
+    chooser.setInitialFileName(fileBaseName(active.name()) + PDF_EXT);
+    File file = chooser.showSaveDialog(stage);
+    if (file == null) {
+      return;
+    }
+    if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PDF_EXT)) {
+      file = new File(file.getParentFile(), file.getName() + PDF_EXT);
+    }
+    ByteArrayOutputStream pdf = new ByteArrayOutputStream();
+    try {
+      CharacterSheetPdf.write(SheetContent.of(active.character()), pdf);
+      Files.write(file.toPath(), pdf.toByteArray());
+      if (stage != null) {
+        TabServices.inform(stage, "Charakterbogen exportiert", file.getName());
+      }
+    } catch (IOException | RuntimeException e) {
+      showError("Fehler beim Exportieren", e.getMessage());
+    }
+  }
+
+  /** Dateiname aus dem Dokumentnamen: Leerzeichen und unter Windows verbotene Zeichen werden „_“. */
+  private static @NonNull String fileBaseName(@NonNull String name) {
+    return name.strip().replaceAll("[\\s\\\\/:*?\"<>|]+", "_");
+  }
+
   @FXML
   private void onClose() {
     OpenDocument active = documents.active();
@@ -370,7 +414,7 @@ public class MainWindowController {
   private boolean saveAs(@NonNull OpenDocument document) {
     FileChooser chooser = buildChooser("Speichern");
     if (document.state().getFile() == null) {
-      chooser.setInitialFileName(document.name().replaceAll("\\s+", "_") + PersistenceUtils.JSON_EXT);
+      chooser.setInitialFileName(fileBaseName(document.name()) + PersistenceUtils.JSON_EXT);
     }
     File file = chooser.showSaveDialog(stage);
     if (file == null) {
@@ -440,6 +484,7 @@ public class MainWindowController {
     menuSave.setDisable(empty);
     menuSaveAs.setDisable(empty);
     menuClose.setDisable(empty);
+    menuExportSheet.setDisable(!(documents.active() instanceof CharacterDocument));
     OpenDocument active = documents.active();
     if (active instanceof CharacterDocument characterDocument) {
       gmModeItem.setDisable(false);
@@ -465,12 +510,15 @@ public class MainWindowController {
   }
 
   private @NonNull FileChooser buildChooser(@NonNull String title) {
+    return buildChooser(title, "Chummer JSON", PersistenceUtils.JSON_EXT);
+  }
+
+  /** Dateiauswahl für {@code extension}, im Ordner der Datei des aktiven Tabs. */
+  private @NonNull FileChooser buildChooser(@NonNull String title, @NonNull String kind, @NonNull String extension) {
     FileChooser chooser = new FileChooser();
     chooser.setTitle(title);
     chooser.getExtensionFilters().add(
-        new FileChooser.ExtensionFilter(
-            "Chummer JSON (*" + PersistenceUtils.JSON_EXT + ")",
-            "*" + PersistenceUtils.JSON_EXT));
+        new FileChooser.ExtensionFilter(kind + " (*" + extension + ")", "*" + extension));
     OpenDocument active = documents.active();
     File current = active == null ? null : active.state().getFile();
     if (current != null) {

@@ -20,6 +20,7 @@ Windows, Linux und macOS.
 - **Würfelpools, Initiative und Zustandsmonitor** werden aus den aktuellen Werten berechnet.
 - **Karrieremodus**: Steigerungen mit Karma, Käufe mit Nuyen, Protokoll aller Änderungen.
 - **Biografie** mit Beschreibung, Hintergrund und Notizen.
+- **Charakterbogen als PDF** zum Ausdrucken, angelehnt an den Bogen des Grundregelwerks, mit Würfelpools.
 - **Übersichtliche Oberfläche**: Seitenleiste mit allen Bereichen, Status-Übersicht als ausklappbares Panel oder fester
   Bereich, Fußzeile mit BP bzw. Karma, Nuyen und Essenz.
 

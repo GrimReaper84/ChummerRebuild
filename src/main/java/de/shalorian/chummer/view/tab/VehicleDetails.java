@@ -23,7 +23,7 @@ import org.jspecify.annotations.NonNull;
  * @param cost             Fahrzeugpreis, mit Ausstattung zusätzlich die Gesamtsumme
  * @param matrix           wirksame Matrixwerte aus Gerätestufe und Aufrüstungen (GRW S. 260/261)
  */
-record VehicleDetails(
+public record VehicleDetails(
     @NonNull String name,
     @NonNull String category,
     @NonNull String handling,
@@ -47,7 +47,7 @@ record VehicleDetails(
 
   private static final String NO_VALUE = "–";
 
-  static @NonNull VehicleDetails of(@NonNull Vehicle vehicle) {
+  public static @NonNull VehicleDetails of(@NonNull Vehicle vehicle) {
     VehicleData data = vehicle.getData();
     int occupied = vehicle.getMountedWeapons().size();
     return new VehicleDetails(

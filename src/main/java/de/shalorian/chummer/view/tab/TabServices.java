@@ -155,6 +155,17 @@ public final class TabServices {
         .show();
   }
 
+  /** Erfolgsmeldung unten rechts, z.B. nach einem Export; auch ohne offenen Charakter nutzbar. */
+  public static void inform(@NonNull Window owner, @NonNull String title, @NonNull String text) {
+    Notifications.create()
+        .title(title)
+        .text(text)
+        .position(Pos.BOTTOM_RIGHT)
+        .owner(owner)
+        .graphic(notificationIcon(FontAwesomeSolid.CHECK_CIRCLE))
+        .show();
+  }
+
   /** Weicher Hinweis unten rechts (Projektregeln Abschnitt 8). */
   public void warn(@NonNull String title, @NonNull String text) {
     Notifications.create()
