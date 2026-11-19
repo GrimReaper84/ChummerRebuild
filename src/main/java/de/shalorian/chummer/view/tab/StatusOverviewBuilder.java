@@ -25,6 +25,7 @@ import de.shalorian.chummer.view.grid.MonitorBoxRow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -32,6 +33,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -110,24 +112,67 @@ public final class StatusOverviewBuilder {
     return card(new VBox(2, name, meta));
   }
 
+  /**
+   * Initiative als Tabelle: je Art eine Zeile (Körperlich, Matrix, Astral) mit Initiative und Durchgängen. Die astrale
+   * Zeile erscheint nur mit Astralzugang (ADR-045).
+   */
   private static @NonNull Node initiative(@NonNull Character c, @NonNull Runnable onChanged) {
+    GridPane grid = new GridPane();
+    grid.setHgap(16);
+    grid.setVgap(8);
+    ColumnConstraints kind = new ColumnConstraints();
+    kind.setHgrow(Priority.ALWAYS);
+    grid.getColumnConstraints().addAll(kind, valueColumn(), valueColumn());
+    grid.add(styled(new Label("Initiative"), "key-caption"), 1, 0);
+    grid.add(styled(new Label("Durchgänge"), "key-caption"), 2, 0);
+
     int wound = c.getWoundModifier();
     String composition = "REA %d + INT %d".formatted(c.getAugmentedAttributeValue(AttributeType.REA),
         c.getAugmentedAttributeValue(AttributeType.INT)) + (wound == 0 ? "" : " − " + -wound + " Verletzung");
-    String astral = c.hasAstralAccess() ? String.valueOf(c.getAstralInitiative()) : "–";
-    GridPane grid = columns(3);
-    Node initiative = figure(String.valueOf(c.getInitiative()), composition, false);
-    Tooltip.install(initiative, new Tooltip("Höchstwert %d (GRW S. 172)".formatted(c.getInitiativeMaximum())));
-    grid.add(initiative, 0, 0);
-    grid.add(figure(String.valueOf(c.getInitiativePasses()), "Durchgänge", c.getInitiativePasses() > 1), 1, 0);
-    grid.add(figure(astral, c.hasAstralAccess()
-        ? "Astral, " + Character.ASTRAL_INITIATIVE_PASSES + " Durchgänge" : "Astral", false), 2, 0);
+    Label physical = initiativeValue(String.valueOf(c.getInitiative()), false);
+    physical.setTooltip(new Tooltip("Höchstwert %d (GRW S. 172)".formatted(c.getInitiativeMaximum())));
+    addInitiativeRow(grid, 1, "Körperlich", composition, physical,
+        initiativeValue(String.valueOf(c.getInitiativePasses()), c.getInitiativePasses() > 1));
     addMatrixRow(grid, c);
+    if (c.hasAstralAccess()) {
+      String astral = "INT %d × 2".formatted(c.getAugmentedAttributeValue(AttributeType.INT))
+          + (wound == 0 ? "" : " − " + -wound + " Verletzung");
+      addInitiativeRow(grid, 3, "Astral", astral, initiativeValue(String.valueOf(c.getAstralInitiative()), false),
+          initiativeValue(String.valueOf(Character.ASTRAL_INITIATIVE_PASSES), true));
+    }
     List<Gear> commlinks = c.getEquipment().getCommlinks();
     if (commlinks.size() < 2) {
       return card(titled("INITIATIVE", grid));
     }
     return card(titled("INITIATIVE", new VBox(8, grid, commlinkChooser(c, commlinks, onChanged))));
+  }
+
+  /** Zeile der Initiative-Tabelle: Art mit Erläuterung darunter, dann Initiative und Durchgänge. */
+  private static void addInitiativeRow(@NonNull GridPane grid, int row, @NonNull String kind,
+      @NonNull String detail, @NonNull Label initiative, @NonNull Label passes) {
+    Label detailLabel = styled(new Label(detail), "key-caption");
+    detailLabel.setWrapText(true);
+    VBox label = new VBox(0, styled(new Label(kind), "attr-name"), detailLabel);
+    grid.add(label, 0, row);
+    grid.add(initiative, 1, row);
+    grid.add(passes, 2, row);
+    GridPane.setValignment(initiative, VPos.TOP);
+    GridPane.setValignment(passes, VPos.TOP);
+  }
+
+  private static @NonNull Label initiativeValue(@NonNull String value, boolean accent) {
+    Label label = styled(new Label(value), "key-figure");
+    if (accent) {
+      label.getStyleClass().add("key-figure-accent");
+    }
+    return label;
+  }
+
+  /** Spalte für Initiative bzw. Durchgänge: so breit wie ihr Inhalt, Werte zentriert. */
+  private static @NonNull ColumnConstraints valueColumn() {
+    ColumnConstraints column = new ColumnConstraints();
+    column.setHalignment(HPos.CENTER);
+    return column;
   }
 
   /**
@@ -156,22 +201,20 @@ public final class StatusOverviewBuilder {
   }
 
   /**
-   * Matrixinitiative (GRW S. 265, 276, 279): Wert und Durchgänge je Zugang, dazu ein Hinweis, was für VR fehlt; in AR
-   * gilt die Körperliche Initiative.
+   * Matrixinitiative (GRW S. 265, 276, 279): Wert und Durchgänge je Zugang, darunter der Zugang bzw. ein Hinweis, was
+   * für VR fehlt; in AR gilt die Körperliche Initiative.
    */
   private static void addMatrixRow(@NonNull GridPane grid, @NonNull Character c) {
     MatrixAccess access = c.getMatrixAccess();
     boolean online = access != MatrixAccess.NONE;
-    String caption = "Matrix · " + access.getDisplayName() + (access == MatrixAccess.AR ? " (körperlich)" : "");
-    grid.add(figure(online ? String.valueOf(c.getMatrixInitiative()) : "–", caption, false), 0, 1);
-    grid.add(figure(online ? String.valueOf(c.getMatrixInitiativePasses()) : "–", "Matrix-Durchgänge",
-        access.isVirtual()), 1, 1);
+    String detail = access.getDisplayName() + (access == MatrixAccess.AR ? " (körperlich)" : "");
     String hint = c.getMatrixAccessHint();
     if (hint != null) {
-      Label hintLabel = styled(new Label(hint), "key-caption");
-      hintLabel.setWrapText(true);
-      grid.add(hintLabel, 2, 1);
+      detail += " · " + hint;
     }
+    addInitiativeRow(grid, 2, "Matrix", detail,
+        initiativeValue(online ? String.valueOf(c.getMatrixInitiative()) : "–", false),
+        initiativeValue(online ? String.valueOf(c.getMatrixInitiativePasses()) : "–", access.isVirtual()));
   }
 
   private static @NonNull Node conditionMonitor(@NonNull Character c, @NonNull Runnable onDamageChanged) {
