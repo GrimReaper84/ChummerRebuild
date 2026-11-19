@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.npc.NpcGroup;
 import de.shalorian.chummer.model.npc.NpcStatblock;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
 
@@ -27,6 +28,18 @@ public final class NpcGroupStore {
 
   public static @NonNull NpcGroup load(@NonNull File file) throws IOException {
     return fromData(MAPPER.readValue(file, NpcGroupData.class));
+  }
+
+  /**
+   * Der aktuelle Stand im Speicherformat, wie {@link #save} ihn schreiben würde; Grundlage für die Erkennung
+   * ungespeicherter Änderungen (ADR-066).
+   */
+  public static byte @NonNull [] serialize(@NonNull NpcGroup group) {
+    try {
+      return MAPPER.writeValueAsBytes(toData(group));
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
   static @NonNull NpcGroupData toData(@NonNull NpcGroup group) {

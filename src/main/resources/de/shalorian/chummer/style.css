@@ -1082,8 +1082,10 @@
     -fx-text-fill: -cr-text;
 }
 
-/* Tabs des Einstellungsdialogs (ADR-065, Klasse settings-tabs); ohne eigene Regeln erschiene das helle Modena-Theme */
-.settings-tabs > .tab-header-area > .tab-header-background {
+/* Tabs des Einstellungsdialogs (ADR-065, settings-tabs) und der offenen Dokumente (ADR-066, document-tabs);
+   ohne eigene Regeln erschiene das helle Modena-Theme */
+.settings-tabs > .tab-header-area > .tab-header-background,
+.document-tabs > .tab-header-area > .tab-header-background {
     -fx-background-color: transparent;
     -fx-border-color: transparent transparent -cr-border transparent;
 }
@@ -1092,36 +1094,64 @@
     -fx-padding: 0 0 8 0;
 }
 
-.settings-tabs > .tab-content-area {
+.settings-tabs > .tab-content-area,
+.document-tabs > .tab-content-area {
     -fx-background-color: transparent;
 }
 
-.settings-tabs .tab {
+.settings-tabs .tab,
+.document-tabs .tab {
     -fx-background-color: transparent;
     -fx-background-radius: 6 6 0 0;
     -fx-padding: 6 14 6 14;
 }
 
-.settings-tabs .tab:hover {
+.settings-tabs .tab:hover,
+.document-tabs .tab:hover {
     -fx-background-color: -cr-hover;
 }
 
-.settings-tabs .tab:selected {
+.settings-tabs .tab:selected,
+.document-tabs .tab:selected {
     -fx-background-color: -cr-accent-bg;
     -fx-border-color: transparent transparent -cr-accent transparent;
     -fx-border-width: 0 0 2 0;
 }
 
-.settings-tabs .tab .tab-label {
+.settings-tabs .tab .tab-label,
+.document-tabs .tab .tab-label {
     -fx-text-fill: -cr-muted;
 }
 
-.settings-tabs .tab:selected .tab-label {
+.settings-tabs .tab:selected .tab-label,
+.document-tabs .tab:selected .tab-label {
     -fx-text-fill: -cr-text;
 }
 
-.settings-tabs .tab:selected .focus-indicator {
+.settings-tabs .tab:selected .focus-indicator,
+.document-tabs .tab:selected .focus-indicator {
     -fx-border-color: transparent;
+}
+
+/* Dokument-Tabs: Abstand zur Kopfzeile des Charakterbogens, Icon und Schließen-Kreuz in Textfarbe */
+.document-tabs > .tab-header-area {
+    -fx-padding: 4 8 0 8;
+}
+
+.document-tabs .tab .ikonli-font-icon {
+    -fx-icon-color: -cr-muted;
+}
+
+.document-tabs .tab:selected .ikonli-font-icon {
+    -fx-icon-color: -cr-accent;
+}
+
+.document-tabs .tab .tab-close-button {
+    -fx-background-color: -cr-muted;
+}
+
+.document-tabs .tab .tab-close-button:hover {
+    -fx-background-color: -cr-text;
 }
 
 /* Kleine Kästchen der Status-Übersicht; im Karrieremodus klickbar */

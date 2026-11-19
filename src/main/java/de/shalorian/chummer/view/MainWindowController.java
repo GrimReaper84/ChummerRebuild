@@ -20,7 +20,11 @@ import de.shalorian.chummer.utils.PersistenceUtils;
 import de.shalorian.chummer.view.dialog.NewCharacterDialogController;
 import de.shalorian.chummer.view.dialog.SettingsDialogController;
 import de.shalorian.chummer.view.dialog.SettingsResult;
-import de.shalorian.chummer.view.npc.NpcGroupViewController;
+import de.shalorian.chummer.view.document.CharacterDocument;
+import de.shalorian.chummer.view.document.DocumentState;
+import de.shalorian.chummer.view.document.DocumentTabs;
+import de.shalorian.chummer.view.document.NpcGroupDocument;
+import de.shalorian.chummer.view.document.OpenDocument;
 import de.shalorian.chummer.view.shell.FloatingButtonPosition;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.io.File;
@@ -32,6 +36,7 @@ import java.util.Set;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -42,17 +47,24 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Hauptfenster: Menüs, Dialoge (Neu, Einstellungen, Dateiauswahl) und Speichern. Die offenen Dokumente liegen als Tabs in
+ * {@link DocumentTabs} (ADR-066); Speichern, Spielleiter-Modus und Fenstertitel beziehen sich auf den aktiven Tab, die
+ * Anzeige-Einstellungen auf alle.
+ */
 public class MainWindowController {
 
   @FXML
-  private BorderPane borderPane;
+  private StackPane documentArea;
+  @FXML
+  private Node welcomePane;
   @FXML
   private MenuBar menuBar;
   @FXML
@@ -63,6 +75,8 @@ public class MainWindowController {
   private MenuItem menuSave;
   @FXML
   private MenuItem menuSaveAs;
+  @FXML
+  private MenuItem menuClose;
   @FXML
   private MenuItem menuExit;
   @FXML
@@ -81,19 +95,27 @@ public class MainWindowController {
   /** Position des Status-Knopfs, gemeinsam für alle Charaktere und gemerkt zwischen den Starts. */
   private final @NonNull FloatingButtonPosition statusButtonPosition =
       new FloatingButtonPosition(preferences, "character.statusButtonPosition");
-  private @Nullable CharacterViewController currentView;
-  /** Offene Schergengruppe (ADR-062); schließt einen offenen Charakter aus und umgekehrt. */
-  private @Nullable NpcGroup currentGroup;
-  /** Ob das offene Dokument eine Kopie aus dem Beta-Menü ist; der Titel zeigt „(Beta)“ bis zum ersten Speichern. */
-  private boolean betaCopy;
-  private @Nullable NpcGroupViewController currentGroupView;
+  private final @NonNull DocumentTabs documents = new DocumentTabs(this::save, this::onDocumentsChanged);
 
   private @Nullable Stage stage;
-  private @Nullable Character currentCharacter;
-  private @Nullable File currentFile;
 
+  /**
+   * Hängt das Fenster an; das Fenster-X fragt wie „Beenden“ nach ungespeicherten Dokumenten. Bekommt das Fenster den
+   * Fokus zurück (nach einem modalen Dialog), wird der Stern des aktiven Dokuments neu geprüft (ADR-066).
+   */
   public void setStage(@NonNull Stage stage) {
     this.stage = stage;
+    stage.setOnCloseRequest(event -> {
+      if (!documents.closeAll()) {
+        event.consume();
+      }
+    });
+    stage.focusedProperty().addListener((_, _, focused) -> {
+      OpenDocument active = documents.active();
+      if (focused && active != null) {
+        active.refreshLabel();
+      }
+    });
   }
 
   @FXML
@@ -103,28 +125,36 @@ public class MainWindowController {
     menuSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
     menuSaveAs.setAccelerator(
         new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
+    menuClose.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
     menuExit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
-    menuSave.setDisable(true);
-    menuSaveAs.setDisable(true);
+    documentArea.getChildren().add(documents.node());
     Numbers.setStyle(displaySettings().numberStyle());
     BetaMenu.folder().ifPresent(folder -> menuBar.getMenus().add(
         BetaMenu.create(folder, this::openBetaTemplate, this::openBetaSample)));
+    onDocumentsChanged();
   }
 
-  /** Lädt eine Datei je nach Dateiart als Charakter oder Schergengruppe und zeigt sie. */
-  private void showDocument(@NonNull File file) throws IOException {
+  /**
+   * Lädt {@code file} je nach Dateiart als Charakter oder Schergengruppe in einen neuen Tab. Eine Beta-Kopie hat keine
+   * Datei und gilt als nie gespeichert, damit Speichern nach einer neuen Datei fragt.
+   */
+  private void openFile(@NonNull File file, boolean betaCopy) throws IOException {
     if (DocumentKind.detect(file) == DocumentKind.NPC_GROUP) {
-      showGroup(NpcGroupStore.load(file));
+      NpcGroup group = NpcGroupStore.load(file);
+      DocumentState state = betaCopy ? DocumentState.unsaved(true)
+          : DocumentState.loaded(file, NpcGroupStore.serialize(group));
+      documents.add(NpcGroupDocument.create(group, state));
     } else {
-      showCharacter(CharacterStore.load(file));
+      Character character = CharacterStore.load(file);
+      DocumentState state = betaCopy ? DocumentState.unsaved(true)
+          : DocumentState.loaded(file, CharacterStore.serialize(character));
+      documents.add(characterDocument(character, state));
     }
   }
 
   private void openBetaTemplate(@NonNull DocumentTemplate template) {
     try {
-      currentFile = null;
-      betaCopy = true;
-      openTemplate(template, template.name());
+      openTemplate(template, template.name(), true);
     } catch (IOException e) {
       showError("Fehler beim Erstellen", e.getMessage());
     }
@@ -133,9 +163,7 @@ public class MainWindowController {
   /** Öffnet einen Testfall ohne Dateipfad, damit Speichern nach einer neuen Datei fragt und ihn nie überschreibt. */
   private void openBetaSample(@NonNull Path file) {
     try {
-      currentFile = null;
-      betaCopy = true;
-      showDocument(file.toFile());
+      openFile(file.toFile(), true);
     } catch (IOException e) {
       showError("Fehler beim Laden", e.getMessage());
     }
@@ -165,9 +193,9 @@ public class MainWindowController {
   }
 
   /**
-   * Öffnet den Einstellungsdialog (ADR-061). Nach „Übernehmen“ werden die Anzeige-Werte gemerkt und angewendet, die
-   * Regeln stehen schon im Charakter; danach wird der offene Charakter neu aufgebaut, weil Zahlenformat und Regeln
-   * überall wirken.
+   * Öffnet den Einstellungsdialog (ADR-061). Die Regeln gelten für den aktiven Charakter. Nach „Übernehmen“ werden die
+   * Anzeige-Werte gemerkt und auf alle Tabs angewendet; danach werden alle Dokumente neu aufgebaut, weil Zahlenformat
+   * und Regeln überall wirken.
    */
   @FXML
   private void onSettings() {
@@ -183,7 +211,7 @@ public class MainWindowController {
       Scene scene = new Scene(root);
       scene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
       dialogStage.setScene(scene);
-      Character character = currentCharacter;
+      Character character = documents.active() instanceof CharacterDocument doc ? doc.character() : null;
       controller.setup(dialogStage, displaySettings(), character == null ? null : character.getRuleOptions(),
           character == null ? "" : character.getName());
       dialogStage.showAndWait();
@@ -194,15 +222,15 @@ public class MainWindowController {
       }
       storeDisplaySettings(result);
       Numbers.setStyle(result.numberStyle());
-      if (currentGroupView != null) {
-        currentGroupView.rebuild();
-      }
-      if (currentView != null) {
-        currentView.setCheatSheetItems(result.cheatSheetItems());
-        if (currentView.isStatusStatic() != result.statusStatic()) {
-          currentView.setStatusStatic(result.statusStatic());
+      for (OpenDocument document : documents.all()) {
+        if (document instanceof CharacterDocument characterDocument) {
+          characterDocument.applyDisplay(result);
         }
-        currentView.rebuild();
+        document.rebuild();
+      }
+      OpenDocument active = documents.active();
+      if (active != null) {
+        active.refreshLabel();
       }
     } catch (IOException e) {
       showError("Fehler beim Öffnen der Einstellungen", e.getMessage());
@@ -210,12 +238,12 @@ public class MainWindowController {
   }
 
   /**
-   * Schaltet den Spielleiter-Modus des offenen Charakters (ADR-060): Einschalten nach Rückfrage, Ausschalten sofort.
+   * Schaltet den Spielleiter-Modus des aktiven Charakters (ADR-060): Einschalten nach Rückfrage, Ausschalten sofort.
    * Wird nicht gespeichert; beim Laden oder Neuanlegen ist er aus.
    */
   @FXML
   private void onGmMode() {
-    if (currentView == null) {
+    if (!(documents.active() instanceof CharacterDocument active)) {
       gmModeItem.setSelected(false);
       return;
     }
@@ -234,7 +262,7 @@ public class MainWindowController {
         return;
       }
     }
-    currentView.setGmMode(on);
+    active.setGmMode(on);
   }
 
   @FXML
@@ -260,15 +288,14 @@ public class MainWindowController {
         return;
       }
 
-      currentFile = null;
-      betaCopy = false;
       DocumentTemplate template = dialogCtrl.getSelectedTemplate();
       if (template != null) {
-        openTemplate(template, dialogCtrl.getCharacterName());
+        openTemplate(template, dialogCtrl.getCharacterName(), false);
       } else if (dialogCtrl.isNpcGroup()) {
-        showGroup(newGroup(dialogCtrl.getCharacterName()));
+        documents.add(NpcGroupDocument.create(newGroup(dialogCtrl.getCharacterName()), DocumentState.unsaved(false)));
       } else {
-        showCharacter(new Character(dialogCtrl.getCharacterName(), dialogCtrl.getSelectedMetatype()));
+        documents.add(characterDocument(new Character(dialogCtrl.getCharacterName(), dialogCtrl.getSelectedMetatype()),
+            DocumentState.unsaved(false)));
       }
 
     } catch (IOException e) {
@@ -276,6 +303,7 @@ public class MainWindowController {
     }
   }
 
+  /** Öffnet eine Datei in einem neuen Tab; ist sie schon offen, wird nur ihr Tab aktiviert. */
   @FXML
   private void onOpen() {
     FileChooser chooser = buildChooser("Öffnen");
@@ -283,10 +311,13 @@ public class MainWindowController {
     if (file == null) {
       return;
     }
+    OpenDocument open = documents.findByFile(file);
+    if (open != null) {
+      documents.select(open);
+      return;
+    }
     try {
-      currentFile = file;
-      betaCopy = false;
-      showDocument(file);
+      openFile(file, false);
     } catch (IOException e) {
       showError("Fehler beim Laden", e.getMessage());
     }
@@ -294,62 +325,82 @@ public class MainWindowController {
 
   @FXML
   private void onSave() {
-    if (currentFile == null) {
-      onSaveAs();
-    } else {
-      saveToFile(currentFile);
+    OpenDocument active = documents.active();
+    if (active != null) {
+      save(active);
     }
   }
 
   @FXML
   private void onSaveAs() {
-    FileChooser chooser = buildChooser("Speichern");
-    String documentName = currentGroup != null ? currentGroup.getName()
-        : currentCharacter != null ? currentCharacter.getName() : null;
-    if (documentName != null && currentFile == null) {
-      chooser.setInitialFileName(documentName.replaceAll("\\s+", "_") + PersistenceUtils.JSON_EXT);
+    OpenDocument active = documents.active();
+    if (active != null) {
+      saveAs(active);
     }
-    File file = chooser.showSaveDialog(stage);
-    if (file == null) {
-      return;
-    }
-    if (!file.getName().endsWith(PersistenceUtils.JSON_EXT)) {
-      file = new File(file.getParentFile(), file.getName() + PersistenceUtils.JSON_EXT);
-    }
-    currentFile = file;
-    saveToFile(file);
   }
 
   @FXML
+  private void onClose() {
+    OpenDocument active = documents.active();
+    if (active != null) {
+      documents.close(active);
+    }
+  }
+
+  /** Beendet nach Rückfrage je ungespeichertem Dokument; Abbrechen stoppt das Beenden. */
+  @FXML
   private void onExit() {
-    Platform.exit();
+    if (documents.closeAll()) {
+      Platform.exit();
+    }
   }
 
   // ── Helpers ────────────────────────────────────────────
 
-  private void showCharacter(@NonNull Character character) throws IOException {
-    FXMLLoader viewLoader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("CharacterView.fxml")));
-    viewLoader.load();
-    CharacterViewController charCtrl = viewLoader.getController();
-    SettingsResult display = displaySettings();
-    charCtrl.configureStatus(display.statusStatic(), statusButtonPosition);
-    charCtrl.setCheatSheetItems(display.cheatSheetItems());
-    charCtrl.setCharacter(character);
-    charCtrl.setOnCharacterReplaced(restored -> {
-      currentCharacter = restored;
-      updateTitle();
-    });
+  /** Speichert in die Datei des Dokuments bzw. fragt nach einer; {@code false}, wenn abgebrochen oder gescheitert. */
+  private boolean save(@NonNull OpenDocument document) {
+    File file = document.state().getFile();
+    return file == null ? saveAs(document) : saveToFile(document, file);
+  }
 
-    currentCharacter = character;
-    currentView = charCtrl;
-    currentGroup = null;
-    currentGroupView = null;
-    borderPane.setCenter(charCtrl.node());
-    menuSave.setDisable(false);
-    menuSaveAs.setDisable(false);
-    gmModeItem.setDisable(false);
-    gmModeItem.setSelected(false);
-    updateTitle();
+  /**
+   * Fragt nach einer Datei und speichert dorthin. Eine Datei, die in einem anderen Tab offen ist, wird nicht
+   * überschrieben, damit nicht zwei Fassungen in dieselbe Datei schreiben.
+   */
+  private boolean saveAs(@NonNull OpenDocument document) {
+    FileChooser chooser = buildChooser("Speichern");
+    if (document.state().getFile() == null) {
+      chooser.setInitialFileName(document.name().replaceAll("\\s+", "_") + PersistenceUtils.JSON_EXT);
+    }
+    File file = chooser.showSaveDialog(stage);
+    if (file == null) {
+      return false;
+    }
+    if (!file.getName().endsWith(PersistenceUtils.JSON_EXT)) {
+      file = new File(file.getParentFile(), file.getName() + PersistenceUtils.JSON_EXT);
+    }
+    OpenDocument other = documents.findByFile(file);
+    if (other != null && !other.equals(document)) {
+      showError("Nicht gespeichert", "„%s“ ist in einem anderen Tab geöffnet (%s). Bitte dort speichern oder den Tab "
+          .formatted(file.getName(), other.name()) + "erst schließen.");
+      return false;
+    }
+    return saveToFile(document, file);
+  }
+
+  private boolean saveToFile(@NonNull OpenDocument document, @NonNull File file) {
+    try {
+      document.saveTo(file);
+      return true;
+    } catch (IOException e) {
+      showError("Fehler beim Speichern", e.getMessage());
+      return false;
+    }
+  }
+
+  private @NonNull CharacterDocument characterDocument(@NonNull Character character, @NonNull DocumentState state)
+      throws IOException {
+    return CharacterDocument.create(character, state, displaySettings(), statusButtonPosition);
   }
 
   /** Leere Gruppe (Stufe 0, 4 Mitglieder, Mensch mit Mindestwerten) oder eine Gruppe aus der GRW-Vorlage. */
@@ -357,68 +408,60 @@ public class MainWindowController {
     return new NpcGroup(name, 0, 4, new NpcStatblock(new Character("Scherge", MetatypeDataLoader.find("Mensch")), ""));
   }
 
-  /** Öffnet ein neues, ungespeichertes Dokument aus einer Vorlage unter dem Namen {@code name}. */
-  private void openTemplate(@NonNull DocumentTemplate template, @NonNull String name) throws IOException {
+  /** Öffnet ein neues, ungespeichertes Dokument aus einer Vorlage unter dem Namen {@code name} in einem neuen Tab. */
+  private void openTemplate(@NonNull DocumentTemplate template, @NonNull String name, boolean betaCopy)
+      throws IOException {
+    DocumentState state = DocumentState.unsaved(betaCopy);
     switch (template) {
       case NpcTemplate npc -> {
         NpcGroup group = npc.create();
         group.setName(name);
-        showGroup(group);
+        documents.add(NpcGroupDocument.create(group, state));
       }
       case ArchetypeTemplate archetype -> {
         Character character = archetype.create();
         character.setName(name);
-        showCharacter(character);
+        documents.add(characterDocument(character, state));
       }
       case CritterTemplate critter -> {
         NpcGroup group = critter.create();
         group.setName(name);
-        showGroup(group);
+        documents.add(NpcGroupDocument.create(group, state));
       }
       default -> throw new IllegalStateException("Unbekannte Vorlage: " + template.kind());
     }
   }
 
-  private void showGroup(@NonNull NpcGroup group) throws IOException {
-    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(App.class.getResource("NpcGroupView.fxml")));
-    loader.load();
-    NpcGroupViewController controller = loader.getController();
-    TabServices services = new TabServices(() -> borderPane.getScene().getWindow(), () -> { },
-        () -> group.getGrunt().getCharacter().getRuleOptions());
-    controller.setGroup(group, services, this::updateTitle);
-    currentGroup = group;
-    currentGroupView = controller;
-    currentCharacter = null;
-    currentView = null;
-    borderPane.setCenter(controller.node());
-    menuSave.setDisable(false);
-    menuSaveAs.setDisable(false);
-    gmModeItem.setDisable(true);
-    gmModeItem.setSelected(false);
-    updateTitle();
-  }
-
-  private void saveToFile(@NonNull File file) {
-    try {
-      if (currentGroup != null) {
-        NpcGroupStore.save(currentGroup, file);
-      } else if (currentCharacter != null) {
-        CharacterStore.save(currentCharacter, file);
-      } else {
-        return;
-      }
-      updateTitle();
-    } catch (IOException e) {
-      showError("Fehler beim Speichern", e.getMessage());
+  /** Nach Tabwechsel, Öffnen, Schließen oder geändertem Tab-Text: Willkommensbereich, Menüs und Fenstertitel. */
+  private void onDocumentsChanged() {
+    boolean empty = documents.isEmpty();
+    welcomePane.setVisible(empty);
+    documents.node().setVisible(!empty);
+    menuSave.setDisable(empty);
+    menuSaveAs.setDisable(empty);
+    menuClose.setDisable(empty);
+    OpenDocument active = documents.active();
+    if (active instanceof CharacterDocument characterDocument) {
+      gmModeItem.setDisable(false);
+      gmModeItem.setSelected(characterDocument.character().isGmMode());
+    } else {
+      gmModeItem.setDisable(true);
+      gmModeItem.setSelected(false);
     }
+    updateTitle(active);
   }
 
-  private void updateTitle() {
-    if (stage == null) return;
-    String name = currentGroup != null ? currentGroup.getName()
-        : currentCharacter != null ? currentCharacter.getName() : "";
-    String file = currentFile != null ? "  [" + currentFile.getName() + "]" : betaCopy ? " (Beta)" : "";
-    stage.setTitle(AppInfo.title() + " – " + name + file);
+  private void updateTitle(@Nullable OpenDocument active) {
+    if (stage == null) {
+      return;
+    }
+    if (active == null) {
+      stage.setTitle(AppInfo.title());
+      return;
+    }
+    File file = active.state().getFile();
+    String suffix = file != null ? "  [" + file.getName() + "]" : active.state().isBetaCopy() ? " (Beta)" : "";
+    stage.setTitle(AppInfo.title() + " – " + active.name() + (active.isMarkedDirty() ? " *" : "") + suffix);
   }
 
   private @NonNull FileChooser buildChooser(@NonNull String title) {
@@ -428,8 +471,10 @@ public class MainWindowController {
         new FileChooser.ExtensionFilter(
             "Chummer JSON (*" + PersistenceUtils.JSON_EXT + ")",
             "*" + PersistenceUtils.JSON_EXT));
-    if (currentFile != null) {
-      chooser.setInitialDirectory(currentFile.getParentFile());
+    OpenDocument active = documents.active();
+    File current = active == null ? null : active.state().getFile();
+    if (current != null) {
+      chooser.setInitialDirectory(current.getParentFile());
     }
     return chooser;
   }

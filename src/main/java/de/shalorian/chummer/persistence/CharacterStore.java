@@ -95,8 +95,16 @@ public class CharacterStore {
 
   /** Merkt den aktuellen Stand im Speicherformat (für Rückgängig, nur im Speicher). */
   public static @NonNull CharacterSnapshot snapshot(@NonNull Character character) {
+    return new CharacterSnapshot(serialize(character));
+  }
+
+  /**
+   * Der aktuelle Stand im Speicherformat, wie {@link #save} ihn schreiben würde; Grundlage für die Erkennung
+   * ungespeicherter Änderungen (ADR-066).
+   */
+  public static byte @NonNull [] serialize(@NonNull Character character) {
     try {
-      return new CharacterSnapshot(MAPPER.writeValueAsBytes(toData(character)));
+      return MAPPER.writeValueAsBytes(toData(character));
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }

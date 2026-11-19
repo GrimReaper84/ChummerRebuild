@@ -348,7 +348,8 @@
 | Drucken / Export / Charakterbogen                                    | ❌      | **Niedrige Priorität** (2026-08-04): keine Charakterbogen-Vorlage/Formular im GRW-Text gefunden — reines Tool-Feature ohne Regelwerk-Bezug |
 | Spielleiter-Modus (Korrekturen ohne Kosten und Sperren) | ✅ | 2026-11-15 (ADR-060): Menü Einstellungen, nicht gespeichert, GRW-Obergrenzen bleiben |
 | Status-Panel und Zustandstab ohne Doppelungen                        | ✅      | 2026-11-19 (ADR-065): Monitor/Initiative/Attributproben nur im Status, Bereich „Cheat-Sheet“ mit wählbaren Inhalten |
-| Mehrere Charaktere gleichzeitig öffnen                               | ❌      | Nutzerwunsch 2026-11-19: Roadmap 17, vor dem Release |
+| Mehrere Charaktere gleichzeitig öffnen                               | ✅      | 2026-11-19 (ADR-066): Tabs im Hauptfenster, Stern und Rückfrage bei ungespeicherten Änderungen |
+| Zuletzt geöffnete Dateien                                            | ❌      | Nutzerentscheidung 2026-11-19: nach dem Release (Plan Mehrere Dokumente) |
 | Kategorie-Dropdowns alphabetisch                                     | ✅      | Nutzervorgabe 2026-10-08: zentral in `CatalogSelectDialogController.refreshCategoryOptions()` (deutsche Sortierung, "Alle" oben); ersetzt die GRW-Reihenfolge der Ausrüstungs-/Waffen-Pläne |
 | Icon für "Pfeile hinzufügen" (Waffen-Tab)                           | ❌      | **Notiz (Nutzerwunsch 2026-10-08):** das Bullseye-Icon passt nicht; ein anderes FontAwesome-Icon suchen oder den Button als Text-Button belassen |
 | Einstellbare Zahlendarstellung (QoL)                                 | ✅      | 2026-11-18 (ADR-061): Tausenderpunkt und Dezimaltrennzeichen, zentral über `utils.Numbers` |
@@ -395,7 +396,7 @@ Stand 2026-11-19, aus den Tabellen oben gezählt (❌ sind überwiegend bewusst 
 | Initiative             |  4 |  0 |  0 |
 | Zustandsmonitor        |  4 |  0 |  0 |
 | Persistenz             |  9 |  0 |  0 |
-| UI/Bedienbarkeit       | 17 |  0 |  3 |
+| UI/Bedienbarkeit       | 18 |  0 |  3 |
 | NSCs und Critter       |  5 |  0 |  1 |
 
 ---
@@ -433,8 +434,8 @@ README-Roadmap sind erledigt; es folgen:
 16. ✅ **Status-Panel und Zustandstab entdoppeln (2026-11-19, ADR-065):** Zustandsmonitor mit Überzahl, Initiative und
     Attributproben nur im Status; der Bereich „Zustand“ wird zum „Cheat-Sheet“ mit wählbaren Inhalten (eigener Tab in
     den Einstellungen).
-17. **Mehrere Charaktere gleichzeitig öffnen** (Nutzerwunsch 2026-11-19): bisher ersetzt jedes Öffnen bzw. „Neu“ das
-    offene Dokument; z.B. Tabs oder eigene Fenster je Dokument, Rückfrage bei ungespeicherten Änderungen je Dokument.
+17. ✅ **Mehrere Charaktere gleichzeitig öffnen (2026-11-19, ADR-066):** Tabs im Hauptfenster, Stern und Rückfrage
+    „Speichern / Verwerfen / Abbrechen“ bei ungespeicherten Änderungen, bereits offene Datei → ihr Tab.
 
 **Release:** Das erste Release (Tag `v1.0.0`) kommt erst, wenn alle Funktionen des Grundregelwerks umgesetzt sind
 (Nutzerentscheidung 2026-11-11); die Release-Technik steht seit ADR-043. Vor dem Tag: erster Lauf von `release.yml` auf

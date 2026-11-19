@@ -346,6 +346,21 @@ bleiben (`display.statusTest.<Konstante>`), damit Wahrnehmung und Ausweichen gew
 jedem Bereich aus erreichbar und damit der Ort für das, was man am Tisch ständig braucht. Weitere optionale Anzeigen
 sollen in einem eigenen Einstellungs-Tab Platz haben. `docs/plaene/archiv/status_entdoppeln_plan.md`.
 
+### ADR-066: Mehrere Dokumente als Tabs (2026-11-19)
+Das Hauptfenster zeigt jedes offene Dokument (Charakter, Schergengruppe, Critter) in einem eigenen Tab. „Neu“, „Öffnen“
+und das Beta-Menü öffnen neue Tabs. Ist eine Datei schon offen, wechselt „Öffnen“ nur zu ihrem Tab. Speichern unter auf
+eine Datei, die ein anderer Tab hält, wird mit Hinweis abgebrochen. Ungespeichert ist ein Dokument, wenn sein Stand im
+Speicherformat (`CharacterStore`/`NpcGroupStore.serialize`) vom zuletzt geladenen oder gespeicherten abweicht. Nie
+gespeicherte Dokumente (Neu, Vorlage, Beta-Kopie) gelten immer als ungespeichert. Tab und Fenstertitel tragen dann
+„*“. Der Stern wird nach jedem Maus- bzw. Tastenloslassen im Dokument neu geprüft und, für Änderungen über modale
+Dialoge, wenn das Hauptfenster den Fokus zurückbekommt. Die Rückfrage beim Schließen vergleicht immer frisch. Rückfrage „Speichern / Verwerfen / Abbrechen“ bei ✕, Datei › Schließen (Strg+W), Beenden und
+Fenster-X. Beim Beenden kommt sie je Dokument nacheinander, Abbrechen oder eine abgebrochene Dateiauswahl stoppt den
+Vorgang. Der Spielleiter-Modus gilt je Tab und zählt nicht als Änderung. Die Anzeige-Einstellungen wirken auf alle
+Tabs, die Regeln auf den aktiven Charakter.
+**Warum:** Nutzerwunsch und -entscheidungen 2026-11-19. Der Vergleich ersetzt das Änderungs-Flag, das das alte Chummer
+an über 450 Stellen setzte, und kann keine Änderung übersehen. Eine Liste zuletzt geöffneter Dateien ist
+zurückgestellt. `docs/plaene/archiv/mehrere_dokumente_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

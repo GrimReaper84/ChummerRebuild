@@ -49,6 +49,8 @@ Package überschaubar bleibt:
   `VehicleTabBuilder`, `LogTabBuilder`), ihre Anzeigewerte (`WeaponDetails`, `GearDetails`, `VehicleDetails`) und die
   gemeinsamen Bausteine `CharacterTabHost`, `TabServices`, `IncrementWiring`
 - `view.dialog`: alle modalen Dialog-Controller und ihre Ergebnis-/Handle-Typen
+- `view.document`: offene Dokumente als Tabs im Hauptfenster (`DocumentTabs`, `OpenDocument` mit `CharacterDocument`/
+  `NpcGroupDocument`, `DocumentState` für ungespeicherte Änderungen, ADR-066)
 - `view.converter`: JavaFX-`StringConverter`
 - `view.grid`: gemeinsame Zeilen-Bausteine (`RowModel`, `RowControls`, `AttributeRowLabel`, `SkillSortMode`)
 
@@ -59,7 +61,8 @@ Package-Wurzel.
 **Controller-Hierarchie:**
 
 - `MainWindowController`: Wurzel; Menüs Datei und Einstellungen, öffnet den NewCharacterDialog, lädt/speichert über
-  `CharacterStore`
+  `CharacterStore`/`NpcGroupStore`; die offenen Dokumente liegen als Tabs in `DocumentTabs` (je Tab ein
+  `CharacterDocument` bzw. `NpcGroupDocument`), Speichern und Spielleiter-Modus wirken auf den aktiven Tab
 - `CharacterViewController`: vom Hauptfenster eingebunden; hält die FXML-Knoten (Seiten der Bereiche in
   `fx:define`), Kopf- und Fußzeile, Seitenleiste und Status-Panel, erzeugt die Tab-Builder und implementiert
   `CharacterTabHost`: Die Bereiche melden fachliche Änderungen (z.B. `onQualitiesChanged`), der Controller entscheidet
