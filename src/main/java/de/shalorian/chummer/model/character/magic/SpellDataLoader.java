@@ -72,6 +72,7 @@ public class SpellDataLoader {
         childText(el, "duration"),
         childText(el, "dv"),
         childText(el, "source"),
-        childText(el, "page"));
+        childText(el, "page"),
+        childText(el, "note"));
   }
 }

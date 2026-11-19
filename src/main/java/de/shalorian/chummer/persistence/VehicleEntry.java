@@ -7,6 +7,9 @@ import org.jspecify.annotations.NonNull;
 /** Ein Fahrzeug bzw. eine Drohne samt Ausstattung in der Speicherdatei. */
 class VehicleEntry {
 
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeNuyen;
+
   public @NonNull String name = "";
   /** Ob ein Riggeradapter nachgerüstet wurde (bei Drohnen immer mitgeliefert, hier {@code false}). */
   public boolean riggerAdapter = false;

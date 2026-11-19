@@ -36,6 +36,8 @@ public class Vehicle {
   /** Katalogname der Autosofts (S. 287). */
   private static final String AUTOSOFT = "Autosoft";
 
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht ins Restgeld. */
+  private int gmFreeNuyen;
   private final @NonNull VehicleData data;
   private final List<WeaponMount> mounts = new ArrayList<>();
   private final List<Gear> includedGear = new ArrayList<>();
@@ -419,5 +421,14 @@ public class Vehicle {
   /** Alle eingesetzten Waffen in Halterungsreihenfolge. */
   public @NonNull List<Weapon> getMountedWeapons() {
     return mounts.stream().map(WeaponMount::getWeapon).filter(Objects::nonNull).toList();
+  }
+
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeNuyen() {
+    return gmFreeNuyen;
+  }
+
+  public void setGmFreeNuyen(int gmFreeNuyen) {
+    this.gmFreeNuyen = Math.max(0, gmFreeNuyen);
   }
 }

@@ -262,7 +262,8 @@
     "name" : "Kurier-Sprite",
     "force" : 3,
     "services" : 2,
-    "bound" : true
+    "bound" : true,
+    "options" : [ ]
   } ],
   "cyberware" : [ ],
   "armor" : [ {
@@ -370,6 +371,7 @@
     "limbArmorAverage" : false,
     "lateAwakening" : false,
     "missedLifestylePayments" : false,
+    "decoupleAtCreation" : false,
     "books" : [ ]
   }
 }

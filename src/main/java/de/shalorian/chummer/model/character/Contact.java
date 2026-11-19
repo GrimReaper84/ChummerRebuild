@@ -15,6 +15,8 @@ public class Contact {
   public static final int MIN_RATING = 1;
   public static final int MAX_RATING = 6;
 
+  /** Gratis-Anteil (BP) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht gegen die 400 BP. */
+  private int gmFreeBp;
   private @NonNull String name;
   private @Nullable String description;
   private int connection = MIN_RATING;
@@ -86,5 +88,14 @@ public class Contact {
               .formatted(name, loyalty, MIN_RATING, MAX_RATING));
     }
     this.loyalty = loyalty;
+  }
+
+  /** Gratis-Anteil (BP) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeBp() {
+    return gmFreeBp;
+  }
+
+  public void setGmFreeBp(int gmFreeBp) {
+    this.gmFreeBp = Math.max(0, gmFreeBp);
   }
 }

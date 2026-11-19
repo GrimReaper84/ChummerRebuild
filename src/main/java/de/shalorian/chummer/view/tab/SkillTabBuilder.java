@@ -303,10 +303,10 @@ public final class SkillTabBuilder {
     preventShrink(groupLabel);
     grid.add(groupLabel, CELL_COL_0 + row);
 
-    // GRW S. 109: Fertigkeitsgruppen dürfen während der Erstellung nicht aufgelöst werden. Eigene
-    // Spalte statt Anhängen an groupLabel, damit der Button unabhängig von der Namenslänge über alle
-    // Zeilen hinweg untereinander steht.
-    if (coupled && character.isCreated()) {
+    // GRW S. 108: Fertigkeitsgruppen dürfen während der Erstellung nicht aufgelöst werden (außer mit Regel-Option bzw.
+    // im Spielleiter-Modus). Eigene Spalte statt Anhängen an groupLabel, damit der Button unabhängig von der
+    // Namenslänge über alle Zeilen hinweg untereinander steht.
+    if (coupled && character.canDecoupleGroups()) {
       Button decoupleBtn = buildDecoupleButton(groupName, character);
       preventShrink(decoupleBtn);
       grid.add(decoupleBtn, CELL_COL_1 + row);
@@ -462,7 +462,7 @@ public final class SkillTabBuilder {
         minus.setVisible(false);
       }
       String group = Objects.requireNonNull(skill.getGroupName());
-      wiring.wireLocked(controls, career ? "Teil der Gruppe %s: erst auskoppeln".formatted(group)
+      wiring.wireLocked(controls, character.canDecoupleGroups() ? "Teil der Gruppe %s: erst auskoppeln".formatted(group)
           : "Teil der Gruppe %s: bei der Erschaffung nicht auflösbar (GRW S. 108)".formatted(group));
       Runnable refresh = () -> {
         ratingLabel.setText(String.valueOf(skill.getRating()));

@@ -120,6 +120,7 @@ public class CharacterStore {
   }
 
   static @NonNull CharacterData toData(@NonNull Character character) {
+    character.coverGmChanges(); // Käufe im Spielleiter-Modus vor dem Speichern gutschreiben (ADR-070)
     CharacterData data = new CharacterData();
     data.name = character.getName();
     data.metatype = character.getMetatype().name(); // MetatypeData.name() Accessor
@@ -159,8 +160,11 @@ public class CharacterStore {
             k.isNativeLanguage(), k.getSpecialization()))
         .toList();
     data.contacts = character.getContacts().stream()
-        .map(c -> new ContactEntry(c.getName(), c.getDescription(), c.getConnection(),
-            c.getLoyalty()))
+        .map(c -> {
+          ContactEntry entry = new ContactEntry(c.getName(), c.getDescription(), c.getConnection(), c.getLoyalty());
+          entry.gmFreeBp = c.getGmFreeBp();
+          return entry;
+        })
         .toList();
     data.decoupledGroups = new ArrayList<>(character.getDecoupledGroups());
     data.karmaLog = character.getKarmaLog().stream()
@@ -172,15 +176,24 @@ public class CharacterStore {
     data.biography = toBiographyData(character.getBiography());
     data.tradition = character.getTradition().name();
     data.spellNames = character.getSpells().stream().map(SpellData::name).toList();
+    data.gmFreeSpells = List.copyOf(character.getGmFreeSpells());
     data.complexForms = character.getComplexForms().stream()
-        .map(cf -> new ComplexFormEntry(cf.getName(), cf.getRating()))
+        .map(cf -> {
+          ComplexFormEntry entry = new ComplexFormEntry(cf.getName(), cf.getRating());
+          entry.gmFreeBp = cf.getGmFreeBp();
+          return entry;
+        })
         .toList();
     data.adeptPowers = character.getAdeptPowers().getPowers().stream()
         .map(p -> new AdeptPowerEntry(p.getData().name(), p.getChoice(), p.getLevel()))
         .toList();
     data.adeptMagic = character.getAdeptPowers().getAdeptMagic();
     data.spirits = character.getSpirits().getAll().stream()
-        .map(s -> new SpiritEntry(s.getName(), s.getForce(), s.getServices(), s.isBound(), s.getOptions()))
+        .map(s -> {
+          SpiritEntry entry = new SpiritEntry(s.getName(), s.getForce(), s.getServices(), s.isBound(), s.getOptions());
+          entry.gmFreeBp = s.getGmFreeBp();
+          return entry;
+        })
         .toList();
     Reputation reputation = character.getReputation();
     data.reputation = new ReputationData(reputation.getStreetCredBonus(), reputation.getNotorietyBonus(),
@@ -204,9 +217,10 @@ public class CharacterStore {
     Lifestyle lifestyle = character.getEquipment().getLifestyle();
     data.lifestyle = new LifestyleEntry(lifestyle.getLevel().name(), lifestyle.getMonths(),
         lifestyle.getMissedMonths(), lifestyle.getDebt());
+    data.lifestyle.gmFreeNuyen = lifestyle.getGmFreeNuyen();
     RuleOptions rules = character.getRuleOptions();
     data.rules = new RuleOptionsEntry(rules.isLimbArmorAverage(), rules.isLateAwakening(),
-        rules.isMissedLifestylePayments(), List.copyOf(rules.getExtraBooks()));
+        rules.isMissedLifestylePayments(), rules.isDecoupleAtCreation(), List.copyOf(rules.getExtraBooks()));
 
     return data;
   }
@@ -219,6 +233,7 @@ public class CharacterStore {
             .toList());
     entry.arrows = weapon.getArrows().stream().map(CharacterStore::toGearEntry).toList();
     entry.ammo = ammo == null ? "" : ammo.getName();
+    entry.gmFreeNuyen = weapon.getGmFreeNuyen();
     return entry;
   }
 
@@ -235,12 +250,14 @@ public class CharacterStore {
     entry.gear = vehicle.getGear().stream().map(CharacterStore::toGearEntry).toList();
     entry.matrixUpgrades = vehicle.getMatrixUpgrades().stream().map(CharacterStore::toGearEntry).toList();
     entry.damage = vehicle.getDamage();
+    entry.gmFreeNuyen = vehicle.getGmFreeNuyen();
     return entry;
   }
 
   private static @NonNull ArmorEntry toArmorEntry(@NonNull Armor armor) {
     ArmorEntry entry = new ArmorEntry(armor.getName(), armor.isEquipped(), armor.getChosenPrice());
     entry.mods = armor.getMods().stream().map(m -> new ArmorModEntry(m.getName(), m.getRating())).toList();
+    entry.gmFreeNuyen = armor.getGmFreeNuyen();
     return entry;
   }
 
@@ -282,6 +299,7 @@ public class CharacterStore {
     }
     entry.pairedCopy = implant.isPairedCopy();
     entry.pair = pairIds.getOrDefault(implant, 0);
+    entry.gmFreeNuyen = implant.getGmFreeNuyen();
     return entry;
   }
 
@@ -300,6 +318,8 @@ public class CharacterStore {
     entry.running = gear.isRunning();
     entry.bound = gear.isBound();
     entry.focusActive = gear.isFocusActive();
+    entry.gmFreeNuyen = gear.getGmFreeNuyen();
+    entry.gmFreeBindingBp = gear.getGmFreeBindingBp();
     return entry;
   }
 
@@ -396,6 +416,7 @@ public class CharacterStore {
         character.addSpell(spellData);
       }
     }
+    character.restoreGmFreeSpells(data.gmFreeSpells);
   }
 
   /**
@@ -426,7 +447,10 @@ public class CharacterStore {
       character.getComplexForms().stream()
           .filter(cf -> cf.getName().equals(entry.name))
           .findFirst()
-          .ifPresent(cf -> cf.setRating(entry.rating));
+          .ifPresent(cf -> {
+            cf.setRating(entry.rating);
+            cf.setGmFreeBp(entry.gmFreeBp);
+          });
     }
   }
 
@@ -491,11 +515,13 @@ public class CharacterStore {
         implant = new Cyberware(cyberwareData, parseGrade(entry.grade), parseLocation(entry.location, part),
             new LimbAttributes(baseValue(entry.body), baseValue(entry.strength), baseValue(entry.agility)));
         implant.setAttached(entry.attached);
+        implant.setGmFreeNuyen(entry.gmFreeNuyen);
       } else {
         implant = new Cyberware(cyberwareData, parseGrade(entry.grade), entry.rating, entry.choice, price);
         if (entry.pairedCopy && cyberwareData.limb().pairedLegs()) {
           implant = implant.pairedCopy();
         }
+        implant.setGmFreeNuyen(entry.gmFreeNuyen);
       }
     } catch (IllegalArgumentException _) {
       return null;
@@ -535,6 +561,7 @@ public class CharacterStore {
         price = entry.price != null && armorData.isValidPrice(entry.price) ? entry.price : armorData.priceMin();
       }
       Armor armor = new Armor(armorData, entry.equipped, price);
+      armor.setGmFreeNuyen(entry.gmFreeNuyen);
       installArmorMods(armor, entry.mods);
       character.getEquipment().addArmor(armor);
     }
@@ -575,6 +602,7 @@ public class CharacterStore {
       return null;
     }
     Weapon weapon = new Weapon(weaponData, entry.rating);
+    weapon.setGmFreeNuyen(entry.gmFreeNuyen);
     entry.accessories.forEach(a -> applyAccessory(weapon, a));
     for (GearEntry arrowEntry : entry.arrows) {
       Gear arrows = toGear(arrowEntry);
@@ -629,6 +657,7 @@ public class CharacterStore {
         continue;
       }
       Vehicle vehicle = new Vehicle(vehicleData);
+      vehicle.setGmFreeNuyen(entry.gmFreeNuyen);
       if (entry.riggerAdapter && vehicle.riggerAdapterProblem() == null) {
         vehicle.installRiggerAdapter();
       }
@@ -716,6 +745,8 @@ public class CharacterStore {
       return null;
     }
     installChildren(gear, entry.installed);
+    gear.setGmFreeNuyen(entry.gmFreeNuyen);
+    gear.setGmFreeBindingBp(entry.gmFreeBindingBp);
     if (entry.running && gear.isProgram()) {
       gear.setRunning(true);
     }
@@ -761,6 +792,7 @@ public class CharacterStore {
     }
     lifestyle.setMonths(Math.max(Lifestyle.MIN_MONTHS, data.lifestyle.months));
     lifestyle.restoreArrears(data.lifestyle.missedMonths, data.lifestyle.debt);
+    lifestyle.setGmFreeNuyen(data.lifestyle.gmFreeNuyen);
   }
 
   private static void applyRuleOptions(@NonNull Character character, @NonNull CharacterData data) {
@@ -768,6 +800,7 @@ public class CharacterStore {
     rules.setLimbArmorAverage(data.rules.limbArmorAverage);
     rules.setLateAwakening(data.rules.lateAwakening);
     rules.setMissedLifestylePayments(data.rules.missedLifestylePayments);
+    rules.setDecoupleAtCreation(data.rules.decoupleAtCreation);
     data.rules.books.forEach(code -> rules.setBookEnabled(code, true));
   }
 
@@ -865,7 +898,9 @@ public class CharacterStore {
       SpiritData spiritData = SpiritDataLoader.findByName(entry.name);
       if (spiritData != null && entry.force >= 1 && entry.services >= 0) {
         List<String> options = entry.options.stream().filter(spiritData.optional()::contains).distinct().toList();
-        spirits.add(new Spirit(spiritData, entry.force, entry.services, entry.bound, options));
+        Spirit spirit = new Spirit(spiritData, entry.force, entry.services, entry.bound, options);
+        spirit.setGmFreeBp(entry.gmFreeBp);
+        spirits.add(spirit);
       }
     }
     character.getSpirits().restore(spirits);
@@ -904,6 +939,7 @@ public class CharacterStore {
       Contact added = character.getContacts().getLast();
       added.setConnection(entry.connection);
       added.setLoyalty(entry.loyalty);
+      added.setGmFreeBp(entry.gmFreeBp);
     }
   }
 

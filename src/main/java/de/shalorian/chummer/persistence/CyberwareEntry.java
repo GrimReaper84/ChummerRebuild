@@ -7,6 +7,9 @@ import org.jspecify.annotations.Nullable;
 
 class CyberwareEntry {
 
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeNuyen;
+
   public @NonNull String name = "";
   /** {@code CyberwareGrade}-Enum-Name, z.B. {@code "ALPHAWARE"}. */
   public @NonNull String grade = "STANDARD";

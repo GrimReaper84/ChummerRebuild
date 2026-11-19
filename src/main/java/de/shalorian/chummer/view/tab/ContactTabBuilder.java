@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -274,7 +275,9 @@ public final class ContactTabBuilder {
 
     Runnable tooltipRefresh = () -> {
       String description = contact.getDescription();
-      Tooltip.install(nameLabelDummy, description != null ? new Tooltip(description) : null);
+      nameLabelDummy.setTooltip(description != null ? new Tooltip(description) : null);
+      // nach der Beschreibung, damit der Gratis-Hinweis (ADR-070) nicht überschrieben wird
+      markGmFree(nameLabelDummy, contact.getGmFreeBp() > 0, contact.getGmFreeBp() + " BP");
     };
     contactRefreshers.add(tooltipRefresh);
     tooltipRefresh.run();

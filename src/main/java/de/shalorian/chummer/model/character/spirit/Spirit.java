@@ -14,6 +14,8 @@ import org.jspecify.annotations.NonNull;
  */
 public class Spirit {
 
+  /** Gratis-Anteil (BP) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht gegen die 400 BP. */
+  private int gmFreeBp;
   private final @NonNull SpiritData data;
   private final int force;
   private int services;
@@ -87,5 +89,14 @@ public class Spirit {
   /** Setzt den Zustand; die Prüfung übernimmt {@link Spirits#getBindProblem}. */
   void setBound(boolean bound) {
     this.bound = bound;
+  }
+
+  /** Gratis-Anteil (BP) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeBp() {
+    return gmFreeBp;
+  }
+
+  public void setGmFreeBp(int gmFreeBp) {
+    this.gmFreeBp = Math.max(0, gmFreeBp);
   }
 }

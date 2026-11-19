@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
  */
 public class Weapon {
 
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht ins Restgeld. */
+  private int gmFreeNuyen;
   private final @NonNull WeaponData data;
   private final int rating;
   private final List<WeaponAccessory> accessories = new ArrayList<>();
@@ -333,5 +335,14 @@ public class Weapon {
       return rating;
     }
     return fixedStrength == null ? strength : fixedStrength;
+  }
+
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeNuyen() {
+    return gmFreeNuyen;
+  }
+
+  public void setGmFreeNuyen(int gmFreeNuyen) {
+    this.gmFreeNuyen = Math.max(0, gmFreeNuyen);
   }
 }

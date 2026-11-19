@@ -9,7 +9,8 @@ import org.jspecify.annotations.NonNull;
  * docs/magie_analyse.md}). Reines Referenz-/Anzeigeobjekt ohne Berechnung — insbesondere wird der
  * Force-Wert (Kraftstufe) hier nicht abgebildet, da er erst beim tatsächlichen Wirken eines Zaubers
  * relevant wird (kein Bestandteil der Charakterverwaltung). {@code dv} (Drain Value) ist daher
- * ebenfalls reiner Anzeigetext, keine berechenbare Zahl (z.B. {@code "(K/2)+3"}, K = Kraftstufe).
+ * ebenfalls reiner Anzeigetext, keine berechenbare Zahl (z.B. {@code "(K/2)+3"}, K = Kraftstufe). {@code note} ist
+ * die Kurzwirkung in eigenen Worten für Kaufdialog und Tooltip.
  */
 public record SpellData(
     @NonNull String name,
@@ -21,5 +22,6 @@ public record SpellData(
     @NonNull String duration,
     @NonNull String dv,
     @NonNull String source,
-    @NonNull String page
+    @NonNull String page,
+    @NonNull String note
 ) implements CatalogEntry, Sourced {}

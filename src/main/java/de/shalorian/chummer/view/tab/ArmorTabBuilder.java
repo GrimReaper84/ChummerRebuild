@@ -4,6 +4,8 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
+import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.installButton;
 import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -32,6 +34,7 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -182,24 +185,13 @@ final class ArmorTabBuilder {
     Button addBtn = toolbarButton("Rüstung hinzufügen", FontAwesomeSolid.PLUS);
     addBtn.setOnAction(_ -> onAddArmor(character));
 
-    Button installBtn = toolbarButton("Einbauen", FontAwesomeSolid.WRENCH);
+    Button installBtn = installButton("Modifikation in das ausgewählte Rüstungsteil einbauen");
     installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> selectedArmor(tree) == null,
         tree.getSelectionModel().selectedItemProperty()));
     installBtn.setOnAction(_ -> {
       Armor armor = selectedArmor(tree);
       if (armor != null) {
         onInstall(character, armor);
-      }
-    });
-
-    Button equipBtn = toolbarButton("Anlegen/Ablegen", FontAwesomeSolid.SHIELD_ALT);
-    equipBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> selectedArmor(tree) == null,
-        tree.getSelectionModel().selectedItemProperty()));
-    equipBtn.setOnAction(_ -> {
-      Armor armor = selectedArmor(tree);
-      if (armor != null) {
-        armor.setEquipped(!armor.isEquipped());
-        onChanged(character, armor, null);
       }
     });
 
@@ -232,7 +224,7 @@ final class ArmorTabBuilder {
 
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    HBox toolbar = new HBox(8, spacer, sellBtn, removeBtn, equipAllBtn, unequipAllBtn, equipBtn, installBtn, addBtn);
+    HBox toolbar = new HBox(8, spacer, sellBtn, removeBtn, equipAllBtn, unequipAllBtn, installBtn, addBtn);
     toolbar.setAlignment(Pos.CENTER_LEFT);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
@@ -247,7 +239,7 @@ final class ArmorTabBuilder {
 
   // ── Detailbereich ─────────────────────────────────────────
 
-  private static void showDetails(@NonNull VBox details, @Nullable ArmorTreeEntry entry,
+  private void showDetails(@NonNull VBox details, @Nullable ArmorTreeEntry entry,
       @NonNull Character character) {
     details.getChildren().clear();
     Armor armor = entry == null ? null : entry.armor();
@@ -261,11 +253,12 @@ final class ArmorTabBuilder {
     if (mod != null) {
       showModDetails(details, armor, mod);
     } else {
-      showArmorDetails(details, armor);
+      showArmorDetails(details, armor, character);
     }
   }
 
-  private static void showArmorDetails(@NonNull VBox details, @NonNull Armor armor) {
+  /** Werte eines Rüstungsteils; „Angelegt“ als Haken (Nutzerbefund 2026-11-20, statt eines eigenen Knopfs). */
+  private void showArmorDetails(@NonNull VBox details, @NonNull Armor armor, @NonNull Character character) {
     ArmorDetails d = ArmorDetails.of(armor);
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][]");
     int row = 0;
@@ -274,11 +267,20 @@ final class ArmorTabBuilder {
     for (SpecialProtection special : d.special()) {
       addRowCells(grid, row++, detailKey(special.label()), detailValue(special.value()));
     }
-    addRowCells(grid, row++, detailKey("Zustand"), detailValue(d.state()));
+    CheckBox equipped = new CheckBox("angelegt");
+    equipped.setSelected(armor.isEquipped());
+    equipped.setOnAction(_ -> {
+      armor.setEquipped(equipped.isSelected());
+      onChanged(character, armor, null);
+    });
+    addRowCells(grid, row++, detailKey("Zustand"), equipped);
     addRowCells(grid, row++, detailKey("Verfügbarkeit"), detailValue(d.availability()));
     addRowCells(grid, row++, detailKey("Preis inkl. Einbauten"), detailValue(d.price()));
     addRowCells(grid, row, detailKey("Quelle"), detailValue(d.source()));
     details.getChildren().addAll(title(d.name()), grid);
+    if (armor.getGmFreeNuyen() > 0) {
+      details.getChildren().add(gmFreeHint(Numbers.nuyen(armor.getGmFreeNuyen())));
+    }
     if (!armor.getData().weapon().isEmpty()) {
       details.getChildren().add(detailHint("Angelegt im Waffenbereich als Nahkampfwaffe verfügbar."));
     }

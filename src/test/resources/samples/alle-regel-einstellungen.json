@@ -742,6 +742,7 @@
     "limbArmorAverage" : true,
     "lateAwakening" : true,
     "missedLifestylePayments" : true,
+    "decoupleAtCreation" : true,
     "books" : [ "SM" ]
   }
 }

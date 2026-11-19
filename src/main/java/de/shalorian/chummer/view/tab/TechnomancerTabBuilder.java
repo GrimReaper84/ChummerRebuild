@@ -2,6 +2,8 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
+import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -127,12 +129,11 @@ public final class TechnomancerTabBuilder {
    */
   private @NonNull MigPane buildComplexFormGrid() {
     MigPane grid = new MigPane(MIGPANE_HIDEMODE_3,
-        "[][center][][center][center][center][][][]");
+        "[][center][][center][center][center][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
-    String[] headers = {"Komplexe Form", "Kategorie", "Fertigkeit", "", "Stufe", "", "Kosten",
-        "Quelle", ""};
+    String[] headers = {"Komplexe Form", "Kategorie", "Fertigkeit", "", "Stufe", "", "Kosten", ""};
     addHeaderRow(grid, headers);
 
     return grid;
@@ -141,6 +142,8 @@ public final class TechnomancerTabBuilder {
   private void addComplexFormRow(@NonNull MigPane grid, int row,
       @NonNull ComplexForm complexForm, @NonNull Character character) {
     Label nameLabel = new Label(complexForm.getName());
+    addSourceTooltip(nameLabel, complexForm.getData().source(), complexForm.getData().page());
+    markGmFree(nameLabel, complexForm.getGmFreeBp() > 0, complexForm.getGmFreeBp() + " BP");
     Label categoryLabel = new Label(complexForm.getData().category());
     Label skillLabel = new Label(complexForm.getData().skill());
     RowControls controls = RowControls.create();
@@ -148,13 +151,11 @@ public final class TechnomancerTabBuilder {
     Label ratingLabel = controls.valueLabel();
     Button plus = controls.plus();
     Label costLabel = controls.costLabel();
-    Label sourceLabel = new Label(complexForm.getData().source());
     Button removeBtn = new Button("Entfernen");
 
     nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
     categoryLabel.getStyleClass().add(STYLE_ATTR_ABBR);
     skillLabel.getStyleClass().add(STYLE_ATTR_RANGE);
-    sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
@@ -222,7 +223,7 @@ public final class TechnomancerTabBuilder {
     });
 
     addRowCells(grid, row, nameLabel, categoryLabel, skillLabel, minus, ratingLabel, plus,
-        costLabel, sourceLabel, removeBtn);
+        costLabel, removeBtn);
   }
 
   /**

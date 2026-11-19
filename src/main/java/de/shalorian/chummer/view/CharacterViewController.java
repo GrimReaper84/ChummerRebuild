@@ -308,6 +308,10 @@ public class CharacterViewController implements CharacterTabHost {
     if (character == null) {
       return;
     }
+    // Spielleiter-Modus bei der Erschaffung (ADR-070): die Tabs haben vor der Gutschrift gelesen, einmal neu aufbauen
+    if (character.consumeGmCredit()) {
+      rebuild();
+    }
     footerLabel.setText(FooterText.of(character));
     setWarnStyle(footerLabel, character.isCreationOverspent());
     Node overview = StatusOverviewBuilder.build(character, services(), this::refreshRows);

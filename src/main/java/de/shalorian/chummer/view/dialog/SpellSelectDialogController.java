@@ -3,6 +3,7 @@ package de.shalorian.chummer.view.dialog;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.magic.SpellData;
 import de.shalorian.chummer.model.character.magic.SpellDataLoader;
+import de.shalorian.chummer.model.character.rulebook.RulebookDataLoader;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +22,10 @@ public class SpellSelectDialogController extends CatalogSelectDialogController<S
 
   @FXML
   private Label costLabel;
+  @FXML
+  private Label statsLabel;
+  @FXML
+  private Label noteLabel;
   @FXML
   private Button okButton;
 
@@ -75,7 +80,10 @@ public class SpellSelectDialogController extends CatalogSelectDialogController<S
 
   @Override
   protected void onListUpdated() {
-    okButton.setDisable(itemListView.getSelectionModel().getSelectedItem() == null);
+    SpellData selected = itemListView.getSelectionModel().getSelectedItem();
+    okButton.setDisable(selected == null);
+    statsLabel.setText(selected == null ? "" : statsText(selected));
+    noteLabel.setText(selected == null ? "" : selected.note());
   }
 
   @FXML
@@ -99,5 +107,12 @@ public class SpellSelectDialogController extends CatalogSelectDialogController<S
 
   public @NonNull Optional<SpellData> getResult() {
     return Optional.ofNullable(result);
+  }
+
+  /** Werte wie in der Zaubertabelle samt Quelle, z.B. „Kampf · M · BF · Schaden K · S · Entzug (K÷2) · …“. */
+  private static @NonNull String statsText(@NonNull SpellData spell) {
+    String damage = spell.damage().equals("–") ? "" : " · Schaden " + spell.damage();
+    return "%s · %s · %s%s · %s · Entzug %s · %s".formatted(spell.category(), spell.type(), spell.range(), damage,
+        spell.duration(), spell.dv(), RulebookDataLoader.describeSource(spell.source(), spell.page()));
   }
 }

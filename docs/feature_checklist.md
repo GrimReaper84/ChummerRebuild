@@ -346,7 +346,7 @@
 | Disabled-Zustand von Buttons korrekt (BP/Karma zu wenig, Grenzwerte) | ✅      |           |
 | Metatyp-Wechsel mit Attribut-Reset in der Erstellung                 | ✅      |           |
 | Drucken / Export / Charakterbogen                                    | ✅      | 2026-11-19 (ADR-067): PDF nach dem GRW-Bogen (S. 406/407) mit Pools, Bleistiftfelder leer, Fortsetzungsseiten; gedruckt wird aus dem PDF-Viewer |
-| Spielleiter-Modus (Korrekturen ohne Kosten und Sperren) | ✅ | 2026-11-15 (ADR-060): Menü Einstellungen, nicht gespeichert, GRW-Obergrenzen bleiben |
+| Spielleiter-Modus (Korrekturen ohne Kosten und Sperren) | ✅ | 2026-11-15 (ADR-060): Menü Einstellungen, nicht gespeichert, GRW-Obergrenzen bleiben; Käufe bei der Erschaffung gratis (ADR-070) |
 | Status-Panel und Zustandstab ohne Doppelungen                        | ✅      | 2026-11-19 (ADR-065): Monitor/Initiative/Attributproben nur im Status, Bereich „Cheat-Sheet“ mit wählbaren Inhalten |
 | Mehrere Charaktere gleichzeitig öffnen                               | ✅      | 2026-11-19 (ADR-066): Tabs im Hauptfenster, Stern und Rückfrage bei ungespeicherten Änderungen |
 | Zuletzt geöffnete Dateien                                            | ❌      | Nutzerentscheidung 2026-11-19: nach dem Release (Plan Mehrere Dokumente) |

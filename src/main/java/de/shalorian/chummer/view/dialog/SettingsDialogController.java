@@ -52,6 +52,8 @@ public class SettingsDialogController {
   @FXML
   private CheckBox missedPaymentsBox;
   @FXML
+  private CheckBox decoupleAtCreationBox;
+  @FXML
   private VBox booksBox;
 
   private final Map<CheatSheetItem, CheckBox> cheatSheetBoxes = new EnumMap<>(CheatSheetItem.class);
@@ -73,6 +75,7 @@ public class SettingsDialogController {
     limbArmorAverageBox.setTooltip(new Tooltip("Auslegung zu GRW S. 390; Standard: Summe wie im alten Chummer"));
     lateAwakeningBox.setTooltip(new Tooltip("Aufhebung der Sperre aus GRW S. 313 im Karrieremodus"));
     missedPaymentsBox.setTooltip(new Tooltip("Monat aussetzen im Karrieremodus nach GRW S. 312"));
+    decoupleAtCreationBox.setTooltip(new Tooltip("Ausnahme von GRW S. 108, wenn der Spielleiter sie erlaubt"));
     for (RulebookData book : RulebookDataLoader.getAll()) {
       CheckBox box = new CheckBox(book.name() + " (" + book.code() + ")");
       if (book.core()) {
@@ -111,6 +114,7 @@ public class SettingsDialogController {
     limbArmorAverageBox.setSelected(ruleOptions.isLimbArmorAverage());
     lateAwakeningBox.setSelected(ruleOptions.isLateAwakening());
     missedPaymentsBox.setSelected(ruleOptions.isMissedLifestylePayments());
+    decoupleAtCreationBox.setSelected(ruleOptions.isDecoupleAtCreation());
     for (Map.Entry<String, CheckBox> book : bookBoxes.entrySet()) {
       book.getValue().setSelected(ruleOptions.isBookEnabled(book.getKey()));
     }
@@ -135,6 +139,7 @@ public class SettingsDialogController {
       ruleOptions.setLimbArmorAverage(limbArmorAverageBox.isSelected());
       ruleOptions.setLateAwakening(lateAwakeningBox.isSelected());
       ruleOptions.setMissedLifestylePayments(missedPaymentsBox.isSelected());
+      ruleOptions.setDecoupleAtCreation(decoupleAtCreationBox.isSelected());
       for (Map.Entry<String, CheckBox> book : bookBoxes.entrySet()) {
         ruleOptions.setBookEnabled(book.getKey(), book.getValue().isSelected());
       }

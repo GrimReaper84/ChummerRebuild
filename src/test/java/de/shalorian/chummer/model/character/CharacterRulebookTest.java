@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 class CharacterRulebookTest {
 
   private static SpellData spellFrom(String source) {
-    return new SpellData("Testzauber", "", "Kampf", "M", "BF", "K", "S", "(K/2)+1", source, "1");
+    return new SpellData("Testzauber", "", "Kampf", "M", "BF", "K", "S", "(K/2)+1", source, "1", "");
   }
 
   @Test

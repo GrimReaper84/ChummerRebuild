@@ -62,6 +62,13 @@ public class QualitySelectDialogController
         : q.type() == QualityType.NEGATIVE;
   }
 
+  /** Im Spielleiter-Modus bei der Erschaffung ist „Gratis“ vorbelegt (ADR-070), abwählbar. */
+  @Override
+  public void setCharacter(@NonNull Character character) {
+    gratisBox.setSelected(character.isGmMode() && !character.isCreated());
+    super.setCharacter(character);
+  }
+
   @Override
   protected boolean isSelectable(@NonNull QualityData q) {
     return character == null

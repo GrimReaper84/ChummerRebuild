@@ -66,6 +66,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -141,6 +142,10 @@ public class Character {
   private final List<KnowledgeSkill> knowledgeSkills = new ArrayList<>();
   private final List<Contact> contacts = new ArrayList<>();
   private final List<SpellData> spells = new ArrayList<>();
+  /** Zauber, die im Spielleiter-Modus bei der Erschaffung gelernt wurden und keine BP kosten (ADR-070). */
+  private final Set<String> gmFreeSpells = new TreeSet<>();
+  /** Erfasst Kostenzuwächse im Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  private final GmAllowance gmAllowance = new GmAllowance(this);
   private final List<ComplexForm> complexForms = new ArrayList<>();
   private final @NonNull AdeptPowers adeptPowers = new AdeptPowers(this);
   private final @NonNull Initiation initiation = new Initiation(this);
@@ -1069,7 +1074,17 @@ public class Character {
    * Bricht die Gruppe auf – Skills behalten ihre Ratings, werden ab jetzt einzeln bepreist.
    */
   public void decoupleGroup(@NonNull String groupName) {
+    // Ladepfad und Karriere ohne Prüfung; die Oberfläche bietet das Auskoppeln nur laut canDecoupleGroups() an
     decoupledGroups.add(groupName);
+  }
+
+  /**
+   * Ob Fertigkeitsgruppen ausgekoppelt werden dürfen: in der Karriere immer, bei der Erschaffung nur im
+   * Spielleiter-Modus oder mit der Regel-Option {@link RuleOptions#isDecoupleAtCreation()} (GRW S. 108: verboten, außer
+   * der Spielleiter erlaubt es).
+   */
+  public boolean canDecoupleGroups() {
+    return created || gmMode || ruleOptions.isDecoupleAtCreation();
   }
 
   public @NonNull Set<String> getDecoupledGroups() {
@@ -2391,7 +2406,7 @@ public class Character {
    */
   public int getContactBP() {
     return contacts.stream()
-        .mapToInt(c -> (c.getConnection() + c.getLoyalty()) * CONTACT_BP_PER_POINT)
+        .mapToInt(c -> Math.max(0, (c.getConnection() + c.getLoyalty()) * CONTACT_BP_PER_POINT - c.getGmFreeBp()))
         .sum();
   }
 
@@ -2419,6 +2434,7 @@ public class Character {
 
   public void removeSpell(@NonNull String name) {
     spells.removeIf(s -> s.name().equals(name));
+    gmFreeSpells.remove(name);
   }
 
   /**
@@ -2426,7 +2442,7 @@ public class Character {
    * (SR4-Grundregelwerk), unabhängig von Kategorie oder Kraftstufe.
    */
   public int getSpellBP() {
-    return spells.size() * SPELL_BP_COST;
+    return (int) spells.stream().filter(s -> !gmFreeSpells.contains(s.name())).count() * SPELL_BP_COST;
   }
 
   /** Karma-Kosten im Karrieremodus, um einen weiteren Zauber zu lernen — fixer Preis, keine Staffelung. */
@@ -2483,7 +2499,8 @@ public class Character {
 
   /** BP-Kosten aller gelernten Komplexen Formen: Rating × {@link ComplexForm#getBpCostPerRating()}. */
   public int getComplexFormBP() {
-    return complexForms.stream().mapToInt(cf -> cf.getRating() * cf.getBpCostPerRating()).sum();
+    return complexForms.stream()
+        .mapToInt(cf -> Math.max(0, cf.getRating() * cf.getBpCostPerRating() - cf.getGmFreeBp())).sum();
   }
 
   /**
@@ -2629,6 +2646,7 @@ public class Character {
    * dann nicht möglich (siehe {@link #getFinalizeProblems()}).
    */
   public int getRemainingNuyen() {
+    coverGmChanges();
     return getResourceNuyen() - equipment.getSpentNuyen();
   }
 
@@ -2693,6 +2711,7 @@ public class Character {
 
   // --- BP ---
   public int getSpentBP() {
+    coverGmChanges();
     int attrBP = getAttributeBP();
 
     int skillBP = 0;
@@ -2818,9 +2837,54 @@ public class Character {
     return ruleOptions;
   }
 
-  /** Schaltet den Spielleiter-Modus; wird nicht gespeichert. */
+  /**
+   * Schaltet den Spielleiter-Modus (wird nicht gespeichert). Bei der Erschaffung wird alles, was im Modus an Kosten dazukommt, als Gratis-Anteil
+   * im Eintrag vermerkt ({@link GmAllowance}, ADR-070): beim Einschalten der Ausgangsstand, beim Ausschalten die
+   * letzte Gutschrift.
+   */
   public void setGmMode(boolean gmMode) {
+    if (gmMode == this.gmMode) {
+      return;
+    }
+    if (!gmMode) {
+      gmAllowance.stop();
+    }
     this.gmMode = gmMode;
+    if (gmMode && !created) {
+      gmAllowance.start();
+    }
+  }
+
+  /**
+   * Schreibt Kostenzuwächse im Spielleiter-Modus gut (ADR-070). Läuft vor jeder BP- und Restgeld-Rechnung und vor dem
+   * Speichern, damit kein Kauf im Modus Kosten verursacht; außerhalb des Modus ohne Wirkung.
+   */
+  public void coverGmChanges() {
+    gmAllowance.cover();
+  }
+
+  /**
+   * Wie {@link #coverGmChanges()} und meldet, ob seit der letzten Abfrage etwas gutgeschrieben wurde. Die Oberfläche
+   * baut dann neu auf, damit Summen und „(gratis)“ stimmen (die Tabs lesen beim Aufbau schon vor der Gutschrift).
+   */
+  public boolean consumeGmCredit() {
+    return gmAllowance.consumeCredit();
+  }
+
+  /** Vermerkt einen im Spielleiter-Modus gelernten Zauber als gratis (ADR-070). */
+  void markSpellGmFree(@NonNull String name) {
+    gmFreeSpells.add(name);
+  }
+
+  /** Namen der gratis gelernten Zauber (Persistenz, Anzeige). */
+  public @NonNull Set<String> getGmFreeSpells() {
+    return Collections.unmodifiableSet(gmFreeSpells);
+  }
+
+  /** Stellt die gratis gelernten Zauber aus der Datei wieder her. */
+  public void restoreGmFreeSpells(@NonNull Collection<String> names) {
+    gmFreeSpells.clear();
+    gmFreeSpells.addAll(names);
   }
 
   public boolean isCreated() {

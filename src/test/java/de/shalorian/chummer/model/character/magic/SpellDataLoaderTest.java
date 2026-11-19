@@ -1,6 +1,7 @@
 package de.shalorian.chummer.model.character.magic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -61,5 +62,10 @@ class SpellDataLoaderTest {
   @Test
   void findByNameReturnsNullForUnknownSpell() {
     assertNull(SpellDataLoader.findByName("Kein echter Zauber"));
+  }
+
+  @Test
+  void everySpellHasAShortNote() {
+    SpellDataLoader.getAllSpells().values().forEach(spell -> assertFalse(spell.note().isBlank(), spell.name()));
   }
 }

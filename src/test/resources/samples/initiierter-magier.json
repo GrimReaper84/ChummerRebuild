@@ -220,7 +220,8 @@
     "name" : "Feuergeist",
     "force" : 4,
     "services" : 2,
-    "bound" : true
+    "bound" : true,
+    "options" : [ ]
   } ],
   "cyberware" : [ ],
   "armor" : [ {
@@ -414,6 +415,7 @@
     "limbArmorAverage" : false,
     "lateAwakening" : false,
     "missedLifestylePayments" : false,
+    "decoupleAtCreation" : false,
     "books" : [ ]
   }
 }

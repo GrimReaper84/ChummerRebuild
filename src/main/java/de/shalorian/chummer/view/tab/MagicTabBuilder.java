@@ -2,12 +2,13 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
+import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 
 import de.shalorian.chummer.model.character.Character;
@@ -20,11 +21,16 @@ import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.SpellSelectDialogController;
 import de.shalorian.chummer.view.grid.GridSupport;
 import java.io.IOException;
+import java.text.Collator;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -106,7 +112,12 @@ public final class MagicTabBuilder {
     magicContainer.getChildren().add(withRightFiller(grid));
 
     int row = 1;
-    for (SpellData spell : ch.getSpells()) {
+    // nach Kategorie, darin nach Name (Nutzerbefund 2026-11-20), deutsche Sortierung
+    Collator collator = Collator.getInstance(Locale.GERMAN);
+    List<SpellData> spells = ch.getSpells().stream()
+        .sorted(Comparator.comparing(SpellData::category, collator).thenComparing(SpellData::name, collator))
+        .toList();
+    for (SpellData spell : spells) {
       addSpellRow(grid, row++, spell, ch);
     }
     magicContainer.getChildren().addAll(spiritSection.build(ch), fociSection.build(ch), poolSection.build(ch));
@@ -119,12 +130,11 @@ public final class MagicTabBuilder {
    * bei Attributen.
    */
   private @NonNull MigPane buildSpellGrid() {
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][center][][][]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][center][][][center][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
 
-    String[] headers = {"Zauber", "Kategorie", "Typ", "Reichweite", "Schaden", "Dauer", "Entzug",
-        "Quelle", ""};
+    String[] headers = {"Zauber", "Kategorie", "Typ", "Reichweite", "Schaden", "Dauer", "Entzug", ""};
     addHeaderRow(grid, headers);
 
     return grid;
@@ -139,11 +149,14 @@ public final class MagicTabBuilder {
     Label damageLabel = new Label(spell.damage());
     Label durationLabel = new Label(spell.duration());
     Label dvLabel = new Label(spell.dv());
-    Label sourceLabel = new Label(spell.source());
     Button removeBtn = new Button("Entfernen");
 
     spellNameLabel.getStyleClass().add(STYLE_ATTR_NAME);
-    sourceLabel.getStyleClass().add(STYLE_ATTR_RANGE);
+    if (!spell.note().isEmpty()) {
+      spellNameLabel.setTooltip(new Tooltip(spell.note()));
+    }
+    addSourceTooltip(spellNameLabel, spell.source(), spell.page());
+    markGmFree(spellNameLabel, character.getGmFreeSpells().contains(spell.name()), Character.SPELL_BP_COST + " BP");
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 
@@ -154,7 +167,7 @@ public final class MagicTabBuilder {
     });
 
     addRowCells(grid, row, spellNameLabel, categoryLabel, typeLabel, rangeLabel, damageLabel,
-        durationLabel, dvLabel, sourceLabel, removeBtn);
+        durationLabel, dvLabel, removeBtn);
   }
 
   /**

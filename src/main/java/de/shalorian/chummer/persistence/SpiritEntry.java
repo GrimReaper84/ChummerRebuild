@@ -10,6 +10,9 @@ import org.jspecify.annotations.NonNull;
  */
 class SpiritEntry {
 
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeBp;
+
   public @NonNull String name = "";
   public int force = 1;
   public int services;

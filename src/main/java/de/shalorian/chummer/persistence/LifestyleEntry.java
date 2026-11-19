@@ -4,6 +4,9 @@ import org.jspecify.annotations.NonNull;
 
 class LifestyleEntry {
 
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeNuyen;
+
   /** {@code LifestyleLevel}-Enum-Name, z.B. {@code "MIDDLE"}. */
   public @NonNull String level = "STREET";
   /** Im Voraus bezahlte Monate, mindestens 1. */

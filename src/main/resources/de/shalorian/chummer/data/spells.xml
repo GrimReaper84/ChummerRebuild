@@ -5,7 +5,8 @@
 
   <descriptors> Merkmale aus der Klammer hinter dem Namen; <type> M = Manazauber, P = Physischer Zauber;
   <range> B = Berührung, BF = Blickfeld, (F) = Flächenzauber; <damage> K/G nur bei Kampfzaubern, sonst "–";
-  <duration> S = Sofort, A = Aufrechterhalten, P = Permanent; <dv> Entzug, K = Kraftstufe, ÷ wie im GRW.
+  <duration> S = Sofort, A = Aufrechterhalten, P = Permanent; <dv> Entzug, K = Kraftstufe, ÷ wie im GRW;
+  <note> Kurzwirkung in eigenen Worten (2026-11-20), kein GRW-Wortlaut.
   Namen mit eckigen Klammern ([Attribut], [Critter], [Lebensform], [Objekt]) stehen für eine Gruppe: Laut GRW
   wird jede Ausprägung als eigener Zauber gelernt.
 -->
@@ -23,6 +24,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Senkt ein körperliches oder geistiges Attribut des Ziels; je Attribut ein eigener Zauber, Widerstand mit dem betroffenen Attribut.</note>
         <page>239</page>
     </spell>
     <spell>
@@ -35,6 +37,7 @@
         <duration>A</duration>
         <dv>(K÷2)−2</dv>
         <source>SR4</source>
+        <note>Steigert ein körperliches oder geistiges Attribut eines bereitwilligen Ziels um die Erfolge; je Attribut ein eigener Zauber.</note>
         <page>239</page>
     </spell>
     <spell>
@@ -47,6 +50,7 @@
         <duration>P</duration>
         <dv>(Toxinschaden)−4</dv>
         <source>SR4</source>
+        <note>Beseitigt die Nebenwirkungen einer Droge oder eines Toxins, heilt aber keinen Schaden.</note>
         <page>239</page>
     </spell>
     <spell>
@@ -59,6 +63,7 @@
         <duration>P</duration>
         <dv>(Toxinschaden)−2</dv>
         <source>SR4</source>
+        <note>Gibt einem vergifteten Ziel Zusatzwürfel für den Widerstand gegen das Gift.</note>
         <page>239</page>
     </spell>
     <spell>
@@ -71,6 +76,7 @@
         <duration>P</duration>
         <dv>(Schaden)−2</dv>
         <source>SR4</source>
+        <note>Heilt Körperlichen Schaden, je Erfolg ein Kästchen; jede Verletzung nur einmal.</note>
         <page>239</page>
     </spell>
     <spell>
@@ -83,6 +89,7 @@
         <duration>P</duration>
         <dv>(Krankheitsschaden)−2</dv>
         <source>SR4</source>
+        <note>Gibt einem Erkrankten Zusatzwürfel für den Widerstand gegen die Krankheit; bereits entstandener Schaden bleibt.</note>
         <page>239</page>
     </spell>
     <spell>
@@ -95,6 +102,7 @@
         <duration>A</duration>
         <dv>(K÷2)−2</dv>
         <source>SR4</source>
+        <note>Gibt einem bereitwilligen Ziel Zusatzwürfel gegen Infektionen, Drogen und Gifte, schwächt aber auch nützliche Substanzen.</note>
         <page>239</page>
     </spell>
     <spell>
@@ -107,6 +115,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Gibt einem bereitwilligen Ziel zusätzliche Initiativedurchgänge.</note>
         <page>240</page>
     </spell>
     <spell>
@@ -119,6 +128,7 @@
         <duration>A</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Versorgt das Ziel mit Atemluft, z.B. unter Wasser oder in Gas, und schützt vor eingeatmeten Giften.</note>
         <page>240</page>
     </spell>
     <spell>
@@ -131,6 +141,7 @@
         <duration>P</duration>
         <dv>(Schaden)−4</dv>
         <source>SR4</source>
+        <note>Das Ziel ignoriert die Verletzungsmodifikatoren für einige Kästchen Schaden, solange der Zauber wirkt.</note>
         <page>240</page>
     </spell>
     <spell>
@@ -143,6 +154,7 @@
         <duration>P</duration>
         <dv>(Überzähliger Schaden)−2</dv>
         <source>SR4</source>
+        <note>Bewahrt einen Sterbenden mit Schaden über dem Zustandsmonitor davor, weiter Schaden zu nehmen.</note>
         <page>240</page>
     </spell>
     <spell>
@@ -155,6 +167,7 @@
         <duration>A</duration>
         <dv>(K÷2)−3</dv>
         <source>SR4</source>
+        <note>Versetzt ein bereitwilliges oder bewusstloses Ziel in Starre und verlangsamt alle Körperfunktionen.</note>
         <page>240</page>
     </spell>
 
@@ -170,6 +183,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Das Subjekt bewegt sich nahezu lautlos; täuscht auch Mikrofone und Sensoren.</note>
         <page>240</page>
     </spell>
     <spell>
@@ -182,6 +196,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Gibt dem Subjekt eine andere Erscheinung samt Stimme und Geruch; täuscht nur Lebewesen.</note>
         <page>240</page>
     </spell>
     <spell>
@@ -194,6 +209,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Gibt dem Subjekt eine andere Erscheinung samt Stimme und Geruch; täuscht auch Kameras und Sensoren.</note>
         <page>240</page>
     </spell>
     <spell>
@@ -206,6 +222,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Dämpft alle Geräusche im Wirkungsbereich; wirkt nur auf Lebewesen und magische Schallangriffe.</note>
         <page>241</page>
     </spell>
     <spell>
@@ -218,6 +235,7 @@
         <duration>A</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Dämpft alle Geräusche im Wirkungsbereich; wirkt auch gegen Mikrofone und technische Schallangriffe.</note>
         <page>241</page>
     </spell>
     <spell>
@@ -230,6 +248,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Erschafft eine täuschend echte Illusion von etwas, das der Zauberer gesehen hat; täuscht nur Lebewesen.</note>
         <page>241</page>
     </spell>
     <spell>
@@ -242,6 +261,7 @@
         <duration>A</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Erschafft eine täuschend echte Illusion von etwas, das der Zauberer gesehen hat; täuscht auch Kameras und Sensoren.</note>
         <page>241</page>
     </spell>
     <spell>
@@ -254,6 +274,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Macht das Subjekt für normale Sicht schwer erkennbar; täuscht nur Lebewesen, die Aura bleibt sichtbar.</note>
         <page>241</page>
     </spell>
     <spell>
@@ -266,6 +287,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Macht das Subjekt für normale Sicht schwer erkennbar; täuscht auch Kameras, die Aura bleibt sichtbar.</note>
         <page>241</page>
     </spell>
     <spell>
@@ -278,6 +300,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Offensichtliche Illusion zum Vergnügen, etwa Lichtspiele oder Musik; für Lebewesen.</note>
         <page>242</page>
     </spell>
     <spell>
@@ -290,6 +313,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Offensichtliche Illusion zum Vergnügen, die auch von Kameras und Aufnahmegeräten erfasst wird.</note>
         <page>242</page>
     </spell>
     <spell>
@@ -302,6 +326,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Überflutet ein Ziel mit wirren Sinneseindrücken, die alle seine Proben erschweren; wirkt auf Lebewesen.</note>
         <page>242</page>
     </spell>
     <spell>
@@ -314,6 +339,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Wie Verwirrung, aber gegen alle Lebewesen im Wirkungsbereich.</note>
         <page>242</page>
     </spell>
     <spell>
@@ -326,6 +352,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Überflutet ein Ziel mit wirren Sinneseindrücken, die alle seine Proben erschweren; stört auch Geräte und Sensoren.</note>
         <page>242</page>
     </spell>
     <spell>
@@ -338,6 +365,7 @@
         <duration>A</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Wie Chaos, aber gegen alle Ziele im Wirkungsbereich.</note>
         <page>242</page>
     </spell>
 
@@ -353,6 +381,7 @@
         <duration>S</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Schleudert einen Blitz gegen ein Ziel und verursacht Elektrizitätsschaden.</note>
         <page>243</page>
     </spell>
     <spell>
@@ -365,6 +394,7 @@
         <duration>S</duration>
         <dv>(K÷2)+5</dv>
         <source>SR4</source>
+        <note>Wie Blitzstrahl, aber als Flächenzauber gegen alle Ziele im Wirkungsbereich.</note>
         <page>243</page>
     </spell>
     <spell>
@@ -377,6 +407,7 @@
         <duration>S</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Leitet zerstörerische Energie per Berührung direkt in das Ziel; Körperlicher Schaden, auch gegen Objekte.</note>
         <page>243</page>
     </spell>
     <spell>
@@ -389,6 +420,7 @@
         <duration>S</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Leitet zerstörerische Energie direkt in ein Ziel; Körperlicher Schaden, auch gegen Objekte.</note>
         <page>243</page>
     </spell>
     <spell>
@@ -401,6 +433,7 @@
         <duration>S</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Wie Energieblitz, aber gegen alle Ziele im Wirkungsbereich.</note>
         <page>243</page>
     </spell>
     <spell>
@@ -413,6 +446,7 @@
         <duration>S</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Lässt Flammen auf ein Ziel los und verursacht Feuerschaden; kann Brennbares entzünden.</note>
         <page>243</page>
     </spell>
     <spell>
@@ -425,6 +459,7 @@
         <duration>S</duration>
         <dv>(K÷2)+5</dv>
         <source>SR4</source>
+        <note>Wie Flammenwerfer, aber als Explosion gegen alle Ziele im Wirkungsbereich.</note>
         <page>243</page>
     </spell>
     <spell>
@@ -437,6 +472,7 @@
         <duration>S</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Überschüttet ein Ziel mit ätzender Säure und verursacht Säureschaden.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -449,6 +485,7 @@
         <duration>S</duration>
         <dv>(K÷2)+5</dv>
         <source>SR4</source>
+        <note>Wie Säurestrom, aber gegen alle Ziele im Wirkungsbereich.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -461,6 +498,7 @@
         <duration>S</duration>
         <dv>(K÷2)−2</dv>
         <source>SR4</source>
+        <note>Unsichtbare Wucht per Berührung; Geistiger Schaden.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -473,6 +511,7 @@
         <duration>S</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Schleudert eine unsichtbare Druckwelle gegen ein Ziel; Geistiger Schaden.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -485,6 +524,7 @@
         <duration>S</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Wie Stoß, aber gegen alle Ziele im Wirkungsbereich.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -497,6 +537,7 @@
         <duration>S</duration>
         <dv>(K÷2)−3</dv>
         <source>SR4</source>
+        <note>Betäubt per Berührung mit Mana; Geistiger Schaden, nur gegen Lebewesen.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -509,6 +550,7 @@
         <duration>S</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Betäubt ein lebendes Ziel mit Mana; Geistiger Schaden, Panzerung hilft nicht.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -521,6 +563,7 @@
         <duration>S</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Wie Betäubungsblitz, aber gegen alle Lebewesen im Wirkungsbereich.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -533,6 +576,7 @@
         <duration>S</duration>
         <dv>(K÷2)−2</dv>
         <source>SR4</source>
+        <note>Greift per Berührung mit Mana an; Körperlicher Schaden, nur gegen Lebewesen.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -545,6 +589,7 @@
         <duration>S</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Greift ein lebendes Ziel direkt mit Mana an; Körperlicher Schaden, Panzerung hilft nicht.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -557,6 +602,7 @@
         <duration>S</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Wie Manablitz, aber gegen alle Lebewesen im Wirkungsbereich.</note>
         <page>244</page>
     </spell>
 
@@ -572,6 +618,7 @@
         <duration>P</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Pflanzt dem Ziel eine einzelne Suggestion ein, die es für die eigene Idee hält.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -584,6 +631,7 @@
         <duration>S</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Überzieht den Boden mit Glatteis; wer darüber läuft oder fährt, muss eine Probe gegen Stürzen ablegen.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -596,6 +644,7 @@
         <duration>P</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Setzt ein Objekt oder Lebewesen in Brand, sobald der Zauber permanent ist.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -608,6 +657,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Übernimmt den Verstand eines Ziels, das jeden Befehl ausführt.</note>
         <page>244</page>
     </spell>
     <spell>
@@ -620,6 +670,7 @@
         <duration>A</duration>
         <dv>(K÷2)+4</dv>
         <source>SR4</source>
+        <note>Wie Gedanken beherrschen, aber gegen alle Lebewesen im Wirkungsbereich.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -632,6 +683,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Zwingt einem Ziel ein bestimmtes Gefühl auf, z.B. Angst oder Heiterkeit.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -644,6 +696,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Wie Gefühle beherrschen, aber gegen alle Lebewesen im Wirkungsbereich.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -656,6 +709,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Verwandelt ein bereitwilliges Ziel in ein gewöhnliches Tier; der Verstand bleibt erhalten.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -668,6 +722,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Verwandelt in ein bestimmtes Tier; für jede Tierart ein eigener Zauber.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -680,6 +735,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Steuert den Körper eines Ziels wie eine Marionette, sein Verstand bleibt unbeeinflusst.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -692,6 +748,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Wie Handlungen beherrschen, aber gegen alle Lebewesen im Wirkungsbereich.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -704,6 +761,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Hebt ein Objekt oder eine Person telekinetisch an und bewegt es im Blickfeld.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -716,6 +774,7 @@
         <duration>A</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Erzeugt einen beweglichen Lichtpunkt, der schlechte Sicht durch Dunkelheit aufhebt.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -728,6 +787,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Errichtet eine unsichtbare Barriere gegen Geister, Zauber und astrale Gestalten.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -740,6 +800,7 @@
         <duration>A</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Umgibt das Ziel mit einem leuchtenden Feld, das zusätzliche Ballistik- und Stoßpanzerung gibt.</note>
         <page>245</page>
     </spell>
     <spell>
@@ -752,6 +813,7 @@
         <duration>A</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Errichtet eine unsichtbare, feste Wand, die Personen, Objekte und Geschosse aufhält.</note>
         <page>246</page>
     </spell>
     <spell>
@@ -764,6 +826,7 @@
         <duration>A</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Lässt kleine Gegenstände im Wirkungsbereich herumwirbeln; behindert die Sicht und verursacht Geistigen Schaden.</note>
         <page>246</page>
     </spell>
     <spell>
@@ -776,6 +839,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Erzeugt eine Kugel aus Dunkelheit, die Angriffe auf Ziele darin erschwert.</note>
         <page>246</page>
     </spell>
     <spell>
@@ -788,6 +852,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Verwandelt ein Lebewesen in eine schleimartige Masse; Ausrüstung bleibt unverändert.</note>
         <page>246</page>
     </spell>
     <spell>
@@ -800,6 +865,7 @@
         <duration>S</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Schleudert einen Gegenstand mit magischer Kraft als Fernkampfangriff auf ein Ziel.</note>
         <page>246</page>
     </spell>
     <spell>
@@ -812,6 +878,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Verwandelt ein Lebewesen vorübergehend in Stein.</note>
         <page>246</page>
     </spell>
     <spell>
@@ -824,6 +891,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Erschafft unsichtbare telekinetische Hände, die greifen und einfache Handlungen ausführen können.</note>
         <page>246</page>
     </spell>
 
@@ -839,6 +907,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Spürt Lebewesen mit feindlichen Absichten gegenüber dem Subjekt in der Nähe auf.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -851,6 +920,7 @@
         <duration>A</duration>
         <dv>(K÷2)+3</dv>
         <source>SR4</source>
+        <note>Wie Feinde aufspüren, mit größerer Reichweite.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -863,6 +933,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Liest die Gedanken eines Ziels, mit genug Erfolgen auch Erinnerungen und Unterbewusstes.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -875,6 +946,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Erschließt Zweck und Bedienung eines Geräts und gibt Zusatzwürfel für seine Benutzung.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -887,6 +959,7 @@
         <duration>A</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Das Subjekt hört von einem frei verschiebbaren Punkt in Reichweite aus.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -899,6 +972,7 @@
         <duration>A</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Das Subjekt sieht von einem frei verschiebbaren Punkt in Reichweite aus.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -911,6 +985,7 @@
         <duration>A</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Spürt eine bestimmte, dem Zauberer bekannte Person in Reichweite auf.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -923,6 +998,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Gibt dem Subjekt eine Vorahnung in Gefahr: Zusatzwürfel bei Überraschung und Verteidigung.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -935,6 +1011,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Spürt alle Lebewesen in Reichweite auf, mit Anzahl und Position.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -947,6 +1024,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Wie Leben aufspüren, mit größerer Reichweite.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -959,6 +1037,7 @@
         <duration>A</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Spürt alle Wesen einer bestimmten Art auf; je Lebensform ein eigener Zauber.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -971,6 +1050,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Wie [Lebensform] aufspüren, mit größerer Reichweite.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -983,6 +1063,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Spürt Foki, Zauber, Hüter, Refugien, Geister und Erwachte in Reichweite auf.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -995,6 +1076,7 @@
         <duration>A</duration>
         <dv>(K÷2)+2</dv>
         <source>SR4</source>
+        <note>Wie Magie aufspüren, mit größerer Reichweite.</note>
         <page>248</page>
     </spell>
     <spell>
@@ -1007,6 +1089,7 @@
         <duration>A</duration>
         <dv>(K÷2)−1</dv>
         <source>SR4</source>
+        <note>Spürt alle Objekte einer bestimmten Art auf, z.B. Waffen; je Objektart ein eigener Zauber.</note>
         <page>249</page>
     </spell>
     <spell>
@@ -1019,6 +1102,7 @@
         <duration>A</duration>
         <dv>(K÷2)+1</dv>
         <source>SR4</source>
+        <note>Zauberer und ein bereitwilliges Subjekt tauschen Gedanken und Bilder aus.</note>
         <page>249</page>
     </spell>
     <spell>
@@ -1031,6 +1115,7 @@
         <duration>A</duration>
         <dv>(K÷2)</dv>
         <source>SR4</source>
+        <note>Erkennt, ob ein Ziel die Wahrheit sagt; was es selbst für wahr hält, gilt als wahr.</note>
         <page>249</page>
     </spell>
 

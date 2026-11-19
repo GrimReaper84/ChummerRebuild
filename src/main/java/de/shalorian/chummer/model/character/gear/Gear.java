@@ -36,6 +36,10 @@ public class Gear {
    */
   public static final int MAX_CHOSEN_PACK_PRICE = 1_000_000;
 
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht ins Restgeld. */
+  private int gmFreeNuyen;
+  /** Gratis-Anteil (BP der Fokusbindung) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht gegen die 400 BP. */
+  private int gmFreeBindingBp;
   private final @NonNull GearData data;
   private final int rating;
   private final @NonNull String extra;
@@ -465,5 +469,23 @@ public class Gear {
           : name + " (" + joined + ")";
     }
     return pieces && quantity > 1 ? name + " ×" + quantity : name;
+  }
+
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeNuyen() {
+    return gmFreeNuyen;
+  }
+
+  public void setGmFreeNuyen(int gmFreeNuyen) {
+    this.gmFreeNuyen = Math.max(0, gmFreeNuyen);
+  }
+
+  /** Gratis-Anteil (BP der Fokusbindung) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeBindingBp() {
+    return gmFreeBindingBp;
+  }
+
+  public void setGmFreeBindingBp(int gmFreeBindingBp) {
+    this.gmFreeBindingBp = Math.max(0, gmFreeBindingBp);
   }
 }

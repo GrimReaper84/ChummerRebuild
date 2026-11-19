@@ -38,6 +38,13 @@ public final class RulebookDataLoader {
     return getAll().stream().filter(RulebookData::core).findFirst().orElseThrow();
   }
 
+  /** Quelle für Tooltips, z.B. „Grundregelwerk, S. 205“; unbekannte Kürzel bleiben stehen. */
+  public static @NonNull String describeSource(@NonNull String code, @NonNull String page) {
+    String book = getAll().stream().filter(b -> b.code().equals(code)).map(RulebookData::name).findFirst()
+        .orElse(code);
+    return book + ", S. " + page;
+  }
+
   private static @NonNull List<RulebookData> loadFromXml() {
     try (InputStream in = RulebookDataLoader.class.getResourceAsStream(DataPaths.BOOKS_XML)) {
       if (in == null) {

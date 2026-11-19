@@ -46,6 +46,8 @@ public class Cyberware {
   /** Waffenloser Schaden mit einem Cyberglied (S. 390). */
   private static final String UNARMED_DAMAGE = "(STR÷2)K";
 
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht ins Restgeld. */
+  private int gmFreeNuyen;
   private final @NonNull CyberwareData data;
   private @NonNull CyberwareGrade grade;
   private final int rating;
@@ -458,5 +460,14 @@ public class Cyberware {
   /** Baut das Kommlink aus. */
   public void removeCommlink() {
     commlink = null;
+  }
+
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeNuyen() {
+    return gmFreeNuyen;
+  }
+
+  public void setGmFreeNuyen(int gmFreeNuyen) {
+    this.gmFreeNuyen = Math.max(0, gmFreeNuyen);
   }
 }

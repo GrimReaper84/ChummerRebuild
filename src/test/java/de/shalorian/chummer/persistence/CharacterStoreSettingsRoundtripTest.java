@@ -25,6 +25,7 @@ class CharacterStoreSettingsRoundtripTest {
     c.getRuleOptions().setLimbArmorAverage(true);
     c.getRuleOptions().setLateAwakening(true);
     c.getRuleOptions().setMissedLifestylePayments(true);
+    c.getRuleOptions().setDecoupleAtCreation(true);
     c.getEquipment().getLifestyle().changeLevel(LifestyleLevel.MIDDLE);
     c.getEquipment().getLifestyle().skipMonth(1);
     c.getEquipment().getLifestyle().skipMonth(6);
@@ -34,6 +35,7 @@ class CharacterStoreSettingsRoundtripTest {
     assertTrue(rules.isLimbArmorAverage());
     assertTrue(rules.isLateAwakening());
     assertTrue(rules.isMissedLifestylePayments());
+    assertTrue(rules.isDecoupleAtCreation());
     Lifestyle lifestyle = loaded.getEquipment().getLifestyle();
     assertEquals(LifestyleLevel.LOW, lifestyle.getLevel());
     assertEquals(1, lifestyle.getMissedMonths());
@@ -60,6 +62,7 @@ class CharacterStoreSettingsRoundtripTest {
     assertFalse(loaded.getRuleOptions().isLimbArmorAverage());
     assertFalse(loaded.getRuleOptions().isLateAwakening());
     assertFalse(loaded.getRuleOptions().isMissedLifestylePayments());
+    assertFalse(loaded.getRuleOptions().isDecoupleAtCreation());
     assertTrue(loaded.getRuleOptions().getExtraBooks().isEmpty());
     assertEquals(0, loaded.getEquipment().getLifestyle().getMissedMonths());
     assertEquals(0, loaded.getEquipment().getLifestyle().getDebt());

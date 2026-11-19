@@ -4,6 +4,8 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
+import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.installButton;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
@@ -246,7 +248,7 @@ public final class VehicleTabBuilder {
     Button gearBtn = vehicleButton("Ausrüstung ins Fahrzeug legen", FontAwesomeSolid.BOX_OPEN, tree);
     gearBtn.setOnAction(_ -> withVehicle(tree, v -> onAddGear(character, v)));
 
-    Button installBtn = button("In ausgewählten Gegenstand einbauen", FontAwesomeSolid.MICROCHIP);
+    Button installBtn = installButton("In ausgewählten Gegenstand einbauen");
     installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       VehicleTreeEntry entry = selectedEntry(tree);
       Gear gear = entry == null ? null : entry.gear();
@@ -350,6 +352,9 @@ public final class VehicleTabBuilder {
       }
     } else {
       showVehicleDetails(details, VehicleDetails.of(vehicle));
+      if (vehicle.getGmFreeNuyen() > 0) {
+        details.getChildren().add(gmFreeHint(Numbers.nuyen(vehicle.getGmFreeNuyen())));
+      }
       details.getChildren().add(VehicleCombatSection.build(character, vehicle, this::refresh));
     }
   }

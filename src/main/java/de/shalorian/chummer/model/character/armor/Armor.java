@@ -24,6 +24,8 @@ public class Armor {
   /** Name der Ganzkörperpanzerung in {@code armor.xml}. */
   public static final String FULL_BODY_ARMOR = "Ganzkörperpanzerung";
 
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht ins Restgeld. */
+  private int gmFreeNuyen;
   private final @NonNull ArmorData data;
   private final @Nullable Integer chosenPrice;
   private boolean equipped;
@@ -203,5 +205,14 @@ public class Armor {
     return mod.availabilitySurcharge()
         ? "+%d (mit %s: %d)".formatted(mod.availability().evaluate(rating), data.name(), availabilityWith(mod, rating))
         : mod.availability().displayText(rating);
+  }
+
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeNuyen() {
+    return gmFreeNuyen;
+  }
+
+  public void setGmFreeNuyen(int gmFreeNuyen) {
+    this.gmFreeNuyen = Math.max(0, gmFreeNuyen);
   }
 }

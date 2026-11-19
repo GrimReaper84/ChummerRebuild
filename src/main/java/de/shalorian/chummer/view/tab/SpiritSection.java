@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
 import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
@@ -103,15 +104,15 @@ final class SpiritSection {
       return box;
     }
     expanded.retainAll(entries);
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][][][]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
-    addHeaderRow(grid, "", kind.getDisplayName(), kind.getPowerName(), "Dienste", "Zustand", "Werte", "");
+    addHeaderRow(grid, "", kind.getDisplayName(), kind.getPowerName(), "Dienste", "Zustand", "");
     int row = 1;
     for (Spirit spirit : entries) {
       addRow(grid, row++, ch, spirit);
       if (expanded.contains(spirit)) {
-        grid.add(details(ch, spirit), "cell 1 " + row++ + " 6 1");
+        grid.add(details(ch, spirit), "cell 1 " + row++ + " 5 1");
       }
     }
     box.getChildren().add(withRightFiller(grid));
@@ -133,6 +134,7 @@ final class SpiritSection {
     });
     Label name = styled(new Label(category == null ? data.name() : data.name() + " · " + category), STYLE_ATTR_NAME);
     name.setTooltip(new Tooltip(data.source() + " S. " + data.page()));
+    markGmFree(name, spirit.getGmFreeBp() > 0, spirit.getGmFreeBp() + " BP");
     Label force = styled(new Label(String.valueOf(spirit.getForce())), STYLE_ATTR_VALUE);
 
     Button minus = actionButton("Dienst weniger", FontAwesomeSolid.MINUS);
@@ -148,16 +150,12 @@ final class SpiritSection {
     state.setTooltip(new Tooltip(spirit.isBound() ? "Klicken zum Lösen" : "Klicken zum " + kind.getBindVerb()));
     state.setOnAction(_ -> toggleBound(ch, spirit));
 
-    Label stats = styled(new Label(data.statsText(spirit.getForce())), STYLE_ATTR_RANGE);
-    stats.setWrapText(true);
-    stats.setMaxWidth(420);
-
     Button remove = actionButton("Entfernen", FontAwesomeSolid.TRASH);
     remove.setOnAction(_ -> {
       spirits.remove(spirit);
       changed(ch);
     });
-    addRowCells(grid, row, toggle, name, force, serviceBox, state, stats, remove);
+    addRowCells(grid, row, toggle, name, force, serviceBox, state, remove);
   }
 
   /**

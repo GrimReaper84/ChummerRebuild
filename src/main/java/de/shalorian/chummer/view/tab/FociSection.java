@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
 import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
@@ -68,7 +69,9 @@ final class FociSection {
     int row = 1;
     for (Gear focus : all) {
       String state = !focus.isBound() ? "ungebunden" : focus.isFocusActive() ? "gebunden, aktiv" : "gebunden";
-      addRowCells(grid, row++, styled(new Label(focus.getDisplayName()), STYLE_ATTR_NAME),
+      Label name = styled(new Label(focus.getDisplayName()), STYLE_ATTR_NAME);
+      markGmFree(name, focus.getGmFreeBindingBp() > 0, focus.getGmFreeBindingBp() + " BP");
+      addRowCells(grid, row++, name,
           styled(new Label(String.valueOf(focus.getRating())), STYLE_ATTR_VALUE),
           styled(new Label(state), STYLE_ATTR_RANGE),
           styled(new Label(String.valueOf(ch.isCreated() ? foci.getBindingKarma(focus) : focus.getRating())),

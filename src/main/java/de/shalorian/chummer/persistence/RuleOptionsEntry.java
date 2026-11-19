@@ -10,6 +10,7 @@ class RuleOptionsEntry {
   public boolean limbArmorAverage;
   public boolean lateAwakening;
   public boolean missedLifestylePayments;
+  public boolean decoupleAtCreation;
   /** Kürzel der zugeschalteten Zusatzbände; das Grundregelwerk ist immer aktiv und wird nicht gespeichert. */
   public @NonNull List<String> books = new ArrayList<>();
 
@@ -17,7 +18,8 @@ class RuleOptionsEntry {
   }
 
   RuleOptionsEntry(boolean limbArmorAverage, boolean lateAwakening, boolean missedLifestylePayments,
-      @NonNull List<String> books) {
+      boolean decoupleAtCreation, @NonNull List<String> books) {
+    this.decoupleAtCreation = decoupleAtCreation;
     this.limbArmorAverage = limbArmorAverage;
     this.lateAwakening = lateAwakening;
     this.missedLifestylePayments = missedLifestylePayments;

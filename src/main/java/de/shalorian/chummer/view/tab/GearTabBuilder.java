@@ -4,6 +4,8 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
+import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.installButton;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
@@ -168,9 +170,7 @@ final class GearTabBuilder {
     useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(_ -> onAddGear(character));
 
-    Button installBtn = new Button("In ausgewählten Gegenstand einbauen");
-    installBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(installBtn, FontAwesomeSolid.MICROCHIP);
+    Button installBtn = installButton("In ausgewählten Gegenstand einbauen");
     // Bindung an die Baumauswahl (UI-Zustand); die Kategorie eines Gegenstands ändert sich nie.
     installBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       Gear gear = selectedGear(tree);
@@ -308,6 +308,9 @@ final class GearTabBuilder {
           skillsoftToggle(gear, character, host, onChanged));
     }
     details.getChildren().addAll(title, grid);
+    if (gear.getGmFreeNuyen() > 0) {
+      details.getChildren().add(gmFreeHint(Numbers.nuyen(gear.getGmFreeNuyen())));
+    }
     if (!d.note().isEmpty()) {
       Label note = detailHint(d.note());
       note.setWrapText(true);

@@ -14,6 +14,8 @@ public class Lifestyle {
   /** Mindestens ein Monat muss bezahlt sein (eine Unterkunft braucht jeder, GRW S. 111). */
   public static final int MIN_MONTHS = 1;
 
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht ins Restgeld. */
+  private int gmFreeNuyen;
   private @NonNull LifestyleLevel level;
   private int months;
   private int missedMonths;
@@ -137,5 +139,14 @@ public class Lifestyle {
   /** Tilgt die offenen Schulden; gebucht wird beim Aufrufer. */
   public void payDebt() {
     debt = 0;
+  }
+
+  /** Gratis-Anteil (Nuyen) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeNuyen() {
+    return gmFreeNuyen;
+  }
+
+  public void setGmFreeNuyen(int gmFreeNuyen) {
+    this.gmFreeNuyen = Math.max(0, gmFreeNuyen);
   }
 }

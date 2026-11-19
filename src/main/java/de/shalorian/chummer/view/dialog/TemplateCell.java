@@ -1,6 +1,5 @@
 package de.shalorian.chummer.view.dialog;
 
-import de.shalorian.chummer.model.character.rulebook.RulebookData;
 import de.shalorian.chummer.model.character.rulebook.RulebookDataLoader;
 import de.shalorian.chummer.model.template.DocumentTemplate;
 import java.util.List;
@@ -8,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -43,11 +41,6 @@ final class TemplateCell extends ListCell<DocumentTemplate> {
     } else {
       setText(text);
     }
-    setTooltip(new Tooltip(bookName(template.source()) + ", S. " + template.page()));
-  }
-
-  private static @NonNull String bookName(@NonNull String code) {
-    return RulebookDataLoader.getAll().stream().filter(b -> b.code().equals(code)).map(RulebookData::name)
-        .findFirst().orElse(code);
+    setTooltip(new Tooltip(RulebookDataLoader.describeSource(template.source(), String.valueOf(template.page()))));
   }
 }

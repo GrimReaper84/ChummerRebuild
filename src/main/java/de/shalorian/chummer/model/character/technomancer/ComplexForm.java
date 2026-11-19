@@ -22,6 +22,8 @@ public class ComplexForm {
 
   private static final int KARMA_PER_RATING = 1;
 
+  /** Gratis-Anteil (BP) aus dem Spielleiter-Modus bei der Erschaffung, ADR-070; zählt nicht gegen die 400 BP. */
+  private int gmFreeBp;
   private final @NonNull ComplexFormData data;
   private int rating = MIN_RATING;
 
@@ -62,5 +64,14 @@ public class ComplexForm {
    */
   public int getKarmaCost(int currentRating) {
     return currentRating == 0 ? KARMA_NEW : (currentRating + 1) * KARMA_PER_RATING;
+  }
+
+  /** Gratis-Anteil (BP) aus dem Spielleiter-Modus bei der Erschaffung (ADR-070). */
+  public int getGmFreeBp() {
+    return gmFreeBp;
+  }
+
+  public void setGmFreeBp(int gmFreeBp) {
+    this.gmFreeBp = Math.max(0, gmFreeBp);
   }
 }

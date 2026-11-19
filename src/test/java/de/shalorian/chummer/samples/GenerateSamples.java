@@ -176,6 +176,7 @@ public final class GenerateSamples {
     options.setLimbArmorAverage(true);
     options.setLateAwakening(true);
     options.setMissedLifestylePayments(true);
+    options.setDecoupleAtCreation(true);
     options.setBookEnabled("SM", true);
     return c;
   }

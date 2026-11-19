@@ -7,6 +7,9 @@ import org.jspecify.annotations.Nullable;
 
 class ArmorEntry {
 
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeNuyen;
+
   public @NonNull String name = "";
   public boolean equipped = true;
   /** Gewählter Kleidungspreis, sonst {@code null}; fehlt in Dateien vor 2026-11-12. */

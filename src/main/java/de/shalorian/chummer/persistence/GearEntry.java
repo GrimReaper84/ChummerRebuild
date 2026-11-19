@@ -7,6 +7,11 @@ import org.jspecify.annotations.Nullable;
 
 class GearEntry {
 
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeNuyen;
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeBindingBp;
+
   public @NonNull String name = "";
   /** Gewählte Stufe, {@code 0} bei Gegenständen ohne Stufe. */
   public int rating = 0;

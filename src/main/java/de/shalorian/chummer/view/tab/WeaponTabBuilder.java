@@ -5,6 +5,8 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
+import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.installButton;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
@@ -219,9 +221,7 @@ final class WeaponTabBuilder {
     useIcon(addBtn, FontAwesomeSolid.PLUS);
     addBtn.setOnAction(_ -> onAddWeapon(character));
 
-    Button addAccessoryBtn = new Button("Zubehör zur ausgewählten Waffe hinzufügen");
-    addAccessoryBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addAccessoryBtn, FontAwesomeSolid.WRENCH);
+    Button addAccessoryBtn = installButton("Zubehör in die ausgewählte Waffe einbauen");
     // Bindungen an die Baumauswahl (UI-Zustand); die Kategorie einer Waffe ändert sich nie.
     addAccessoryBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       Weapon weapon = selectedWeapon(tree);
@@ -310,6 +310,9 @@ final class WeaponTabBuilder {
     Label title = new Label(d.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
     details.getChildren().addAll(title, buildValueGrid(d));
+    if (weapon.getGmFreeNuyen() > 0) {
+      details.getChildren().add(gmFreeHint(Numbers.nuyen(weapon.getGmFreeNuyen())));
+    }
     if (weapon.getData().category().usesAmmunition() && !weapon.getData().builtIn()) {
       details.getChildren().add(ammoSelector(weapon, character));
     }
@@ -334,6 +337,9 @@ final class WeaponTabBuilder {
     ComboBox<Gear> box = new ComboBox<>();
     box.setConverter(new AmmoStringConverter());
     box.setPromptText(STANDARD_AMMO);
+    // feste Breite: sonst springt das Feld mit der Länge des gewählten Namens
+    box.setPrefWidth(260);
+    box.setMinWidth(Region.USE_PREF_SIZE);
     box.getItems().setAll(character.getEquipment().getAmmoCandidates(weapon));
     Gear loaded = character.getEquipment().getLoadedAmmo(weapon);
     box.setValue(loaded);

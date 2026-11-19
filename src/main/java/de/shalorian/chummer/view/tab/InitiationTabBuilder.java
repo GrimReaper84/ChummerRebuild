@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
 import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
@@ -150,10 +151,10 @@ public final class InitiationTabBuilder {
       container.getChildren().add(empty);
       return;
     }
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
-    addHeaderRow(grid, kind.getTechniqueName(), "Wirkung", "Quelle");
+    addHeaderRow(grid, kind.getTechniqueName(), "Wirkung");
     int row = 1;
     for (TechniqueData technique : learned) {
       int count = initiation.count(technique);
@@ -162,8 +163,8 @@ public final class InitiationTabBuilder {
       Label effect = styled(new Label(technique.effectText(initiation.getGrade(), count)), "effect-text");
       effect.setWrapText(true);
       effect.setMaxWidth(520);
-      Label source = styled(new Label(technique.source() + " S. " + technique.page()), STYLE_ATTR_RANGE);
-      addRowCells(grid, row++, name, effect, source);
+      addSourceTooltip(name, technique.source(), technique.page());
+      addRowCells(grid, row++, name, effect);
     }
     container.getChildren().add(withRightFiller(grid));
   }

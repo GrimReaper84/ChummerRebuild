@@ -136,7 +136,7 @@ public class Equipment {
 
   /** Gesamtpreis aller eingebauten Implantate in Nuyen (inkl. Grade-Multiplikatoren). */
   public int getCyberwareNuyenCost() {
-    return cyberware.stream().mapToInt(Cyberware::getNuyenCost).sum();
+    return cyberware.stream().mapToInt(c -> charged(c.getNuyenCost(), c.getGmFreeNuyen())).sum();
   }
 
   /**
@@ -231,7 +231,7 @@ public class Equipment {
 
   /** Gesamtpreis aller gekauften Rüstungsteile in Nuyen (angelegt oder nicht). */
   public int getArmorNuyenCost() {
-    return armor.stream().mapToInt(Armor::getNuyenCost).sum();
+    return armor.stream().mapToInt(a -> charged(a.getNuyenCost(), a.getGmFreeNuyen())).sum();
   }
 
   /**
@@ -400,7 +400,7 @@ public class Equipment {
 
   /** Gesamtpreis aller gekauften Waffen in Nuyen. */
   public int getWeaponNuyenCost() {
-    return weapons.stream().mapToInt(Weapon::getTotalNuyenCost).sum();
+    return weapons.stream().mapToInt(w -> charged(w.getTotalNuyenCost(), w.getGmFreeNuyen())).sum();
   }
 
   /**
@@ -661,7 +661,12 @@ public class Equipment {
 
   /** Gesamtpreis aller gekauften Ausrüstungsgegenstände in Nuyen. */
   public int getGearNuyenCost() {
-    return gear.stream().mapToInt(Gear::getNuyenCost).sum();
+    return gear.stream().mapToInt(g -> charged(g.getNuyenCost(), g.getGmFreeNuyen())).sum();
+  }
+
+  /** Preis abzüglich des Gratis-Anteils aus dem Spielleiter-Modus (ADR-070), nie negativ. */
+  private static int charged(int cost, int gmFree) {
+    return Math.max(0, cost - gmFree);
   }
 
   // --- Fahrzeuge & Drohnen ---
@@ -689,7 +694,7 @@ public class Equipment {
 
   /** Gesamtpreis aller Fahrzeuge samt Ausstattung in Nuyen ({@link Vehicle#getNuyenCost()}). */
   public int getVehicleNuyenCost() {
-    return vehicles.stream().mapToInt(Vehicle::getNuyenCost).sum();
+    return vehicles.stream().mapToInt(v -> charged(v.getNuyenCost(), v.getGmFreeNuyen())).sum();
   }
 
   // --- Lebensstil & Nuyen-Summe ---
@@ -710,6 +715,6 @@ public class Equipment {
    */
   public int getSpentNuyen() {
     return getCyberwareNuyenCost() + getArmorNuyenCost() + getWeaponNuyenCost()
-        + getGearNuyenCost() + getVehicleNuyenCost() + lifestyle.getNuyenCost();
+        + getGearNuyenCost() + getVehicleNuyenCost() + charged(lifestyle.getNuyenCost(), lifestyle.getGmFreeNuyen());
   }
 }

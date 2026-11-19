@@ -410,6 +410,22 @@ das GRW lässt die Optionen bei der Beschwörung wählen. Das C#-Original kennt 
 **Warum:** Beta-Befunde und Nutzerentscheidung 2026-11-19: Gesperrte Knöpfe und Einträge nannten keinen Grund, und
 Dialogkäufe konnten anders als die Knöpfe BP überziehen.
 
+### ADR-070: Käufe im Spielleiter-Modus bei der Erschaffung gratis (2026-11-20)
+Beim Einschalten des Spielleiter-Modus bei der Erschaffung merkt sich der Charakter die Kosten jedes Eintrags
+(`GmAllowance`). Jeder spätere Zuwachs (Neukauf, Einbau, Steigerung von Connection/Loyalität, Stufe einer Komplexen
+Form, Diensten, Lebensstil) wird dem Eintrag als Gratis-Anteil gutgeschrieben (`gmFreeNuyen` bzw. `gmFreeBp`, Fokusbindung
+`gmFreeBindingBp`, Zauber als Namensliste) und zählt nie gegen BP bzw. Restgeld, auch nach dem Ausschalten nicht.
+Gutgeschrieben wird vor jeder BP- und Restgeld-Rechnung, beim Ausschalten und beim Speichern. Der Ausgangsstand je
+Eintrag steigt nur, Senken und erneutes Steigern im Modus schenkt also nichts. Der Gratis-Anteil deckt bis zum
+Höchststand im Modus: Wird ein Eintrag danach ohne Modus gesenkt und wieder gesteigert, bleibt das bis dahin gratis
+(Spielleiter-Werkzeug, bewusst einfach). Gaben und Handicaps: Der Gratis-Haken ist im Modus vorbelegt, ein vom
+Spielleiter vergebenes Handicap bringt also keine BP (Eingriffe belasten das Budget weder, noch stocken sie es auf).
+Die Oberfläche fragt nach jeder Änderung `consumeGmCredit()` ab und baut bei einer Gutschrift einmal neu auf, weil die
+Tabs beim Aufbau schon vor der Gutschrift lesen. Attribut-, Fertigkeits- und Wissenspunkte zählen weiter. Gratis-Einträge tragen „(gratis)“ am Namen bzw.
+einen Hinweis im Detail. In der Karriere bleibt es wie bisher (keine Buchung im Modus). Alte Dateien: Anteil 0.
+**Warum:** Beta-Befund und Nutzerentscheidungen 2026-11-20: Im Modus kostete die Erschaffung weiter BP und Restgeld.
+`docs/plaene/archiv/gm_gratis_plan.md`.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

@@ -52,6 +52,8 @@ public class CharacterData {
   public @NonNull InitiationEntry initiation = new InitiationEntry();
   /** Geister und Sprites; fehlt in Dateien vor ADR-053. */
   public @NonNull List<SpiritEntry> spirits = new ArrayList<>();
+  /** Im Spielleiter-Modus bei der Erschaffung gratis gelernte Zauber (ADR-070). */
+  public @NonNull List<String> gmFreeSpells = new ArrayList<>();
   public @NonNull List<CyberwareEntry> cyberware = new ArrayList<>();
   public @NonNull List<ArmorEntry> armor = new ArrayList<>();
   public @NonNull List<WeaponEntry> weapons = new ArrayList<>();

@@ -2,6 +2,9 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
+import static de.shalorian.chummer.view.grid.GridSupport.installButton;
+import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -27,6 +30,7 @@ import de.shalorian.chummer.model.character.cyberware.LimbPart;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.MatrixStats;
+import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.dialog.CyberwareSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
@@ -63,9 +67,9 @@ public final class CyberwareTabBuilder {
 
   private static final EssenceStringConverter ESSENCE_FORMAT = new EssenceStringConverter();
   private static final String[] IMPLANT_HEADERS =
-      {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Wirkung", "Quelle", ""};
+      {"Implantat", "Bereich", "Kategorie", "Stufe", "Essenz", "Preis", "Wirkung", ""};
   private static final String[] LIMB_HEADERS =
-      {"Glied", "Werte", "Kategorie", "Stufe", "Essenz", "Preis", "Kapazität", "Quelle", ""};
+      {"Glied", "Werte", "Kategorie", "Stufe", "Essenz", "Preis", "Kapazität", ""};
   /** Einrückung für eingebautes Zubehör und Kommlink unter ihrem Implantat. */
   private static final String CHILD_PREFIX = "   ↳ ";
 
@@ -174,7 +178,7 @@ public final class CyberwareTabBuilder {
    * Implantat-Grid inkl. Kopfzeile (Zeile 0), inhaltsbasierte Spalten analog {@code MagicTabBuilder.buildSpellGrid()}.
    */
   private static @NonNull MigPane buildCyberwareGrid(@NonNull String[] headers) {
-    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][][]");
+    MigPane grid = new MigPane(MIGPANE_HIDEMODE_3, "[][][][center][right][right][][]");
     grid.getStyleClass().add(STYLE_ATTR_GRID);
     VBox.setMargin(grid, new Insets(12, 0, 0, 0));
     addHeaderRow(grid, headers);
@@ -262,12 +266,13 @@ public final class CyberwareTabBuilder {
     String capacity = "Kapazität " + limb.getUsedCapacity() + "/" + limb.getCapacity();
     int armor = limb.getLimbArmor();
     Label effectLabel = styled(new Label(armor == 0 ? capacity : capacity + ", Panzerung " + armor), "effect-text");
-    Label sourceLabel = styled(new Label(sourceText(limb)), STYLE_ATTR_RANGE);
+    addSourceTooltip(nameLabel, limb.getData().source(), limb.getData().page());
+    markGmFree(nameLabel, limb.getGmFreeNuyen() > 0, Numbers.nuyen(limb.getGmFreeNuyen()));
 
     Button attachBtn = actionButton(limb.isAttached() ? "Abnehmen" : "Anschließen",
         limb.isAttached() ? FontAwesomeSolid.UNLINK : FontAwesomeSolid.LINK);
     attachBtn.setOnAction(_ -> onToggleAttached(ch, limb));
-    Button installBtn = actionButton("Einbauen", FontAwesomeSolid.WRENCH);
+    Button installBtn = installButton("Verbesserung oder Zubehör in das Glied einbauen");
     installBtn.setOnAction(_ -> onInstallAccessory(limb));
     Button removeBtn = actionButton("Entfernen", FontAwesomeSolid.TRASH);
     removeBtn.setOnAction(_ -> {
@@ -280,7 +285,7 @@ public final class CyberwareTabBuilder {
       nameLabel.setOpacity(0.6);
     }
     addRowCells(grid, row, nameLabel, valuesLabel, gradeLabel, styled(new Label("–"), STYLE_ATTR_VALUE),
-        essenceLabel, priceLabel, effectLabel, sourceLabel, actions);
+        essenceLabel, priceLabel, effectLabel, actions);
   }
 
   /** Schließt an bzw. nimmt ab; sind danach Stellen mehrfach belegt, nur ein Hinweis (spätere Regelwerke, Surge). */
@@ -338,6 +343,8 @@ public final class CyberwareTabBuilder {
     if (!note.isEmpty()) {
       implantNameLabel.setTooltip(new Tooltip(note));
     }
+    addSourceTooltip(implantNameLabel, implant.getData().source(), implant.getData().page());
+    markGmFree(implantNameLabel, implant.getGmFreeNuyen() > 0, Numbers.nuyen(implant.getGmFreeNuyen()));
     Label categoryLabel = styled(new Label(implant.getData().category()), STYLE_ATTR_RANGE);
     Label gradeLabel = styled(new Label(implant.getGrade().getDisplayName()), STYLE_ATTR_ABBR);
     Label ratingLabel = styled(new Label(implant.getData().hasRating()
@@ -348,7 +355,6 @@ public final class CyberwareTabBuilder {
     Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(implant.getOwnNuyenCost())),
         STYLE_ATTR_BP);
     Label effectLabel = styled(new Label(effectText(implant)), "effect-text");
-    Label sourceLabel = styled(new Label(sourceText(implant)), STYLE_ATTR_RANGE);
 
     HBox actions = new HBox(6);
     actions.setAlignment(Pos.CENTER_LEFT);
@@ -371,7 +377,7 @@ public final class CyberwareTabBuilder {
     actions.getChildren().add(removeBtn);
 
     addRowCells(grid, row, implantNameLabel, categoryLabel, gradeLabel, ratingLabel, essenceLabel,
-        priceLabel, effectLabel, sourceLabel, actions);
+        priceLabel, effectLabel, actions);
   }
 
   /**
@@ -386,6 +392,7 @@ public final class CyberwareTabBuilder {
     if (!note.isEmpty()) {
       nameLabel.setTooltip(new Tooltip(note));
     }
+    addSourceTooltip(nameLabel, accessory.getData().source(), accessory.getData().page());
     Label ratingLabel = styled(new Label(accessory.getData().hasRating()
         ? String.valueOf(accessory.getRating())
         : "–"), STYLE_ATTR_VALUE);
@@ -407,7 +414,7 @@ public final class CyberwareTabBuilder {
     }
     actions.getChildren().add(removeBtn);
     addRowCells(grid, row, nameLabel, new Label(), new Label(), ratingLabel, capacityLabel, priceLabel,
-        new Label(), styled(new Label(sourceText(accessory)), STYLE_ATTR_RANGE), actions);
+        new Label(), actions);
   }
 
   /** Fügt die Zeile des eingebauten Kommlinks von {@code headware} an, falls vorhanden; liefert die nächste Zeile. */
@@ -429,12 +436,11 @@ public final class CyberwareTabBuilder {
     Label nameLabel = styled(new Label(CHILD_PREFIX + commlink.getName() + " (" + os + ")"), STYLE_ATTR_NAME);
     Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(commlink.getNuyenCost())), STYLE_ATTR_BP);
     Label statsLabel = styled(new Label(commlinkStatsText(commlink)), STYLE_ATTR_RANGE);
-    Label sourceLabel = styled(new Label(commlink.getData().source() + " S. " + commlink.getData().page()),
-        STYLE_ATTR_RANGE);
+    addSourceTooltip(nameLabel, commlink.getData().source(), commlink.getData().page());
 
     HBox actions = new HBox(6);
     actions.setAlignment(Pos.CENTER_LEFT);
-    Button installBtn = actionButton("Einbauen", FontAwesomeSolid.MICROCHIP);
+    Button installBtn = installButton("In das Kommlink einbauen");
     installBtn.setOnAction(_ -> onInstallIntoCommlink(commlink));
     actions.getChildren().add(installBtn);
     Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
@@ -444,7 +450,7 @@ public final class CyberwareTabBuilder {
     });
     actions.getChildren().add(removeBtn);
     addRowCells(grid, row, nameLabel, new Label(), new Label(), new Label(), new Label(), priceLabel,
-        statsLabel, sourceLabel, actions);
+        statsLabel, actions);
     int next = row + 1;
     MatrixStats stats = Objects.requireNonNull(commlink.getMatrixStats());
     for (Gear part : commlink.getInstalled()) {
@@ -480,8 +486,9 @@ public final class CyberwareTabBuilder {
       onCyberwareChanged();
     });
     actions.getChildren().add(removeBtn);
+    addSourceTooltip(nameLabel, part.getData().source(), part.getData().page());
     addRowCells(grid, row, nameLabel, new Label(), new Label(), new Label(), new Label(), priceLabel, infoLabel,
-        styled(new Label(part.getData().source() + " S. " + part.getData().page()), STYLE_ATTR_RANGE), actions);
+        actions);
   }
 
   /** Matrixwerte des eingebauten Kommlinks, dieselben Texte wie im Ausrüstungs-Detail ({@link GearDetails}). */
@@ -503,9 +510,6 @@ public final class CyberwareTabBuilder {
     return button;
   }
 
-  private static @NonNull String sourceText(@NonNull Cyberware implant) {
-    return implant.getData().source() + " S. " + implant.getData().page();
-  }
 
   /**
    * Kurzanzeige der rechnenden Wirkungen, z.B. {@code "STR +2, GES +2"} oder {@code "Durchgänge +1"}; bei

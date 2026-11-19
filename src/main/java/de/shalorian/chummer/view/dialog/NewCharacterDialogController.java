@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.template.DocumentTemplate;
 import de.shalorian.chummer.model.template.Templates;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -66,6 +67,7 @@ public class NewCharacterDialogController {
     templateBox.setButtonCell(new TemplateCell());
     templateBox.valueProperty().addListener((_, before, template) -> {
       templateInfo.setText(template == null ? "" : template.description());
+      fitWindow();
       String current = nameField.getText().trim();
       if (template != null && (current.isEmpty() || (before != null && current.equals(before.name())))) {
         nameField.setText(template.name());
@@ -89,6 +91,14 @@ public class NewCharacterDialogController {
     }
     show(List.of(metatypeLabel, metatypeBox), chosen.equals(characterBtn));
     show(List.of(templateLabel, templateBox), chosen.equals(templateBtn));
+    fitWindow();
+  }
+
+  /** Passt das Fenster an den Inhalt an, sonst schiebt eine längere Beschreibung die Buttons aus dem Dialog. */
+  private void fitWindow() {
+    if (stage != null) {
+      Platform.runLater(stage::sizeToScene);
+    }
   }
 
   private static void show(@NonNull List<Node> nodes, boolean visible) {

@@ -27,11 +27,13 @@
         <Label fx:id="metatypeLabel" text="Metatyp:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <ComboBox fx:id="metatypeBox" maxWidth="Infinity"
                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-        <Label fx:id="templateLabel" text="Vorlage:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <!-- Vorlage teilt sich die Zeile mit Metatyp (immer nur eins sichtbar): eine leere Zeile brächte sonst einen
+             zweiten Zeilenabstand -->
+        <Label fx:id="templateLabel" text="Vorlage:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <ComboBox fx:id="templateBox" maxWidth="Infinity"
-                  GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
         <Label fx:id="templateInfo" wrapText="true" maxWidth="280" styleClass="key-caption"
-               GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
     </GridPane>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">

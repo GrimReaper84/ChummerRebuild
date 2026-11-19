@@ -6,6 +6,9 @@ import org.jspecify.annotations.NonNull;
 
 class WeaponEntry {
 
+  /** Gratis-Anteil aus dem Spielleiter-Modus (ADR-070); fehlt in älteren Dateien, dann 0. */
+  public int gmFreeNuyen;
+
   public @NonNull String name = "";
   /** Gewählte Stufe, {@code 0} bei Waffen ohne Stufe. */
   public int rating = 0;

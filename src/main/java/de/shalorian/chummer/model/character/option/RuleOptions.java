@@ -18,6 +18,7 @@ public class RuleOptions {
   private boolean limbArmorAverage;
   private boolean lateAwakening;
   private boolean missedLifestylePayments;
+  private boolean decoupleAtCreation;
   /** Zugeschaltete Zusatzbände (Kürzel); das Grundregelwerk ist immer aktiv und steht nicht darin. */
   private final Set<String> extraBooks = new TreeSet<>();
 
@@ -56,6 +57,18 @@ public class RuleOptions {
   }
 
   /**
+   * Fertigkeitsgruppen schon bei der Erschaffung auskoppeln: Das GRW verbietet es (S. 108), stellt es aber dem
+   * Spielleiter frei.
+   */
+  public boolean isDecoupleAtCreation() {
+    return decoupleAtCreation;
+  }
+
+  public void setDecoupleAtCreation(boolean decoupleAtCreation) {
+    this.decoupleAtCreation = decoupleAtCreation;
+  }
+
+  /**
    * Ob das Regelwerk {@code code} aktiv ist. Das Grundregelwerk und ein leeres Kürzel sind es immer; Zusatzbände nur,
    * wenn zugeschaltet. Neue Charaktere haben nur das Grundregelwerk (Nutzerentscheidung 2026-11-18).
    */
@@ -83,6 +96,7 @@ public class RuleOptions {
     limbArmorAverage = other.limbArmorAverage;
     lateAwakening = other.lateAwakening;
     missedLifestylePayments = other.missedLifestylePayments;
+    decoupleAtCreation = other.decoupleAtCreation;
     extraBooks.clear();
     extraBooks.addAll(other.extraBooks);
   }

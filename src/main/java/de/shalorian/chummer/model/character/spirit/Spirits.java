@@ -210,7 +210,7 @@ public class Spirits {
     if (owner.isCreated()) {
       return 0;
     }
-    return entries.stream().filter(Spirit::isBound).mapToInt(Spirit::getServices).sum();
+    return entries.stream().filter(Spirit::isBound).mapToInt(s -> Math.max(0, s.getServices() - s.getGmFreeBp())).sum();
   }
 
   /**

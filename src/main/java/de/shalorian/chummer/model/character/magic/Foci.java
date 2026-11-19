@@ -131,7 +131,8 @@ public class Foci {
 
   /** BP bei der Erschaffung: 1 je Kraftpunkt gebundener Foki (S. 112, 123); danach 0. */
   public int getBpCost() {
-    return owner.isCreated() ? 0 : getBoundForce();
+    return owner.isCreated() ? 0
+        : getBound().stream().mapToInt(f -> Math.max(0, f.getRating() - f.getGmFreeBindingBp())).sum();
   }
 
   /**

@@ -1,7 +1,9 @@
 package de.shalorian.chummer.model.character;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
@@ -78,5 +80,17 @@ class CharacterRaiseProblemTest {
     c.setGmMode(false);
     c.setCreated(true);
     assertNull(c.getBpShortfallProblem(3));
+  }
+
+  @Test
+  void decouplingAtCreationNeedsRuleOptionOrGmMode() {
+    // GRW S. 108: bei der Erschaffung nicht auflösbar, außer der Spielleiter erlaubt es
+    Character c = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    assertFalse(c.canDecoupleGroups());
+    c.getRuleOptions().setDecoupleAtCreation(true);
+    assertTrue(c.canDecoupleGroups());
+    c.getRuleOptions().setDecoupleAtCreation(false);
+    c.setGmMode(true);
+    assertTrue(c.canDecoupleGroups());
   }
 }
