@@ -5,7 +5,8 @@ import org.jspecify.annotations.NonNull;
 /** Art einer Vorlage; die Reihenfolge ist die der Gruppen in der Vorlagen-Auswahl des Dialogs „Neu“. */
 public enum TemplateKind {
   ARCHETYPE("Archetypen"),
-  NPC_GROUP("Schergengruppen");
+  NPC_GROUP("Schergengruppen"),
+  CRITTER("Critter");
 
   private final @NonNull String displayName;
 

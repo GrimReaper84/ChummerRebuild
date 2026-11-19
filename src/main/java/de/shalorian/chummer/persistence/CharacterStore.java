@@ -36,6 +36,10 @@ import de.shalorian.chummer.model.character.magic.SpellDataLoader;
 import de.shalorian.chummer.model.character.magic.Tradition;
 import de.shalorian.chummer.model.character.metatype.MetatypeData;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import de.shalorian.chummer.model.critter.CritterData;
+import de.shalorian.chummer.model.critter.CritterDataLoader;
+import de.shalorian.chummer.model.critter.CritterMetatype;
+import de.shalorian.chummer.model.critter.CritterTraits;
 import de.shalorian.chummer.model.character.option.RuleOptions;
 import de.shalorian.chummer.model.character.quality.QualityData;
 import de.shalorian.chummer.model.character.quality.QualityDataLoader;
@@ -111,6 +115,13 @@ public class CharacterStore {
     CharacterData data = new CharacterData();
     data.name = character.getName();
     data.metatype = character.getMetatype().name(); // MetatypeData.name() Accessor
+    CritterTraits critter = character.getCritterTraits();
+    if (critter != null) {
+      data.critter = critter.getData().name();
+      data.critterPowers = new ArrayList<>(critter.getPowers());
+      data.critterWeaknesses = new ArrayList<>(critter.getWeaknesses());
+      data.critterSkills = new HashMap<>(critter.getSpecialSkills());
+    }
 
     for (AttributeType type : AttributeType.values()) {
       data.attributes.put(type.name(), character.getAttribute(type).getValue());
@@ -307,8 +318,15 @@ public class CharacterStore {
   static @NonNull Character fromData(@NonNull CharacterData data) {
     String charName = Objects.requireNonNull(data.name, "Name fehlt in Speicherdatei");
     String metatypeName = Objects.requireNonNull(data.metatype, "Metatyp fehlt in Speicherdatei");
-    MetatypeData metatype = MetatypeDataLoader.find(metatypeName);
+    CritterData critter = data.critter == null ? null
+        : Objects.requireNonNull(CritterDataLoader.findByName(data.critter), "Unbekannter Critter: " + data.critter);
+    MetatypeData metatype = critter == null ? MetatypeDataLoader.find(metatypeName) : CritterMetatype.of(critter);
     Character character = new Character(charName, metatype);
+    if (critter != null) {
+      CritterTraits traits = new CritterTraits(critter, data.critterPowers, data.critterWeaknesses);
+      data.critterSkills.forEach(traits::setSpecialSkill);
+      character.setCritterTraits(traits);
+    }
     // Regel-Einstellungen vor allem anderen, damit jede spätere Berechnung schon mit ihnen läuft.
     applyRuleOptions(character, data);
 

@@ -6,6 +6,7 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.adept.AdeptPower;
 import de.shalorian.chummer.model.character.armor.Armor;
+import de.shalorian.chummer.model.character.attribute.AttributeRange;
 import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.attribute.SpecialAttribute;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
@@ -22,6 +23,13 @@ import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.critter.CritterMetatype;
+import de.shalorian.chummer.model.critter.CritterPowerData;
+import de.shalorian.chummer.model.critter.CritterPowerDataLoader;
+import de.shalorian.chummer.model.critter.CritterTraits;
+import de.shalorian.chummer.model.critter.CritterWeaknessData;
+import de.shalorian.chummer.model.critter.CritterWeaknessDataLoader;
+import de.shalorian.chummer.model.critter.NaturalWeapon;
 import de.shalorian.chummer.model.npc.NpcStatblock;
 import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.MetatypeStringConverter;
@@ -36,6 +44,7 @@ import de.shalorian.chummer.view.tab.TabServices;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -44,6 +53,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -56,7 +66,9 @@ import org.jspecify.annotations.Nullable;
  * Ein Werteblock auf dem Schergen-Bogen im Stil des GRW (S. 325–328): Attributzeile K G R S C I L W (M) ESS INI ID ZM,
  * darunter Fertigkeiten mit Würfelpool, Gaben, Implantate, Zauber, Adeptenkräfte, Waffen mit Pool und Panzerung sowie
  * die sonstige Ausrüstung als Text. Im Bearbeiten-Modus lassen sich alle Teile ändern; Katalogeinträge kommen über die
- * vorhandenen Auswahldialoge. Der Werteblock steht im Spielleiter-Modus, nichts kostet BP, Karma oder Nuyen.
+ * vorhandenen Auswahldialoge. Der Werteblock steht im Spielleiter-Modus, nichts kostet BP, Karma oder Nuyen. Bei
+ * Crittern (ADR-064) zeigt er statt Ausrüstung Bewegung, Kräfte und Schwächen mit Tooltip, natürliche Waffen und
+ * Panzer; Attribute bearbeitet man in der Spanne ±3 des Katalogs (GRW S. 337).
  */
 final class StatblockBuilder {
 
@@ -67,6 +79,8 @@ final class StatblockBuilder {
   private final @NonNull TabServices services;
   private final @NonNull Runnable onChanged;
   private final boolean editing;
+  /** Merkmale, wenn der Werteblock ein Critter ist (GRW S. 337–343), sonst {@code null}. */
+  private final @Nullable CritterTraits critter;
 
   private StatblockBuilder(@NonNull NpcStatblock statblock, @NonNull TabServices services, @NonNull Runnable onChanged,
       boolean editing) {
@@ -75,6 +89,7 @@ final class StatblockBuilder {
     this.services = services;
     this.onChanged = onChanged;
     this.editing = editing;
+    this.critter = c.getCritterTraits();
   }
 
   /**
@@ -107,6 +122,15 @@ final class StatblockBuilder {
       hintLabel.setWrapText(true);
       box.getChildren().add(hintLabel);
     }
+    if (critter != null) {
+      // Critter tragen keine Ausrüstung (Plan-Annahme); Waffen und Panzer kommen aus ihren Kräften
+      box.getChildren().addAll(attributeGrid(), movement(critter), skills(), powers(critter), weaknesses(critter),
+          qualities(), naturalWeapons(critter));
+      if (!c.getQualities().isEmpty()) {
+        box.getChildren().add(magic());
+      }
+      return box;
+    }
     box.getChildren().addAll(attributeGrid(), skills(), qualities(), implants(), magic(), weapons(), armor(), gear());
     return box;
   }
@@ -114,6 +138,10 @@ final class StatblockBuilder {
   // --- Kopf und Attribute ---
 
   private @NonNull Node metatypeNode() {
+    if (critter != null) {
+      return styled(new Label(critter.getData().name() + " · " + critter.getData().category().getDisplayName()),
+          "key-caption");
+    }
     if (!editing) {
       return styled(new Label(c.getMetatype().name()), "key-caption");
     }
@@ -142,13 +170,17 @@ final class StatblockBuilder {
       grid.add(header(type.getAbbreviation()), col, 0);
       grid.add(editing ? attributeSpinner(type) : value(attributeText(type)), col++, 1);
     }
+    if (critter != null) {
+      grid.add(header("EDG"), col, 0);
+      grid.add(editing ? magicSpinner(c.getEdge()) : value(String.valueOf(c.getEdge().getValue())), col++, 1);
+    }
     SpecialAttribute magic = c.getMagicOrResonance();
     if (magic != null) {
       grid.add(header(c.hasMagic() ? "M" : "RES"), col, 0);
       grid.add(editing ? magicSpinner(magic) : value(String.valueOf(c.getEffectiveMagicOrResonanceValue())), col++, 1);
     }
     grid.add(header("ESS"), col, 0);
-    grid.add(value(Numbers.essence(c.getEssence())), col++, 1);
+    grid.add(value(critter != null ? critter.getData().essence() : Numbers.essence(c.getEssence())), col++, 1);
     grid.add(header("INI"), col, 0);
     grid.add(value(String.valueOf(c.getInitiative())), col++, 1);
     grid.add(header("ID"), col, 0);
@@ -212,6 +244,12 @@ final class StatblockBuilder {
       String text = "%s (%s) %d".formatted(knowledge.getName(), knowledge.getCategory().getDisplayName(),
           knowledge.getRating()) + pool.map(p -> " → " + p.dice()).orElse("");
       lines.getChildren().add(line(text, () -> c.removeKnowledgeSkill(knowledge.getName())));
+    }
+    if (critter != null) {
+      for (var special : critter.getSpecialSkills().entrySet()) {
+        lines.getChildren().add(editing ? row(value(special.getKey()), specialSkillSpinner(critter, special.getKey(),
+            special.getValue())) : value(special.getKey() + " " + special.getValue()));
+      }
     }
     if (editing) {
       lines.getChildren().addAll(skillAdder(), groupAdder(), knowledgeAdder());
@@ -282,6 +320,98 @@ final class StatblockBuilder {
       c.getKnowledgeSkills().getLast().setRating(rating.getValue());
     });
     return row(name, category, rating, add);
+  }
+
+  // --- Critter (GRW S. 337–343) ---
+
+  private static @NonNull Node movement(@NonNull CritterTraits critter) {
+    return section("Bewegung", value(critter.getData().movement()));
+  }
+
+  /** Sonderfertigkeit ohne Eintrag in skills.xml (Fliegen) in der Spanne ±3 um den Katalogwert, nicht unter 0. */
+  private @NonNull Node specialSkillSpinner(@NonNull CritterTraits traits, @NonNull String name, int rating) {
+    int base = traits.getData().skills().stream().filter(s -> s.name().equals(name)).mapToInt(s -> s.rating())
+        .findFirst().orElse(rating);
+    AttributeRange range = CritterMetatype.range(base);
+    Spinner<Integer> spinner = new Spinner<>(range.min(), range.max(), rating);
+    spinner.setPrefWidth(64);
+    spinner.valueProperty().addListener((_, _, value) -> {
+      traits.setSpecialSkill(name, value);
+      onChanged.run();
+    });
+    return spinner;
+  }
+
+  private @NonNull Node powers(@NonNull CritterTraits traits) {
+    VBox lines = new VBox(2);
+    for (String power : traits.getPowers()) {
+      CritterPowerData data = CritterPowerDataLoader.findForEntry(power);
+      lines.getChildren().add(line(power, data == null ? null : data.describe(), () -> traits.removePower(power)));
+    }
+    SpecialAttribute magic = c.getMagicOrResonance();
+    if (magic != null && !traits.getPowers().isEmpty()) {
+      lines.getChildren().add(styled(new Label("Hält bis zu %d Kräfte zugleich aufrecht (Magie, S. 337)"
+          .formatted(c.getEffectiveMagicOrResonanceValue())), "key-caption"));
+    }
+    if (magic != null && !c.isMagician()) {
+      lines.getChildren().add(styled(new Label("Ohne die Gabe Zauberer keine Zauber, Beschwörung oder Projektion"
+          + " (S. 337)"), "key-caption"));
+    }
+    if (editing) {
+      lines.getChildren().add(traitAdder(CritterPowerDataLoader.getAll().values().stream()
+          .filter(p -> !p.sprite()).map(CritterPowerData::name).toList(), "Kraft", traits::addPower));
+    }
+    return section("Kräfte", lines);
+  }
+
+  private @NonNull Node weaknesses(@NonNull CritterTraits traits) {
+    VBox lines = new VBox(2);
+    for (String weakness : traits.getWeaknesses()) {
+      CritterWeaknessData data = CritterWeaknessDataLoader.findForEntry(weakness);
+      lines.getChildren().add(line(weakness, data == null ? null : data.describe(),
+          () -> traits.removeWeakness(weakness)));
+    }
+    if (editing) {
+      lines.getChildren().add(traitAdder(CritterWeaknessDataLoader.getAll().values().stream()
+          .map(CritterWeaknessData::name).toList(), "Schwäche", traits::addWeakness));
+    }
+    return lines.getChildren().isEmpty() ? new VBox() : section("Schwächen", lines);
+  }
+
+  /** Auswahl aus dem Katalog plus Zusatztext, z.B. „Allergie“ + „Sonnenlicht, Leicht“. */
+  private @NonNull Node traitAdder(@NonNull List<String> names, @NonNull String prompt,
+      @NonNull Consumer<String> add) {
+    ComboBox<String> box = new ComboBox<>();
+    box.getItems().setAll(names);
+    box.setPromptText(prompt);
+    TextField extra = new TextField();
+    extra.setPromptText("Zusatz");
+    extra.setPrefWidth(200);
+    return row(box, extra, addButton(() -> {
+      if (box.getValue() != null) {
+        String text = extra.getText().trim();
+        add.accept(CritterTraits.entry(box.getValue(), text));
+      }
+    }));
+  }
+
+  /**
+   * Natürliche Waffen mit Pool aus Waffenloser Kampf (S. 340; Fernangriffe wie Elementarer Angriff nutzen Exotische
+   * Fernkampfwaffe und stehen als Kraft da) und der Panzer aus den Kräften.
+   */
+  private @NonNull Node naturalWeapons(@NonNull CritterTraits traits) {
+    VBox lines = new VBox(2);
+    Skill unarmed = c.getSkill("Waffenloser Kampf");
+    String pool = unarmed == null ? "" : c.getSkillDicePool(unarmed).map(p -> " → " + p.dice()).orElse("");
+    for (NaturalWeapon weapon : traits.getNaturalWeapons()) {
+      lines.getChildren().add(value("%s: %s, PB %d%s%s".formatted(weapon.name(), weapon.damage(), weapon.ap(),
+          optional(", ", weapon.extra()), pool)));
+    }
+    if (c.getArmorBallistic() > 0 || c.getArmorImpact() > 0) {
+      lines.getChildren().add(value("Panzer %d/%d%s".formatted(c.getArmorBallistic(), c.getArmorImpact(),
+          traits.isHardened() ? " (verstärkt: Schaden bis zur Panzerung prallt ab)" : "")));
+    }
+    return lines.getChildren().isEmpty() ? new VBox() : section("Kampf", lines);
   }
 
   // --- Gaben, Implantate, Magie ---
@@ -487,7 +617,15 @@ final class StatblockBuilder {
 
   /** Zeile mit Text und, im Bearbeiten-Modus, einem Entfernen-Knopf. */
   private @NonNull Node line(@NonNull String text, @NonNull Runnable remove) {
+    return line(text, null, remove);
+  }
+
+  /** Wie {@link #line(String, Runnable)} mit Tooltip, z.B. der Wirkung einer Critterkraft. */
+  private @NonNull Node line(@NonNull String text, @Nullable String tooltip, @NonNull Runnable remove) {
     Label label = value(text);
+    if (tooltip != null) {
+      label.setTooltip(new Tooltip(tooltip));
+    }
     if (!editing) {
       return label;
     }

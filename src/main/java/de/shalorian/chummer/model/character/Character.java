@@ -56,6 +56,8 @@ import de.shalorian.chummer.model.character.technomancer.ComplexForm;
 import de.shalorian.chummer.model.character.technomancer.ComplexFormData;
 import de.shalorian.chummer.model.character.technomancer.LivingPersona;
 import de.shalorian.chummer.model.character.vehicle.Vehicle;
+import de.shalorian.chummer.model.critter.CritterMetatype;
+import de.shalorian.chummer.model.critter.CritterTraits;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.utils.Numbers;
 import java.math.BigDecimal;
@@ -152,6 +154,7 @@ public class Character {
   private @NonNull MetatypeData metatype;
   private @NonNull SpecialAttribute edge;
   private @Nullable SpecialAttribute magicOrResonance;
+  private @Nullable CritterTraits critter;
   private @NonNull Tradition tradition = Tradition.HERMETIC;
   private boolean created = false;
   private int nuyenBP = 0;
@@ -409,6 +412,33 @@ public class Character {
     }
   }
 
+  /** Critter-Essenz aus dem Katalog; Würfelangaben wie „2W6 − 1“ (Vampir) gelten als 6, der Bogen zeigt den Text. */
+  private static @NonNull BigDecimal critterEssence(@NonNull String essence) {
+    String text = essence.trim().replace(',', '.');
+    return text.matches("\\d+(\\.\\d+)?") ? new BigDecimal(text) : BASE_ESSENCE;
+  }
+
+  /** Was diesen Charakter zum Critter macht, {@code null} bei allen anderen (GRW S. 337–343). */
+  public @Nullable CritterTraits getCritterTraits() {
+    return critter;
+  }
+
+  /**
+   * Macht den Charakter zum Critter, vor dem Setzen der Werte (auch beim Laden). Erwachte Critter haben Magie ohne die Gabe Zauberer (S. 337), in der Spanne ±3
+   * wie die übrigen Attribute.
+   */
+  public void setCritterTraits(@NonNull CritterTraits traits) {
+    this.critter = traits;
+    // Fertigkeitsmaxima des Critters (Katalogwert + 3, sonst 3); hält auch über spätere Gaben-Änderungen
+    skills.values().forEach(this::applyQualityLimits);
+    int magic = traits.getData().magic();
+    if (magic > 0) {
+      AttributeRange range = CritterMetatype.range(magic);
+      magicOrResonance = new SpecialAttribute(SpecialAttributeType.MAGIC, range.min(), range.max(), false);
+      magicOrResonance.setValue(magic);
+    }
+  }
+
   /**
    * Liefert das freigeschaltete Magic- oder Resonance-Sonderattribut, oder {@code null}, wenn der
    * Charakter keine entsprechende Quality besitzt (siehe {@link #hasMagic()}/{@link
@@ -472,6 +502,9 @@ public class Character {
   }
 
   private @NonNull BigDecimal getExactEssence() {
+    if (critter != null) {
+      return critterEssence(critter.getData().essence());
+    }
     BigDecimal cyber = getExactCyberwareEssenceLoss();
     BigDecimal bio = equipment.getBiowareEssenceCost();
     BigDecimal higher = cyber.max(bio);
@@ -520,9 +553,13 @@ public class Character {
    * SR4-Grundregelwerk S. 208: Jeder angebrochene Punkt Essenzverlust senkt Magie und Magiemaximum um
    * je 1 (GRW-Beispiel: Magie 4 bei Essenz 5,8 ergibt Magie 3, Maximum 5) — also
    * {@code ceiling(6 − Essenz)}. Gilt laut GRW S. 111 ebenso für Resonanz. Einheitlich für Erstellungs-
-   * und Karrieremodus (kein modusabhängiger Sonderfall wie im C#-Original).
+   * und Karrieremodus (kein modusabhängiger Sonderfall wie im C#-Original). Critter: kein Abzug, ihre Magie steht
+   * fest im Katalog (GRW S. 337).
    */
   public int getEssencePenalty() {
+    if (critter != null) {
+      return 0;
+    }
     return BASE_ESSENCE.subtract(getExactEssence()).setScale(0, RoundingMode.CEILING).intValue();
   }
 
@@ -588,7 +625,7 @@ public class Character {
       magicOrResonance = new SpecialAttribute(SpecialAttributeType.MAGIC, 1, 6, true);
     } else if (resonance && magicOrResonance == null) {
       magicOrResonance = new SpecialAttribute(SpecialAttributeType.RESONANCE, 1, 6, true);
-    } else if (!magic && !resonance) {
+    } else if (!magic && !resonance && (critter == null || critter.getData().magic() == 0)) {
       magicOrResonance = null;
       initiation.clear();
     }
@@ -793,7 +830,15 @@ public class Character {
    */
   private boolean isSkillAccessible(@NonNull Skill skill) {
     return !hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())
-        && isSkillAccessible(skill, isMagician(), hasAstralPerception(), hasResonance());
+        && (critterMagicSkill(skill) || isSkillAccessible(skill, isMagician(), hasAstralPerception(), hasResonance()));
+  }
+
+  /**
+   * Erwachte Critter haben ihre magischen Fertigkeiten auch ohne Gabe (GRW S. 337, wie im C#-Original); ohne die Gabe
+   * Zauberer dürfen sie damit nur keine Zauber wirken, beschwören oder projizieren, das zeigt der Bogen als Hinweis.
+   */
+  private boolean critterMagicSkill(@NonNull Skill skill) {
+    return critter != null && critter.getData().magic() > 0 && skill.getCategory() == SkillCategory.MAGICAL;
   }
 
   private static boolean isSkillAccessible(@NonNull Skill skill, boolean magician, boolean astral,
@@ -1236,8 +1281,12 @@ public class Character {
 
   /** Höchstwert durch Talentiert (S. 117) und Sperre durch Inkompetenz (S. 120) für eine Fertigkeit. */
   private void applyQualityLimits(@NonNull Skill skill) {
-    skill.setMaxRating(hasQualityChoice(QualityBonusType.APTITUDE, skill.getName())
-        ? Skill.MAX_RATING + 1 : Skill.MAX_RATING);
+    if (critter != null) {
+      skill.setMaxRating(critter.getSkillMaximum(skill));
+    } else {
+      skill.setMaxRating(hasQualityChoice(QualityBonusType.APTITUDE, skill.getName())
+          ? Skill.MAX_RATING + 1 : Skill.MAX_RATING);
+    }
     if (hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())) {
       resetLockedSkill(skill);
     }
@@ -1880,10 +1929,13 @@ public class Character {
   }
 
   /**
-   * Initiativedurchgänge: einer, plus die Stufe von Gesteigerte Reflexe (S. 172, 230) bzw. von Reflexbooster oder
+   * Initiativedurchgänge: bei Crittern wie im Katalog; sonst einer, plus die Stufe von Gesteigerte Reflexe (S. 172, 230) bzw. von Reflexbooster oder
    * Synapsenbeschleuniger (S. 389, 394). Die Quellen schließen einander aus ({@link Implants#getBlockReason}).
    */
   public int getInitiativePasses() {
+    if (critter != null) {
+      return critter.getData().passes();
+    }
     return 1 + adeptPowers.level(AdeptPowerEffect.IMPROVED_REFLEXES)
         + implants.level(ImplantEffectType.INITIATIVE_PASSES);
   }
@@ -2468,11 +2520,12 @@ public class Character {
   /**
    * Ballistik-Schutz: angelegte Rüstung ({@link Equipment#getArmorBallistic()}) plus Mystischer Panzer (S. 231) plus
    * Implantatpanzerung (Dermalpanzerung, Titan-Kompositknochen S. 388; Orthoskin S. 393) plus Gliedpanzerung
-   * ({@link Implants#getLimbArmor()}, S. 390).
+   * ({@link Implants#getLimbArmor()}, S. 390) plus Panzer eines Critters (S. 340).
    */
   public int getArmorBallistic() {
     return equipment.getArmorBallistic() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR)
-        + implants.level(ImplantEffectType.ARMOR_BALLISTIC) + implants.getLimbArmor();
+        + implants.level(ImplantEffectType.ARMOR_BALLISTIC) + implants.getLimbArmor()
+        + (critter == null ? 0 : critter.getArmorBallistic());
   }
 
   /**
@@ -2482,7 +2535,8 @@ public class Character {
    */
   public int getArmorImpact() {
     return equipment.getArmorImpact() + adeptPowers.level(AdeptPowerEffect.MYSTIC_ARMOR)
-        + implants.level(ImplantEffectType.ARMOR_IMPACT) + implants.getLimbArmor();
+        + implants.level(ImplantEffectType.ARMOR_IMPACT) + implants.getLimbArmor()
+        + (critter == null ? 0 : critter.getArmorImpact());
   }
 
   // --- Ausrüstung & Nuyen-Budget ---

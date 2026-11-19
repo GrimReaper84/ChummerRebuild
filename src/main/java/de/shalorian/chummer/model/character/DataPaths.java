@@ -24,6 +24,9 @@ public final class DataPaths {
   public static final String BOOKS_XML = "/de/shalorian/chummer/data/books.xml";
   public static final String NPCS_XML = "/de/shalorian/chummer/data/npcs.xml";
   public static final String ARCHETYPES_XML = "/de/shalorian/chummer/data/archetypes.xml";
+  public static final String CRITTERS_XML = "/de/shalorian/chummer/data/critters.xml";
+  public static final String CRITTER_POWERS_XML = "/de/shalorian/chummer/data/critter_powers.xml";
+  public static final String CRITTER_WEAKNESSES_XML = "/de/shalorian/chummer/data/critter_weaknesses.xml";
 
   private DataPaths() {}
 }

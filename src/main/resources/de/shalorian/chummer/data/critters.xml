@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Critter des SR4-Grundregelwerks (S. 343–351, PDF 344–352): gewöhnliche Critter, Paracritter und Dracoformen; Geister
+  stehen in spirits.xml. Werte am Seitenbild abgelesen 2026-11-19 (Initiative = Reaktion + Intuition bei allen geprüft),
+  Beschreibungen in eigenen Worten. <attributes> K G R S C I L W EDG, MAG nur bei Erwachten; <essence> und <movement>
+  als Text wie im GRW; <passes> Initiativedurchgänge. <skill> Aktionsfertigkeit, <group> Fertigkeitsgruppe,
+  <knowledge detail="Kategorie">, <special> Critter-Fertigkeit ohne Eintrag in skills.xml (Fliegen, S. 337).
+  <quality>: Gabe, die der Critter laut GRW immer hat (Zauberer bei Wendigo und Dracoformen).
+  <power> und <weakness>: Katalogname aus critter_powers.xml bzw. critter_weaknesses.xml, Zusatz in Klammern.
+  Natürliche Waffe: „Name: Schaden 5K, PB 0“; Panzer: „(Ballistisch/Stoß)“. Dracoformen: gemeinsame Fertigkeiten und
+  Kräfte (S. 348) bei allen vier eingetragen; Leviathan schwimmt statt zu fliegen.
+-->
+<critters>
+    <critter category="ORDINARY" page="344">
+        <name>Großkatze</name>
+        <attributes BOD="6" AGI="5" REA="4" STR="5" CHA="3" INT="3" LOG="2" WIL="3" EDG="4"/>
+        <essence>6</essence>
+        <passes>2</passes>
+        <movement>10/60</movement>
+        <skill rating="3">Infiltration</skill>
+        <skill rating="3">Spurenlesen</skill>
+        <skill rating="4">Waffenloser Kampf</skill>
+        <skill rating="2">Wahrnehmung</skill>
+        <power>Natürliche Waffe (Krallen/Biss: Schaden 5K, PB 0)</power>
+        <note>Steht für alle Wildkatzen wie Löwe, Tiger, Panther oder Puma.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="ORDINARY" page="344">
+        <name>Hai</name>
+        <attributes BOD="3" AGI="5" REA="5" STR="3" CHA="1" INT="4" LOG="1" WIL="2" EDG="2"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>20/60 (schwimmend)</movement>
+        <skill rating="4">Schwimmen</skill>
+        <skill rating="4">Waffenloser Kampf</skill>
+        <skill rating="2">Wahrnehmung</skill>
+        <power>Natürliche Waffe (Biss: Schaden 5K, PB 0)</power>
+        <note>Werte eines Bullenhais; Tigerhai und Weißer Hai sind größer und gefährlicher.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="ORDINARY" page="344">
+        <name>Hund</name>
+        <attributes BOD="2" AGI="3" REA="3" STR="2" CHA="3" INT="3" LOG="1" WIL="3" EDG="3"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>10/45</movement>
+        <skill rating="2">Einschüchtern</skill>
+        <skill rating="2">Spurenlesen</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="2">Wahrnehmung</skill>
+        <power>Gesteigerte Sinne (Geruch)</power>
+        <power>Natürliche Waffe (Krallen/Biss: Schaden 2K, PB 0)</power>
+        <note>Mittelgroßer bis großer, abgerichteter Hund wie Schäferhund oder Rottweiler.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="ORDINARY" page="344">
+        <name>Pferd</name>
+        <attributes BOD="8" AGI="5" REA="5" STR="8" CHA="3" INT="3" LOG="1" WIL="2" EDG="2"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>20/100</movement>
+        <skill rating="3">Laufen</skill>
+        <note>Reit-, Pack- oder Wildpferd.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="ORDINARY" page="344">
+        <name>Wolf</name>
+        <attributes BOD="2" AGI="3" REA="3" STR="2" CHA="3" INT="3" LOG="2" WIL="3" EDG="3"/>
+        <essence>6</essence>
+        <passes>2</passes>
+        <movement>10/50</movement>
+        <skill rating="2">Infiltration</skill>
+        <skill rating="2">Spurenlesen</skill>
+        <skill rating="4">Waffenloser Kampf</skill>
+        <skill rating="2">Wahrnehmung</skill>
+        <power>Natürliche Waffe (Krallen/Biss: Schaden 2K, PB 0)</power>
+        <note>Jagt im Rudel von zwei bis sechs Tieren, angeführt von einem Alphatier.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="344">
+        <name>Barghest</name>
+        <attributes BOD="7" AGI="5" REA="6" STR="5" CHA="3" INT="3" LOG="1" WIL="3" EDG="4" MAG="4"/>
+        <essence>6</essence>
+        <passes>2</passes>
+        <movement>15/50</movement>
+        <skill rating="4">Einschüchtern</skill>
+        <skill rating="3">Spurenlesen</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="3">Wahrnehmung</skill>
+        <power>Dualwesen</power>
+        <power>Gesteigerte Sinne (Sonar)</power>
+        <power>Grauen</power>
+        <power>Lähmendes Heulen</power>
+        <power>Natürliche Waffe (Biss: Schaden 5K, PB 0)</power>
+        <note>Riesiger, haarloser Hund mit Rückenstacheln und leuchtenden Augen; jagt einzeln, zu zweit oder im Rudel.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="344">
+        <name>Donnervogel</name>
+        <attributes BOD="3" AGI="3" REA="6" STR="3" CHA="1" INT="5" LOG="1" WIL="3" EDG="2" MAG="4"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>25/40 (fliegend)</movement>
+        <special rating="3">Fliegen</special>
+        <skill rating="2">Spruchzauberei</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="4">Wahrnehmung</skill>
+        <power>Dualwesen</power>
+        <power>Gesteigerte Sinne (Restlichtverstärkung)</power>
+        <power>Natürlicher Zauberspruch (Blitzstrahl)</power>
+        <power>Natürliche Waffe (Biss/Klauen: Schaden 5K, PB 0)</power>
+        <power>Wetterbeherrschung (Gewitter)</power>
+        <note>Tagaktiver Greifvogel mit großer Spannweite, der elektrische Energie als Blitz entlädt.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="345">
+        <name>Ghul</name>
+        <attributes BOD="7" AGI="3" REA="5" STR="6" CHA="1" INT="4" LOG="2" WIL="5" EDG="3" MAG="1"/>
+        <essence>5</essence>
+        <passes>1</passes>
+        <movement>wie der Metatyp</movement>
+        <skill rating="2">Askennen</skill>
+        <skill rating="4">Infiltration</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="3">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Dualwesen</power>
+        <power>Gesteigerte Sinne (Gehör, Geruch)</power>
+        <power>Natürliche Waffe (Klauen: Schaden 4K, PB 0)</power>
+        <weakness>Allergie (Sonnenlicht, Leicht)</weakness>
+        <weakness>Nahrungsbedarf (metamenschliches Fleisch)</weakness>
+        <weakness>Reduzierte Sinne (blind)</weakness>
+        <note>Werte eines menschlichen Ghuls; andere Metatypen mit deren Attributmodifikatoren. Manche Ghule haben die Gabe Adept, Zauberer oder Magieradept.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="345">
+        <name>Höllenhund</name>
+        <attributes BOD="4" AGI="4" REA="5" STR="4" CHA="3" INT="4" LOG="2" WIL="3" EDG="3" MAG="3"/>
+        <essence>6</essence>
+        <passes>3</passes>
+        <movement>15/50</movement>
+        <skill rating="3">Einschüchtern</skill>
+        <skill rating="4">Exotische Fernkampfwaffe</skill>
+        <skill rating="4">Infiltration</skill>
+        <skill rating="5">Spurenlesen</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="3">Wahrnehmung</skill>
+        <power>Dualwesen</power>
+        <power>Elementarer Angriff (Feuer)</power>
+        <power>Gesteigerte Sinne (Gehör, Geruch, Restlichtverstärkung)</power>
+        <power>Grauen</power>
+        <power>Immunität (Feuer)</power>
+        <power>Natürliche Waffe (Biss: Schaden 4K, PB 0)</power>
+        <note>Schwarzer Jagdhund mit glühenden Augen, der im Rudel jagt und Feuer speien kann.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="345">
+        <name>Merrow</name>
+        <attributes BOD="5" AGI="3" REA="7" STR="7" CHA="3" INT="3" LOG="3" WIL="3" EDG="3" MAG="1"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>15/45 (schwimmend)</movement>
+        <skill rating="3">Askennen</skill>
+        <skill rating="3">Ausweichen</skill>
+        <skill rating="4">Schwimmen</skill>
+        <skill rating="2">Waffenloser Kampf</skill>
+        <skill rating="2">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Dualwesen</power>
+        <weakness>Ungebildet</weakness>
+        <note>Meeresbewohner mit humanoidem Oberkörper und Fischschwanz, nutzt einfache Werkzeuge. Manche Merrows haben die Gabe Adept, Zauberer oder Magieradept.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="346">
+        <name>Naga</name>
+        <attributes BOD="5" AGI="2" REA="4" STR="6" CHA="4" INT="4" LOG="3" WIL="3" EDG="4" MAG="4"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>5/20</movement>
+        <skill rating="4">Askennen</skill>
+        <skill rating="2">Klettern</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="4">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Gift</power>
+        <power>Dualwesen</power>
+        <power>Natürliche Waffe (Biss: Schaden 5K, PB 0)</power>
+        <power>Panzer (2/3)</power>
+        <power>Schutz</power>
+        <weakness>Ungebildet</weakness>
+        <note>Große, intelligente Schlange, oft als Wächter eingesetzt. Manche Nagas haben die Gabe Adept, Zauberer oder Magieradept.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="346">
+        <name>Riesenratte</name>
+        <attributes BOD="2" AGI="5" REA="5" STR="1" CHA="5" INT="5" LOG="2" WIL="3" EDG="2" MAG="3"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>2/10</movement>
+        <skill rating="3">Ausweichen</skill>
+        <skill rating="4">Infiltration</skill>
+        <skill rating="3">Klettern</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="2">Wahrnehmung</skill>
+        <power>Immunität (Toxine)</power>
+        <power>Natürliche Waffe (Biss: Schaden 1K, PB 0, Reichweite −1)</power>
+        <power>Tierbeherrschung (gewöhnliche Ratten)</power>
+        <power>Verschleierung (nur selbst)</power>
+        <weakness>Allergie (Sonnenlicht, Leicht)</weakness>
+        <note>Nachtaktive, nackte Ratte von bis zu einem Meter Länge, jagt in großen Rudeln.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="346">
+        <name>Sasquatch</name>
+        <attributes BOD="8" AGI="3" REA="3" STR="7" CHA="3" INT="3" LOG="3" WIL="2" EDG="4" MAG="3"/>
+        <essence>6</essence>
+        <passes>1</passes>
+        <movement>15/35</movement>
+        <group rating="2">Athletik</group>
+        <skill rating="3">Askennen</skill>
+        <skill rating="4">Handwerk</skill>
+        <skill rating="3">Infiltration</skill>
+        <knowledge rating="5" detail="PROFESSIONAL">Tierstimmen</knowledge>
+        <skill rating="4">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Dualwesen</power>
+        <power>Mimikry</power>
+        <note>Großer, friedlicher Humanoider und anerkanntes fühlendes Wesen; Reichweitenbonus +1. Manche haben die Gabe Adept, Zauberer oder Magieradept.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="346">
+        <name>Vampir</name>
+        <attributes BOD="3" AGI="5" REA="5" STR="3" CHA="5" INT="4" LOG="3" WIL="4" EDG="3" MAG="3"/>
+        <essence>2W6 − 1</essence>
+        <passes>2</passes>
+        <movement>10/25</movement>
+        <skill rating="4">Beschatten</skill>
+        <skill rating="3">Infiltration</skill>
+        <skill rating="3">Waffenloser Kampf</skill>
+        <skill rating="3">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Essenzentzug</power>
+        <power>Gesteigerte Sinne (Gehör, Geruch, Infrarotsicht)</power>
+        <power>Immunität (Alter, Pathogene, Gifte)</power>
+        <power>Infektion</power>
+        <power>Natürliche Waffe (Biss: Schaden 2K, PB 0, Reichweite −1)</power>
+        <power>Nebelgestalt</power>
+        <power>Regeneration</power>
+        <weakness>Allergie (Holz, Schwer)</weakness>
+        <weakness>Allergie (Sonnenlicht, Mittel)</weakness>
+        <weakness>Essenzverlust</weakness>
+        <weakness>Nahrungsbedarf (Blut)</weakness>
+        <note>Vom MMVV verwandelter Metamensch, der sich von Blut und Essenz nährt; −4 beim Schwimmen, wird bei Luftmangel bewusstlos. Manche haben die Gabe Adept, Zauberer oder Magieradept.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="PARACRITTER" page="347">
+        <name>Wendigo</name>
+        <attributes BOD="6" AGI="2" REA="3" STR="5" CHA="4" INT="3" LOG="3" WIL="3" EDG="3" MAG="3"/>
+        <essence>2W6 − 1</essence>
+        <passes>2</passes>
+        <movement>10/25</movement>
+        <skill rating="2">Askennen</skill>
+        <skill rating="2">Astralkampf</skill>
+        <group rating="2">Beschwören</group>
+        <skill rating="3">Einschüchtern</skill>
+        <group rating="3">Hexerei</group>
+        <skill rating="3">Infiltration</skill>
+        <skill rating="4">Waffenloser Kampf</skill>
+        <skill rating="3">Wahrnehmung</skill>
+        <power>Einfluss</power>
+        <power>Essenzentzug</power>
+        <power>Gesteigerte Sinne (Gehör, Geruch, Restlichtverstärkung, Sehschärfe)</power>
+        <power>Grauen</power>
+        <power>Immunität (Alter, Pathogene, Toxine)</power>
+        <power>Infektion</power>
+        <power>Natürliche Waffe (Biss/Klauen: Schaden 5K, PB 0)</power>
+        <power>Regeneration</power>
+        <weakness>Allergie (Eisenhaltige Metalle, Mittel)</weakness>
+        <weakness>Allergie (Sonnenlicht, Mittel)</weakness>
+        <weakness>Essenzverlust</weakness>
+        <weakness>Nahrungsbedarf (metamenschliches Fleisch)</weakness>
+        <quality>Zauberer</quality>
+        <note>Vom MMVV verwandelter Ork mit weißem Fell, der von Metamenschenfleisch lebt. Alle Wendigos haben die Gabe Zauberer (S. 118).</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="DRACOFORM" page="350">
+        <name>Gefiederte Schlange</name>
+        <attributes BOD="12" AGI="4" REA="8" STR="30" CHA="8" INT="8" LOG="8" WIL="8" EDG="6" MAG="9"/>
+        <essence>6 + 1W6</essence>
+        <passes>2</passes>
+        <movement>15/50 (30/100 fliegend)</movement>
+        <skill rating="8">Askennen</skill>
+        <group rating="6">Beschwören</group>
+        <skill rating="6">Exotische Fernkampfwaffe</skill>
+        <special rating="6">Fliegen</special>
+        <group rating="8">Hexerei</group>
+        <skill rating="6">Waffenloser Kampf</skill>
+        <skill rating="6">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Drachensprache</power>
+        <power>Dualwesen</power>
+        <power>Elementarer Angriff (normalerweise Feuer)</power>
+        <power>Gesteigerte Sinne (Breitbandhören, Infrarotsicht, Restlichtverstärkung, verbesserter Geruch)</power>
+        <power>Mystischer Panzer (8)</power>
+        <power>Natürliche Waffe (Biss/Klauen: Schaden 10K, PB −2)</power>
+        <power>Verstärkter Panzer (8/8)</power>
+        <quality>Zauberer</quality>
+        <note>Dracoform aus Süd- und Mittelamerika und Afrika mit langem Körper, Schwingen und gefiederter Halskrause. Magie gleich Essenz (6 + 1W6), hier mit 9 angesetzt. Dracoformen sollten als Top-Runner gespielt werden (S. 328); alle haben die Gabe Zauberer und kennen viele Zauber; Reichweitenbonus +2. Individuelle Kräfte je Drache möglich: Ätzender Speichel, Gift, Grauen, Einfluss, Tierbeherrschung, Übler Atem, Zwang. Große Drachen: siehe S. 351.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="DRACOFORM" page="350">
+        <name>Leviathan</name>
+        <attributes BOD="13" AGI="4" REA="8" STR="35" CHA="8" INT="8" LOG="8" WIL="8" EDG="6" MAG="9"/>
+        <essence>6 + 1W6</essence>
+        <passes>2</passes>
+        <movement>15/30 (30/75 schwimmend)</movement>
+        <skill rating="8">Askennen</skill>
+        <group rating="6">Beschwören</group>
+        <skill rating="6">Exotische Fernkampfwaffe</skill>
+        <group rating="8">Hexerei</group>
+        <skill rating="6">Waffenloser Kampf</skill>
+        <skill rating="6">Wahrnehmung</skill>
+        <skill rating="6">Schwimmen</skill>
+        <power>Bewusstsein</power>
+        <power>Drachensprache</power>
+        <power>Dualwesen</power>
+        <power>Elementarer Angriff (normalerweise Feuer)</power>
+        <power>Gesteigerte Sinne (Breitbandhören, Infrarotsicht, Restlichtverstärkung, verbesserter Geruch)</power>
+        <power>Mystischer Panzer (8)</power>
+        <power>Natürliche Waffe (Biss/Klauen: Schaden 10K, PB −2)</power>
+        <power>Verstärkter Panzer (8/8)</power>
+        <quality>Zauberer</quality>
+        <note>Seedrache der Tiefsee, an Land langsam, im Wasser schnell; atmet Wasser und Luft. Magie gleich Essenz (6 + 1W6), hier mit 9 angesetzt. Dracoformen sollten als Top-Runner gespielt werden (S. 328); alle haben die Gabe Zauberer und kennen viele Zauber; Reichweitenbonus +2. Individuelle Kräfte je Drache möglich: Ätzender Speichel, Gift, Grauen, Einfluss, Tierbeherrschung, Übler Atem, Zwang. Große Drachen: siehe S. 351.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="DRACOFORM" page="350">
+        <name>Östlicher Drache</name>
+        <attributes BOD="14" AGI="8" REA="8" STR="35" CHA="9" INT="8" LOG="10" WIL="8" EDG="6" MAG="9"/>
+        <essence>6 + 1W6</essence>
+        <passes>2</passes>
+        <movement>15/50 (30/100 fliegend)</movement>
+        <skill rating="8">Askennen</skill>
+        <group rating="6">Beschwören</group>
+        <skill rating="6">Exotische Fernkampfwaffe</skill>
+        <special rating="6">Fliegen</special>
+        <group rating="8">Hexerei</group>
+        <skill rating="6">Waffenloser Kampf</skill>
+        <skill rating="6">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Drachensprache</power>
+        <power>Dualwesen</power>
+        <power>Elementarer Angriff (normalerweise Feuer)</power>
+        <power>Gesteigerte Sinne (Breitbandhören, Infrarotsicht, Restlichtverstärkung, verbesserter Geruch)</power>
+        <power>Mystischer Panzer (8)</power>
+        <power>Natürliche Waffe (Biss/Klauen: Schaden 10K, PB −2)</power>
+        <power>Verstärkter Panzer (8/8)</power>
+        <quality>Zauberer</quality>
+        <note>Schlangenförmiger Drache Asiens mit Barthaaren und Hörnern; auch der Sirrush Kleinasiens hat diese Werte. Magie gleich Essenz (6 + 1W6), hier mit 9 angesetzt. Dracoformen sollten als Top-Runner gespielt werden (S. 328); alle haben die Gabe Zauberer und kennen viele Zauber; Reichweitenbonus +2. Individuelle Kräfte je Drache möglich: Ätzender Speichel, Gift, Grauen, Einfluss, Tierbeherrschung, Übler Atem, Zwang. Große Drachen: siehe S. 351.</note>
+        <source>SR4</source>
+    </critter>
+    <critter category="DRACOFORM" page="351">
+        <name>Westlicher Drache</name>
+        <attributes BOD="15" AGI="7" REA="8" STR="40" CHA="8" INT="8" LOG="8" WIL="8" EDG="6" MAG="9"/>
+        <essence>6 + 1W6</essence>
+        <passes>2</passes>
+        <movement>15/40 (30/60 fliegend)</movement>
+        <skill rating="8">Askennen</skill>
+        <group rating="6">Beschwören</group>
+        <skill rating="6">Exotische Fernkampfwaffe</skill>
+        <special rating="6">Fliegen</special>
+        <group rating="8">Hexerei</group>
+        <skill rating="6">Waffenloser Kampf</skill>
+        <skill rating="6">Wahrnehmung</skill>
+        <power>Bewusstsein</power>
+        <power>Drachensprache</power>
+        <power>Dualwesen</power>
+        <power>Elementarer Angriff (normalerweise Feuer)</power>
+        <power>Gesteigerte Sinne (Breitbandhören, Infrarotsicht, Restlichtverstärkung, verbesserter Geruch)</power>
+        <power>Mystischer Panzer (8)</power>
+        <power>Natürliche Waffe (Biss/Klauen: Schaden 10K, PB −2)</power>
+        <power>Verstärkter Panzer (8/8)</power>
+        <quality>Zauberer</quality>
+        <note>Geflügelter Drache Europas und Westasiens mit gehörntem Kopf auf langem Hals. Magie gleich Essenz (6 + 1W6), hier mit 9 angesetzt. Dracoformen sollten als Top-Runner gespielt werden (S. 328); alle haben die Gabe Zauberer und kennen viele Zauber; Reichweitenbonus +2. Individuelle Kräfte je Drache möglich: Ätzender Speichel, Gift, Grauen, Einfluss, Tierbeherrschung, Übler Atem, Zwang. Große Drachen: siehe S. 351.</note>
+        <source>SR4</source>
+    </critter>
+</critters>

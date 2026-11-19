@@ -52,7 +52,7 @@ Package überschaubar bleibt:
 - `view.converter`: JavaFX-`StringConverter`
 - `view.grid`: gemeinsame Zeilen-Bausteine (`RowModel`, `RowControls`, `AttributeRowLabel`, `SkillSortMode`)
 
-`model.npc` enthält die Schergengruppen, `model.template` die Vorlagen für den Dialog „Neu“ (Archetypen,
+`model.npc` enthält die Schergengruppen, `model.critter` die Critter (Kataloge, Merkmale), `model.template` die Vorlagen für den Dialog „Neu“ (Archetypen,
 gemeinsame Bauanleitung `CharacterSpec`). `persistence` und `utils` bleiben flach. Neue Klassen kommen in das Unterpaket ihres Fachbereichs, nicht in die
 Package-Wurzel.
 

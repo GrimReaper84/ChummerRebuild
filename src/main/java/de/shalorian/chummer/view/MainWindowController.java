@@ -7,6 +7,7 @@ import de.shalorian.chummer.model.character.condition.StatusTest;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.npc.NpcGroup;
 import de.shalorian.chummer.model.npc.NpcStatblock;
+import de.shalorian.chummer.model.critter.CritterTemplate;
 import de.shalorian.chummer.model.npc.NpcTemplate;
 import de.shalorian.chummer.model.template.ArchetypeTemplate;
 import de.shalorian.chummer.model.template.DocumentTemplate;
@@ -365,6 +366,11 @@ public class MainWindowController {
         Character character = archetype.create();
         character.setName(name);
         showCharacter(character);
+      }
+      case CritterTemplate critter -> {
+        NpcGroup group = critter.create();
+        group.setName(name);
+        showGroup(group);
       }
       default -> throw new IllegalStateException("Unbekannte Vorlage: " + template.kind());
     }

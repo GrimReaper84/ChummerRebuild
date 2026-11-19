@@ -21,7 +21,7 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Beta-Menü für Entwicklungsläufe (ADR-063, Vorbild Fallout-Projekt ADR-018): öffnet die Archetypen und
- * Schergengruppen der Vorlagen sowie die Testfälle unter {@code samples/} des Ordners aus der Systemeigenschaft
+ * Schergengruppen und Critter der Vorlagen sowie die Testfälle unter {@code samples/} des Ordners aus der Systemeigenschaft
  * {@value #PROPERTY}, jeweils als ungespeicherte Kopie. Nur der Gradle-Task {@code run} setzt die Eigenschaft, nicht
  * {@code applicationDefaultJvmArgs} (das käme in Startskripte und Installer); Release-Builds zeigen das Menü daher nie.
  * Die Testfälle werden beim Aufbau und über „Liste neu laden“ gelesen.
@@ -62,11 +62,12 @@ final class BetaMenu {
     List<DocumentTemplate> templates = Templates.available(new RuleOptions());
     Menu archetypes = templateMenu("Archetypen", TemplateKind.ARCHETYPE, templates, openTemplate);
     Menu groups = templateMenu("Schergengruppen", TemplateKind.NPC_GROUP, templates, openTemplate);
+    Menu critters = templateMenu("Critter", TemplateKind.CRITTER, templates, openTemplate);
     Menu samples = new Menu("Testfälle");
     MenuItem reload = new MenuItem("Liste neu laden");
     reload.setOnAction(_ -> samples.getItems().setAll(sampleItems(folder.resolve(SAMPLES), openSample)));
     samples.getItems().setAll(sampleItems(folder.resolve(SAMPLES), openSample));
-    return new Menu("Beta", null, archetypes, groups, samples, new SeparatorMenuItem(), reload);
+    return new Menu("Beta", null, archetypes, groups, critters, samples, new SeparatorMenuItem(), reload);
   }
 
   private static @NonNull Menu templateMenu(@NonNull String title, @NonNull TemplateKind kind,

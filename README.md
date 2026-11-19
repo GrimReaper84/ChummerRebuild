@@ -50,8 +50,8 @@ Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
 12. ✅ **Einstellungen**: Zahlenformat, Proben im Status, Gliedpanzerung als Durchschnitt, versäumte
     Lebensstilzahlungen, spätes Erwachen latenter Charaktere und die Auswahl der Regelwerke je Charakter.
 13. **Charakterbogen**: Drucken und Exportieren.
-14. **NSCs**: ✅ Schergengruppen mit den Beispielgruppen des Grundregelwerks und Kampfverwaltung; als Nächstes Critter
-    mit ihren Kräften.
+14. **NSCs**: ✅ Schergengruppen mit den Beispielgruppen des Grundregelwerks und Kampfverwaltung; Critter einzeln
+    oder als Rudel mit Kräften und Schwächen.
 15. **Drogen, Toxine und Granaten** (optional): ihre Wirkung statt nur Katalogeinträge.
 
 Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in

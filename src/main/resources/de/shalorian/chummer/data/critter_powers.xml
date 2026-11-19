@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Kräfte der Critter (SR4-Grundregelwerk S. 337–342, PDF 338–343) und der Sprites (S. 283), am Seitenbild übertragen
+  2026-11-19; Wirkungen in eigenen Worten, kein GRW-Wortlaut. Felder wie im GRW: <type> M/P, <action> Auto/Einfach/
+  Komplex, <range> Selbst/B/BF/Speziell, <duration> Immer/Sofort/Aufrechterhalten/Permanent/Speziell; Sprite-Kräfte
+  nennen keine dieser Angaben („–“). <effect> markiert Kräfte, die das Modell rechnet: NATURAL_WEAPON, ARMOR,
+  HARDENED_ARMOR, sonst NONE. Geister (spirits.xml) und Sprites verweisen per Namen hierher.
+-->
+<powers>
+    <power>
+        <name>Astrale Gestalt</name>
+        <type>M</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Existiert nur im Astralraum; nur astrale Angriffe und Manazauber treffen ihn, er wirkt nur mit astraler Wahrnehmung oder auf Dualwesen.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Ätzender Speichel</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Speziell</duration>
+        <effect>NONE</effect>
+        <note>Fernangriff mit Exotische Fernkampfwaffe + Geschicklichkeit, Reichweite Konstitution in Metern; Säureschaden gleich Magie, halbe Stoßpanzerung.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Bewegung</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Multipliziert oder teilt die Bewegungsrate eines Ziels im eigenen Gebiet durch die Magie; bei hoher Konstitution des Ziels schwächer.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Bewusstsein</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Denkt wie ein Metamensch, gilt in fehlenden Fertigkeiten als ungeübt statt ahnungslos und kann Fertigkeiten lernen.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Bindung</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Sofort</duration>
+        <effect>NONE</effect>
+        <note>Lässt das Opfer an einer Oberfläche festkleben; Befreien mit Stärke + Konstitution gegen Magie + Willenskraft.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Dualwesen</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Ständig zugleich in physischer und astraler Welt aktiv; ohne den üblichen Abzug von −2 bei astraler Wahrnehmung.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Einfluss</name>
+        <type>M</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Sofort</duration>
+        <effect>NONE</effect>
+        <note>Pflanzt dem Ziel eine Handlung, Reaktion oder Emotion ein; Magie + Charisma gegen Willenskraft.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Elementarer Angriff</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Sofort</duration>
+        <effect>NONE</effect>
+        <note>Elementarer Fernangriff mit Exotische Fernkampfwaffe + Geschicklichkeit, Schaden gleich Magie, halbe Stoßpanzerung; Element fest gewählt.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Energieaura</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Elementare Aura: +4 Schaden im Nahkampf; wer den Critter im Nahkampf trifft, widersteht Schaden gleich dessen Magie.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Essenzentzug</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>B</range>
+        <duration>Permanent</duration>
+        <effect>NONE</effect>
+        <note>Raubt einem wehrlosen oder willigen Opfer Essenz und kann damit vorübergehend Attribute oder Magie steigern.</note>
+        <source>SR4</source>
+        <page>338</page>
+    </power>
+    <power>
+        <name>Gesteigerte Sinne</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Besondere Sinne über das Menschliche hinaus, etwa Restlichtverstärkung, Infrarotsicht, scharfes Gehör oder Geruch, Sonar.</note>
+        <source>SR4</source>
+        <page>339</page>
+    </power>
+    <power>
+        <name>Gift</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>B</range>
+        <duration>Sofort</duration>
+        <effect>NONE</effect>
+        <note>Natürliches Gift als Toxin, wenn nicht anders angegeben: Injektion, 1 Kampfrunde, Kraft 6, Körperlicher Schaden.</note>
+        <source>SR4</source>
+        <page>339</page>
+    </power>
+    <power>
+        <name>Grauen</name>
+        <type>M</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Speziell</duration>
+        <effect>NONE</effect>
+        <note>Versetzt das Opfer in panische Flucht; Willenskraft + Magie gegen Willenskraft, Dauer je Nettoerfolg 1 Kampfrunde.</note>
+        <source>SR4</source>
+        <page>339</page>
+    </power>
+    <power>
+        <name>Immunität</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Panzerungsstufe gleich doppelter Magie gegen eine Angriffsart, wirkt wie Verstärkter Panzer; auch gegen Alterung oder normale Waffen.</note>
+        <source>SR4</source>
+        <page>339</page>
+    </power>
+    <power>
+        <name>Infektion</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>B</range>
+        <duration>Permanent</duration>
+        <effect>NONE</effect>
+        <note>Ein Opfer mit Essenz 0 durch Essenzentzug wird mit dem Virus infiziert und erwacht als neuer Critter.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Lähmendes Heulen</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>Speziell</range>
+        <duration>Speziell</duration>
+        <effect>NONE</effect>
+        <note>Wer das Heulen hört, verliert Reaktion; Magie + Charisma gegen Willenskraft, bei Reaktion 0 gelähmt.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Materialisierung</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>Selbst</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Ein astraler Critter nimmt physische Gestalt an und erhält dabei Immunität gegen normale Waffen.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Mimikry</name>
+        <type>P</type>
+        <action>Einfach</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Ahmt Geräusche und Stimmen nach; Entlarven gegen Charisma + Magie des Critters.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Mystischer Panzer</name>
+        <type>M</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Natürlicher Schutz gegen astrale Angriffe in Höhe der Stufe; bei manchen Crittern als Verstärkter Panzer.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Natürliche Waffe</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>B</range>
+        <duration>Sofort</duration>
+        <effect>NATURAL_WEAPON</effect>
+        <note>Klauen, Zähne, Stachel o.ä. mit eigenem Schaden und PB; Nahkampf mit Waffenloser Kampf, Fernkampf mit Exotische Fernkampfwaffe.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Natürlicher Zauberspruch</name>
+        <type>wie Zauber</type>
+        <action>Komplex</action>
+        <range>wie Zauber</range>
+        <duration>wie Zauber</duration>
+        <effect>NONE</effect>
+        <note>Wirkt einen bestimmten Zauber instinktiv mit Spruchzauberei, Entzug wie üblich.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Nebelgestalt</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>Selbst</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Verwandelt sich in Nebel (Bewegung 5 m), gleitet durch Ritzen und hat Immunität gegen normale Waffen.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Panzer</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>ARMOR</effect>
+        <note>Natürliche Ballistische und Stoßpanzerung, addiert sich zu getragener Panzerung.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Psychokinese</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Bewegt Dinge telekinetisch mit Stärke und Geschicklichkeit gleich den Erfolgen einer Probe auf Magie + Willenskraft.</note>
+        <source>SR4</source>
+        <page>340</page>
+    </power>
+    <power>
+        <name>Regeneration</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>NONE</effect>
+        <note>Heilt am Ende jeder Kampfrunde Schaden je Erfolg einer Probe auf Magie + Konstitution; nicht gegen magischen Schaden oder Kopftreffer.</note>
+        <source>SR4</source>
+        <page>341</page>
+    </power>
+    <power>
+        <name>Schutz</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Bewahrt Ziele vor Unfällen und natürlichen Gefahren, auf eine Anzahl Ziele gleich Magie.</note>
+        <source>SR4</source>
+        <page>341</page>
+    </power>
+    <power>
+        <name>Suche</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>Speziell</range>
+        <duration>Speziell</duration>
+        <effect>NONE</effect>
+        <note>Findet Personen, Orte oder Dinge mit einer Ausgedehnten Probe auf Magie + Intuition.</note>
+        <source>SR4</source>
+        <page>341</page>
+    </power>
+    <power>
+        <name>Tierbeherrschung</name>
+        <type>M</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Lenkt das Verhalten eines Tiers oder einer Tiergruppe im Rahmen seiner Natur; Anzahl nach Charisma.</note>
+        <source>SR4</source>
+        <page>341</page>
+    </power>
+    <power>
+        <name>Übler Atem</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>Speziell</range>
+        <duration>Sofort</duration>
+        <effect>NONE</effect>
+        <note>Ekelerregender Gestank als eingeatmetes Toxin (Kraft gleich Magie, Geistiger Schaden, Übelkeit); Kegel bis Konstitution Meter.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+    <power>
+        <name>Unfall</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Sofort</duration>
+        <effect>NONE</effect>
+        <note>Lässt dem Ziel scheinbar natürliche Missgeschicke passieren; Magie + Willenskraft gegen Intuition + Reaktion.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+    <power>
+        <name>Verschleierung</name>
+        <type>P</type>
+        <action>Einfach</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Verbirgt sich oder andere; Abzug gleich Magie auf alle Proben, das Verborgene zu finden.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+    <power>
+        <name>Verschlingen</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>B</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Zieht ein Opfer in sein beherrschtes Element und erstickt es; Schaden gleich Magie je Kampfphase.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+    <power>
+        <name>Verstärkter Panzer</name>
+        <type>P</type>
+        <action>Auto</action>
+        <range>Selbst</range>
+        <duration>Immer</duration>
+        <effect>HARDENED_ARMOR</effect>
+        <note>Wie Panzer; übersteigt der modifizierte Schaden die Panzerung nicht, prallt der Angriff ganz ab.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+    <power>
+        <name>Verwirrung</name>
+        <type>M</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Verwirrt das Ziel; die Nettoerfolge von Magie + Willenskraft gegen Willenskraft sind ein Abzug auf alle Handlungen.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+    <power>
+        <name>Wetterbeherrschung</name>
+        <type>P</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Ruft allmählich passendes Wetter herbei, ohne es im Detail zu lenken.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+    <power>
+        <name>Zwang</name>
+        <type>M</type>
+        <action>Komplex</action>
+        <range>BF</range>
+        <duration>Aufrechterhalten</duration>
+        <effect>NONE</effect>
+        <note>Zwingt ein Opfer zu einer bestimmten Handlung; Magie + Charisma gegen Willenskraft + Charisma.</note>
+        <source>SR4</source>
+        <page>342</page>
+    </power>
+
+    <!-- ── Kräfte der Dracoformen ohne Kopfangaben (S. 348, 351) ── -->
+
+    <power>
+        <name>Drachensprache</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Telepathische Verständigung mit Wesen im Blickfeld; Technik kann sie nicht aufzeichnen.</note>
+        <source>SR4</source>
+        <page>348</page>
+    </power>
+    <power>
+        <name>Metamenschliche Gestalt</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Nur Große Drachen: nimmt mit einer Komplexen Handlung die Gestalt eines Metamenschen an.</note>
+        <source>SR4</source>
+        <page>351</page>
+    </power>
+    <power>
+        <name>Schicksalsmacht</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Nur Große Drachen: beeinflusst den Einsatz von Edge anderer und kann eigenes Edge übertragen.</note>
+        <source>SR4</source>
+        <page>351</page>
+    </power>
+
+    <!-- ── Sprite-Kräfte (S. 283) ── -->
+
+    <power sprite="true">
+        <name>Cookie</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Markiert ein Icon und zeichnet dessen Matrixaktivitäten auf.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Diagnose</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Prüft ein Gerät und unterstützt per Teamwork dessen Benutzung oder Reparatur.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Elektronensturm</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Matrixangriff, der jede Handlungsphase Matrixschaden gleich der Stufe verursacht und −2 auf Matrixhandlungen gibt.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Gremlins</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Lässt ein Gerät versagen; bei Erfolg ein Patzer, mit 4 Nettoerfolgen ein kritischer Patzer.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Hash</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Verschlüsselt eine Datei so, dass nur das Sprite sie entschlüsseln kann.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Stabilität</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Schützt Knoten, Gerät, Programm oder Icon vor normalen Fehlfunktionen und mildert kritische Patzer.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Steganografie</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Versteckt Daten in einer anderen Datei, nur mit Matrix-Wahrnehmung (4) zu finden.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Unterdrücken</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Verzögert ausgelöste Alarme um (Stufe ÷ 2, aufgerundet) Kampfrunden.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+    <power sprite="true">
+        <name>Wasserzeichen</name>
+        <type>–</type>
+        <action>–</action>
+        <range>–</range>
+        <duration>–</duration>
+        <effect>NONE</effect>
+        <note>Hinterlässt eine unsichtbare Markierung, die nur Resonanzwesen sehen.</note>
+        <source>SR4</source>
+        <page>283</page>
+    </power>
+</powers>

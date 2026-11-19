@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Schwächen der Critter (SR4-Grundregelwerk S. 343, PDF 344), Wirkungen in eigenen Worten (2026-11-19). -->
+<weaknesses>
+    <weakness>
+        <name>Allergie</name>
+        <note>Unbehagen oder Schaden durch eine Substanz oder Bedingung, in Stufen wie das Handicap Allergie (S. 119).</note>
+        <source>SR4</source>
+        <page>343</page>
+    </weakness>
+    <weakness>
+        <name>Essenzverlust</name>
+        <note>Verliert je Mondzyklus 1 Punkt Essenz und muss sie anderen rauben; bei 0 stirbt der Critter nach einigen Tagen.</note>
+        <source>SR4</source>
+        <page>343</page>
+    </weakness>
+    <weakness>
+        <name>Nahrungsbedarf</name>
+        <note>Braucht regelmäßig eine bestimmte, oft exotische Substanz, sonst wird er krank und stirbt.</note>
+        <source>SR4</source>
+        <page>343</page>
+    </weakness>
+    <weakness>
+        <name>Reduzierte Sinne</name>
+        <note>Einer oder mehrere Sinne sind eingeschränkt, meist halbe Reichweite oder Wirkung, bis zum völligen Fehlen.</note>
+        <source>SR4</source>
+        <page>343</page>
+    </weakness>
+    <weakness>
+        <name>Ungebildet</name>
+        <note>Kaum an die Hightech-Gesellschaft angepasst, wirkt wie das Handicap Ungebildet (S. 121).</note>
+        <source>SR4</source>
+        <page>343</page>
+    </weakness>
+</weaknesses>

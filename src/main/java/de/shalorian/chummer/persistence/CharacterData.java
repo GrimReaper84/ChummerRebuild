@@ -11,6 +11,12 @@ public class CharacterData {
 
   public @Nullable String name;
   public @Nullable String metatype;
+  /** Name aus critters.xml, nur bei Crittern; der Metatyp entsteht dann daraus (ADR-064). */
+  public @Nullable String critter;
+  public @NonNull List<String> critterPowers = new ArrayList<>();
+  public @NonNull List<String> critterWeaknesses = new ArrayList<>();
+  /** Sonderfertigkeiten ohne Eintrag in skills.xml (Fliegen). */
+  public @NonNull Map<String, Integer> critterSkills = new HashMap<>();
   public boolean created = false;
   public int nuyenBP = 0;
   /** Eingetragener Schaden im Zustandsmonitor (Kästchen); fehlt in Dateien vor 2026-11-12. */

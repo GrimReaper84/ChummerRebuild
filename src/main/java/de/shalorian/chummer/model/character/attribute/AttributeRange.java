@@ -3,7 +3,7 @@ package de.shalorian.chummer.model.character.attribute;
 public record AttributeRange(int min, int max) {
 
   public AttributeRange {
-    if (min < 1 || max < min) {
+    if (min < 0 || max < min) {
       throw new IllegalArgumentException(
           "Ungültiger Bereich: [%d/%d]".formatted(min, max));
     }

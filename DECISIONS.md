@@ -312,6 +312,27 @@ Startskripte und Installer); es öffnet Archetypen, Schergengruppen und die Test
 Archetypen sind zugleich Startpunkte für Spieler (S. 105) und ein Abnahmetest der Erschaffungsregeln. Vorbild:
 Fallout-Projekt, ADR-018.
 
+### ADR-064: Critter (2026-11-19)
+Critter sind Werteblöcke auf dem Schergen-Bogen (ADR-062): einzeln eine Gruppe mit einem Mitglied, als Rudel mit
+mehreren (Schergenregeln für Critter-Gruppen, S. 337). Der Werteblock ist ein `Character` im Spielleiter-Modus mit einem
+Metatyp, der aus dem Katalog entsteht: jedes Attribut und Edge in der Spanne Wert ±3, nicht unter 0 (S. 337; dafür
+erlaubt `AttributeRange` jetzt 0). Die Critter-Merkmale (`CritterTraits`) halten Kräfte und Schwächen als Text mit
+Zusatz in Klammern und Sonderfertigkeiten ohne Eintrag in `skills.xml` (Fliegen). Erwachte Critter haben Magie ohne
+Gabe; Initiativedurchgänge und Essenz kommen aus dem Katalog, ohne Essenzabzug auf die Magie; Würfelangaben wie
+„2W6 − 1“ stehen als Text da. Rechnerisch wirken Natürliche Waffe (Schaden und PB aus dem Zusatz, Pool aus Waffenloser
+Kampf, S. 340), Panzer und Verstärkter Panzer (zur Panzerung addiert, S. 340/342); alle übrigen Kräfte sind
+Beschreibung mit Tooltip. Fertigkeiten bis Katalogwert + 3, übrige bis 3; die Grenze wertet `Character` zentral aus,
+damit Gaben sie nicht zurücksetzen. Erwachte Critter haben für ihre magischen Fertigkeiten einen Pool auch ohne Gabe
+(wie im C#-Original); ohne die Gabe Zauberer zeigt der Bogen nur den Hinweis, dass Zauber, Beschwörung und Projektion
+fehlen (S. 337). Wendigo und Dracoformen bringen die Gabe Zauberer aus der Vorlage mit (S. 347/348). Kataloge: `critters.xml` (19 Critter
+S. 343–351, Geister bleiben in `spirits.xml`), `critter_powers.xml` (48 Kräfte inkl. Sprite- und Drachenkräften, auch
+Grundlage der Geister-Tooltips), `critter_weaknesses.xml`. Gespeichert wird der Crittername; beim Laden entsteht der
+Metatyp neu. Critter erscheinen in der gemeinsamen Vorlagenliste (ADR-063) und im Beta-Menü. Dracoformen: Magie gleich
+Essenz (6 + 1W6), angesetzt mit 9.
+**Warum:** Ein Bogen für alle NSCs, kein eigener Charaktertyp; die Spielleitung passt Critter im Rahmen des GRW an und
+führt Rudel wie Schergen. Nur die Kräfte zu rechnen, die Pools und Panzerung ändern, hält die übrigen Regeln dort, wo
+sie hingehören: bei der Spielleitung.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)

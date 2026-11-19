@@ -19,6 +19,8 @@ import de.shalorian.chummer.model.character.spirit.Spirit;
 import de.shalorian.chummer.model.character.spirit.SpiritData;
 import de.shalorian.chummer.model.character.spirit.SpiritKind;
 import de.shalorian.chummer.model.character.spirit.Spirits;
+import de.shalorian.chummer.model.critter.CritterPowerData;
+import de.shalorian.chummer.model.critter.CritterPowerDataLoader;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.SpiritSelectDialogController;
 import java.io.IOException;
@@ -138,7 +140,7 @@ final class SpiritSection {
     addRowCells(grid, row, name, force, serviceBox, state, stats, remove);
   }
 
-  /** Werte, Bewegung, Fertigkeiten, Komplexe Formen, Kräfte, Optionen und Schwächen für den Tooltip. */
+  /** Werte, Bewegung, Fertigkeiten, Komplexe Formen, Kräfte mit Wirkung, Optionen und Schwächen für den Tooltip. */
   private static @NonNull String details(@NonNull SpiritData data, int force) {
     List<String> lines = new ArrayList<>();
     lines.add(data.statsText(force));
@@ -153,6 +155,15 @@ final class SpiritSection {
     lines.add("Optional, %d wählbar: %s".formatted(data.optionalCount(force), String.join(", ", data.optional())));
     if (!data.weaknesses().isEmpty()) {
       lines.add("Schwächen: " + String.join(", ", data.weaknesses()));
+    }
+    // Wirkung jeder Kraft aus dem gemeinsamen Kräftekatalog (critter_powers.xml, ADR-064)
+    List<String> names = new ArrayList<>(data.powers());
+    names.addAll(data.optional());
+    for (String power : names) {
+      CritterPowerData powerData = CritterPowerDataLoader.findForEntry(power);
+      if (powerData != null) {
+        lines.add("• " + powerData.name() + ": " + powerData.note());
+      }
     }
     lines.add(data.source() + " S. " + data.page());
     return String.join("\n", lines);

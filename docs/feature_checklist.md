@@ -363,13 +363,14 @@
 | Kampfverwaltung für Schergen | ✅ | Monitor je Mitglied (S. 324), Gruppen-Edge, Führungsprobe, Fluchthinweis (S. 325) |
 | Beispiel-Schergen des GRW als Vorlage | ✅ | sieben Gruppen (S. 325–328), `npcs.xml` |
 | Top-Runner | ❌ | Nutzerentscheidung 2026-11-18: als normalen Charakter bauen |
-| Critter mit Kräften und Schwächen | ❌ | Roadmap 14, Teil 2 (eigener Plan) |
+| Critter mit Kräften und Schwächen | ✅ | 2026-11-19 (ADR-064): 19 GRW-Critter (S. 343–351) als Vorlage, einzeln oder als Rudel auf dem Schergen-Bogen; Werte ±3 (S. 337), Kräfte und Schwächen mit Tooltip, natürliche Waffen und Panzer gerechnet |
+| Kräftekatalog für Critter, Geister und Sprites | ✅ | 2026-11-19 (ADR-064): `critter_powers.xml` (48 Kräfte, S. 283, 337–342, 348, 351), Wirkung im Geister-Tooltip |
 
 ---
 
 ## Zusammenfassung
 
-Stand 2026-11-18, aus den Tabellen oben gezählt (❌ sind überwiegend bewusst zurückgestellte Zusatzband-Inhalte).
+Stand 2026-11-19, aus den Tabellen oben gezählt (❌ sind überwiegend bewusst zurückgestellte Zusatzband-Inhalte).
 
 | Bereich                | ✅ | ⚠️ | ❌ |
 |------------------------|----|----|----|
@@ -392,8 +393,8 @@ Stand 2026-11-18, aus den Tabellen oben gezählt (❌ sind überwiegend bewusst 
 | Initiative             |  4 |  0 |  0 |
 | Zustandsmonitor        |  4 |  0 |  0 |
 | Persistenz             |  9 |  0 |  0 |
-| UI/Bedienbarkeit       | 14 |  0 |  2 |
-| NSCs und Critter       |  3 |  0 |  2 |
+| UI/Bedienbarkeit       | 16 |  0 |  2 |
+| NSCs und Critter       |  5 |  0 |  1 |
 
 ---
 
@@ -424,7 +425,7 @@ README-Roadmap sind erledigt; es folgen:
     Regelwerk-Auswahl (Regeln, je Charakter).
 13. **Charakterbogen:** Drucken und Exportieren (reines Werkzeug-Feature, Abschnitt 19).
 14. **NSCs:** ✅ Teil 1 Schergengruppen mit GRW-Vorlagen und Kampfverwaltung (2026-11-18, ADR-062); Teil 2 Critter mit
-    ihren Kräften (Critter-Kapitel des GRW) folgt.
+    ihren Kräften (2026-11-19, ADR-064).
 15. **Drogen, Toxine und Granaten (optional):** Wirkung, Sucht und Einsatz im Kampf statt nur Katalogeinträge
     (Abschnitt 13); nur, wenn das Werkzeug das abbilden soll.
 

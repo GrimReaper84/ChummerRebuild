@@ -1,6 +1,8 @@
 package de.shalorian.chummer.model.template;
 
 import de.shalorian.chummer.model.character.option.RuleOptions;
+import de.shalorian.chummer.model.critter.CritterDataLoader;
+import de.shalorian.chummer.model.critter.CritterTemplate;
 import de.shalorian.chummer.model.npc.NpcTemplateLoader;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import org.jspecify.annotations.NonNull;
 
-/** Alle Vorlagen für den Dialog „Neu“ an einer Stelle (Archetypen, Schergengruppen). */
+/** Alle Vorlagen für den Dialog „Neu“ an einer Stelle (Archetypen, Schergengruppen, Critter). */
 public final class Templates {
 
   private Templates() {
@@ -20,6 +22,7 @@ public final class Templates {
     List<DocumentTemplate> all = new ArrayList<>();
     all.addAll(ArchetypeLoader.getAll());
     all.addAll(NpcTemplateLoader.getAll());
+    CritterDataLoader.getAll().forEach(critter -> all.add(new CritterTemplate(critter)));
     Collator collator = Collator.getInstance(Locale.GERMAN);
     return all.stream().filter(options::allows)
         .sorted(Comparator.comparing(DocumentTemplate::kind).thenComparing(DocumentTemplate::name, collator))

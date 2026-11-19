@@ -229,6 +229,8 @@ gelesenen Quelle übernehmen, nicht aus dem Gedächtnis.
 | +/−-Zeile | `IncrementWiring.wire(...)` bzw. `wireFree(...)` mit einer `RowModel`-Implementierung |
 | Zustandsmonitor-Kästchen | `view.grid.MonitorBoxRow.build(...)` (Status-Panel, Schergen-Bogen) |
 | NSC-Werteblock | `model.npc.NpcStatblock`: ein `Character` im Spielleiter-Modus plus Ausrüstungstext (ADR-062); Anzeige über `view.npc.StatblockBuilder` |
+| Critter | `model.critter.CritterTemplate.statblock(...)`: Metatyp aus dem Katalog (`CritterMetatype`, ±3), Merkmale in `CritterTraits` am `Character` (ADR-064) |
+| Vorlage im Dialog „Neu“ | `model.template.DocumentTemplate` + Eintrag in `Templates.available(...)` (ADR-063) |
 
 Vorhandene Muster bevorzugen und nur erweitern, wenn sie nicht passen. Erweiterungen der Basisklassen
 klein halten und im Ergebnis erwähnen.
