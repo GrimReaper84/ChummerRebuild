@@ -241,9 +241,12 @@ klein halten und im Ergebnis erwähnen.
 - **Neue Tabs zuerst gegen das alte `*.Designer.cs`** (TabPage in `frmCreate.Designer.cs`/
   `frmCareer.Designer.cs`) abgleichen: Controls, Gruppierung, Reihenfolge übernehmen, Pixelpositionen
   nicht. Bewusst verbesserte Muster (getrennte Zeilentypen statt Mehrzweck-Controls, +/−-Stepper mit
-  `canIncrement()`, BP/Karma inline) nicht zurückbauen.
+  `incrementProblem()`, BP/Karma inline) nicht zurückbauen.
 - **Grids:** `MigPane` mit inhaltsbasierten Spalten, `addRowCells()`, `preventShrink()`,
   `withRightFiller()`. Buttons über `useIcon()` mit FontAwesome-Icon, Text wird Tooltip.
+- **Gesperrt immer mit Grund:** Ein gesperrter +-Knopf bekommt den Grund als Tooltip (`RowModel.incrementProblem()`,
+  `IncrementWiring` setzt `:blocked` statt `setDisable`, weil JavaFX an deaktivierten Controls keinen Tooltip zeigt).
+  Nicht wählbare Katalogeinträge bleiben anklickbar und nennen den Grund im Detail; „OK“ ist dann gesperrt.
 - **Nicht nutzbare Elemente in Listen sichtbar, aber deaktiviert** zeigen, nicht ausblenden. Der Nutzer
   sieht dann, dass es sie gibt und warum sie gesperrt sind. Ganze Tabs dürfen weiterhin verschwinden,
   bis ihre Voraussetzung erfüllt ist (Magie/Technomancer).

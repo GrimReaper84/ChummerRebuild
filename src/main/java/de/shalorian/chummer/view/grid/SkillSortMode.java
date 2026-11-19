@@ -1,6 +1,6 @@
 package de.shalorian.chummer.view.grid;
 
-/** Reiner UI-Sitzungszustand für die Sortierung der aktiven Fertigkeiten im Skills-Tab — nicht persistiert. */
+/** Sortierung der aktiven Fertigkeiten im Skills-Tab; die Wahl steht in den {@code ViewPreferences}. */
 public enum SkillSortMode {
   CATEGORY,
   ALPHABETICAL

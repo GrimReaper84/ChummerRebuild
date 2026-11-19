@@ -238,8 +238,8 @@ public final class AttributeTabBuilder {
           }
 
           @Override
-          public boolean canIncrement() {
-            return character.canRaiseAttributeAtCreation(type);
+          public @Nullable String incrementProblem() {
+            return character.getAttributeRaiseProblem(type);
           }
 
           @Override
@@ -299,7 +299,7 @@ public final class AttributeTabBuilder {
   /**
    * Baut eine Attribut-Zeile (Name, Abkürzung, +/−, Wert, Aug-Platzhalter, Bereich, BP-/Karma-Kosten) in ein MigPane ein und verdrahtet sie über
    * {@link IncrementWiring#wire}. Gemeinsam genutzt von {@link #addAttributeRow} und {@link #addSpecialAttributeRow}, die sich nur in Datenquelle und
-   * {@link RowModel#canIncrement()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am alten WinForms-{@code panAttributes}
+   * {@link RowModel#incrementProblem()} unterscheiden. Spaltenreihenfolge orientiert sich strukturell am alten WinForms-{@code panAttributes}
    * (Name/Abkürzung, Basiswert, augmentierter Wert, Metatyp-Grenzen inkl. augmentiertem Maximum). Die Aug-Spalte zeigt den wirksamen Wert von
    * {@code augmentedType} (bei jedem Refresh neu ermittelt, damit z.B. eine KON-Änderung die Panzerungsbehinderung sofort nachzieht), verstärkt
    * in der Akzentfarbe, bzw. {@link Numbers#NO_VALUE} bei Sonderattributen ({@code null}); der Klammerzusatz im Bereichs-Label zeigt das

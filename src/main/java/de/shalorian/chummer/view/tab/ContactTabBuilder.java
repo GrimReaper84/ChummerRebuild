@@ -409,6 +409,11 @@ public final class ContactTabBuilder {
     if (ch == null) {
       return;
     }
+    String bpProblem = ch.getBpShortfallProblem(Character.NEW_CONTACT_BP);
+    if (bpProblem != null) {
+      host.services().warn("Kontakt hinzufügen", bpProblem);
+      return;
+    }
     try {
       DialogHandle dialog = host.services().openDialog("ContactEditDialog.fxml", "Kontakt hinzufügen");
       ContactEditDialogController ctrl = dialog.loader().getController();

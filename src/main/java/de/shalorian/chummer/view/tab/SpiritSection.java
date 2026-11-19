@@ -233,6 +233,10 @@ final class SpiritSection {
 
   private void changeServices(@NonNull Character ch, @NonNull Spirit spirit, int services) {
     String problem = ch.getSpirits().getServicesProblem(spirit, services);
+    if (problem == null && spirit.isBound() && services > spirit.getServices()) {
+      // jeder Dienst eines gebundenen Eintrags kostet bei der Erschaffung 1 BP (GRW S. 112/113)
+      problem = ch.getBpShortfallProblem(services - spirit.getServices());
+    }
     if (problem != null) {
       host.services().warn("Dienste", problem);
       return;

@@ -140,8 +140,11 @@ public class SpiritSelectDialogController extends CatalogSelectDialogController<
     if (character == null || forceSpinner.getValue() == null || servicesSpinner.getValue() == null) {
       return "Werte fehlen";
     }
-    return character.getSpirits().getAddProblem(data, forceSpinner.getValue(), servicesSpinner.getValue(),
+    String problem = character.getSpirits().getAddProblem(data, forceSpinner.getValue(), servicesSpinner.getValue(),
         boundCheck.isSelected(), List.copyOf(chosenOptions));
+    // gebundene Geister bzw. registrierte Sprites kosten bei der Erschaffung 1 BP je Dienst (GRW S. 112/113)
+    return problem != null || !boundCheck.isSelected() ? problem
+        : character.getBpShortfallProblem(servicesSpinner.getValue());
   }
 
   /** Baut die Auswahl bei einer anderen Art neu, kürzt sie auf die erlaubte Zahl und sperrt die übrigen. */

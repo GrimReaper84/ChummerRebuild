@@ -21,6 +21,7 @@ import de.shalorian.chummer.model.character.gear.SkillsoftStatus;
 import de.shalorian.chummer.model.character.skill.ExoticSkills;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
+import de.shalorian.chummer.view.ViewPreferences;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.ExoticSkillAddDialogController;
 import de.shalorian.chummer.view.grid.RowControls;
@@ -28,6 +29,7 @@ import de.shalorian.chummer.view.grid.RowModel;
 import de.shalorian.chummer.view.grid.SkillSortMode;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +80,10 @@ public final class SkillTabBuilder {
   private final @NonNull CharacterTabHost host;
   private final @NonNull IncrementWiring wiring;
   private final @NonNull List<Runnable> skillRefreshers = new ArrayList<>();
-  private @NonNull SkillSortMode skillSortMode = SkillSortMode.CATEGORY;
+  /** Preferences-Schlüssel der Sortierung; Standard ist alphabetisch (Nutzerentscheidung 2026-11-19). */
+  private static final String PREF_SORT_ALPHABETICAL = "display.skillsAlphabetical";
+
+  private @NonNull SkillSortMode skillSortMode = SkillSortMode.ALPHABETICAL;
   private final @NonNull KnowledgeSkillSection knowledgeSection;
   private @Nullable Character character;
 
@@ -95,6 +100,9 @@ public final class SkillTabBuilder {
     this.host = host;
     this.wiring = wiring;
     this.knowledgeSection = new KnowledgeSkillSection(knowledgeSkillsContainer, host, wiring);
+    boolean alphabetical = ViewPreferences.user().getBoolean(PREF_SORT_ALPHABETICAL, true);
+    skillSortMode = alphabetical ? SkillSortMode.ALPHABETICAL : SkillSortMode.CATEGORY;
+    skillSortToggleGroup.selectToggle(alphabetical ? sortByAlphabetBtn : sortByCategoryBtn);
     skillSortToggleGroup.selectedToggleProperty()
         .addListener((_, old, newVal) -> onSortToggled(old, newVal));
   }
@@ -171,9 +179,9 @@ public final class SkillTabBuilder {
 
   /**
    * Alphabet-Modus: zwei unabhängig sortierte Listen nebeneinander — links alle noch gekoppelten Fertigkeitsgruppen (nur Name + gemeinsame
-   * Rating-Steuerung, keine Mitgliedsnamen, siehe {@code docs/skills_sortierung_plan.md} Abschnitt 13), rechts alle Einzelfertigkeiten (ungruppiert
-   * oder entkoppelt), jeweils alphabetisch nach Name sortiert über {@link Character#getCoupledGroupNames()} bzw.
-   * {@link Character#getIndividualSkills()}.
+   * Rating-Steuerung, keine Mitgliedsnamen, siehe {@code docs/skills_sortierung_plan.md} Abschnitt 13), rechts alle Fertigkeiten,
+   * jeweils alphabetisch nach Name. Fertigkeiten einer noch gekoppelten Gruppe stehen rechts mit dem Gruppenwert, ihre
+   * Knöpfe sind gesperrt mit Grund, bis die Gruppe ausgekoppelt ist (Nutzerbefund 2026-11-19).
    */
   private void buildAlphabeticalSkillsSection(@NonNull Character character) {
     MigPane groupGrid = buildGroupOnlyGrid();
@@ -183,12 +191,15 @@ public final class SkillTabBuilder {
     }
     MigPane skillGrid = buildSkillGrid();
     int skillRow = 1;
-    for (Skill skill : character.getIndividualSkills()) {
-      addSkillRow(skillGrid, skillRow++, skill, false, character);
+    // alle Fertigkeiten, auch die einer noch gekoppelten Gruppe: sie stehen gesperrt mit Grund da (Nutzerbefund 2026-11-19)
+    List<Skill> all = character.getSkills().stream().sorted(Comparator.comparing(Skill::getName)).toList();
+    for (Skill skill : all) {
+      String group = skill.getGroupName();
+      addSkillRow(skillGrid, skillRow++, skill, group != null && character.isGroupCoupled(group), character);
     }
 
     VBox leftColumn = scrollingColumn("Fertigkeitsgruppen", groupGrid);
-    VBox rightColumn = scrollingColumn("Einzelfertigkeiten", skillGrid);
+    VBox rightColumn = scrollingColumn("Fertigkeiten", skillGrid);
     HBox.setHgrow(rightColumn, Priority.ALWAYS);
     HBox columns = new HBox(24, leftColumn, rightColumn);
     VBox.setVgrow(columns, Priority.ALWAYS);
@@ -326,8 +337,8 @@ public final class SkillTabBuilder {
             }
 
             @Override
-            public boolean canIncrement() {
-              return character.canRaiseGroup(groupName);
+            public @Nullable String incrementProblem() {
+              return character.getGroupRaiseProblem(groupName);
             }
 
             @Override
@@ -450,11 +461,12 @@ public final class SkillTabBuilder {
       if (career) {
         minus.setVisible(false);
       }
+      String group = Objects.requireNonNull(skill.getGroupName());
+      wiring.wireLocked(controls, career ? "Teil der Gruppe %s: erst auskoppeln".formatted(group)
+          : "Teil der Gruppe %s: bei der Erschaffung nicht auflösbar (GRW S. 108)".formatted(group));
       Runnable refresh = () -> {
         ratingLabel.setText(String.valueOf(skill.getRating()));
         bpLabel.setText("");
-        minus.setDisable(true);
-        plus.setDisable(true);
       };
       skillRefreshers.add(refresh);
       refresh.run();
@@ -477,8 +489,8 @@ public final class SkillTabBuilder {
             }
 
             @Override
-            public boolean canIncrement() {
-              return character.canRaiseSkill(skill);
+            public @Nullable String incrementProblem() {
+              return character.getSkillRaiseProblem(skill);
             }
 
             @Override
@@ -664,6 +676,7 @@ public final class SkillTabBuilder {
     } else if (newVal == sortByCategoryBtn) {
       skillSortMode = SkillSortMode.CATEGORY;
     }
+    ViewPreferences.user().putBoolean(PREF_SORT_ALPHABETICAL, skillSortMode == SkillSortMode.ALPHABETICAL);
     buildActiveSkills();
   }
 

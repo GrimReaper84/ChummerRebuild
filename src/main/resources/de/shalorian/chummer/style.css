@@ -32,6 +32,8 @@
     -fx-accent: -cr-accent-bg;
     -fx-focus-color: -cr-accent;
     -fx-faint-focus-color: transparent;
+    /* Textfarbe für Labels, CheckBoxen usw. ohne eigene Stilklasse (Modena: .label nutzt diese Farbe), sonst grau */
+    -fx-text-background-color: -cr-text-soft;
 }
 
 .root-pane {
@@ -377,6 +379,11 @@
     -fx-padding: 4 8 4 8;
 }
 
+/* Nicht wählbarer Katalogeintrag: abgeblendet, aber auswählbar (Grund im Detailbereich) */
+.list-cell:blocked {
+    -fx-opacity: 0.45;
+}
+
 .combo-box-popup .list-cell:hover {
     -fx-background-color: -cr-accent-bg;
     -fx-text-fill: -cr-text;
@@ -583,6 +590,16 @@
 
 .attr-btn:focus-visible {
     -fx-border-color: -cr-accent;
+}
+
+/* Gesperrt mit Grund (IncrementWiring): sieht deaktiviert aus, bleibt aber für Tooltip und Hinweis bedienbar. */
+.attr-btn:blocked,
+.attr-btn:blocked:hover {
+    -fx-opacity: 0.3;
+    -fx-cursor: default;
+    -fx-background-color: -cr-raised;
+    -fx-border-color: -cr-border-strong;
+    -fx-text-fill: -cr-text-soft;
 }
 
 .attr-value {

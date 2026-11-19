@@ -622,7 +622,7 @@ public class CharacterViewController implements CharacterTabHost {
   }
 
   /**
-   * Schließt die Charaktererschaffung ab. Hinderungsgründe aus {@link Character#getFinalizeProblems()} (derzeit negatives Restgeld) brechen mit einer
+   * Schließt die Charaktererschaffung ab. Hinderungsgründe aus {@link Character#getFinalizeProblems()} (überzogene BP, negatives Restgeld) brechen mit einer
    * Warnung ab; sonst zeigt der Abschlussdialog den Startkapital-Wurf nach Lebensstil (GRW S. 114), gebucht wird über
    * {@link Character#finalizeCreation(int)}.
    */

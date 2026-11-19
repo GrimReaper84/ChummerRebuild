@@ -5,18 +5,27 @@ import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.view.grid.RowControls;
 import de.shalorian.chummer.view.grid.RowModel;
 import java.util.List;
+import java.util.function.Supplier;
+import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Verdrahtet die +/−-Zeilen der Tabs (Attribute, Fertigkeiten, Wissensfertigkeiten, Kontakte, Komplexe Formen)
  * einheitlich: Anzeige-Refresher, Klick-Handler, BP- bzw. Karma-Prüfung samt Bestätigung im Karrieremodus. Nach
  * jeder Änderung meldet sie über den {@link CharacterTabHost}, dass Zeilen, BP oder Log neu zu bewerten sind.
+ *
+ * <p>Ein gesperrter +-Knopf bleibt bedienbar, trägt aber die Pseudoklasse {@code :blocked} (sieht deaktiviert aus) und
+ * den Grund als Tooltip; ein Klick zeigt den Grund als Hinweis. Deaktivierte Knöpfe zeigen in JavaFX keinen Tooltip,
+ * deshalb nicht {@code setDisable}. Der −-Knopf wird am Mindestwert weiter deaktiviert, dort braucht es keinen Grund.
  */
 public final class IncrementWiring {
 
   private static final String KARMA_SUFFIX = " Karma";
+  private static final PseudoClass BLOCKED = PseudoClass.getPseudoClass("blocked");
 
   private final @NonNull CharacterTabHost host;
 
@@ -48,37 +57,42 @@ public final class IncrementWiring {
       @NonNull LogCategory category) {
     Label valueLabel = controls.valueLabel();
     Label costLabel = controls.costLabel();
-    Button minus = controls.minus();
     Button plus = controls.plus();
-
-    minus.setVisible(false);
-    Runnable refresh = () -> {
-      int val = model.value();
+    Supplier<@Nullable String> problem = () -> {
+      if (model.value() >= model.max()) {
+        return maxText(model);
+      }
       int karmaCost = model.karmaStepCost();
+      return character.getKarmaTotal() < karmaCost
+          ? "Nicht genug Karma (%d nötig, %d vorhanden)".formatted(karmaCost, character.getKarmaTotal())
+          : model.incrementProblem();
+    };
+
+    controls.minus().setVisible(false);
+    Runnable refresh = () -> {
       valueLabel.setText(model.valueDisplayText());
-      costLabel.setText(val >= model.max() ? "–" : karmaCost + KARMA_SUFFIX);
-      plus.setDisable(val >= model.max() || character.getKarmaTotal() < karmaCost
-          || !model.canIncrement());
+      costLabel.setText(model.value() >= model.max() ? "–" : model.karmaStepCost() + KARMA_SUFFIX);
+      block(plus, problem.get());
     };
     refresherList.add(refresh);
 
     plus.setOnAction(_ -> {
+      if (warnIfBlocked(problem.get())) {
+        return;
+      }
       int val = model.value();
-      int karmaCost = model.karmaStepCost();
-      String label = model.actionLabel(val, val + 1);
-      if (val < model.max() && character.getKarmaTotal() >= karmaCost && model.canIncrement()
-          && !host.services().karmaChargeFailed(character, category, label, karmaCost)) {
+      if (!host.services().karmaChargeFailed(character, category, model.actionLabel(val, val + 1),
+          model.karmaStepCost())) {
         model.increment();
         host.refreshRows();
       }
     });
-
     refresh.run();
   }
 
   /**
    * Spielleiter-Modus (ADR-060): Steigern und Senken ohne Kosten, Bestätigung und Buchung, in beiden Modi; es gelten nur
-   * Höchstwert und {@link RowModel#canIncrement()} (die Sperren dort hebt der Charakter im Spielleiter-Modus auf).
+   * Höchstwert und {@link RowModel#incrementProblem()} (die Sperren dort hebt der Charakter im Spielleiter-Modus auf).
    * BP zählen bei der Erschaffung weiter, deshalb auch {@code onBpChanged}.
    */
   private void wireGm(@NonNull List<Runnable> refresherList, @NonNull RowControls controls,
@@ -92,14 +106,19 @@ public final class IncrementWiring {
     Label costLabel = controls.costLabel();
     Button minus = controls.minus();
     Button plus = controls.plus();
+    Supplier<@Nullable String> problem = () -> {
+      if (model.value() >= model.max()) {
+        return maxText(model);
+      }
+      String bpProblem = character.getBpShortfallProblem(model.bpStepCost());
+      return bpProblem != null ? bpProblem : model.incrementProblem();
+    };
 
     Runnable refresh = () -> {
-      int val = model.value();
       valueLabel.setText(model.valueDisplayText());
       costLabel.setText(model.bpDisplayText());
-      minus.setDisable(val <= model.min());
-      plus.setDisable(val >= model.max() || character.getRemainingBP() < model.bpStepCost()
-          || !model.canIncrement());
+      minus.setDisable(model.value() <= model.min());
+      block(plus, problem.get());
     };
     refresherList.add(refresh);
 
@@ -111,14 +130,12 @@ public final class IncrementWiring {
       }
     });
     plus.setOnAction(_ -> {
-      if (model.value() < model.max() && character.getRemainingBP() >= model.bpStepCost()
-          && model.canIncrement()) {
+      if (!warnIfBlocked(problem.get())) {
         model.increment();
         host.refreshRows();
         host.onBpChanged();
       }
     });
-
     refresh.run();
   }
 
@@ -135,21 +152,22 @@ public final class IncrementWiring {
 
   /**
    * Gemeinsamer Baustein für {@link #wireFree} und den Spielleiter-Modus: beide Richtungen ohne Kosten, nur Höchstwert,
-   * Mindestwert und {@link RowModel#canIncrement()} gelten; {@code costText} steht in der Kostenspalte.
+   * Mindestwert und {@link RowModel#incrementProblem()} gelten; {@code costText} steht in der Kostenspalte.
    */
   private void wireWithoutCost(@NonNull List<Runnable> refresherList, @NonNull RowControls controls,
       @NonNull RowModel model, @NonNull String costText) {
     Label valueLabel = controls.valueLabel();
     Button minus = controls.minus();
     Button plus = controls.plus();
+    Supplier<@Nullable String> problem = () -> model.value() >= model.max() ? maxText(model)
+        : model.incrementProblem();
 
     Runnable refresh = () -> {
-      int val = model.value();
       valueLabel.setText(model.valueDisplayText());
       controls.costLabel().setText(costText);
       minus.setVisible(true);
-      minus.setDisable(val <= model.min());
-      plus.setDisable(val >= model.max() || !model.canIncrement());
+      minus.setDisable(model.value() <= model.min());
+      block(plus, problem.get());
     };
     refresherList.add(refresh);
 
@@ -161,13 +179,41 @@ public final class IncrementWiring {
       }
     });
     plus.setOnAction(_ -> {
-      if (model.value() < model.max() && model.canIncrement()) {
+      if (!warnIfBlocked(problem.get())) {
         model.increment();
         host.refreshRows();
         host.onBpChanged();
       }
     });
-
     refresh.run();
+  }
+
+  /**
+   * Sperrt eine Zeile dauerhaft mit {@code reason}, z.B. eine Fertigkeit einer noch gekoppelten Gruppe: + ist gesperrt
+   * mit Tooltip und zeigt beim Klick den Grund, − bleibt deaktiviert. Den Wert setzt der Aufrufer.
+   */
+  public void wireLocked(@NonNull RowControls controls, @NonNull String reason) {
+    controls.minus().setDisable(true);
+    block(controls.plus(), reason);
+    controls.plus().setOnAction(_ -> warnIfBlocked(reason));
+  }
+
+  private static @NonNull String maxText(@NonNull RowModel model) {
+    return "Höchstwert %d erreicht".formatted(model.max());
+  }
+
+  /** Setzt bzw. löst die Sperre: Pseudoklasse {@code :blocked} und der Grund als Tooltip. */
+  private static void block(@NonNull Button plus, @Nullable String reason) {
+    plus.pseudoClassStateChanged(BLOCKED, reason != null);
+    plus.setTooltip(reason == null ? null : new Tooltip(reason));
+  }
+
+  /** Zeigt {@code reason} als Hinweis; {@code true}, wenn gesperrt war und nichts passieren soll. */
+  private boolean warnIfBlocked(@Nullable String reason) {
+    if (reason == null) {
+      return false;
+    }
+    host.services().warn("Nicht möglich", reason);
+    return true;
   }
 }

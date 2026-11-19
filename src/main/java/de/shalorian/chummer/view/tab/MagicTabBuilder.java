@@ -172,6 +172,11 @@ public final class MagicTabBuilder {
           "Kein weiterer Zauber ohne höheres Spruchzauberei-/Ritualzauberei-Rating möglich");
       return;
     }
+    String bpProblem = ch.getBpShortfallProblem(Character.SPELL_BP_COST);
+    if (bpProblem != null) {
+      host.services().warn("Zauber hinzufügen", bpProblem);
+      return;
+    }
     try {
       DialogHandle dialog = host.services().openDialog("SpellSelectDialog.fxml", "Zauber hinzufügen");
       SpellSelectDialogController ctrl = dialog.loader().getController();

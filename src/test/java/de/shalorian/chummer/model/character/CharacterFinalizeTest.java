@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.cyberware.Cyberware;
 import de.shalorian.chummer.model.character.cyberware.CyberwareData;
 import de.shalorian.chummer.model.character.cyberware.CyberwareGrade;
@@ -12,6 +13,7 @@ import de.shalorian.chummer.model.character.cyberware.EquipmentKind;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.lifestyle.LifestyleLevel;
 import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /** Abschluss der Erschaffung: Hinderungsgründe und Startkapital nach GRW S. 111/114. */
@@ -36,6 +38,21 @@ class CharacterFinalizeTest {
     assertThrows(IllegalStateException.class, () -> c.finalizeCreation(3));
     assertFalse(c.isCreated());
     assertTrue(c.getNuyenLog().isEmpty());
+  }
+
+  @Test
+  void overspentBpBlocksFinalization() {
+    // GRW S. 104: 400 BP; mehr ausgegeben (z.B. nach Entfernen eines Handicaps) sperrt den Abschluss
+    Character c = mensch();
+    for (AttributeType type : AttributeType.values()) {
+      c.getAttribute(type).setValue(6);
+    }
+    c.setNuyenBP(50);
+    assertTrue(c.getRemainingBP() < 0);
+    assertEquals(List.of("Es wurden %d BP mehr ausgegeben, als zur Verfügung stehen.".formatted(-c.getRemainingBP())),
+        c.getFinalizeProblems());
+    assertThrows(IllegalStateException.class, () -> c.finalizeCreation(3));
+    assertFalse(c.isCreated());
   }
 
   @Test

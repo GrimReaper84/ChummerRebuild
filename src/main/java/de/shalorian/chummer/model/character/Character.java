@@ -93,6 +93,8 @@ public class Character {
   public static final int MAX_NEGATIVE_QUALITY_BP = 35;
   public static final int MAX_ATTRIBUTE_BP = TOTAL_BP / 2;
   public static final int MAX_GROUP_RATING_AT_CREATION = 4;
+  /** Grund für die 6/5-Regel der Erschaffung (aktive und Wissensfertigkeiten). */
+  private static final String SIX_FIVE_RULE = "Bei der Erschaffung eine Fertigkeit auf 6 oder zwei auf 5 (GRW S. 108)";
   private static final int KARMA_NEW_SKILL_GROUP = 10;
   private static final int KNOWLEDGE_SKILL_BP_PER_OVERFLOW_POINT = 2;
   private static final int KNOWLEDGE_SKILL_KARMA_NEW = 2;
@@ -101,7 +103,10 @@ public class Character {
   private static final int SPECIALIZATION_KARMA_COST = 2;
   private static final int MIN_RATING_FOR_SPECIALIZATION = 1;
   private static final int CONTACT_BP_PER_POINT = 1;
-  private static final int SPELL_BP_COST = 3;
+  /** BP für einen Zauber bei der Erschaffung. */
+  public static final int SPELL_BP_COST = 3;
+  /** BP für einen neuen Kontakt bei der Erschaffung (Connection und Loyalität je 1). */
+  public static final int NEW_CONTACT_BP = 2 * Contact.MIN_RATING * CONTACT_BP_PER_POINT;
   private static final int SPELL_KARMA_COST = 5;
   private static final int SPELL_CAP_MULTIPLIER = 2;
   private static final String SPELLCASTING_SKILL = "Spruchzauberei";
@@ -294,20 +299,26 @@ public class Character {
    * Maximum gesteigert werden. Im Karrieremodus und im Spielleiter-Modus gelten diese Erstellungs-Caps nicht.
    */
   public boolean canRaiseAttributeAtCreation(@NonNull AttributeType type) {
+    return getAttributeRaiseProblem(type) == null;
+  }
+
+  /** Warum {@code type} nicht um 1 steigen kann (Gründe wie {@link #canRaiseAttributeAtCreation}), oder {@code null}. */
+  public @Nullable String getAttributeRaiseProblem(@NonNull AttributeType type) {
     if (created || gmMode) {
-      return true;
+      return null;
     }
     CharacterAttribute attr = getAttribute(type);
     int newValue = attr.getValue() + 1;
     if (newValue > attr.getMax()) {
-      return false;
+      return "Rassenmaximum %d erreicht".formatted(attr.getMax());
     }
     int projectedAttributeBP = getAttributeBP() - attr.getBpCost() + attr.getBpCostForValue(newValue);
     if (projectedAttributeBP > MAX_ATTRIBUTE_BP) {
-      return false;
+      return "Höchstens %d BP für Attribute (GRW S. 106)".formatted(MAX_ATTRIBUTE_BP);
     }
     boolean wouldMaximize = attr.getMin() != attr.getMax() && newValue == attr.getMax();
-    return !wouldMaximize || getMaximizedAttributeCount() == 0;
+    return wouldMaximize && getMaximizedAttributeCount() > 0
+        ? "Nur ein Attribut auf dem Rassenmaximum (GRW S. 106)" : null;
   }
 
   /**
@@ -879,7 +890,38 @@ public class Character {
    * {@link #isSkillAccessible(Skill)}.
    */
   public boolean canRaiseSkill(@NonNull Skill skill) {
-    return !skill.isExoticTemplate() && (gmMode || (isSkillAccessible(skill) && canRaiseSkillAtCreation(skill)));
+    return getSkillRaiseProblem(skill) == null;
+  }
+
+  /** Warum {@code skill} nicht um 1 steigen kann (Gründe wie {@link #canRaiseSkill}), oder {@code null}. */
+  public @Nullable String getSkillRaiseProblem(@NonNull Skill skill) {
+    if (skill.isExoticTemplate()) {
+      return "Exotische Fertigkeiten je Waffe bzw. Fahrzeug anlegen (GRW S. 148)";
+    }
+    if (gmMode) {
+      return null;
+    }
+    String access = getSkillAccessProblem(skill);
+    if (access != null) {
+      return access;
+    }
+    return canRaiseSkillAtCreation(skill) ? null : SIX_FIVE_RULE;
+  }
+
+  /** Grund zu {@link #isSkillAccessible(Skill)}, oder {@code null}. */
+  private @Nullable String getSkillAccessProblem(@NonNull Skill skill) {
+    if (isSkillAccessible(skill)) {
+      return null;
+    }
+    if (hasQualityChoice(QualityBonusType.INCOMPETENT, skill.getName())) {
+      return "Inkompetenz (GRW S. 120)";
+    }
+    return switch (skill.getCategory()) {
+      case RESONANCE -> "Nur für Technomancer (GRW S. 151)";
+      case MAGICAL -> ASSENSING_SKILL.equals(skill.getName()) || ASTRAL_COMBAT_SKILL.equals(skill.getName())
+          ? "Nur mit astraler Wahrnehmung (GRW S. 149)" : "Nur für Zauberer und Magieradepten (GRW S. 148)";
+      default -> "Nicht zugänglich";
+    };
   }
 
   private boolean isCoupledGroupMember(@NonNull Skill s) {
@@ -987,12 +1029,29 @@ public class Character {
    * (GRW S. 120–122).
    */
   public boolean canRaiseGroup(@NonNull String groupName) {
+    return getGroupRaiseProblem(groupName) == null;
+  }
+
+  /** Warum die Gruppe nicht um 1 steigen kann (Gründe wie {@link #canRaiseGroup}), oder {@code null}. */
+  public @Nullable String getGroupRaiseProblem(@NonNull String groupName) {
     List<Skill> members = skills.values().stream()
         .filter(s -> groupName.equals(s.getGroupName()))
         .toList();
     // Doppelte Kosten (Ungebildet usw.) sperren Gruppen auch im Spielleiter-Modus: die BP-Rechnung bildet sie nicht ab.
-    return members.stream().noneMatch(s -> isSkillCostDoubled(s.getCategory()))
-        && (gmMode || (members.stream().allMatch(this::isSkillAccessible) && canRaiseGroupAtCreation(groupName)));
+    if (members.stream().anyMatch(s -> isSkillCostDoubled(s.getCategory()))) {
+      return "Gruppen dieser Kategorie gesperrt (Ungebildet, Ungehobelt bzw. Körperliche Schwäche, GRW S. 120–122)";
+    }
+    if (gmMode) {
+      return null;
+    }
+    for (Skill member : members) {
+      String access = getSkillAccessProblem(member);
+      if (access != null) {
+        return member.getName() + ": " + access;
+      }
+    }
+    return canRaiseGroupAtCreation(groupName) ? null
+        : "Gruppen bei der Erschaffung höchstens %d (GRW S. 108)".formatted(MAX_GROUP_RATING_AT_CREATION);
   }
 
   /**
@@ -1571,21 +1630,26 @@ public class Character {
    * Wissensfertigkeit auf Wert 6 oder maximal zwei auf Wert 5 (übrige max. 4). Die Muttersprache
    * ist von beiden Regeln ausgenommen. Im Karrieremodus und im Spielleiter-Modus gilt dieser Erstellungs-Cap nicht.
    */
-  @SuppressWarnings("ReferenceEquality") // Identität gewollt: "eine andere Fertigkeit als diese"
   public boolean canRaiseKnowledgeSkillAtCreation(@NonNull KnowledgeSkill skill) {
+    return getKnowledgeSkillRaiseProblem(skill) == null;
+  }
+
+  /** Warum {@code skill} nicht um 1 steigen kann (Gründe wie {@link #canRaiseKnowledgeSkillAtCreation}), oder {@code null}. */
+  @SuppressWarnings("ReferenceEquality") // Identität gewollt: "eine andere Fertigkeit als diese"
+  public @Nullable String getKnowledgeSkillRaiseProblem(@NonNull KnowledgeSkill skill) {
     if (created || gmMode || skill.isNativeLanguage()) {
-      return true;
+      return null;
     }
     int newValue = skill.getRating() + 1;
     if (newValue > KnowledgeSkill.MAX_RATING) {
-      return false;
+      return "Höchstwert %d erreicht".formatted(KnowledgeSkill.MAX_RATING);
     }
     int contribution = isKnowledgeSkillCostDoubled(skill.getCategory()) ? 2 : 1;
     if (getKnowledgeSkillPointsUsed() + contribution > getKnowledgeSkillPointPool() * 2) {
-      return false;
+      return "Höchstens doppelt so viele Wissenspunkte wie frei (GRW S. 109)";
     }
     if (newValue <= 4) {
-      return true;
+      return null;
     }
     long count6 = knowledgeSkills.stream()
         .filter(k -> k != skill && !k.isNativeLanguage() && k.getRating() == 6)
@@ -1593,11 +1657,9 @@ public class Character {
     long count5 = knowledgeSkills.stream()
         .filter(k -> k != skill && !k.isNativeLanguage() && k.getRating() == 5)
         .count();
-    if (newValue == 5) {
-      return count6 == 0 && count5 < 2;
-    }
     // newValue 6 oder (Talentiert, GRW S. 117) 7: zählt als die eine Fertigkeit auf 6
-    return count5 == 0 && count6 < 1;
+    boolean allowed = newValue == 5 ? count6 == 0 && count5 < 2 : count5 == 0 && count6 < 1;
+    return allowed ? null : SIX_FIVE_RULE;
   }
 
   /**
@@ -2434,8 +2496,16 @@ public class Character {
    * Essenzverlust ggf. reduzierte Resonanzwert ({@link #getEffectiveMagicOrResonanceValue()}).
    */
   public boolean canRaiseComplexForm(@NonNull ComplexForm complexForm) {
-    return hasResonance()
-        && complexForm.getRating() + 1 <= getEffectiveMagicOrResonanceValue();
+    return getComplexFormRaiseProblem(complexForm) == null;
+  }
+
+  /** Warum {@code complexForm} nicht um 1 steigen kann (Gründe wie {@link #canRaiseComplexForm}), oder {@code null}. */
+  public @Nullable String getComplexFormRaiseProblem(@NonNull ComplexForm complexForm) {
+    if (!hasResonance()) {
+      return "Nur für Technomancer";
+    }
+    return complexForm.getRating() + 1 <= getEffectiveMagicOrResonanceValue() ? null
+        : "Stufe höchstens Resonanz (%d)".formatted(getEffectiveMagicOrResonanceValue());
   }
 
   /**
@@ -2566,13 +2636,17 @@ public class Character {
 
   /**
    * Gründe, die einen Abschluss der Charaktererschaffung verhindern; leer, wenn abgeschlossen werden
-   * darf. Derzeit nur negatives Restgeld (GRW S. 111: Fehlendes Geld muss vor Ende der Erschaffung
-   * ausgeglichen werden). Essenz ≤ 0 ist
+   * darf: mehr BP ausgegeben als die 400 (GRW S. 104) und negatives Restgeld (GRW S. 111: Fehlendes Geld muss vor
+   * Ende der Erschaffung ausgeglichen werden). Essenz ≤ 0 ist
    * bewusst kein Hinderungsgrund, sondern bleibt eine weiche Warnung (Nutzerentscheidung, siehe
    * {@link #isEssenceBelowCreationMinimum()}).
    */
   public @NonNull List<String> getFinalizeProblems() {
     List<String> problems = new ArrayList<>();
+    int remainingBp = getRemainingBP();
+    if (remainingBp < 0) {
+      problems.add("Es wurden %d BP mehr ausgegeben, als zur Verfügung stehen.".formatted(-remainingBp));
+    }
     int remaining = getRemainingNuyen();
     if (remaining < 0) {
       problems.add("Es wurden %s mehr ausgegeben, als an Ressourcen zur Verfügung stehen."
@@ -2657,6 +2731,19 @@ public class Character {
 
   public int getRemainingBP() {
     return TOTAL_BP - getSpentBP();
+  }
+
+  /**
+   * Grund, wenn bei der Erschaffung für {@code bpCost} BP nicht mehr genug übrig sind, sonst {@code null}; im
+   * Karrieremodus und im Spielleiter-Modus nie. Gemeinsame Prüfung für +/−-Knöpfe und Käufe über Dialoge, damit sich
+   * beide gleich verhalten. Die Oberfläche prüft sie vor dem Kauf; das Modell selbst lässt Überziehen zu (Vorlagen
+   * bauen schrittweise auf); {@link #getFinalizeProblems()} sperrt dann den Abschluss.
+   */
+  public @Nullable String getBpShortfallProblem(int bpCost) {
+    if (created || gmMode || bpCost <= getRemainingBP()) {
+      return null;
+    }
+    return "Nicht genug BP (%d nötig, %d übrig)".formatted(bpCost, Math.max(0, getRemainingBP()));
   }
 
   // --- Karma & Nuyen Log ---

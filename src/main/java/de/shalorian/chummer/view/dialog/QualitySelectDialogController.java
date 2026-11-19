@@ -64,7 +64,13 @@ public class QualitySelectDialogController
 
   @Override
   protected boolean isSelectable(@NonNull QualityData q) {
-    return character == null || character.getQualityBlockReason(q, gratisBox.isSelected()) == null;
+    return character == null
+        || (character.getQualityBlockReason(q, gratisBox.isSelected()) == null && bpProblem(character, q) == null);
+  }
+
+  /** Gaben kosten bei der Erschaffung BP; reichen sie nicht, ist die Gabe gesperrt wie ein +-Knopf (Gratis nie). */
+  private @Nullable String bpProblem(@NonNull Character ch, @NonNull QualityData q) {
+    return gratisBox.isSelected() || q.type() != QualityType.POSITIVE ? null : ch.getBpShortfallProblem(q.bp());
   }
 
   @Override
@@ -84,7 +90,8 @@ public class QualitySelectDialogController
 
   @Override
   protected @Nullable String problem(@NonNull Character ch, @NonNull QualityData q, @NonNull String choice) {
-    return ch.getQualityAddProblem(q, gratisBox.isSelected(), choice);
+    String problem = ch.getQualityAddProblem(q, gratisBox.isSelected(), choice);
+    return problem != null ? problem : bpProblem(ch, q);
   }
 
   @Override

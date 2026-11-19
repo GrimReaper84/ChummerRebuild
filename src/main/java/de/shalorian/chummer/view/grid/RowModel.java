@@ -1,6 +1,7 @@
 package de.shalorian.chummer.view.grid;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Zugriff auf einen einzelnen erhöh-/senkbaren Wert (Attribut, Skillgruppen-Rating oder Skill-Rating), den
@@ -22,11 +23,12 @@ public interface RowModel {
   int max();
 
   /**
-   * Zusätzliche regelspezifische Sperre über die reine BP-Verfügbarkeit hinaus (z.B. Erstellungs-Caps, die nicht allein über {@code max()}
-   * abbildbar sind). Standardmäßig immer erlaubt.
+   * Zusätzliche regelspezifische Sperre über Höchstwert und BP- bzw. Karma-Verfügbarkeit hinaus (z.B. Erstellungs-Caps,
+   * die nicht allein über {@code max()} abbildbar sind): der Grund als Stichpunkt, oder {@code null}, wenn erlaubt.
+   * Standardmäßig immer erlaubt.
    */
-  default boolean canIncrement() {
-    return true;
+  default @Nullable String incrementProblem() {
+    return null;
   }
 
   /**

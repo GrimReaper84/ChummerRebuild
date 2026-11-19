@@ -230,8 +230,8 @@ final class KnowledgeSkillSection {
           }
 
           @Override
-          public boolean canIncrement() {
-            return character.canRaiseKnowledgeSkillAtCreation(skill);
+          public @Nullable String incrementProblem() {
+            return character.getKnowledgeSkillRaiseProblem(skill);
           }
 
           @Override

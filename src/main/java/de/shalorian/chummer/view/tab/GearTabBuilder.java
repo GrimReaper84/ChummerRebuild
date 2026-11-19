@@ -336,6 +336,10 @@ final class GearTabBuilder {
         return;
       }
       String problem = foci.getBindProblem(focus);
+      if (problem == null) {
+        // Bindung kostet bei der Erschaffung 1 BP je Kraft (GRW S. 112)
+        problem = character.getBpShortfallProblem(focus.getRating());
+      }
       if (problem != null) {
         host.services().warn("Fokus binden", problem);
         return;

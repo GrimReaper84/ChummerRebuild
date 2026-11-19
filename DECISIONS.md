@@ -390,6 +390,26 @@ ihrer Wirkung als eigenem Tooltip. Der PDF-Bogen zeigt die Optionen im Namen, z.
 das GRW lässt die Optionen bei der Beschwörung wählen. Das C#-Original kennt keine Optionen.
 `docs/plaene/archiv/geister_optionen_plan.md`.
 
+### ADR-069: Gesperrt immer mit Grund, einheitliche BP-Grenze (2026-11-19)
+- **+/−-Zeilen:** `RowModel.incrementProblem()` liefert den Grund statt nur ja/nein; die Prüfungen in `Character`
+  (`getAttributeRaiseProblem`, `getSkillRaiseProblem`, `getGroupRaiseProblem`, `getKnowledgeSkillRaiseProblem`,
+  `getComplexFormRaiseProblem`) nennen die Regel mit GRW-Seite. `IncrementWiring` ergänzt Höchstwert, BP und Karma.
+  Ein gesperrter +-Knopf trägt `:blocked` (sieht deaktiviert aus) und den Grund als Tooltip, ein Klick zeigt ihn als
+  Hinweis. JavaFX zeigt an deaktivierten Controls keinen Tooltip, deshalb nicht `setDisable`.
+- **Auswahldialoge:** Nicht wählbare Einträge sind abgeblendet (`:blocked`), aber auswählbar; der Detailbereich nennt
+  den Grund, OK ist gesperrt.
+- **BP-Grenze:** Käufe über Dialoge (Gaben, Zauber, Komplexe Formen, Kontakte, gebundene Geister und deren Dienste,
+  Fokusbindung) sind bei der Erschaffung gesperrt, wenn die BP nicht reichen, wie die +/−-Knöpfe
+  (`Character.getBpShortfallProblem`). Das Modell selbst lässt Überziehen zu, weil Vorlagen und Ladepfad schrittweise
+  aufbauen. Den Abschluss sperren überzogene BP (GRW S. 104) und negatives Restgeld (S. 111), beide in
+  `getFinalizeProblems`; Essenz unter 0 bleibt eine Warnung.
+- **Fertigkeiten alphabetisch:** Standardansicht, die Wahl steht in den Preferences. Die rechte Liste enthält alle
+  Fertigkeiten; die einer noch gekoppelten Gruppe stehen mit dem Gruppenwert und gesperrt mit Grund da (überholt den
+  Alphabet-Modus aus `docs/plaene/archiv/skills_sortierung_plan.md`, Abschnitt 13).
+
+**Warum:** Beta-Befunde und Nutzerentscheidung 2026-11-19: Gesperrte Knöpfe und Einträge nannten keinen Grund, und
+Dialogkäufe konnten anders als die Knöpfe BP überziehen.
+
 ## Architektur und Code
 
 ### ADR-010: Ein Top-Level-Typ pro Datei (2026-08-06)
@@ -618,6 +638,6 @@ Rüstung folgt später.
 In `CatalogSelectDialogController` mit deutschem Collator, „Alle“ oben; überholt die GRW-Reihenfolge.
 **Warum:** Schneller beim Suchen.
 
-### ADR-037: Fertigkeits-Sortierung als nicht gespeicherter UI-Zustand (2026-08)
+### ADR-037: Fertigkeits-Sortierung als nicht gespeicherter UI-Zustand (2026-08) — überholt durch ADR-069
 ToggleButton-Paar statt ComboBox; der Modus wird nicht gespeichert.
 **Warum (r):** Reine Ansichtssache, kein Charakterzustand.

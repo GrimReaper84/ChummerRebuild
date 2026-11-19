@@ -180,8 +180,8 @@ public final class TechnomancerTabBuilder {
           }
 
           @Override
-          public boolean canIncrement() {
-            return character.canRaiseComplexForm(complexForm);
+          public @Nullable String incrementProblem() {
+            return character.getComplexFormRaiseProblem(complexForm);
           }
 
           @Override
@@ -243,6 +243,11 @@ public final class TechnomancerTabBuilder {
     if (!ch.canAddComplexFormAtCreation()) {
       host.services().warn("Obergrenze erreicht",
           "Zu Spielbeginn höchstens doppelt so viele Komplexe Formen wie Logik (GRW S. 112)");
+      return;
+    }
+    String bpProblem = ch.getBpShortfallProblem(ComplexForm.MIN_RATING * ComplexForm.BP_PER_RATING);
+    if (bpProblem != null) {
+      host.services().warn("Komplexe Form hinzufügen", bpProblem);
       return;
     }
     try {

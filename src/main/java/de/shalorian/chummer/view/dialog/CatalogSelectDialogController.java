@@ -6,6 +6,7 @@ import java.text.Collator;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
@@ -26,6 +27,9 @@ import org.jspecify.annotations.Nullable;
  * @param <T> Typ der Katalogeinträge (z.B. {@code QualityData}, {@code SpellData})
  */
 public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
+
+  /** Abgeblendeter, aber auswählbarer Eintrag (siehe {@link #isSelectable}). */
+  private static final PseudoClass BLOCKED = PseudoClass.getPseudoClass("blocked");
 
   private static final String CATEGORY_ALL = "Alle";
 
@@ -53,7 +57,8 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
       protected void updateItem(@Nullable T item, boolean empty) {
         super.updateItem(item, empty);
         setText(empty || item == null ? null : item.name());
-        setDisable(!empty && item != null && !isSelectable(item));
+        // abgeblendet statt deaktiviert: auswählbar, damit der Detailbereich den Grund nennt; OK sperrt die Subklasse
+        pseudoClassStateChanged(BLOCKED, !empty && item != null && !isSelectable(item));
       }
     });
 
@@ -120,10 +125,9 @@ public abstract class CatalogSelectDialogController<T extends CatalogEntry> {
   }
 
   /**
-   * Ob {@code entry} aktuell gewählt werden darf. Nicht wählbare Einträge bleiben in der Liste
-   * sichtbar, werden aber deaktiviert dargestellt (z.B. Verfügbarkeit über 12 bei der
-   * Charaktererschaffung). Subklassen müssen die Regel zusätzlich beim Bestätigen prüfen, da die
-   * Auswahl per Tastatur deaktivierte Zellen nicht zuverlässig überspringt. Default: alle wählbar.
+   * Ob {@code entry} aktuell gewählt werden darf. Nicht wählbare Einträge bleiben in der Liste sichtbar und auswählbar,
+   * werden aber abgeblendet dargestellt (Pseudoklasse {@code :blocked}, z.B. Verfügbarkeit über 12 bei der
+   * Charaktererschaffung). Subklassen nennen den Grund im Detailbereich und sperren OK. Default: alle wählbar.
    */
   protected boolean isSelectable(@NonNull T entry) {
     return true;

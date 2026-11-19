@@ -53,9 +53,9 @@
           <ToggleGroup fx:id="skillSortToggleGroup"/>
         </fx:define>
         <HBox alignment="CENTER_LEFT" spacing="8">
-          <ToggleButton fx:id="sortByCategoryBtn" text="Nach Kategorie" selected="true"
+          <ToggleButton fx:id="sortByCategoryBtn" text="Nach Kategorie"
             styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
-          <ToggleButton fx:id="sortByAlphabetBtn" text="Nach Alphabet"
+          <ToggleButton fx:id="sortByAlphabetBtn" text="Nach Alphabet" selected="true"
             styleClass="toggle-button" toggleGroup="$skillSortToggleGroup"/>
           <padding>
             <Insets bottom="8" left="36" right="36" top="12"/>
