@@ -7,7 +7,7 @@ Karrieremodus mit Karma, Nuyen und Protokoll.
 Chummer SR4 Reborn ist ein Neuaufbau des Open-Source-Programms Chummer (C#, Windows) in Java/JavaFX und läuft unter
 Windows, Linux und macOS.
 
-> Inoffizielles Fanprojekt, siehe [Rechtliches](#rechtliches). Noch in Entwicklung, nicht alle Bereiche sind vollständig.
+> Inoffizielles Fanprojekt, siehe [Rechtliches](#rechtliches). Umfang ist das Grundregelwerk, Zusatzbände fehlen.
 
 ## Funktionen
 
@@ -29,34 +29,14 @@ Charaktere werden als JSON-Dateien gespeichert, wo du möchtest. Den genauen Sta
 
 ## Roadmap
 
-Die nächsten großen Schritte, ungefähr in dieser Reihenfolge:
+Mit Version 1.0.0 sind die Inhalte des Grundregelwerks umgesetzt; was sich je Version geändert hat, steht auf der
+Seite [Releases](https://github.com/GrimReaper84/ChummerRebuild/releases). Als Nächstes kommen die Zusatzbände, jeweils
+als eigenes Regelwerk, das sich je Charakter in den Einstellungen zuschalten lässt:
 
-1. ✅ **Cyberware und Bioware vollständig**: alle Implantate des Grundregelwerks, mit ihren Wirkungen auf Attribute,
-   Initiative und Würfelpools.
-2. ✅ **Rüstung überarbeiten**: Darstellung als Baum mit Detailbereich wie bei Waffen, dazu Zubehör und
-   Panzerungsmodifikationen.
-3. ✅ **Cybergliedmaßen**: Arme, Beine und Torso mit eigenen Attributen, Verbesserungen, Zubehör und Cyberwaffen.
-4. ✅ **Magie und Resonanz ausbauen**: Geister und Sprites, Initiation mit Metamagie, Wandlung mit Echos.
-5. ✅ **Neue Oberfläche**: grundlegende Überarbeitung von Layout, Navigation und Darstellung der Werte.
-6. ✅ **Matrix und Kommlinks**: Hardware-Aufrüstungen, Programme auf dem Kommlink, Matrix-Initiative mit Sim-Modul,
-   Lebende Persona, Matrix-Upgrades für Fahrzeuge.
-7. ✅ **Magie abrunden**: Foki binden und ihre Wirkung, Schutzpatrone mit ihren Boni, situative Adeptenkräfte.
-8. ✅ **Kampfwerte vervollständigen**: Munitionswirkung auf Waffenwerte, Smartlink-Bonus, Würfelpools für Rigger und
-   Drohnen, Fahrzeugschaden.
-9. ✅ **Status-Panel überarbeiten**: Zustandsmonitor mit Verletzungsstufen, Edgepunkte und Edge verheizen.
-10. ✅ **Karrieremodus ausbauen**: typisierte Log-Einträge mit Rückgängig, Lebensstilzahlungen, Verkauf von Ausrüstung.
-11. ✅ **Restliche Grundregelwerk-Inhalte**: Exotische Fertigkeiten, Bewegungsrate, Ruf (Straßenruf, Schlechter Ruf,
-    Prominenz), Talentleitungen mit Aktions-, Wissens- und Linguasofts, keine spätere Wahl von Adept, Zauberer,
-    Magieradept oder Technomancer im Karrieremodus, Vorschlagsliste für Wissensfertigkeiten, Portrait.
-12. ✅ **Einstellungen**: Zahlenformat, Proben im Status, Gliedpanzerung als Durchschnitt, versäumte
-    Lebensstilzahlungen, spätes Erwachen latenter Charaktere und die Auswahl der Regelwerke je Charakter.
-13. **Charakterbogen**: Drucken und Exportieren.
-14. **NSCs**: ✅ Schergengruppen mit den Beispielgruppen des Grundregelwerks und Kampfverwaltung; Critter einzeln
-    oder als Rudel mit Kräften und Schwächen.
-15. **Drogen, Toxine und Granaten** (optional): ihre Wirkung statt nur Katalogeinträge.
+1. **Runner-Kompendium**, **Vernetzt** und **Straßenmagie**
+2. **Arsenal**, **Parazoologie** und **Parabotanik**
 
-Das erste Release erscheint, wenn alle Inhalte des Grundregelwerks umgesetzt sind. Die ausführliche Planung steht in
-[`docs/feature_checklist.md`](docs/feature_checklist.md).
+Die ausführliche Planung steht in [`docs/feature_checklist.md`](docs/feature_checklist.md).
 
 ## Download und Installation
 
@@ -146,7 +126,8 @@ Vorbild ist das Open-Source-Programm Chummer, dessen Verhalten für diesen Neuau
 
 Das Anwendungs-Icon ist das Symbol „dragon“ aus [Font Awesome Free](https://fontawesome.com) von Fonticons, Inc.,
 lizenziert unter [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); es wurde umgefärbt und auf einen
-petrolfarbenen Hintergrund gesetzt, dazu eine „4“ in der Schrift Chakra Petch (SIL OFL 1.1). Die Schaltflächen des Programms nutzen die Icon-Schrift von Font Awesome Free (Schriftdateien
+petrolfarbenen Hintergrund gesetzt, dazu eine „4“ in der Schrift Chakra Petch (SIL OFL 1.1). Die Schaltflächen des Programms nutzen die Icon-Schrift
+von Font Awesome Free (Schriftdateien
 unter [SIL OFL 1.1](https://openfontlicense.org/), Icons unter CC BY 4.0) über [Ikonli](https://kordamp.org/ikonli/).
 
 Die Oberfläche nutzt die Schriften [Inter](https://rsms.me/inter/) (The Inter Project Authors) und
