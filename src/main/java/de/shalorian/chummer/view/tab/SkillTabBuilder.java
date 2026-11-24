@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.preventShrink;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
@@ -16,12 +17,14 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogCategory;
+import de.shalorian.chummer.model.character.attribute.AttributeType;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.SkillsoftStatus;
 import de.shalorian.chummer.model.character.skill.ExoticSkills;
 import de.shalorian.chummer.model.character.skill.Skill;
 import de.shalorian.chummer.model.character.skill.SkillCategory;
 import de.shalorian.chummer.view.ViewPreferences;
+import de.shalorian.chummer.view.dialog.DialogButtons;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.ExoticSkillAddDialogController;
 import de.shalorian.chummer.view.grid.RowControls;
@@ -37,7 +40,6 @@ import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextInputDialog;
@@ -51,6 +53,7 @@ import javafx.scene.layout.VBox;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.tbee.javafx.scene.layout.MigPane;
 
 /**
@@ -393,9 +396,11 @@ public final class SkillTabBuilder {
     // UNLINK statt LINK_SLASH: die gepinnte ikonli-fontawesome6-pack-Version 12.4.0 führt die
     // FA6-Icons noch unter ihren alten FA5-Namen, liefert für "unlink" aber denselben Glyph/Codepoint
     // (U+F127), den FontAwesome 6 unter "link-slash" listet.
-    useIcon(decoupleBtn, FontAwesomeSolid.UNLINK);
+    // Icon und Text wie „Einbauen“: selten und folgenreich, ein reines Icon ist schwer zu erkennen (ADR-071).
+    decoupleBtn.setGraphic(new FontIcon(FontAwesomeSolid.UNLINK));
+    decoupleBtn.setTooltip(new Tooltip("Fertigkeitsgruppe " + groupName + " auskoppeln"));
     decoupleBtn.setOnAction(_ -> {
-      Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+      Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "", DialogButtons.OK, DialogButtons.CANCEL);
       TabServices.applyDialogStyle(confirm);
       confirm.setTitle("Gruppe auskoppeln");
       confirm.setHeaderText("Skillgruppe \"" + groupName + "\" wirklich auskoppeln?");
@@ -408,7 +413,7 @@ public final class SkillTabBuilder {
           "Nach dem Auskoppeln können die Skills der Gruppe unabhängig voneinander "
               + "erhöht werden." + costInfo);
       confirm.showAndWait()
-          .filter(btn -> btn == ButtonType.OK)
+          .filter(btn -> btn == DialogButtons.OK)
           .ifPresent(_ -> {
             character.decoupleGroup(groupName);
             rebuildSkillsTab();
@@ -424,7 +429,7 @@ public final class SkillTabBuilder {
       return;
     }
     Label skillNameLabel = new Label(skill.getName());
-    Label attrLabel = new Label(skill.getLinkedAttribute());
+    Label attrLabel = new Label(AttributeType.abbreviationOf(skill.getLinkedAttribute()));
     RowControls controls = RowControls.create();
     Button minus = controls.minus();
     Label ratingLabel = controls.valueLabel();
@@ -616,17 +621,14 @@ public final class SkillTabBuilder {
       @NonNull Character character) {
     Label nameLabel = new Label(template.getName());
     nameLabel.getStyleClass().add(STYLE_ATTR_NAME);
-    Label attrLabel = new Label(template.getLinkedAttribute());
+    Label attrLabel = new Label(AttributeType.abbreviationOf(template.getLinkedAttribute()));
     attrLabel.getStyleClass().add(STYLE_ATTR_ABBR);
     Label poolLabel = DicePoolLabel.create();
     Runnable poolRefresh = () -> DicePoolLabel.show(poolLabel, character.getSkillDicePool(template), 0, null);
     skillRefreshers.add(poolRefresh);
     poolRefresh.run();
-    Button addBtn = new Button("Hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
-    addBtn.setTooltip(new Tooltip(ExoticSkills.VEHICLE.equals(template.getName())
-        ? "Exotische Fertigkeit für ein Fahrzeug lernen" : "Exotische Fertigkeit für eine Waffe lernen"));
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, ExoticSkills.VEHICLE.equals(template.getName())
+        ? "Exotische Fertigkeit für ein Fahrzeug lernen" : "Exotische Fertigkeit für eine Waffe lernen");
     addBtn.setOnAction(_ -> onAddExoticSkill(template, character));
     addRowCells(grid, row, nameLabel, attrLabel, new Label(), new Label(), new Label(), poolLabel, new Label(),
         addBtn, new Label());
@@ -693,6 +695,7 @@ public final class SkillTabBuilder {
     }
     TextInputDialog dialog = new TextInputDialog(
         skill.getSpecialization() != null ? skill.getSpecialization() : "");
+    dialog.getDialogPane().getButtonTypes().setAll(DialogButtons.OK, DialogButtons.CANCEL);
     TabServices.applyDialogStyle(dialog);
     dialog.setTitle("Spezialisierung");
     dialog.setHeaderText(skill.getName() + " – Spezialisierung");

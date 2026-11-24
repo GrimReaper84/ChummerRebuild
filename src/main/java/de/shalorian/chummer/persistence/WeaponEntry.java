@@ -18,6 +18,8 @@ class WeaponEntry {
   public @NonNull List<GearEntry> arrows = new ArrayList<>();
   /** Name der geladenen Munition (Stapel der Ausrüstung), leer für Standardmunition. */
   public @NonNull String ammo = "";
+  /** Ersetzte bzw. ausgebaute mitgelieferte Teile (ADR-071); fehlt in älteren Dateien. */
+  public @NonNull List<String> retiredIncluded = new ArrayList<>();
 
   public WeaponEntry() {
   }

@@ -221,6 +221,7 @@ public class CharacterStore {
     RuleOptions rules = character.getRuleOptions();
     data.rules = new RuleOptionsEntry(rules.isLimbArmorAverage(), rules.isLateAwakening(),
         rules.isMissedLifestylePayments(), rules.isDecoupleAtCreation(), List.copyOf(rules.getExtraBooks()));
+    data.rules.removeIncludedParts = rules.isRemoveIncludedParts();
 
     return data;
   }
@@ -229,11 +230,19 @@ public class CharacterStore {
   private static @NonNull WeaponEntry toWeaponEntry(@NonNull Weapon weapon, @Nullable Gear ammo) {
     WeaponEntry entry = new WeaponEntry(weapon.getName(), weapon.getRating(),
         weapon.getAccessories().stream()
-            .map(a -> new AccessoryEntry(a.getName(), a.mount() == null ? null : a.mount().name()))
+            .map(CharacterStore::toAccessoryEntry)
             .toList());
+    entry.retiredIncluded = List.copyOf(weapon.getRetiredIncluded());
     entry.arrows = weapon.getArrows().stream().map(CharacterStore::toGearEntry).toList();
     entry.ammo = ammo == null ? "" : ammo.getName();
     entry.gmFreeNuyen = weapon.getGmFreeNuyen();
+    return entry;
+  }
+
+  private static @NonNull AccessoryEntry toAccessoryEntry(@NonNull WeaponAccessory accessory) {
+    AccessoryEntry entry = new AccessoryEntry(accessory.getName(),
+        accessory.mount() == null ? null : accessory.mount().name());
+    entry.replaces = accessory.replaces();
     return entry;
   }
 
@@ -603,6 +612,11 @@ public class CharacterStore {
     }
     Weapon weapon = new Weapon(weaponData, entry.rating);
     weapon.setGmFreeNuyen(entry.gmFreeNuyen);
+    // Erst die ausgebauten Teile, dann das Zubehör: ein Ersatzteil findet sein mitgeliefertes Teil so noch vor und
+    // ersetzt es wie beim Kauf (Weapon#addAccessory).
+    entry.retiredIncluded.stream()
+        .filter(name -> entry.accessories.stream().noneMatch(a -> name.equals(a.replaces)))
+        .forEach(weapon::removeIncluded);
     entry.accessories.forEach(a -> applyAccessory(weapon, a));
     for (GearEntry arrowEntry : entry.arrows) {
       Gear arrows = toGear(arrowEntry);
@@ -801,6 +815,7 @@ public class CharacterStore {
     rules.setLateAwakening(data.rules.lateAwakening);
     rules.setMissedLifestylePayments(data.rules.missedLifestylePayments);
     rules.setDecoupleAtCreation(data.rules.decoupleAtCreation);
+    rules.setRemoveIncludedParts(data.rules.removeIncludedParts);
     data.rules.books.forEach(code -> rules.setBookEnabled(code, true));
   }
 

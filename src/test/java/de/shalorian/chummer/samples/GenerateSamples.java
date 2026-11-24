@@ -177,6 +177,7 @@ public final class GenerateSamples {
     options.setLateAwakening(true);
     options.setMissedLifestylePayments(true);
     options.setDecoupleAtCreation(true);
+    options.setRemoveIncludedParts(true);
     options.setBookEnabled("SM", true);
     return c;
   }

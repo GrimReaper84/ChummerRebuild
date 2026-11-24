@@ -157,11 +157,13 @@
     "specialization" : null
   } ],
   "contacts" : [ {
+    "gmFreeBp" : 0,
     "name" : "Schieber",
     "description" : null,
     "connection" : 2,
     "loyalty" : 2
   }, {
+    "gmFreeBp" : 0,
     "name" : "Talismankrämer",
     "description" : null,
     "connection" : 2,
@@ -217,33 +219,42 @@
     "techniques" : [ "Zentrierung" ]
   },
   "spirits" : [ {
+    "gmFreeBp" : 0,
     "name" : "Feuergeist",
     "force" : 4,
     "services" : 2,
     "bound" : true,
     "options" : [ ]
   } ],
+  "gmFreeSpells" : [ ],
   "cyberware" : [ ],
   "armor" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Gefütterter Mantel",
     "equipped" : true,
     "price" : null,
     "mods" : [ ]
   } ],
   "weapons" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Katana",
     "rating" : 0,
     "accessories" : [ ],
     "arrows" : [ ],
-    "ammo" : ""
+    "ammo" : "",
+    "retiredIncluded" : [ ]
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Yamaha Sakura Fubuki",
     "rating" : 0,
     "accessories" : [ ],
     "arrows" : [ ],
-    "ammo" : ""
+    "ammo" : "",
+    "retiredIncluded" : [ ]
   } ],
   "gear" : [ {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Mage-Sight-Brille",
     "rating" : 0,
     "quantity" : 1,
@@ -255,6 +266,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Stimulanz-Patch",
     "rating" : 3,
     "quantity" : 4,
@@ -266,6 +279,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Gefälschte SIN",
     "rating" : 3,
     "quantity" : 1,
@@ -277,12 +292,16 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Novatech Airware",
     "rating" : 0,
     "quantity" : 1,
     "extra" : "",
     "packPrice" : null,
     "installed" : [ {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Mangadyne Deva",
       "rating" : 0,
       "quantity" : 1,
@@ -294,6 +313,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Sim-Modul (für BTL/heißes Sim modifiziert)",
       "rating" : 0,
       "quantity" : 1,
@@ -305,6 +326,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Analyse",
       "rating" : 3,
       "quantity" : 1,
@@ -316,6 +339,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Befehl",
       "rating" : 1,
       "quantity" : 1,
@@ -327,6 +352,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Editieren",
       "rating" : 3,
       "quantity" : 1,
@@ -338,6 +365,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Schmöker",
       "rating" : 3,
       "quantity" : 1,
@@ -354,6 +383,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Simrig",
     "rating" : 0,
     "quantity" : 1,
@@ -365,6 +396,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Schnellziehholster",
     "rating" : 0,
     "quantity" : 1,
@@ -376,6 +409,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Standardmunition",
     "rating" : 0,
     "quantity" : 200,
@@ -387,6 +422,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Kraftfokus",
     "rating" : 1,
     "quantity" : 1,
@@ -400,6 +437,7 @@
   } ],
   "vehicles" : [ ],
   "lifestyle" : {
+    "gmFreeNuyen" : 0,
     "level" : "LOW",
     "months" : 2,
     "missedMonths" : 0,
@@ -416,6 +454,7 @@
     "lateAwakening" : false,
     "missedLifestylePayments" : false,
     "decoupleAtCreation" : false,
+    "removeIncludedParts" : false,
     "books" : [ ]
   }
 }

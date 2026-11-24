@@ -3,7 +3,7 @@ package de.shalorian.chummer.view.tab;
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
-import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -97,9 +97,7 @@ public final class TechnomancerTabBuilder {
     // syncTechnomancerTabVisibility()) — ein hier gesetzter Disabled-Zustand würde nach Erwerb der
     // Quality "Technomancer" eingefroren bleiben. Die Prüfung erfolgt stattdessen live beim Klick in
     // onAddComplexForm() (analog dem Zauber-Button in MagicTabBuilder.build()).
-    Button addBtn = new Button("Komplexe Form hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Komplexe Form hinzufügen");
     addBtn.setOnAction(_ -> onAddComplexForm());
 
     HBox header = new HBox(12);
@@ -143,7 +141,6 @@ public final class TechnomancerTabBuilder {
       @NonNull ComplexForm complexForm, @NonNull Character character) {
     Label nameLabel = new Label(complexForm.getName());
     addSourceTooltip(nameLabel, complexForm.getData().source(), complexForm.getData().page());
-    markGmFree(nameLabel, complexForm.getGmFreeBp() > 0, complexForm.getGmFreeBp() + " BP");
     Label categoryLabel = new Label(complexForm.getData().category());
     Label skillLabel = new Label(complexForm.getData().skill());
     RowControls controls = RowControls.create();

@@ -3,8 +3,8 @@ package de.shalorian.chummer.view.tab;
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
@@ -12,7 +12,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_NAME;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_VALUE;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
@@ -89,9 +88,7 @@ public final class InitiationTabBuilder {
     int cost = initiation.getNextGradeKarmaCost();
     Label costLabel = styled(new Label("nächster Grad: " + cost + " Karma"), STYLE_BP_LABEL);
 
-    Button raiseBtn = new Button("Grad steigern");
-    raiseBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(raiseBtn, FontAwesomeSolid.ARROW_UP);
+    Button raiseBtn = iconTextButton("Grad steigern", FontAwesomeSolid.ARROW_UP, kind.getGradeName() + " steigern");
     raiseBtn.setOnAction(_ -> onRaise(ch, initiation, kind));
     // Der Bereich wird beim Moduswechsel neu gebaut, daher darf der Modus den Knopf sperren.
     String modeProblem = initiation.getModeProblem();
@@ -133,9 +130,7 @@ public final class InitiationTabBuilder {
     String plural = kind.getPluralName();
     Label title = styled(new Label(plural), STYLE_SECTION_TITLE);
     Label free = styled(new Label("frei: " + initiation.getFreeChoices()), STYLE_BP_LABEL);
-    Button learnBtn = new Button(kind.getTechniqueName() + " lernen");
-    learnBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(learnBtn, FontAwesomeSolid.PLUS);
+    Button learnBtn = iconTextButton("Lernen", FontAwesomeSolid.PLUS, kind.getTechniqueName() + " lernen");
     learnBtn.setOnAction(_ -> onLearn(ch, initiation, kind));
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);

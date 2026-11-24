@@ -89,35 +89,44 @@
         "techniques" : [ ]
       },
       "spirits" : [ ],
+      "gmFreeSpells" : [ ],
       "cyberware" : [ ],
       "armor" : [ {
+        "gmFreeNuyen" : 0,
         "name" : "Panzerjacke",
         "equipped" : true,
         "price" : null,
         "mods" : [ ]
       } ],
       "weapons" : [ {
+        "gmFreeNuyen" : 0,
         "name" : "Betäubungsschlagstock",
         "rating" : 0,
         "accessories" : [ ],
         "arrows" : [ ],
-        "ammo" : ""
+        "ammo" : "",
+        "retiredIncluded" : [ ]
       }, {
+        "gmFreeNuyen" : 0,
         "name" : "Colt America L36",
         "rating" : 0,
         "accessories" : [ ],
         "arrows" : [ ],
-        "ammo" : ""
+        "ammo" : "",
+        "retiredIncluded" : [ ]
       }, {
+        "gmFreeNuyen" : 0,
         "name" : "Defiance EX Schocker",
         "rating" : 0,
         "accessories" : [ ],
         "arrows" : [ ],
-        "ammo" : ""
+        "ammo" : "",
+        "retiredIncluded" : [ ]
       } ],
       "gear" : [ ],
       "vehicles" : [ ],
       "lifestyle" : {
+        "gmFreeNuyen" : 0,
         "level" : "STREET",
         "months" : 1,
         "missedMonths" : 0,
@@ -134,6 +143,7 @@
         "lateAwakening" : false,
         "missedLifestylePayments" : false,
         "decoupleAtCreation" : false,
+        "removeIncludedParts" : false,
         "books" : [ ]
       }
     },
@@ -246,13 +256,16 @@
         "techniques" : [ ]
       },
       "spirits" : [ ],
+      "gmFreeSpells" : [ ],
       "cyberware" : [ {
+        "gmFreeNuyen" : 0,
         "name" : "Ganzer Arm (offensichtlich)",
         "grade" : "STANDARD",
         "rating" : 0,
         "choice" : "",
         "price" : null,
         "installed" : [ {
+          "gmFreeNuyen" : 0,
           "name" : "Panzerungsverbesserung",
           "grade" : "STANDARD",
           "rating" : 3,
@@ -277,6 +290,7 @@
         "pairedCopy" : false,
         "pair" : 0
       }, {
+        "gmFreeNuyen" : 0,
         "name" : "Reaktionsverbesserung",
         "grade" : "STANDARD",
         "rating" : 2,
@@ -292,6 +306,7 @@
         "pairedCopy" : false,
         "pair" : 0
       }, {
+        "gmFreeNuyen" : 0,
         "name" : "Smartlink",
         "grade" : "STANDARD",
         "rating" : 0,
@@ -308,33 +323,41 @@
         "pair" : 0
       } ],
       "armor" : [ {
+        "gmFreeNuyen" : 0,
         "name" : "Panzerjacke",
         "equipped" : true,
         "price" : null,
         "mods" : [ ]
       } ],
       "weapons" : [ {
+        "gmFreeNuyen" : 0,
         "name" : "Betäubungsschlagstock",
         "rating" : 0,
         "accessories" : [ ],
         "arrows" : [ ],
-        "ammo" : ""
+        "ammo" : "",
+        "retiredIncluded" : [ ]
       }, {
+        "gmFreeNuyen" : 0,
         "name" : "Colt Manhunter",
         "rating" : 0,
         "accessories" : [ ],
         "arrows" : [ ],
-        "ammo" : ""
+        "ammo" : "",
+        "retiredIncluded" : [ ]
       }, {
+        "gmFreeNuyen" : 0,
         "name" : "Defiance EX Schocker",
         "rating" : 0,
         "accessories" : [ ],
         "arrows" : [ ],
-        "ammo" : ""
+        "ammo" : "",
+        "retiredIncluded" : [ ]
       } ],
       "gear" : [ ],
       "vehicles" : [ ],
       "lifestyle" : {
+        "gmFreeNuyen" : 0,
         "level" : "STREET",
         "months" : 1,
         "missedMonths" : 0,
@@ -351,6 +374,7 @@
         "lateAwakening" : false,
         "missedLifestylePayments" : false,
         "decoupleAtCreation" : false,
+        "removeIncludedParts" : false,
         "books" : [ ]
       }
     },

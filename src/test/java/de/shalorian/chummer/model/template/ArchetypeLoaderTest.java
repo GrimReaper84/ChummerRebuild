@@ -2,14 +2,19 @@ package de.shalorian.chummer.model.template;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.DataPaths;
+import de.shalorian.chummer.model.character.weapon.Recoil;
+import de.shalorian.chummer.model.character.weapon.Weapon;
+import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
@@ -25,6 +30,21 @@ class ArchetypeLoaderTest {
   void loadsAllSixteenArchetypes() {
     assertEquals(16, ArchetypeLoader.getAll().size());
     assertNotNull(ArchetypeLoader.findByName("Straßensamurai"));
+  }
+
+  @Test
+  void streetSamuraiWeaponsAsInRulebook() {
+    // GRW-Archetyp: Ingram Smartgun X mit Schallunterdrücker und Gasventilsystem 3, Stoner mit internem Smartgun.
+    Character c = Objects.requireNonNull(ArchetypeLoader.findByName("Straßensamurai")).create(new ArrayList<>());
+    Weapon ingram = weapon(c, "Ingram Smartgun X");
+    assertEquals(List.of("Gasventilsystem 3"), ingram.getAccessories().stream().map(WeaponAccessory::getName).toList());
+    assertEquals(1, ingram.getIncluded().stream().filter(i -> i.name().equals("Schallunterdrücker")).count());
+    assertEquals(new Recoil(3, 4), ingram.getRecoil());
+    assertTrue(weapon(c, "Stoner-Ares M202").hasSmartgun());
+  }
+
+  private static Weapon weapon(Character c, String name) {
+    return c.getEquipment().getWeapons().stream().filter(w -> w.getName().equals(name)).findFirst().orElseThrow();
   }
 
   @Test

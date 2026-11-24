@@ -4,13 +4,11 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
-import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.installButton;
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
@@ -39,6 +37,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -221,19 +220,19 @@ public final class VehicleTabBuilder {
     return header;
   }
 
-  private @NonNull HBox buildToolbar(@NonNull Character character,
+  private @NonNull FlowPane buildToolbar(@NonNull Character character,
       @NonNull TreeView<VehicleTreeEntry> tree) {
-    Button addBtn = button("Fahrzeug hinzufügen", FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Fahrzeug hinzufügen");
     addBtn.setOnAction(_ -> onAddVehicle(character));
 
     // Bindungen nur an die Baumauswahl (UI-Zustand); Regeln prüfen die Handler.
-    Button riggerBtn = vehicleButton("Riggeradapter einbauen", FontAwesomeSolid.GAMEPAD, tree);
+    Button riggerBtn = vehicleButton("Riggeradapter", "Riggeradapter einbauen", FontAwesomeSolid.GAMEPAD, tree);
     riggerBtn.setOnAction(_ -> withVehicle(tree, v -> onAddRiggerAdapter(character, v)));
 
-    Button mountBtn = vehicleButton("Waffenhalterung einbauen", FontAwesomeSolid.CROSSHAIRS, tree);
+    Button mountBtn = vehicleButton("Halterung", "Waffenhalterung einbauen", FontAwesomeSolid.CROSSHAIRS, tree);
     mountBtn.setOnAction(_ -> withVehicle(tree, v -> onAddMount(character, v)));
 
-    Button weaponBtn = vehicleButton("Waffe in Halterung einsetzen", FontAwesomeSolid.BULLSEYE, tree);
+    Button weaponBtn = vehicleButton("Waffe", "Waffe in Halterung einsetzen", FontAwesomeSolid.BULLSEYE, tree);
     weaponBtn.setOnAction(_ -> {
       VehicleTreeEntry entry = selectedEntry(tree);
       Vehicle vehicle = entry == null ? null : entry.vehicle();
@@ -242,10 +241,10 @@ public final class VehicleTabBuilder {
       }
     });
 
-    Button matrixBtn = vehicleButton("Matrix-Upgrade einbauen", FontAwesomeSolid.MICROCHIP, tree);
+    Button matrixBtn = vehicleButton("Matrix-Upgrade", "Matrix-Upgrade einbauen", FontAwesomeSolid.MICROCHIP, tree);
     matrixBtn.setOnAction(_ -> withVehicle(tree, v -> onAddMatrixUpgrade(character, v)));
 
-    Button gearBtn = vehicleButton("Ausrüstung ins Fahrzeug legen", FontAwesomeSolid.BOX_OPEN, tree);
+    Button gearBtn = vehicleButton("Ausrüstung", "Ausrüstung ins Fahrzeug legen", FontAwesomeSolid.BOX_OPEN, tree);
     gearBtn.setOnAction(_ -> withVehicle(tree, v -> onAddGear(character, v)));
 
     Button installBtn = installButton("In ausgewählten Gegenstand einbauen");
@@ -263,7 +262,7 @@ public final class VehicleTabBuilder {
       }
     });
 
-    Button removeBtn = button("Auswahl entfernen", FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Entfernen", FontAwesomeSolid.TRASH, "Auswahl entfernen");
     removeBtn.disableProperty().bind(Bindings.createBooleanBinding(
         () -> selectedVehicle(tree) == null, tree.getSelectionModel().selectedItemProperty()));
     removeBtn.setOnAction(_ -> {
@@ -283,27 +282,18 @@ public final class VehicleTabBuilder {
           onChanged(character, null);
         });
 
-    HBox toolbar = new HBox(8);
-    toolbar.setAlignment(Pos.CENTER_LEFT);
-    Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
-    toolbar.getChildren().addAll(spacer, sellBtn, removeBtn, installBtn, gearBtn, matrixBtn, weaponBtn, mountBtn,
+    // Umbrechen statt kürzen: mit Text passen die neun Knöpfe nicht immer in eine Zeile (ADR-071).
+    FlowPane toolbar = new FlowPane(8, 8, sellBtn, removeBtn, installBtn, gearBtn, matrixBtn, weaponBtn, mountBtn,
         riggerBtn, addBtn);
+    toolbar.setAlignment(Pos.CENTER_RIGHT);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
   }
 
-  private static @NonNull Button button(@NonNull String text, @NonNull FontAwesomeSolid icon) {
-    Button button = new Button(text);
-    button.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(button, icon);
-    return button;
-  }
-
   /** Button, der nur mit einem gewählten Fahrzeug (oder einem seiner Kindknoten) aktiv ist. */
-  private static @NonNull Button vehicleButton(@NonNull String text, @NonNull FontAwesomeSolid icon,
-      @NonNull TreeView<VehicleTreeEntry> tree) {
-    Button button = button(text, icon);
+  private static @NonNull Button vehicleButton(@NonNull String text, @NonNull String tooltip,
+      @NonNull FontAwesomeSolid icon, @NonNull TreeView<VehicleTreeEntry> tree) {
+    Button button = iconTextButton(text, icon, tooltip);
     button.disableProperty().bind(Bindings.createBooleanBinding(
         () -> selectedVehicle(tree) == null, tree.getSelectionModel().selectedItemProperty()));
     return button;
@@ -352,9 +342,6 @@ public final class VehicleTabBuilder {
       }
     } else {
       showVehicleDetails(details, VehicleDetails.of(vehicle));
-      if (vehicle.getGmFreeNuyen() > 0) {
-        details.getChildren().add(gmFreeHint(Numbers.nuyen(vehicle.getGmFreeNuyen())));
-      }
       details.getChildren().add(VehicleCombatSection.build(character, vehicle, this::refresh));
     }
   }

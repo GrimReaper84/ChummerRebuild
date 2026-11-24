@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view.tab;
 
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.preventShrink;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
@@ -131,9 +132,8 @@ public final class QualityTabBuilder {
     Label limitLabel = new Label();
     limitLabel.getStyleClass().add(STYLE_BP_LABEL);
 
-    Button addBtn = new Button("Hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS,
+        type == QualityType.POSITIVE ? "Gabe hinzufügen" : "Handicap hinzufügen");
     addBtn.setOnAction(_ -> onAddQuality(type));
 
     HBox header = new HBox(8);
@@ -292,11 +292,13 @@ public final class QualityTabBuilder {
       host.services().warn("Nicht wählbar", problem);
       return;
     }
-    // Eine Gabe im Karrieremodus erwerben kostet die doppelten GP-Kosten in Karma.
-    if (ch.isCreated() && r.data().type() == QualityType.POSITIVE && !r.gratis()) {
-      int karmaCost = ch.getQualityKarmaCost(r.data());
-      if (host.services().karmaChargeFailed(ch, LogCategory.QUALITY, "%s erwerben".formatted(r.data().name()),
-          karmaCost)) {
+    // Eine Gabe im Karrieremodus erwerben kostet die doppelten GP-Kosten in Karma; gratis steht sie mit 0 im
+    // Protokoll (ADR-071).
+    if (ch.isCreated() && r.data().type() == QualityType.POSITIVE) {
+      String label = "%s erwerben".formatted(r.data().name());
+      if (r.gratis()) {
+        host.services().bookKarma(ch, LogCategory.QUALITY, label, 0);
+      } else if (host.services().karmaChargeFailed(ch, LogCategory.QUALITY, label, ch.getQualityKarmaCost(r.data()))) {
         return;
       }
     }

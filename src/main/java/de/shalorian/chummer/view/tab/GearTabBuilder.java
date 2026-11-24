@@ -4,9 +4,8 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
-import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.installButton;
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
@@ -165,9 +164,7 @@ final class GearTabBuilder {
 
   private @NonNull HBox buildToolbar(@NonNull Character character,
       @NonNull TreeView<GearTreeEntry> tree) {
-    Button addBtn = new Button("Gegenstand hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Gegenstand hinzufügen");
     addBtn.setOnAction(_ -> onAddGear(character));
 
     Button installBtn = installButton("In ausgewählten Gegenstand einbauen");
@@ -192,9 +189,7 @@ final class GearTabBuilder {
       onInstall(character, gear);
     });
 
-    Button removeBtn = new Button("Ausgewählten Gegenstand entfernen");
-    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(removeBtn, FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Entfernen", FontAwesomeSolid.TRASH, "Ausgewählten Gegenstand entfernen");
     // Bindung an die Baumauswahl (UI-Zustand): Bereichsknoten lassen sich nicht entfernen.
     removeBtn.disableProperty().bind(Bindings.createBooleanBinding(
         () -> selectedGear(tree) == null, tree.getSelectionModel().selectedItemProperty()));
@@ -308,9 +303,6 @@ final class GearTabBuilder {
           skillsoftToggle(gear, character, host, onChanged));
     }
     details.getChildren().addAll(title, grid);
-    if (gear.getGmFreeNuyen() > 0) {
-      details.getChildren().add(gmFreeHint(Numbers.nuyen(gear.getGmFreeNuyen())));
-    }
     if (!d.note().isEmpty()) {
       Label note = detailHint(d.note());
       note.setWrapText(true);

@@ -2865,7 +2865,7 @@ public class Character {
 
   /**
    * Wie {@link #coverGmChanges()} und meldet, ob seit der letzten Abfrage etwas gutgeschrieben wurde. Die Oberfläche
-   * baut dann neu auf, damit Summen und „(gratis)“ stimmen (die Tabs lesen beim Aufbau schon vor der Gutschrift).
+   * baut dann neu auf, damit Summen und Restgeld stimmen (die Tabs lesen beim Aufbau schon vor der Gutschrift).
    */
   public boolean consumeGmCredit() {
     return gmAllowance.consumeCredit();

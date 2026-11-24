@@ -4,15 +4,13 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
-import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.installButton;
 import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_VALUE;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
@@ -182,7 +180,7 @@ final class ArmorTabBuilder {
   }
 
   private @NonNull HBox buildToolbar(@NonNull Character character, @NonNull TreeView<ArmorTreeEntry> tree) {
-    Button addBtn = toolbarButton("Rüstung hinzufügen", FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Rüstung hinzufügen");
     addBtn.setOnAction(_ -> onAddArmor(character));
 
     Button installBtn = installButton("Modifikation in das ausgewählte Rüstungsteil einbauen");
@@ -195,12 +193,12 @@ final class ArmorTabBuilder {
       }
     });
 
-    Button equipAllBtn = toolbarButton("Alle anlegen", FontAwesomeSolid.CHECK_DOUBLE);
+    Button equipAllBtn = iconTextButton("Alle anlegen", FontAwesomeSolid.CHECK_DOUBLE, "Alle Rüstungen anlegen");
     equipAllBtn.setOnAction(_ -> onSetAllEquipped(character, true));
-    Button unequipAllBtn = toolbarButton("Alle ablegen", FontAwesomeSolid.SQUARE);
+    Button unequipAllBtn = iconTextButton("Alle ablegen", FontAwesomeSolid.SQUARE, "Alle Rüstungen ablegen");
     unequipAllBtn.setOnAction(_ -> onSetAllEquipped(character, false));
 
-    Button removeBtn = toolbarButton("Entfernen", FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Entfernen", FontAwesomeSolid.TRASH, "Ausgewählte Rüstung bzw. Modifikation entfernen");
     // Kategorieknoten und Einbauten, die ein anderer Einbau braucht, lassen sich nicht entfernen.
     removeBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       ArmorTreeEntry entry = selectedEntry(tree);
@@ -228,13 +226,6 @@ final class ArmorTabBuilder {
     toolbar.setAlignment(Pos.CENTER_LEFT);
     VBox.setMargin(toolbar, new Insets(0, 0, 8, 0));
     return toolbar;
-  }
-
-  private static @NonNull Button toolbarButton(@NonNull String text, @NonNull FontAwesomeSolid icon) {
-    Button button = new Button(text);
-    button.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(button, icon);
-    return button;
   }
 
   // ── Detailbereich ─────────────────────────────────────────
@@ -278,9 +269,6 @@ final class ArmorTabBuilder {
     addRowCells(grid, row++, detailKey("Preis inkl. Einbauten"), detailValue(d.price()));
     addRowCells(grid, row, detailKey("Quelle"), detailValue(d.source()));
     details.getChildren().addAll(title(d.name()), grid);
-    if (armor.getGmFreeNuyen() > 0) {
-      details.getChildren().add(gmFreeHint(Numbers.nuyen(armor.getGmFreeNuyen())));
-    }
     if (!armor.getData().weapon().isEmpty()) {
       details.getChildren().add(detailHint("Angelegt im Waffenbereich als Nahkampfwaffe verfügbar."));
     }

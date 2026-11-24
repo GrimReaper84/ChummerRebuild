@@ -1,7 +1,6 @@
 package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
-import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_BP;
@@ -215,7 +214,6 @@ public final class StreetGearTabBuilder {
     addLifestyleRow(grid, row, "Monatskosten:",
         new Label(SpendCurrency.NUYEN.formatAmount(lifestyle.getLevel().getMonthlyCost())));
     Label total = new Label(SpendCurrency.NUYEN.formatAmount(lifestyle.getNuyenCost()));
-    markGmFree(total, lifestyle.getGmFreeNuyen() > 0, Numbers.nuyen(lifestyle.getGmFreeNuyen()));
     addLifestyleRow(grid, row + 1, "Gesamtkosten:", total);
   }
 

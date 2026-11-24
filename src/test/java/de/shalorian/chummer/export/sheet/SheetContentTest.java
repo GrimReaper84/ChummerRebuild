@@ -87,7 +87,7 @@ class SheetContentTest {
     c.setSkillSpecialization(pistols, "Revolver");
     List<List<String>> skills = SheetContent.of(c).activeSkills();
     assertEquals(1, skills.size(), "nur Fertigkeiten mit Wert");
-    assertEquals(List.of("Pistolen (Revolver)", "3", pistols.getLinkedAttribute(), "7 (9)"), skills.getFirst());
+    assertEquals(List.of("Pistolen (Revolver)", "3", "GES", "7 (9)"), skills.getFirst());
   }
 
   @Test

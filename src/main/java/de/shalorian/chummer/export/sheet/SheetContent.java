@@ -177,7 +177,7 @@ public record SheetContent(
         .filter(skill -> skill.getRating() > 0)
         .sorted(Comparator.comparing(Skill::getName, GERMAN))
         .map(skill -> List.of(withSpecialization(skill.getName(), skill.getSpecialization()),
-            Numbers.integer(skill.getRating()), skill.getLinkedAttribute(),
+            Numbers.integer(skill.getRating()), AttributeType.abbreviationOf(skill.getLinkedAttribute()),
             poolText(c.getSkillDicePool(skill), skill.getSpecialization() != null)))
         .toList();
   }

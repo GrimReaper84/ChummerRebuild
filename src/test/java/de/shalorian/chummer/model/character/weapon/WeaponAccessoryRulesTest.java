@@ -121,12 +121,22 @@ class WeaponAccessoryRulesTest {
   }
 
   @Test
-  void noSecondGasVentOrSmartgunWhenOneIsIncluded() {
-    // GRW S. 367: Eine Waffe mit Gasventil ab Werk bekommt kein zweites.
+  void noSecondGasVentWhenOneIsIncludedUnlessStronger() {
+    // GRW S. 367: Eine Waffe mit Gasventil ab Werk bekommt kein zweites; ein stärkeres rüstet es auf (ADR-071).
     assertNotNull(weapon("Ingram White Knight").mountProblem(accessory("Gasventilsystem 3")));
-    assertNotNull(weapon("Ares Predator IV").mountProblem(accessory("Smartgunsystem, extern")));
-    assertNotNull(weapon("Ares Predator IV").mountProblem(accessory("Smartgunsystem, intern")));
-    assertNotNull(weapon("Ruger 100").mountProblem(accessory("Schockpolster")));
+    String problem = weapon("Ingram Smartgun X").mountProblem(accessory("Gasventilsystem 2"));
+    assertNotNull(problem);
+    assertTrue(problem.contains("Nur ein stärkeres Gasventil"));
+    assertNull(weapon("Ingram Smartgun X").mountProblem(accessory("Gasventilsystem 3")));
+  }
+
+  @Test
+  void includedSmartgunAndShockPadCanBeReplaced() {
+    // Kein GRW-Verbot: mitgeliefertes Smartgun bzw. Schockpolster lässt sich ersetzen (ADR-071).
+    assertEquals("Smartgunsystem",
+        Objects.requireNonNull(weapon("Ares Predator IV").replacementFor(accessory("Smartgunsystem, intern"))).name());
+    assertNull(weapon("Ares Predator IV").mountProblem(accessory("Smartgunsystem, extern")));
+    assertNull(weapon("Ruger 100").mountProblem(accessory("Schockpolster")));
   }
 
   @Test

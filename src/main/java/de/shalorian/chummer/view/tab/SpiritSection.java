@@ -2,7 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
-import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.setWarnStyle;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
@@ -79,9 +79,7 @@ final class SpiritSection {
         spirits.getBoundLimit());
     Label countLabel = styled(new Label(ch.isCreated() ? count : count + " · " + spirits.getBpCost() + " BP"),
         STYLE_BP_LABEL);
-    Button addBtn = new Button(kind.getDisplayName() + " hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, kind.getDisplayName() + " hinzufügen");
     addBtn.setOnAction(_ -> onAdd(ch));
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -134,7 +132,6 @@ final class SpiritSection {
     });
     Label name = styled(new Label(category == null ? data.name() : data.name() + " · " + category), STYLE_ATTR_NAME);
     name.setTooltip(new Tooltip(data.source() + " S. " + data.page()));
-    markGmFree(name, spirit.getGmFreeBp() > 0, spirit.getGmFreeBp() + " BP");
     Label force = styled(new Label(String.valueOf(spirit.getForce())), STYLE_ATTR_VALUE);
 
     Button minus = actionButton("Dienst weniger", FontAwesomeSolid.MINUS);

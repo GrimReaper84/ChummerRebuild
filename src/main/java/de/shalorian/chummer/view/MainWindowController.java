@@ -19,6 +19,7 @@ import de.shalorian.chummer.persistence.NpcGroupStore;
 import de.shalorian.chummer.utils.NumberStyle;
 import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.utils.PersistenceUtils;
+import de.shalorian.chummer.view.dialog.DialogButtons;
 import de.shalorian.chummer.view.dialog.NewCharacterDialogController;
 import de.shalorian.chummer.view.dialog.SettingsDialogController;
 import de.shalorian.chummer.view.dialog.SettingsResult;
@@ -45,7 +46,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -259,14 +259,15 @@ public class MainWindowController {
     boolean on = gmModeItem.isSelected();
     if (on) {
       Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-          "Steigern, Senken, Kaufen und Entfernen kosten nichts und werden nicht gebucht. Regelsperren entfallen "
+          "Steigern, Senken, Kaufen und Entfernen kosten nichts; Käufe in der Karriere stehen mit 0 im Protokoll. "
+              + "Regelsperren entfallen "
               + "(Erschaffungsgrenzen, nur steigern im Karrieremodus, Voraussetzungen, Verfügbarkeit); die Obergrenzen "
               + "aus dem Grundregelwerk bleiben. Der Modus wird nicht gespeichert.",
-          ButtonType.YES, ButtonType.NO);
+          DialogButtons.YES, DialogButtons.NO);
       TabServices.applyDialogStyle(confirm);
       confirm.setTitle("Spielleiter-Modus");
       confirm.setHeaderText("Spielleiter-Modus einschalten?");
-      if (confirm.showAndWait().filter(button -> button == ButtonType.YES).isEmpty()) {
+      if (confirm.showAndWait().filter(button -> button == DialogButtons.YES).isEmpty()) {
         gmModeItem.setSelected(false);
         return;
       }
@@ -528,7 +529,7 @@ public class MainWindowController {
   }
 
   private void showError(@NonNull String header, @Nullable String detail) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
+    Alert alert = new Alert(Alert.AlertType.ERROR, "", DialogButtons.OK);
     TabServices.applyDialogStyle(alert);
     alert.setTitle("Fehler");
     alert.setHeaderText(header);

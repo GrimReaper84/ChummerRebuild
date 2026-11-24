@@ -436,14 +436,14 @@
             <weapon>Schockhandschuh</weapon>
             <weapon rating="8">Bogen</weapon>
             <gear rating="8" amount="20">Pfeil</gear>
-            <weapon>Mossberg AM-CMDT</weapon>
+            <weapon>Mossberg AM-CMDT<part>Smartgunsystem, intern</part></weapon>
             <gear amount="100" detail="Schrotflinten">Flechettegeschosse</gear>
             <weapon>Ruger 100<part detail="UNDERBARREL">Zweibein</part></weapon>
             <gear amount="50" detail="Sportgewehre">Standardmunition</gear>
             <contact rating="2" amount="2">Schieber</contact>
             <contact rating="2" amount="2">Straßendoc</contact>
             <contact rating="2" amount="4">Streifenpolizist</contact>
-            <notes>Mossberg mit internem Smartgunsystem; DocWagon-Vertrag für 1 Jahr.</notes>
+            <notes>DocWagon-Vertrag für 1 Jahr.</notes>
         </character>
     </archetype>
 
@@ -573,8 +573,8 @@
                 <part>Bildverbindung</part>
             </gear>
             <gear>AR-Handschuhe</gear>
-            <weapon>Colt Manhunter</weapon>
-            <weapon>Colt Manhunter</weapon>
+            <weapon>Colt Manhunter<part>Smartgunsystem, intern</part></weapon>
+            <weapon>Colt Manhunter<part>Smartgunsystem, intern</part></weapon>
             <gear amount="2">Schnellziehholster</gear>
             <gear amount="320" detail="Schwere Pistolen">Explosivgeschosse</gear>
             <weapon>Raecor Sting</weapon>
@@ -583,8 +583,7 @@
             <contact rating="2" amount="2">Lone-Star-Detective</contact>
             <contact rating="3" amount="3">Schieber</contact>
             <contact rating="2" amount="2">Waffenhändler</contact>
-            <notes>Beide Colt Manhunter mit internem Smartgunsystem; die Feuerwaffen-Gruppe ist durch Verbesserte
-                Fertigkeit bei Pistolen 6.</notes>
+            <notes>Die Feuerwaffen-Gruppe ist durch Verbesserte Fertigkeit bei Pistolen 6.</notes>
         </character>
     </archetype>
 
@@ -849,17 +848,13 @@
             <weapon>Ares Predator IV</weapon>
             <gear amount="2">Tarnholster</gear>
             <gear amount="300" detail="Schwere Pistolen">Explosivgeschosse</gear>
-            <weapon>Ingram Smartgun X
-                <part detail="BARREL">Schallunterdrücker</part>
-            </weapon>
+            <weapon>Ingram Smartgun X<part>Gasventilsystem 3</part></weapon>
             <gear amount="320" detail="Maschinenpistolen">Standardmunition</gear>
-            <weapon>Stoner-Ares M202</weapon>
+            <weapon>Stoner-Ares M202<part>Smartgunsystem, intern</part></weapon>
             <gear amount="200" detail="Mittlere Maschinengewehre">Standardmunition</gear>
             <contact rating="3" amount="3">Schieber</contact>
             <contact rating="2" amount="3">Straßendoc</contact>
-            <notes>Beide Cyberarme maßgefertigt; Stoner-Ares M202 mit internem Smartgunsystem; Ingram Smartgun X laut GRW mit Gasventilsystem 3 statt des
-                mitgelieferten Gasventilsystems 2; DocWagon-Vertrag für
-                1 Jahr; die fünf gefälschten Lizenzen gelten für zwei Ares Predator IV, Katana, Ingram Smartgun X und
+            <notes>Beide Cyberarme maßgefertigt; DocWagon-Vertrag für 1 Jahr; die fünf gefälschten Lizenzen gelten für zwei Ares Predator IV, Katana, Ingram Smartgun X und
                 Reflexbooster.</notes>
         </character>
     </archetype>
@@ -961,12 +956,12 @@
             <gear>Meta Link
                 <part>Vector Xim</part>
             </gear>
-            <weapon>Colt America L36</weapon>
+            <weapon>Colt America L36<part>Smartgunsystem, intern</part></weapon>
             <gear>Versteckte Armhalterung</gear>
             <gear amount="60" detail="Leichte Pistolen">Standardmunition</gear>
             <contact rating="2" amount="2">Blogger</contact>
             <contact rating="2" amount="2">Schieber</contact>
-            <notes>Colt America L36 mit internem Smartgunsystem; das GRW nennt 5 Streifen zu 11 Schuss, Munition gibt es nur in Packungen zu 10.</notes>
+            <notes>Das GRW nennt 5 Streifen zu 11 Schuss, Munition gibt es nur in Packungen zu 10.</notes>
         </character>
     </archetype>
 
@@ -1020,12 +1015,12 @@
             <weapon>Ares Predator IV</weapon>
             <gear>Tarnholster</gear>
             <gear amount="150" detail="Schwere Pistolen">Explosivgeschosse</gear>
-            <weapon>Remington 990</weapon>
+            <weapon>Remington 990<part>Smartgunsystem, intern</part></weapon>
             <gear amount="40" detail="Schrotflinten">Flechettegeschosse</gear>
             <contact rating="1" amount="1">BTL-Dealer</contact>
             <contact rating="3" amount="1">Mafia-Consiglieri</contact>
             <contact rating="1" amount="2">Mafia-Soldat</contact>
-            <notes>Remington 990 mit internem Smartgunsystem; die drei BTL-Chips sind verschiedene Aufzeichnungen.</notes>
+            <notes>Die drei BTL-Chips sind verschiedene Aufzeichnungen.</notes>
         </character>
     </archetype>
 

@@ -421,10 +421,35 @@ Höchststand im Modus: Wird ein Eintrag danach ohne Modus gesenkt und wieder ges
 (Spielleiter-Werkzeug, bewusst einfach). Gaben und Handicaps: Der Gratis-Haken ist im Modus vorbelegt, ein vom
 Spielleiter vergebenes Handicap bringt also keine BP (Eingriffe belasten das Budget weder, noch stocken sie es auf).
 Die Oberfläche fragt nach jeder Änderung `consumeGmCredit()` ab und baut bei einer Gutschrift einmal neu auf, weil die
-Tabs beim Aufbau schon vor der Gutschrift lesen. Attribut-, Fertigkeits- und Wissenspunkte zählen weiter. Gratis-Einträge tragen „(gratis)“ am Namen bzw.
-einen Hinweis im Detail. In der Karriere bleibt es wie bisher (keine Buchung im Modus). Alte Dateien: Anteil 0.
+Tabs beim Aufbau schon vor der Gutschrift lesen. Attribut-, Fertigkeits- und Wissenspunkte zählen weiter. Eine
+Kennzeichnung am Eintrag gibt es seit ADR-071 nicht mehr. In der Karriere bucht der Modus Käufe mit 0 (ADR-071). Alte
+Dateien: Anteil 0.
 **Warum:** Beta-Befund und Nutzerentscheidungen 2026-11-20: Im Modus kostete die Erschaffung weiter BP und Restgeld.
 `docs/plaene/archiv/gm_gratis_plan.md`.
+
+### ADR-071: Gratis-Käufe in der Karriere, mitgeliefertes Zubehör ersetzen und ausbauen (2026-11-24)
+- **Gratis-Kauf:** Der Kaufdialog der Karriere (`TabServices.chargeFailed`, Karma und Nuyen, auch Schuldentilgung)
+  hat einen Haken „Gratis“. Gratis bucht einen Eintrag mit dem normalen Text und 0, ohne Zusatz; Rückgängig greift wie
+  bei jeder Buchung. Bei zu wenig Guthaben geht nur gratis. Gaben mit Gratis-Haken buchen in der Karriere ebenfalls
+  0 Karma. Der Spielleiter-Modus bucht Käufe in der Karriere ohne Dialog mit 0 (vorher gar nicht); Steigern und Senken
+  über die ±-Knöpfe bleibt im Modus ohne Buchung.
+- **Keine Gratis-Kennzeichnung:** „(gratis)“ am Namen und der Hinweis im Detail (ADR-070) entfallen; nachvollziehbar
+  ist ein Geschenk über das Protokoll.
+- **Mitgeliefertes Zubehör ersetzen:** Ein Teil mit Einmal-Regel (Gasventil, Smartgun, Schockpolster) ersetzt ein
+  mitgeliefertes derselben Regel nach Rückfrage; es sitzt an dessen Stelle (keine Halterung), kostet den vollen Preis,
+  und die RK des alten Teils (`<included rc>`) fällt weg. Ein Gasventil nur durch ein stärkeres: GRW S. 367 verbietet
+  ein zweites und den Ausbau, nicht das Aufrüsten; der Archetyp Straßensamurai rüstet selbst von 2 auf 3 auf. Das
+  interne Gasventil der White Knight ist laut Waffentext nicht aufwertbar (`replaceable="false"`). Ein gleiches Teil
+  wie ein mitgeliefertes (z.B. zweiter Schallunterdrücker) ist erlaubt, mit Ja/Nein-Rückfrage.
+- **Ausbauen:** Regel-Option „Mitgelieferte Teile von Waffen ausbauen“ (`RuleOptions.removeIncludedParts`), für
+  Gasventile eine Hausregel gegen S. 367; ohne Erstattung. Gekaufte Gasventile bleiben fest eingebaut.
+- **Mitgelieferte Lasermarkierer** tragen jetzt die Regel `LASER_SIGHT` und geben +1 (vorher wirkungslos).
+- **Deutsche Kürzel:** Attribute zeigen KON/GES … wie im GRW (Anzeigename „Konstitution“); der Enum-Name bleibt der
+  Schlüssel in XML und Speicherdatei. **Deutsche Dialogknöpfe** über `DialogButtons` statt der JavaFX-Standardknöpfe.
+- **Knöpfe nach Ort:** Leisten und Detailbereiche Icon + Text (`iconTextButton`), kompakte Zeilenknöpfe nur Icon.
+
+**Warum:** Beta-Befunde Lauf 3 und Nutzerentscheidungen 2026-11-23/24 (E1–E9). Das C#-Original erlaubt das Aufrüsten
+faktisch über RK-Gruppen (nur das stärkste Gasventil zählt). `docs/plaene/archiv/beta_lauf3_befunde_plan.md`.
 
 ## Architektur und Code
 

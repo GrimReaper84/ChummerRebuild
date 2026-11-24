@@ -2,7 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
-import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -84,9 +84,7 @@ public final class ContactTabBuilder {
     contactRefreshers.clear();
 
 
-    Button addBtn = new Button("Hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Kontakt hinzufügen");
     addBtn.setOnAction(_ -> onAddContact());
 
     HBox header = new HBox(8);
@@ -139,9 +137,7 @@ public final class ContactTabBuilder {
     addReputationRow(grid, 3, "Prominenz", ch::getPublicAwareness, career
         ? adjustmentModel(reputation::getAwarenessAdjustment, reputation::setAwarenessAdjustment, -ADJUSTMENT_LIMIT) : null);
     if (career) {
-      Button burn = new Button("2 Straßenruf opfern");
-      burn.getStyleClass().add(STYLE_BTN_SECONDARY);
-      useIcon(burn, FontAwesomeSolid.FIRE);
+      Button burn = iconTextButton("Opfern", FontAwesomeSolid.FIRE, "2 Straßenruf opfern");
       burn.setOnAction(_ -> {
         if (ch.canBurnStreetCred() && host.services().confirmYesNo("Straßenruf opfern",
             "2 Punkte Straßenruf dauerhaft opfern?", "Der Schlechte Ruf sinkt dafür um 1 (GRW S. 308).")) {
@@ -276,8 +272,6 @@ public final class ContactTabBuilder {
     Runnable tooltipRefresh = () -> {
       String description = contact.getDescription();
       nameLabelDummy.setTooltip(description != null ? new Tooltip(description) : null);
-      // nach der Beschreibung, damit der Gratis-Hinweis (ADR-070) nicht überschrieben wird
-      markGmFree(nameLabelDummy, contact.getGmFreeBp() > 0, contact.getGmFreeBp() + " BP");
     };
     contactRefreshers.add(tooltipRefresh);
     tooltipRefresh.run();

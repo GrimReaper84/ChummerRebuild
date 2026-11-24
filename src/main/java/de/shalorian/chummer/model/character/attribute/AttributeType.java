@@ -2,9 +2,13 @@ package de.shalorian.chummer.model.character.attribute;
 
 import org.jspecify.annotations.NonNull;
 
+/**
+ * Die acht Grundattribute. Der Enum-Name ist der Schlüssel in XML-Daten und Speicherdateien (z.B. {@code
+ * attribute="AGI"}), Anzeigename und Kürzel folgen dem deutschen GRW (Konstitution/KON, Geschicklichkeit/GES …).
+ */
 public enum AttributeType {
-  BOD("Körper", "BOD"),
-  AGI("Geschicklichkeit", "AGI"),
+  BOD("Konstitution", "KON"),
+  AGI("Geschicklichkeit", "GES"),
   REA("Reaktion", "REA"),
   STR("Stärke", "STR"),
   CHA("Charisma", "CHA"),
@@ -26,6 +30,19 @@ public enum AttributeType {
 
   public @NonNull String getAbbreviation() {
     return abbreviation;
+  }
+
+  /**
+   * Anzeige-Kürzel zu einem Schlüssel wie {@code "AGI"} (z.B. {@code Skill#getLinkedAttribute}); Sonderattribute (MAG,
+   * RES, EDG) und unbekannte Schlüssel bleiben, wie sie sind.
+   */
+  public static @NonNull String abbreviationOf(@NonNull String key) {
+    for (AttributeType type : values()) {
+      if (type.name().equals(key)) {
+        return type.abbreviation;
+      }
+    }
+    return key;
   }
 
   /** Körperliches Attribut: Konstitution, Geschicklichkeit, Reaktion oder Stärke. */

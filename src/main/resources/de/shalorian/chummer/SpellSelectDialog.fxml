@@ -29,11 +29,11 @@
                GridPane.columnIndex="1" GridPane.rowIndex="0"/>
         <Label text="Werte:" styleClass="field-label"
                GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <Label fx:id="statsLabel" wrapText="true" styleClass="attr-range"
+        <Label fx:id="statsLabel" wrapText="true" minHeight="-Infinity" styleClass="attr-range"
                GridPane.columnIndex="1" GridPane.rowIndex="1"/>
         <Label text="Wirkung:" styleClass="field-label" GridPane.valignment="TOP"
                GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Label fx:id="noteLabel" wrapText="true" minHeight="40"
+        <Label fx:id="noteLabel" wrapText="true" minHeight="-Infinity"
                GridPane.columnIndex="1" GridPane.rowIndex="2"/>
     </GridPane>
 

@@ -10,8 +10,10 @@
   S. 357). "–" wie in der Tabelle; fehlende Elemente (reach/mode/rc/ammo) = die Tabelle der Kategorie
   führt diese Spalte nicht. <avail>/<legality> wie armor.xml.
   <included> = mit der Waffe geliefertes Zubehör laut Waffentext (S. 362–366, am Bild geprüft); belegt
-  keine Halterung, RK steckt schon im Tabellenwert (S. 357). rule="…" (AccessoryRule) nur bei Teilen, die
-  höchstens einmal je Waffe erlaubt sind (Gasventil, Smartgunsystem, Schockpolster). Schulterstützen
+  keine Halterung, RK steckt schon im Tabellenwert (S. 357). rule="…" (AccessoryRule) bei Teilen mit
+  Regelwirkung (Gasventil, Smartgunsystem, Schockpolster, Lasermarkierer). rc="…" = RK des Teils im
+  Tabellenwert (Gasventil fest, sonst im Klammerwert), abgezogen, wenn das Teil ersetzt oder ausgebaut wird;
+  replaceable="false" = laut Waffentext nicht aufwertbar (White Knight). Schulterstützen
   sind kein Zubehör des Katalogs und fehlen deshalb. Smartgunsysteme ohne Angabe im Text bleiben
   "Smartgunsystem" (Walter MA-2100: "internen Smartgunsystem").
   <range> = Zeile der Tabelle Waffenreichweiten (GRW S. 179), nur bei Fernkampfwaffen. Abweichend von der
@@ -503,7 +505,7 @@
         <avail>6</avail>
         <legality>E</legality>
         <cost>450</cost>
-        <included>Lasermarkierer</included>
+        <included rule="LASER_SIGHT">Lasermarkierer</included>
         <source>SR4</source>
         <page>363</page>
     </item>
@@ -520,7 +522,7 @@
         <avail>8</avail>
         <legality>E</legality>
         <cost>650</cost>
-        <included rule="GAS_VENT">Gasventil (eingebaut)</included>
+        <included rule="GAS_VENT" rc="1">Gasventil (eingebaut)</included>
         <included rule="SMARTGUN">Smartgunsystem</included>
         <source>SR4</source>
         <page>363</page>
@@ -590,7 +592,7 @@
         <avail>4</avail>
         <legality>E</legality>
         <cost>300</cost>
-        <included>Lasermarkierer</included>
+        <included rule="LASER_SIGHT">Lasermarkierer</included>
         <source>SR4</source>
         <page>363</page>
     </item>
@@ -710,8 +712,8 @@
         <avail>4</avail>
         <legality>E</legality>
         <cost>550</cost>
-        <included rule="GAS_VENT">Gasventilsystem 2</included>
-        <included>Lasermarkierer</included>
+        <included rule="GAS_VENT" rc="2">Gasventilsystem 2</included>
+        <included rule="LASER_SIGHT">Lasermarkierer</included>
         <source>SR4</source>
         <page>363</page>
     </item>
@@ -728,7 +730,7 @@
         <avail>6</avail>
         <legality>E</legality>
         <cost>650</cost>
-        <included rule="GAS_VENT">Gasventilsystem 2</included>
+        <included rule="GAS_VENT" rc="2">Gasventilsystem 2</included>
         <included rule="SMARTGUN">Smartgunsystem</included>
         <included>Schallunterdrücker</included>
         <source>SR4</source>
@@ -747,7 +749,7 @@
         <avail>4</avail>
         <legality>E</legality>
         <cost>500</cost>
-        <included>Lasermarkierer</included>
+        <included rule="LASER_SIGHT">Lasermarkierer</included>
         <source>SR4</source>
         <page>363</page>
     </item>
@@ -800,8 +802,8 @@
         <avail>8</avail>
         <legality>E</legality>
         <cost>1000</cost>
-        <included>Lasermarkierer</included>
-        <included rule="GAS_VENT">Gasventilsystem 2</included>
+        <included rule="LASER_SIGHT">Lasermarkierer</included>
+        <included rule="GAS_VENT" rc="2">Gasventilsystem 2</included>
         <source>SR4</source>
         <page>366</page>
     </item>
@@ -820,7 +822,7 @@
         <cost>2500</cost>
         <note>Inkl. Unterlauf-Granatwerfer: Granate, PB –, EM, Rückstoß –, 8 (s). Umbausätze (Unterlauf-Schrotflinte, Karabiner, Scharfschützengewehr, LMG) nicht enthalten, siehe GRW S. 366</note>
         <included rule="SMARTGUN">Smartgunsystem</included>
-        <included rule="SHOCK_PAD">Schockpolster</included>
+        <included rule="SHOCK_PAD" rc="1">Schockpolster</included>
         <included>Airburst-Verbindung (am Unterlauf-Granatwerfer)</included>
         <source>SR4</source>
         <page>366</page>
@@ -841,7 +843,7 @@
         <legality>E</legality>
         <cost>900</cost>
         <included>Zielfernrohr</included>
-        <included rule="SHOCK_PAD">Schockpolster</included>
+        <included rule="SHOCK_PAD" rc="1">Schockpolster</included>
         <source>SR4</source>
         <page>366</page>
     </item>
@@ -858,7 +860,7 @@
         <avail>12</avail>
         <legality>E</legality>
         <cost>6000</cost>
-        <included rule="SHOCK_PAD">Schockpolster</included>
+        <included rule="SHOCK_PAD" rc="1">Schockpolster</included>
         <source>SR4</source>
         <page>366</page>
     </item>
@@ -879,7 +881,7 @@
         <cost>6200</cost>
         <included>Schalldämpfer</included>
         <included>Zielfernrohr</included>
-        <included rule="SHOCK_PAD">Schockpolster</included>
+        <included rule="SHOCK_PAD" rc="1">Schockpolster</included>
         <source>SR4</source>
         <page>366</page>
     </item>
@@ -897,7 +899,7 @@
         <legality>V</legality>
         <cost>5000</cost>
         <included rule="SMARTGUN">Smartgunsystem, intern</included>
-        <included rule="SHOCK_PAD">Schockpolster</included>
+        <included rule="SHOCK_PAD" rc="1">Schockpolster</included>
         <source>SR4</source>
         <page>366</page>
     </item>
@@ -934,7 +936,7 @@
         <cost>550</cost>
         <note>Mit Flechette: 9K(f), PB +5</note>
         <included>Zielfernrohr</included>
-        <included rule="SHOCK_PAD">Schockpolster</included>
+        <included rule="SHOCK_PAD" rc="1">Schockpolster</included>
         <source>SR4</source>
         <page>366</page>
     </item>
@@ -1018,7 +1020,7 @@
         <avail>12</avail>
         <legality>V</legality>
         <cost>2000</cost>
-        <included rule="GAS_VENT">Gasventilsystem, intern (5 RK, nicht aufwertbar)</included>
+        <included rule="GAS_VENT" rc="5" replaceable="false">Gasventilsystem, intern (5 RK, nicht aufwertbar)</included>
         <source>SR4</source>
         <page>366</page>
     </item>
@@ -1055,9 +1057,9 @@
         <avail>15</avail>
         <legality>V</legality>
         <cost>7500</cost>
-        <included>Dreibein</included>
-        <included rule="SHOCK_PAD">Schockpolster</included>
-        <included rule="GAS_VENT">Gasventilsystem 3</included>
+        <included rc="6">Dreibein</included>
+        <included rule="SHOCK_PAD" rc="1">Schockpolster</included>
+        <included rule="GAS_VENT" rc="3">Gasventilsystem 3</included>
         <source>SR4</source>
         <page>366</page>
     </item>

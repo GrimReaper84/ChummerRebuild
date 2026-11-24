@@ -54,6 +54,8 @@ public class SettingsDialogController {
   @FXML
   private CheckBox decoupleAtCreationBox;
   @FXML
+  private CheckBox removeIncludedPartsBox;
+  @FXML
   private VBox booksBox;
 
   private final Map<CheatSheetItem, CheckBox> cheatSheetBoxes = new EnumMap<>(CheatSheetItem.class);
@@ -76,6 +78,7 @@ public class SettingsDialogController {
     lateAwakeningBox.setTooltip(new Tooltip("Aufhebung der Sperre aus GRW S. 313 im Karrieremodus"));
     missedPaymentsBox.setTooltip(new Tooltip("Monat aussetzen im Karrieremodus nach GRW S. 312"));
     decoupleAtCreationBox.setTooltip(new Tooltip("Ausnahme von GRW S. 108, wenn der Spielleiter sie erlaubt"));
+    removeIncludedPartsBox.setTooltip(new Tooltip("Hausregel gegen GRW S. 367 (Gasventile)\nAuch Smartgun, Schalldämpfer usw."));
     for (RulebookData book : RulebookDataLoader.getAll()) {
       CheckBox box = new CheckBox(book.name() + " (" + book.code() + ")");
       if (book.core()) {
@@ -115,6 +118,7 @@ public class SettingsDialogController {
     lateAwakeningBox.setSelected(ruleOptions.isLateAwakening());
     missedPaymentsBox.setSelected(ruleOptions.isMissedLifestylePayments());
     decoupleAtCreationBox.setSelected(ruleOptions.isDecoupleAtCreation());
+    removeIncludedPartsBox.setSelected(ruleOptions.isRemoveIncludedParts());
     for (Map.Entry<String, CheckBox> book : bookBoxes.entrySet()) {
       book.getValue().setSelected(ruleOptions.isBookEnabled(book.getKey()));
     }
@@ -140,6 +144,7 @@ public class SettingsDialogController {
       ruleOptions.setLateAwakening(lateAwakeningBox.isSelected());
       ruleOptions.setMissedLifestylePayments(missedPaymentsBox.isSelected());
       ruleOptions.setDecoupleAtCreation(decoupleAtCreationBox.isSelected());
+      ruleOptions.setRemoveIncludedParts(removeIncludedPartsBox.isSelected());
       for (Map.Entry<String, CheckBox> book : bookBoxes.entrySet()) {
         ruleOptions.setBookEnabled(book.getKey(), book.getValue().isSelected());
       }

@@ -1,8 +1,5 @@
 package de.shalorian.chummer.view.tab;
 
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
-
 import de.shalorian.chummer.App;
 import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.LogCategory;
@@ -10,7 +7,9 @@ import de.shalorian.chummer.model.character.LogEntry;
 import de.shalorian.chummer.model.character.equipment.Equipment;
 import de.shalorian.chummer.model.character.option.RuleOptions;
 import de.shalorian.chummer.view.dialog.CatalogSelectDialogController;
+import de.shalorian.chummer.view.dialog.DialogButtons;
 import de.shalorian.chummer.view.dialog.DialogHandle;
+import de.shalorian.chummer.view.grid.GridSupport;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -28,7 +27,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -112,10 +111,15 @@ public final class TabServices {
   public static void applyDialogStyle(@NonNull Dialog<?> dialog) {
     dialog.getDialogPane().getStylesheets()
         .add(Objects.requireNonNull(App.class.getResource("style.css")).toExternalForm());
-    FontIcon icon = new FontIcon(dialogIcon(dialog));
+    dialog.setGraphic(dialogIconNode(dialogIcon(dialog)));
+  }
+
+  /** Font-Awesome-Icon in der Akzentfarbe für den Kopf eines Dialogs. */
+  private static @NonNull FontIcon dialogIconNode(@NonNull Ikon ikon) {
+    FontIcon icon = new FontIcon(ikon);
     icon.setIconSize(DIALOG_ICON_SIZE);
     icon.getStyleClass().add("dialog-icon");
-    dialog.setGraphic(icon);
+    return icon;
   }
 
   private static @NonNull Ikon dialogIcon(@NonNull Dialog<?> dialog) {
@@ -180,11 +184,11 @@ public final class TabServices {
   /** Ja/Nein-Dialog im App-Stil; {@code true} nur bei "Ja". */
   public boolean confirmYesNo(@NonNull String title, @NonNull String header,
       @NonNull String content) {
-    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, content, ButtonType.YES, ButtonType.NO);
+    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, content, DialogButtons.YES, DialogButtons.NO);
     prepare(confirm);
     confirm.setTitle(title);
     confirm.setHeaderText(header);
-    return confirm.showAndWait().filter(btn -> btn == ButtonType.YES).isPresent();
+    return confirm.showAndWait().filter(btn -> btn == DialogButtons.YES).isPresent();
   }
 
   /**
@@ -197,9 +201,7 @@ public final class TabServices {
   public <T> @NonNull Button sellButton(@NonNull Character c, @NonNull String tooltip,
       @NonNull ObservableValue<?> selectionChanged, @NonNull Supplier<@Nullable T> selection,
       @NonNull Function<T, String> name, @NonNull ToIntFunction<T> price, @NonNull Consumer<T> removeAndRebuild) {
-    Button button = new Button(tooltip);
-    button.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(button, FontAwesomeSolid.HAND_HOLDING_USD);
+    Button button = GridSupport.iconTextButton("Verkaufen", FontAwesomeSolid.HAND_HOLDING_USD, tooltip);
     button.setVisible(c.isCreated());
     button.setManaged(c.isCreated());
     button.disableProperty().bind(Bindings.createBooleanBinding(() -> selection.get() == null, selectionChanged));
@@ -234,9 +236,9 @@ public final class TabServices {
     dialog.setHeaderText(itemName + " verkaufen (Originalpreis " + SpendCurrency.NUYEN.formatAmount(originalPrice)
         + ")");
     dialog.getDialogPane().setContent(new VBox(8, new Label("Erlös in ¥:"), proceeds, hint));
-    dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+    dialog.getDialogPane().getButtonTypes().setAll(DialogButtons.OK, DialogButtons.CANCEL);
     // Der Editor übernimmt Getipptes erst beim Bestätigen; deshalb den Text lesen, nicht den Wert des Spinners.
-    dialog.setResultConverter(button -> button != ButtonType.OK ? null
+    dialog.setResultConverter(button -> button != DialogButtons.OK ? null
         : editor.getText().isEmpty() ? 0 : Integer.parseInt(editor.getText()));
     Optional<Integer> answer = dialog.showAndWait();
     if (answer.isEmpty()) {
@@ -325,43 +327,60 @@ public final class TabServices {
   }
 
   /**
-   * Gemeinsamer Ablauf aller Karrieremodus-Käufe: bei zu wenig Guthaben Hinweis und Abbruch, sonst Bestätigung
-   * einholen und einen negativen Log-Eintrag buchen. Im Spielleiter-Modus (ADR-060) kostenlos und ohne Buchung; nur
-   * ein Zusatzhinweis wird noch bestätigt.
+   * Gemeinsamer Ablauf aller Karrieremodus-Käufe: Bestätigung einholen und einen negativen Log-Eintrag buchen. Im Dialog
+   * lässt sich der Kauf gratis buchen (z.B. Belohnung des Spielleiters): dann ein Eintrag mit 0 und demselben Text,
+   * damit das Protokoll zeigt, was dazukam, und Rückgängig greift (ADR-071). Bei zu wenig Guthaben geht nur gratis.
+   * Im Spielleiter-Modus (ADR-060) ohne Dialog immer mit 0 gebucht; nur ein Zusatzhinweis wird noch bestätigt.
    *
-   * @return true, wenn NICHT gekauft werden soll (zu wenig Guthaben oder abgebrochen)
+   * @return true, wenn NICHT gekauft werden soll (abgebrochen)
    */
   private boolean chargeFailed(@NonNull Character c, @NonNull SpendCurrency currency, @NonNull LogCategory category,
       @NonNull String label, int cost, int available, @Nullable String extraWarning) {
+    int amount;
     if (c.isGmMode()) {
-      return extraWarning != null && !confirmYesNo("Spielleiter-Modus", label, extraWarning);
+      if (extraWarning != null && !confirmYesNo("Spielleiter-Modus", label, extraWarning)) {
+        return true;
+      }
+      amount = 0;
+    } else {
+      SpendChoice choice = confirmSpend(currency, label, cost, available, extraWarning);
+      if (choice == SpendChoice.CANCEL) {
+        return true;
+      }
+      amount = choice == SpendChoice.FREE ? 0 : -cost;
     }
-    if (available < cost) {
-      warn("Nicht genug " + currency.getDisplayName(), "Benötigt: " + currency.formatAmount(cost));
-      return true;
-    }
-    if (!confirmSpend(currency, label, cost, available, extraWarning)) {
-      return true;
-    }
-    book(c, currency, new LogEntry(label, -cost, LocalDate.now(ZoneId.systemDefault()), category));
+    book(c, currency, new LogEntry(label, amount, LocalDate.now(ZoneId.systemDefault()), category));
     return false;
   }
 
   /**
-   * Bestätigungsdialog für einen Karrieremodus-Kauf; {@code extraWarning} wird dem Kostentext vorangestellt.
+   * Bestätigungsdialog für einen Karrieremodus-Kauf mit dem Haken „Gratis“; {@code extraWarning} wird dem Kostentext
+   * vorangestellt. Reicht das Guthaben nicht, ist „OK“ erst mit dem Haken frei.
    */
-  private boolean confirmSpend(@NonNull SpendCurrency currency, @NonNull String label, int cost,
+  private @NonNull SpendChoice confirmSpend(@NonNull SpendCurrency currency, @NonNull String label, int cost,
       int available, @Nullable String extraWarning) {
-    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-    prepare(confirm);
-    confirm.setTitle(currency.getDisplayName() + " ausgeben");
-    confirm.setHeaderText(label);
-    String content = currency.formatAmount(cost) + " ausgeben?\n\n"
-        + currency.formatRemaining(available - cost);
-    if (extraWarning != null) {
-      content = extraWarning + "\n\n" + content;
+    boolean affordable = available >= cost;
+    String prefix = extraWarning == null ? "" : extraWarning + "\n\n";
+    String paidText = prefix + (affordable
+        ? currency.formatAmount(cost) + " ausgeben?\n\n" + currency.formatRemaining(available - cost)
+        : "Nicht genug " + currency.getDisplayName() + " (benötigt " + currency.formatAmount(cost) + ").");
+    String freeText = prefix + "Wird mit " + currency.formatAmount(0) + " im Protokoll gebucht.";
+    Label text = new Label(paidText);
+    text.setWrapText(true);
+    CheckBox free = new CheckBox("Gratis (z.B. Belohnung des Spielleiters)");
+    free.selectedProperty().addListener((_, _, on) -> text.setText(on ? freeText : paidText));
+    Dialog<SpendChoice> dialog = new Dialog<>();
+    prepare(dialog);
+    dialog.setGraphic(dialogIconNode(FontAwesomeSolid.QUESTION_CIRCLE));
+    dialog.setTitle(currency.getDisplayName() + " ausgeben");
+    dialog.setHeaderText(label);
+    dialog.getDialogPane().setContent(new VBox(12, text, free));
+    dialog.getDialogPane().getButtonTypes().setAll(DialogButtons.OK, DialogButtons.CANCEL);
+    if (!affordable) {
+      dialog.getDialogPane().lookupButton(DialogButtons.OK).disableProperty().bind(free.selectedProperty().not());
     }
-    confirm.setContentText(content);
-    return confirm.showAndWait().filter(btn -> btn == ButtonType.OK).isPresent();
+    dialog.setResultConverter(button -> button != DialogButtons.OK ? SpendChoice.CANCEL
+        : free.isSelected() ? SpendChoice.FREE : SpendChoice.PAY);
+    return dialog.showAndWait().orElse(SpendChoice.CANCEL);
   }
 }

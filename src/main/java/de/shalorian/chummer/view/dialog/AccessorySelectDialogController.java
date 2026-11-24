@@ -4,6 +4,7 @@ import de.shalorian.chummer.model.character.Character;
 import de.shalorian.chummer.model.character.equipment.Availability;
 import de.shalorian.chummer.model.character.weapon.AccessoryData;
 import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
+import de.shalorian.chummer.model.character.weapon.IncludedAccessory;
 import de.shalorian.chummer.model.character.weapon.Mount;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
@@ -122,7 +123,8 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
   @Override
   protected void onListUpdated() {
     AccessoryData selected = itemListView.getSelectionModel().getSelectedItem();
-    if (selected == null || weapon == null || !selected.needsMount()) {
+    // Ein Ersatzteil sitzt an der Stelle des mitgelieferten und braucht keine Halterung (ADR-071).
+    if (selected == null || weapon == null || !needsMount(selected)) {
       mountBox.getItems().clear();
       mountBox.setDisable(true);
     } else if (!selected.equals(mountSource)) {
@@ -154,7 +156,9 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
     String catalogCost = selected.costText();
     costLabel.setText(catalogCost.equals(cost) ? cost : cost + " (" + catalogCost + ")");
     sourceLabel.setText(selected.source() + " S. " + selected.page());
-    noteLabel.setText(selected.note());
+    IncludedAccessory replaced = weapon.replacementFor(selected);
+    noteLabel.setText(replaced == null ? selected.note()
+        : (selected.note() + "\nErsetzt das mitgelieferte " + replaced.name() + ".").strip());
     String problem = problem(selected);
     problemLabel.setText(problem == null ? "" : "Nicht möglich: " + problem);
     okButton.setDisable(buildSelection() == null);
@@ -166,11 +170,16 @@ public class AccessorySelectDialogController extends CatalogSelectDialogControll
     if (selected == null || problem(selected) != null) {
       return null;
     }
-    Mount mount = selected.needsMount() ? mountBox.getValue() : null;
-    if (selected.needsMount() && mount == null) {
+    Mount mount = needsMount(selected) ? mountBox.getValue() : null;
+    if (needsMount(selected) && mount == null) {
       return null;
     }
     return new WeaponAccessory(selected, mount);
+  }
+
+  /** Ob für {@code accessory} eine Halterung zu wählen ist; nicht bei einem Ersatz für ein mitgeliefertes Teil. */
+  private boolean needsMount(@NonNull AccessoryData accessory) {
+    return accessory.needsMount() && (weapon == null || weapon.replacementFor(accessory) == null);
   }
 
   @FXML

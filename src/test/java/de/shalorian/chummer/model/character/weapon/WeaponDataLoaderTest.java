@@ -157,13 +157,16 @@ class WeaponDataLoaderTest {
   @Test
   void includedAccessoriesFollowWeaponTexts() {
     // GRW S. 363: "Die TX beinhaltet ein Gasventilsystem 2, einen Lasermarkierer …"
-    assertEquals(List.of(new IncludedAccessory("Gasventilsystem 2", AccessoryRule.GAS_VENT),
-            new IncludedAccessory("Lasermarkierer", null)),
+    assertEquals(List.of(new IncludedAccessory("Gasventilsystem 2", AccessoryRule.GAS_VENT, 2, true),
+            new IncludedAccessory("Lasermarkierer", AccessoryRule.LASER_SIGHT, 0, true)),
         find("HK MP-5 TX").included());
     // GRW S. 362: "Enthält ein Smartgunsystem."
-    assertEquals(List.of(new IncludedAccessory("Smartgunsystem", AccessoryRule.SMARTGUN)),
+    assertEquals(List.of(new IncludedAccessory("Smartgunsystem", AccessoryRule.SMARTGUN, 0, true)),
         find("Ares Predator IV").included());
     assertEquals(3, find("Ultimax HMG-2").included().size());
+    // Waffentext White Knight: internes Gasventil mit 5 RK, nicht aufwertbar.
+    assertEquals(new IncludedAccessory("Gasventilsystem, intern (5 RK, nicht aufwertbar)", AccessoryRule.GAS_VENT, 5,
+        false), find("Ingram White Knight").included().getFirst());
     assertTrue(find("Katana").included().isEmpty());
   }
 

@@ -47,11 +47,11 @@
                GridPane.columnIndex="0" GridPane.rowIndex="5"/>
         <HBox fx:id="customBox" spacing="8" alignment="CENTER_LEFT" visible="false" managed="false"
               GridPane.columnIndex="1" GridPane.rowIndex="5">
-            <Label text="BOD" styleClass="attr-abbr"/>
+            <Label text="KON" styleClass="attr-abbr"/>
             <Spinner fx:id="bodySpinner" prefWidth="70"/>
             <Label text="STR" styleClass="attr-abbr"/>
             <Spinner fx:id="strengthSpinner" prefWidth="70"/>
-            <Label text="AGI" styleClass="attr-abbr"/>
+            <Label text="GES" styleClass="attr-abbr"/>
             <Spinner fx:id="agilitySpinner" prefWidth="70"/>
         </HBox>
         <Label text="Verfügbarkeit:" styleClass="field-label"

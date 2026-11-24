@@ -28,9 +28,6 @@ import org.tbee.javafx.scene.layout.MigPane;
  */
 public final class GridSupport {
 
-  /** Zusatz am Namen von Einträgen mit Gratis-Anteil aus dem Spielleiter-Modus (ADR-070). */
-  private static final String GM_FREE_SUFFIX = " (gratis)";
-
   /** Hängt {@code style} an {@code control} an und gibt es zurück. */
   public static <T extends Control> @NonNull T styled(@NonNull T control, @NonNull String style) {
     control.getStyleClass().add(style);
@@ -77,7 +74,8 @@ public final class GridSupport {
 
   /**
    * Ersetzt den Text von {@code button} durch ein FontAwesome-Icon; der bisherige Text bleibt als
-   * Tooltip erhalten, damit die Schaltfläche ohne Beschriftung weiterhin erkennbar bleibt.
+   * Tooltip erhalten, damit die Schaltfläche ohne Beschriftung weiterhin erkennbar bleibt. Nur für kompakte Knöpfe in
+   * Tabellenzeilen (Entfernen, ±, Aufklappen); Leisten und Detailbereiche nutzen {@link #iconTextButton} (ADR-071).
    */
   public static void useIcon(@NonNull Button button, @NonNull Ikon icon) {
     String label = button.getText();
@@ -148,34 +146,6 @@ public final class GridSupport {
   private static void appendTooltip(@NonNull Label label, @NonNull String text) {
     Tooltip existing = label.getTooltip();
     label.setTooltip(new Tooltip(existing == null ? text : existing.getText() + "\n" + text));
-  }
-
-  /**
-   * Kennzeichnet einen Eintrag mit Gratis-Anteil aus dem Spielleiter-Modus (ADR-070): Zusatz „(gratis)“ am Namen und
-   * der Betrag im Tooltip (an einen vorhandenen angehängt); ohne Gratis-Anteil bleibt {@code name} unverändert.
-   * Mehrfaches Aufrufen (z.B. aus einem Refresh, der den Tooltip neu setzt) hängt nichts doppelt an.
-   */
-  public static void markGmFree(@NonNull Label name, boolean free, @NonNull String amount) {
-    if (!free) {
-      return;
-    }
-    if (!name.getText().endsWith(GM_FREE_SUFFIX)) {
-      name.setText(name.getText() + GM_FREE_SUFFIX);
-    }
-    Tooltip existing = name.getTooltip();
-    if (existing == null || !existing.getText().contains(gmFreeText(amount))) {
-      appendTooltip(name, gmFreeText(amount));
-    }
-  }
-
-
-  /** Hinweis im Detailbereich zum Gratis-Anteil aus dem Spielleiter-Modus (ADR-070). */
-  public static @NonNull Label gmFreeHint(@NonNull String amount) {
-    return detailHint(gmFreeText(amount));
-  }
-
-  private static @NonNull String gmFreeText(@NonNull String amount) {
-    return "Gratis (Spielleiter): " + amount;
   }
 
   /** Hinweistext im Detailbereich (gedämpft). */

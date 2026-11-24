@@ -56,7 +56,7 @@ class CharacterStoreAdeptPowerRoundtripTest {
     assertEquals(3, loaded.getAdeptPowers().getAdeptMagic());
     List<AdeptPower> powers = loaded.getAdeptPowers().getPowers();
     assertEquals(2, powers.size());
-    assertEquals("Gesteigertes körperliches Attribut (Körper)", powers.getFirst().displayName());
+    assertEquals("Gesteigertes körperliches Attribut (Konstitution)", powers.getFirst().displayName());
     assertEquals(2, powers.getFirst().getLevel());
     assertEquals("Infrarotsicht", powers.get(1).getChoice());
     // Schaden erst nach den Kräften geladen: die verstärkte KON vergrößert die Spalten

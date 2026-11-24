@@ -3,9 +3,8 @@ package de.shalorian.chummer.view.tab;
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.installButton;
-import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_ABBR;
@@ -16,7 +15,6 @@ import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_RANGE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_VALUE;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_VALUE;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
 import de.shalorian.chummer.model.character.Character;
@@ -30,7 +28,6 @@ import de.shalorian.chummer.model.character.cyberware.LimbPart;
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
 import de.shalorian.chummer.model.character.gear.MatrixStats;
-import de.shalorian.chummer.utils.Numbers;
 import de.shalorian.chummer.view.converter.EssenceStringConverter;
 import de.shalorian.chummer.view.dialog.CyberwareSelectDialogController;
 import de.shalorian.chummer.view.dialog.DialogHandle;
@@ -138,9 +135,7 @@ public final class CyberwareTabBuilder {
     Label title = new Label(kind.getDisplayName());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
 
-    Button addBtn = new Button(kind.getDisplayName() + " hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, kind.getDisplayName() + " hinzufügen");
     addBtn.setOnAction(_ -> onAddCyberware(kind));
 
     HBox header = new HBox(8);
@@ -194,9 +189,7 @@ public final class CyberwareTabBuilder {
   private void buildLimbSection(@NonNull Character ch) {
     Label title = new Label("Cybergliedmaßen");
     title.getStyleClass().add(STYLE_SECTION_TITLE);
-    Button addBtn = new Button("Cyberglied hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Cyberglied hinzufügen");
     addBtn.setOnAction(_ -> onAddLimb());
 
     HBox header = new HBox(8);
@@ -234,15 +227,16 @@ public final class CyberwareTabBuilder {
     cyberwareContainer.getChildren().add(withRightFiller(grid));
   }
 
-  /** „Durchschnitt BOD 4 · STR 4 · AGI 2“, mit der Summe der Gliedpanzerung, wenn vorhanden. */
+  /** „Durchschnitt KON 4 · STR 4 · GES 2“, mit der Summe der Gliedpanzerung, wenn vorhanden. */
   private static @NonNull String averagesText(@NonNull LimbAttributes averages, int armor) {
     String text = "Durchschnitt " + limbValuesText(averages);
     return armor == 0 ? text : text + " · Gliedpanzerung +" + armor;
   }
 
-  /** „BOD 8 · STR 9 · AGI 4“; auch für die Status-Übersicht. */
+  /** „KON 8 · STR 9 · GES 4“; auch für die Status-Übersicht. */
   static @NonNull String limbValuesText(@NonNull LimbAttributes values) {
-    return "BOD %d · STR %d · AGI %d".formatted(values.body(), values.strength(), values.agility());
+    return "%s %d · %s %d · %s %d".formatted(AttributeType.BOD.getAbbreviation(), values.body(),
+        AttributeType.STR.getAbbreviation(), values.strength(), AttributeType.AGI.getAbbreviation(), values.agility());
   }
 
   private void addLimbRow(@NonNull MigPane grid, int row, @NonNull Cyberware limb, @NonNull Character ch) {
@@ -267,14 +261,14 @@ public final class CyberwareTabBuilder {
     int armor = limb.getLimbArmor();
     Label effectLabel = styled(new Label(armor == 0 ? capacity : capacity + ", Panzerung " + armor), "effect-text");
     addSourceTooltip(nameLabel, limb.getData().source(), limb.getData().page());
-    markGmFree(nameLabel, limb.getGmFreeNuyen() > 0, Numbers.nuyen(limb.getGmFreeNuyen()));
 
-    Button attachBtn = actionButton(limb.isAttached() ? "Abnehmen" : "Anschließen",
-        limb.isAttached() ? FontAwesomeSolid.UNLINK : FontAwesomeSolid.LINK);
+    Button attachBtn = iconTextButton(limb.isAttached() ? "Abnehmen" : "Anschließen",
+        limb.isAttached() ? FontAwesomeSolid.UNLINK : FontAwesomeSolid.LINK,
+        limb.getName() + (limb.isAttached() ? " abnehmen" : " anschließen"));
     attachBtn.setOnAction(_ -> onToggleAttached(ch, limb));
     Button installBtn = installButton("Verbesserung oder Zubehör in das Glied einbauen");
     installBtn.setOnAction(_ -> onInstallAccessory(limb));
-    Button removeBtn = actionButton("Entfernen", FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Entfernen", FontAwesomeSolid.TRASH, limb.getName() + " entfernen");
     removeBtn.setOnAction(_ -> {
       ch.getImplants().remove(limb);
       onCyberwareChanged();
@@ -344,7 +338,6 @@ public final class CyberwareTabBuilder {
       implantNameLabel.setTooltip(new Tooltip(note));
     }
     addSourceTooltip(implantNameLabel, implant.getData().source(), implant.getData().page());
-    markGmFree(implantNameLabel, implant.getGmFreeNuyen() > 0, Numbers.nuyen(implant.getGmFreeNuyen()));
     Label categoryLabel = styled(new Label(implant.getData().category()), STYLE_ATTR_RANGE);
     Label gradeLabel = styled(new Label(implant.getGrade().getDisplayName()), STYLE_ATTR_ABBR);
     Label ratingLabel = styled(new Label(implant.getData().hasRating()
@@ -359,17 +352,17 @@ public final class CyberwareTabBuilder {
     HBox actions = new HBox(6);
     actions.setAlignment(Pos.CENTER_LEFT);
     if (implant.getData().hasCapacity()) {
-      Button installBtn = actionButton("Zubehör", FontAwesomeSolid.PLUS);
+      Button installBtn = iconTextButton("Zubehör", FontAwesomeSolid.PLUS, "Zubehör in " + implant.getName() + " einbauen");
       installBtn.setDisable(implant.getUsedCapacity() >= implant.getCapacity());
       installBtn.setOnAction(_ -> onInstallAccessory(implant));
       actions.getChildren().add(installBtn);
     }
     if (implant.getData().acceptedGear() != null && implant.getCommlink() == null) {
-      Button commlinkBtn = actionButton("Kommlink", FontAwesomeSolid.PLUS);
+      Button commlinkBtn = iconTextButton("Kommlink", FontAwesomeSolid.PLUS, "Kommlink in " + implant.getName() + " einsetzen");
       commlinkBtn.setOnAction(_ -> onInstallCommlink(implant));
       actions.getChildren().add(commlinkBtn);
     }
-    Button removeBtn = actionButton("Entfernen", FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Entfernen", FontAwesomeSolid.TRASH, implant.getName() + " entfernen");
     removeBtn.setOnAction(_ -> {
       character.getImplants().remove(implant);
       onCyberwareChanged();
@@ -399,7 +392,7 @@ public final class CyberwareTabBuilder {
     Label capacityLabel = styled(new Label("Kap. " + base.capacityNeed(accessory.getData(), accessory.getRating())),
         STYLE_ATTR_VALUE);
     Label priceLabel = styled(new Label(SpendCurrency.NUYEN.formatAmount(accessory.getNuyenCost())), STYLE_ATTR_BP);
-    Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Ausbauen", FontAwesomeSolid.TRASH, accessory.getName() + " ausbauen");
     removeBtn.setOnAction(_ -> {
       uninstall.run();
       onCyberwareChanged();
@@ -408,7 +401,7 @@ public final class CyberwareTabBuilder {
     actions.setAlignment(Pos.CENTER_LEFT);
     if (accessory.getData().acceptedGear() != null && accessory.getCommlink() == null) {
       // Kommlink-Headware in einem Glied (S. 385) nimmt wie implantiert ein Kommlink-Modell auf
-      Button commlinkBtn = actionButton("Kommlink", FontAwesomeSolid.PLUS);
+      Button commlinkBtn = iconTextButton("Kommlink", FontAwesomeSolid.PLUS, "Kommlink in " + accessory.getName() + " einsetzen");
       commlinkBtn.setOnAction(_ -> onInstallCommlink(accessory));
       actions.getChildren().add(commlinkBtn);
     }
@@ -443,7 +436,7 @@ public final class CyberwareTabBuilder {
     Button installBtn = installButton("In das Kommlink einbauen");
     installBtn.setOnAction(_ -> onInstallIntoCommlink(commlink));
     actions.getChildren().add(installBtn);
-    Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Ausbauen", FontAwesomeSolid.TRASH, commlink.getName() + " ausbauen");
     removeBtn.setOnAction(_ -> {
       headware.removeCommlink();
       onCyberwareChanged();
@@ -480,7 +473,7 @@ public final class CyberwareTabBuilder {
       });
       actions.getChildren().add(running);
     }
-    Button removeBtn = actionButton("Ausbauen", FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Ausbauen", FontAwesomeSolid.TRASH, part.getName() + " ausbauen");
     removeBtn.setOnAction(_ -> {
       commlink.uninstall(part);
       onCyberwareChanged();
@@ -503,12 +496,6 @@ public final class CyberwareTabBuilder {
     return label;
   }
 
-  private static @NonNull Button actionButton(@NonNull String text, @NonNull FontAwesomeSolid icon) {
-    Button button = new Button(text);
-    button.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(button, icon);
-    return button;
-  }
 
 
   /**

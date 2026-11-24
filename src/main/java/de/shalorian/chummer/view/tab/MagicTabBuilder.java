@@ -3,7 +3,7 @@ package de.shalorian.chummer.view.tab;
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.addSourceTooltip;
-import static de.shalorian.chummer.view.grid.GridSupport.markGmFree;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -94,9 +94,7 @@ public final class MagicTabBuilder {
       }
     });
 
-    Button addBtn = new Button("Zauber hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Zauber hinzufügen");
     addBtn.setOnAction(_ -> onAddSpell());
 
     HBox header = new HBox(12);
@@ -156,7 +154,6 @@ public final class MagicTabBuilder {
       spellNameLabel.setTooltip(new Tooltip(spell.note()));
     }
     addSourceTooltip(spellNameLabel, spell.source(), spell.page());
-    markGmFree(spellNameLabel, character.getGmFreeSpells().contains(spell.name()), Character.SPELL_BP_COST + " BP");
     removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     useIcon(removeBtn, FontAwesomeSolid.TRASH);
 

@@ -2,6 +2,7 @@ package de.shalorian.chummer.model.character.weapon;
 
 import de.shalorian.chummer.model.character.gear.Gear;
 import de.shalorian.chummer.model.character.gear.GearCategory;
+import de.shalorian.chummer.model.character.option.RuleOptions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,8 @@ public class Weapon {
   private final @NonNull WeaponData data;
   private final int rating;
   private final List<WeaponAccessory> accessories = new ArrayList<>();
+  /** Namen der mitgelieferten Teile, die ersetzt oder ausgebaut sind (siehe {@link #getIncluded()}). */
+  private final List<String> retiredIncluded = new ArrayList<>();
   private final List<Gear> arrows = new ArrayList<>();
   private final @NonNull String builtInSource;
   private final @Nullable Integer fixedStrength;
@@ -122,11 +125,21 @@ public class Weapon {
   /**
    * Rückstoßkompensation einschließlich des gekauften Zubehörs: Tabellenwert plus RK des Zubehörs,
    * fest eingebautes Zubehör (Gasventilsystem) in beiden Werten, alles andere nur im Klammerwert
-   * (siehe {@link Recoil}). Eingebautes Zubehör ist im Tabellenwert schon enthalten.
+   * (siehe {@link Recoil}). Eingebautes Zubehör ist im Tabellenwert schon enthalten; ersetzte bzw. ausgebaute
+   * mitgelieferte Teile ziehen ihre RK wieder ab.
    */
   public @NonNull Recoil getRecoil() {
     int fixedRc = 0;
     int removableRc = 0;
+    for (IncludedAccessory included : data.included()) {
+      if (retiredIncluded.contains(included.name())) {
+        if (included.isPermanent()) {
+          fixedRc -= included.rc();
+        } else {
+          removableRc -= included.rc();
+        }
+      }
+    }
     for (WeaponAccessory accessory : accessories) {
       if (accessory.data().isPermanent()) {
         fixedRc += accessory.data().rc();
@@ -142,6 +155,60 @@ public class Weapon {
   /** Gekauftes Zubehör in Kaufreihenfolge (ohne eingebautes, siehe {@link WeaponData#included()}). */
   public @NonNull List<WeaponAccessory> getAccessories() {
     return Collections.unmodifiableList(accessories);
+  }
+
+  /** Mitgeliefertes Zubehör, das noch an der Waffe ist (ohne ersetzte und ausgebaute Teile). */
+  public @NonNull List<IncludedAccessory> getIncluded() {
+    return data.included().stream().filter(i -> !retiredIncluded.contains(i.name())).toList();
+  }
+
+  /** Namen der ersetzten bzw. ausgebauten mitgelieferten Teile, für die Speicherdatei. */
+  public @NonNull List<String> getRetiredIncluded() {
+    return Collections.unmodifiableList(retiredIncluded);
+  }
+
+  /**
+   * Mitgeliefertes Teil, das {@code accessory} beim Einbau ersetzt, oder {@code null}. Ersetzt wird ein mitgeliefertes
+   * Teil mit derselben Einmal-Regel (Gasventil, Smartgun, Schockpolster), solange nichts im GRW widerspricht
+   * (Nutzerentscheidung 2026-11-24): Ein Gasventil lässt sich laut S. 367 weder ausbauen noch durch ein zweites
+   * ergänzen, ein stärkeres darf das vorhandene aber aufrüsten; es bleibt fest eingebaut. Das interne Gasventil der
+   * White Knight ist laut Waffentext nicht aufwertbar.
+   */
+  public @Nullable IncludedAccessory replacementFor(@NonNull AccessoryData accessory) {
+    AccessoryRule rule = accessory.rule();
+    if (rule == null || !rule.isOnePerWeapon()
+        || accessories.stream().anyMatch(a -> a.data().rule() == rule)) {
+      return null;
+    }
+    return getIncluded().stream()
+        .filter(i -> i.rule() == rule && i.replaceable())
+        .filter(i -> rule != AccessoryRule.GAS_VENT || accessory.rc() > i.rc())
+        .findFirst()
+        .orElse(null);
+  }
+
+  /** Mitgeliefertes Teil mit demselben Namen wie {@code accessory} (z.B. ein zweiter Schallunterdrücker), oder null. */
+  public @Nullable IncludedAccessory includedDuplicate(@NonNull AccessoryData accessory) {
+    return getIncluded().stream().filter(i -> i.name().equals(accessory.name())).findFirst().orElse(null);
+  }
+
+  /**
+   * Warum mitgelieferte Teile nicht ausgebaut werden können, oder {@code null}: Das geht nur mit der Regel-Option
+   * {@link RuleOptions#isRemoveIncludedParts()}, für Gasventile eine Hausregel gegen GRW S. 367 (ADR-071).
+   */
+  public static @Nullable String includedRemovalProblem(@NonNull RuleOptions options) {
+    return options.isRemoveIncludedParts() ? null
+        : "Mitgeliefert, nicht ausbaubar (Regel-Option „Mitgelieferte Teile von Waffen ausbauen“).";
+  }
+
+  /**
+   * Legt ein mitgeliefertes Teil still: ausgebaut ({@link #includedRemovalProblem} prüft der Aufrufer) bzw. beim Laden
+   * einer Speicherdatei. Ohne Erstattung, die RK sinkt entsprechend.
+   */
+  public void removeIncluded(@NonNull String name) {
+    if (!retiredIncluded.contains(name)) {
+      retiredIncluded.add(name);
+    }
   }
 
   /**
@@ -161,9 +228,13 @@ public class Weapon {
       return accessory.name() + ": " + rule.getRestriction() + " (GRW S. 367/368)";
     }
     if (rule != null && rule.isOnePerWeapon()) {
+      if (replacementFor(accessory) != null) {
+        return null;
+      }
       String holder = ruleHolder(rule);
       if (holder != null) {
-        return "Die Waffe hat bereits " + holder + ".";
+        return "Die Waffe hat bereits " + holder + "." + (upgradeableGasVent(rule)
+            ? " Nur ein stärkeres Gasventil kann es ersetzen." : "");
       }
     }
     if (accessory.needsMount() && freeMounts(accessory).isEmpty()) {
@@ -176,6 +247,12 @@ public class Weapon {
     return null;
   }
 
+  /** Ob ein mitgeliefertes, aufwertbares Gasventil die Regel hält (für den Hinweis auf ein stärkeres). */
+  private boolean upgradeableGasVent(@NonNull AccessoryRule rule) {
+    return rule == AccessoryRule.GAS_VENT && accessories.stream().noneMatch(a -> a.data().rule() == rule)
+        && getIncluded().stream().anyMatch(i -> i.rule() == rule && i.replaceable());
+  }
+
   /** Freie Halterungen der Waffe, an die {@code accessory} passt (leer bei Zubehör ohne Halterung). */
   public @NonNull List<Mount> freeMounts(@NonNull AccessoryData accessory) {
     Set<Mount> available = data.category().mounts();
@@ -186,7 +263,9 @@ public class Weapon {
   }
 
   /**
-   * Montiert ein Zubehörteil. Die Verfügbarkeit bei der Erschaffung prüft die UI (wie bei Waffen).
+   * Montiert ein Zubehörteil. Die Verfügbarkeit bei der Erschaffung prüft die UI (wie bei Waffen). Ersetzt es ein
+   * mitgeliefertes Teil ({@link #replacementFor}), sitzt es an dessen Stelle: ohne Halterung (eine angegebene wird
+   * ignoriert), und das mitgelieferte Teil entfällt.
    *
    * @throws IllegalArgumentException wenn das Teil laut {@link #mountProblem} nicht passt oder die
    *                                  Halterung nicht frei bzw. nicht angegeben ist
@@ -196,6 +275,12 @@ public class Weapon {
     String problem = mountProblem(accessoryData);
     if (problem != null) {
       throw new IllegalArgumentException(problem);
+    }
+    IncludedAccessory replaced = replacementFor(accessoryData);
+    if (replaced != null) {
+      removeIncluded(replaced.name());
+      accessories.add(new WeaponAccessory(accessoryData, null, replaced.name()));
+      return;
     }
     Mount mount = accessory.mount();
     boolean mountValid = accessoryData.needsMount()
@@ -219,6 +304,12 @@ public class Weapon {
       throw new IllegalStateException(accessory.getName() + " kann nicht entfernt werden");
     }
     accessories.remove(accessory);
+    // Ein Ersatzteil saß an der Stelle des mitgelieferten; ausgebaut ist dann wieder das mitgelieferte Teil da, sonst
+    // ginge es ohne die Regel-Option verloren (ADR-071).
+    String replaced = accessory.replaces();
+    if (replaced != null) {
+      retiredIncluded.remove(replaced);
+    }
   }
 
   /**
@@ -249,7 +340,7 @@ public class Weapon {
    * wenn die Waffe keines hat.
    */
   private @Nullable String ruleHolder(@NonNull AccessoryRule rule) {
-    return data.included().stream().filter(i -> i.rule() == rule)
+    return getIncluded().stream().filter(i -> i.rule() == rule)
         .map(i -> i.name() + " (mitgeliefert)")
         .findFirst()
         .orElseGet(() -> accessories.stream().filter(a -> a.data().rule() == rule)

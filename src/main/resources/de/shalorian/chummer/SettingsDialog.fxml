@@ -43,6 +43,7 @@
                     <CheckBox fx:id="lateAwakeningBox" text="Spätes Erwachen erlauben (latente Charaktere)"/>
                     <CheckBox fx:id="missedPaymentsBox" text="Versäumte Lebensstilzahlungen (Würfelwurf, Abstieg, Schulden)"/>
                     <CheckBox fx:id="decoupleAtCreationBox" text="Fertigkeitsgruppen bei der Erschaffung auskoppeln"/>
+                    <CheckBox fx:id="removeIncludedPartsBox" text="Mitgelieferte Teile von Waffen ausbauen"/>
                     <Label text="Regelwerke:" styleClass="field-label"/>
                     <VBox fx:id="booksBox" spacing="6"/>
                 </VBox>

@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -84,6 +86,22 @@ public class SpellSelectDialogController extends CatalogSelectDialogController<S
     okButton.setDisable(selected == null);
     statsLabel.setText(selected == null ? "" : statsText(selected));
     noteLabel.setText(selected == null ? "" : selected.note());
+    growWindowToContent();
+  }
+
+  /**
+   * Vergrößert das Fenster, wenn Werte und Wirkung des gewählten Zaubers mehr Platz brauchen; sonst kürzt JavaFX die
+   * umbrechenden Labels auf „…“ (Beta-Befund 2026-11-23). Nur wachsen, damit das Fenster beim Blättern nicht springt.
+   */
+  private void growWindowToContent() {
+    Platform.runLater(this::fitWindowHeight);
+  }
+
+  private void fitWindowHeight() {
+    Scene scene = okButton.getScene();
+    if (stage != null && scene != null && scene.getRoot().prefHeight(scene.getWidth()) > scene.getHeight()) {
+      stage.sizeToScene();
+    }
   }
 
   @FXML

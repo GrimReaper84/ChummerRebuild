@@ -1,5 +1,6 @@
 package de.shalorian.chummer.view.document;
 
+import de.shalorian.chummer.view.dialog.DialogButtons;
 import de.shalorian.chummer.view.tab.TabServices;
 import java.io.File;
 import java.nio.file.Path;
@@ -25,9 +26,9 @@ import org.jspecify.annotations.Nullable;
  */
 public final class DocumentTabs {
 
-  private static final ButtonType SAVE = new ButtonType("Speichern", ButtonBar.ButtonData.YES);
-  private static final ButtonType DISCARD = new ButtonType("Verwerfen", ButtonBar.ButtonData.NO);
-  private static final ButtonType CANCEL = new ButtonType("Abbrechen", ButtonBar.ButtonData.CANCEL_CLOSE);
+  private static final ButtonType SAVE = DialogButtons.SAVE;
+  private static final ButtonType DISCARD = DialogButtons.DISCARD;
+  private static final ButtonType CANCEL = DialogButtons.CANCEL;
 
   private final @NonNull TabPane pane = new TabPane();
   private final @NonNull Predicate<OpenDocument> save;

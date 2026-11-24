@@ -169,9 +169,13 @@ public final class StatusOverviewBuilder {
     return label;
   }
 
-  /** Spalte für Initiative bzw. Durchgänge: so breit wie ihr Inhalt, Werte zentriert. */
+  /**
+   * Spalte für Initiative bzw. Durchgänge: so breit wie ihr Inhalt, Werte zentriert. Die Mindestbreite verhindert, dass
+   * die wachsende erste Spalte Überschrift und Wert auf „…“ kürzt (Beta-Befund 2026-11-23).
+   */
   private static @NonNull ColumnConstraints valueColumn() {
     ColumnConstraints column = new ColumnConstraints();
+    column.setMinWidth(Region.USE_PREF_SIZE);
     column.setHalignment(HPos.CENTER);
     return column;
   }

@@ -863,6 +863,8 @@
 
 .text-area {
     -fx-background-color: -cr-raised;
+    -fx-text-fill: -cr-text;
+    -fx-prompt-text-fill: -cr-faint;
     -fx-border-color: -cr-border-strong;
     -fx-border-radius: 6;
     -fx-background-radius: 6;

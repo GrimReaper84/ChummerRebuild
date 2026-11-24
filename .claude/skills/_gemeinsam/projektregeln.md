@@ -243,7 +243,8 @@ klein halten und im Ergebnis erwähnen.
   nicht. Bewusst verbesserte Muster (getrennte Zeilentypen statt Mehrzweck-Controls, +/−-Stepper mit
   `incrementProblem()`, BP/Karma inline) nicht zurückbauen.
 - **Grids:** `MigPane` mit inhaltsbasierten Spalten, `addRowCells()`, `preventShrink()`,
-  `withRightFiller()`. Buttons über `useIcon()` mit FontAwesome-Icon, Text wird Tooltip.
+  `withRightFiller()`. Knöpfe nach Ort (ADR-071): in Leisten und Detailbereichen Icon + kurzer Text über
+  `iconTextButton()` (Tooltip nennt das Ziel), kompakte Knöpfe in Tabellenzeilen nur Icon über `useIcon()`.
 - **Gesperrt immer mit Grund:** Ein gesperrter +-Knopf bekommt den Grund als Tooltip (`RowModel.incrementProblem()`,
   `IncrementWiring` setzt `:blocked` statt `setDisable`, weil JavaFX an deaktivierten Controls keinen Tooltip zeigt).
   Nicht wählbare Katalogeinträge bleiben anklickbar und nennen den Grund im Detail; „OK“ ist dann gesperrt.
@@ -310,7 +311,8 @@ Regeln, sonst erscheint das helle Modena-Theme.
 - Texte: `.page-title`, `.section-title`, `.key-figure` (+ `.key-figure-accent`, `.key-caption`), `.warn-text`.
 - Buttons: `.btn-primary` (eine Hauptaktion pro Bereich, Petrol mit Akzentrand) und `.btn-secondary`
   (alles andere); Radius 6, Innenabstand 6/14; deaktiviert mit Deckkraft 0,45. Toggle-Buttons im selben Stil,
-  gewählt = Akzent-Hintergrund. Icon-Buttons über `GridSupport.useIcon()`, das Icon übernimmt die Textfarbe.
+  gewählt = Akzent-Hintergrund. Icon-Buttons über `GridSupport.iconTextButton()` bzw. in Tabellenzeilen `useIcon()`, das Icon übernimmt die
+  Textfarbe.
 - Grids: `MigPane` mit `GridSupport` (`addRowCells`, `preventShrink`, `withRightFiller`), Spalten nach Inhalt.
 
 **Rahmen (ADR-049):** gruppierte Seitenleiste, schmale Kopfzeile, Fußzeile `BP | Nuyen | Essenz` bzw.

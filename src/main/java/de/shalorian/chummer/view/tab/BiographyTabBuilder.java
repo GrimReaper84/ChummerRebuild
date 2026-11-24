@@ -1,7 +1,6 @@
 package de.shalorian.chummer.view.tab;
 
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
-import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BTN_SECONDARY;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_DETAIL_HINT;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_SECTION_TITLE;
 
@@ -93,12 +92,8 @@ public final class BiographyTabBuilder {
     view.setSmooth(true);
     Label empty = new Label("Kein Portrait");
     empty.getStyleClass().add(STYLE_DETAIL_HINT);
-    Button choose = new Button("Bild wählen …");
-    choose.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(choose, FontAwesomeSolid.IMAGE);
-    Button remove = new Button("Entfernen");
-    remove.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(remove, FontAwesomeSolid.TRASH);
+    Button choose = iconTextButton("Bild wählen", FontAwesomeSolid.IMAGE, "Portrait aus einer Bilddatei laden");
+    Button remove = iconTextButton("Entfernen", FontAwesomeSolid.TRASH, "Portrait entfernen");
     Runnable show = () -> {
       byte[] png = bio.getPortrait();
       view.setImage(png == null ? null : new Image(new ByteArrayInputStream(png)));

@@ -26,6 +26,7 @@ class CharacterStoreSettingsRoundtripTest {
     c.getRuleOptions().setLateAwakening(true);
     c.getRuleOptions().setMissedLifestylePayments(true);
     c.getRuleOptions().setDecoupleAtCreation(true);
+    c.getRuleOptions().setRemoveIncludedParts(true);
     c.getEquipment().getLifestyle().changeLevel(LifestyleLevel.MIDDLE);
     c.getEquipment().getLifestyle().skipMonth(1);
     c.getEquipment().getLifestyle().skipMonth(6);
@@ -36,6 +37,7 @@ class CharacterStoreSettingsRoundtripTest {
     assertTrue(rules.isLateAwakening());
     assertTrue(rules.isMissedLifestylePayments());
     assertTrue(rules.isDecoupleAtCreation());
+    assertTrue(rules.isRemoveIncludedParts());
     Lifestyle lifestyle = loaded.getEquipment().getLifestyle();
     assertEquals(LifestyleLevel.LOW, lifestyle.getLevel());
     assertEquals(1, lifestyle.getMissedMonths());
@@ -63,6 +65,7 @@ class CharacterStoreSettingsRoundtripTest {
     assertFalse(loaded.getRuleOptions().isLateAwakening());
     assertFalse(loaded.getRuleOptions().isMissedLifestylePayments());
     assertFalse(loaded.getRuleOptions().isDecoupleAtCreation());
+    assertFalse(loaded.getRuleOptions().isRemoveIncludedParts());
     assertTrue(loaded.getRuleOptions().getExtraBooks().isEmpty());
     assertEquals(0, loaded.getEquipment().getLifestyle().getMissedMonths());
     assertEquals(0, loaded.getEquipment().getLifestyle().getDebt());

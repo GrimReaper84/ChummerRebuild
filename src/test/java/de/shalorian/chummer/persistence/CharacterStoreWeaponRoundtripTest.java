@@ -10,6 +10,7 @@ import de.shalorian.chummer.model.character.metatype.MetatypeDataLoader;
 import de.shalorian.chummer.model.character.weapon.AccessoryData;
 import de.shalorian.chummer.model.character.weapon.AccessoryDataLoader;
 import de.shalorian.chummer.model.character.weapon.Mount;
+import de.shalorian.chummer.model.character.weapon.Recoil;
 import de.shalorian.chummer.model.character.weapon.Weapon;
 import de.shalorian.chummer.model.character.weapon.WeaponAccessory;
 import de.shalorian.chummer.model.character.weapon.WeaponDataLoader;
@@ -124,6 +125,23 @@ class CharacterStoreWeaponRoundtripTest {
 
     assertEquals(rifle.getAccessories(), loaded.getAccessories());
     assertEquals(rifle.getTotalNuyenCost(), loaded.getTotalNuyenCost());
+  }
+
+  @Test
+  void roundtripPreservesReplacedAndRemovedIncludedParts() throws IOException {
+    Character original = new Character("Test", MetatypeDataLoader.find("Mensch"));
+    Weapon ingram = new Weapon(Objects.requireNonNull(WeaponDataLoader.findByName("Ingram Smartgun X")));
+    ingram.addAccessory(new WeaponAccessory(accessory("Gasventilsystem 3"), null));
+    ingram.removeIncluded("Schallunterdrücker");
+    ingram.addAccessory(new WeaponAccessory(accessory("Lasermarkierer"), Mount.TOP));
+    original.getEquipment().addWeapon(ingram);
+
+    CharacterStore.save(original, tempFile());
+    Weapon loaded = CharacterStore.load(tempFile()).getEquipment().getWeapons().getFirst();
+
+    assertEquals(ingram.getAccessories(), loaded.getAccessories());
+    assertEquals(ingram.getIncluded(), loaded.getIncluded());
+    assertEquals(new Recoil(3, 4), loaded.getRecoil());
   }
 
   @Test

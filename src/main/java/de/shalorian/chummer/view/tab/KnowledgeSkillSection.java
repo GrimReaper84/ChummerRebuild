@@ -2,6 +2,7 @@ package de.shalorian.chummer.view.tab;
 
 import static de.shalorian.chummer.view.grid.GridSupport.addHeaderRow;
 import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.GridSupport.withRightFiller;
 import static de.shalorian.chummer.view.grid.StyleClasses.MIGPANE_HIDEMODE_3;
@@ -17,6 +18,7 @@ import de.shalorian.chummer.model.character.LogCategory;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkill;
 import de.shalorian.chummer.model.character.skill.KnowledgeSkillCategory;
 import de.shalorian.chummer.model.character.skill.KnowledgeSuggestionLoader;
+import de.shalorian.chummer.view.dialog.DialogButtons;
 import de.shalorian.chummer.view.dialog.DialogHandle;
 import de.shalorian.chummer.view.dialog.KnowledgeSkillAddDialogController;
 import de.shalorian.chummer.view.grid.RowControls;
@@ -29,7 +31,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.HBox;
@@ -85,9 +86,7 @@ final class KnowledgeSkillSection {
     Label poolLabel = new Label();
     poolLabel.getStyleClass().add(STYLE_BP_LABEL);
 
-    Button addBtn = new Button("Hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Wissens- oder Sprachfertigkeit hinzufügen");
     addBtn.setOnAction(_ -> onAddKnowledgeSkill());
 
     HBox header = new HBox(8);
@@ -133,12 +132,10 @@ final class KnowledgeSkillSection {
     Label label = new Label();
     label.getStyleClass().add(STYLE_ATTR_NAME);
 
-    Button editBtn = new Button("Ändern");
-    editBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
     // EDIT statt PEN_TO_SQUARE: die gepinnte ikonli-fontawesome6-pack-Version 12.4.0 führt die
     // FA6-Icons noch unter ihren alten FA5-Namen, liefert für "edit" aber denselben Glyph/Codepoint
     // (U+F044), den FontAwesome 6 unter "pen-to-square" listet.
-    useIcon(editBtn, FontAwesomeSolid.EDIT);
+    Button editBtn = iconTextButton("Ändern", FontAwesomeSolid.EDIT, "Muttersprache ändern");
 
     Runnable refresh = () -> {
       KnowledgeSkill nativeLanguage = ch.getNativeLanguage();
@@ -337,8 +334,8 @@ final class KnowledgeSkillSection {
     box.setPrefWidth(260);
     Dialog<String> dialog = new Dialog<>();
     dialog.getDialogPane().setContent(new HBox(10, new Label(caption), box));
-    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-    dialog.setResultConverter(button -> button == ButtonType.OK ? box.getEditor().getText() : null);
+    dialog.getDialogPane().getButtonTypes().addAll(DialogButtons.OK, DialogButtons.CANCEL);
+    dialog.setResultConverter(button -> button == DialogButtons.OK ? box.getEditor().getText() : null);
     TabServices.applyDialogStyle(dialog);
     dialog.setTitle(title);
     dialog.setHeaderText(header);

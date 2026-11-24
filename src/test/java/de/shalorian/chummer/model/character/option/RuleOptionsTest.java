@@ -60,6 +60,7 @@ class RuleOptionsTest {
     source.setLateAwakening(true);
     source.setMissedLifestylePayments(true);
     source.setDecoupleAtCreation(true);
+    source.setRemoveIncludedParts(true);
     source.setBookEnabled("AR", true);
     RuleOptions target = new RuleOptions();
     target.setBookEnabled("XYZ", true);
@@ -69,6 +70,7 @@ class RuleOptionsTest {
     assertTrue(target.isLateAwakening());
     assertTrue(target.isMissedLifestylePayments());
     assertTrue(target.isDecoupleAtCreation());
+    assertTrue(target.isRemoveIncludedParts());
     assertEquals(Set.of("AR"), target.getExtraBooks());
   }
 }

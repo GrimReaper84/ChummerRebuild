@@ -11,6 +11,8 @@ class RuleOptionsEntry {
   public boolean lateAwakening;
   public boolean missedLifestylePayments;
   public boolean decoupleAtCreation;
+  /** Mitgelieferte Teile von Waffen ausbauen (ADR-071); fehlt in älteren Dateien, dann aus. */
+  public boolean removeIncludedParts;
   /** Kürzel der zugeschalteten Zusatzbände; das Grundregelwerk ist immer aktiv und wird nicht gespeichert. */
   public @NonNull List<String> books = new ArrayList<>();
 

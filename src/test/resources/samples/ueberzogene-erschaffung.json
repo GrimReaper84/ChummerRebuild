@@ -164,26 +164,31 @@
     "specialization" : null
   } ],
   "contacts" : [ {
+    "gmFreeBp" : 0,
     "name" : "Barkeeper",
     "description" : null,
     "connection" : 2,
     "loyalty" : 1
   }, {
+    "gmFreeBp" : 0,
     "name" : "Mr. Johnson",
     "description" : null,
     "connection" : 2,
     "loyalty" : 2
   }, {
+    "gmFreeBp" : 0,
     "name" : "Schieber",
     "description" : null,
     "connection" : 4,
     "loyalty" : 2
   }, {
+    "gmFreeBp" : 0,
     "name" : "Triaden-Soldat",
     "description" : null,
     "connection" : 2,
     "loyalty" : 1
   }, {
+    "gmFreeBp" : 0,
     "name" : "Waffenhändler",
     "description" : null,
     "connection" : 2,
@@ -219,7 +224,9 @@
     "techniques" : [ ]
   },
   "spirits" : [ ],
+  "gmFreeSpells" : [ ],
   "cyberware" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Datenbuchse",
     "grade" : "STANDARD",
     "rating" : 0,
@@ -235,6 +242,7 @@
     "pairedCopy" : false,
     "pair" : 0
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Kommlink",
     "grade" : "STANDARD",
     "rating" : 0,
@@ -250,6 +258,7 @@
     "pairedCopy" : false,
     "pair" : 0
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Reflexbooster",
     "grade" : "STANDARD",
     "rating" : 3,
@@ -265,6 +274,7 @@
     "pairedCopy" : false,
     "pair" : 0
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Kunstmuskeln",
     "grade" : "STANDARD",
     "rating" : 2,
@@ -281,19 +291,24 @@
     "pair" : 0
   } ],
   "armor" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Panzerkleidung",
     "equipped" : true,
     "price" : null,
     "mods" : [ ]
   } ],
   "weapons" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Fichetti Security 600",
     "rating" : 0,
     "accessories" : [ ],
     "arrows" : [ ],
-    "ammo" : ""
+    "ammo" : "",
+    "retiredIncluded" : [ ]
   } ],
   "gear" : [ {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Störsender, Bereich",
     "rating" : 4,
     "quantity" : 1,
@@ -305,6 +320,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Beglaubigter Credstick",
     "rating" : 0,
     "quantity" : 4,
@@ -316,6 +333,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "DocWagon-Vertrag (Standard)",
     "rating" : 0,
     "quantity" : 1,
@@ -327,6 +346,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Gefälschte SIN",
     "rating" : 4,
     "quantity" : 2,
@@ -338,12 +359,16 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Transys Avalon",
     "rating" : 0,
     "quantity" : 1,
     "extra" : "",
     "packPrice" : null,
     "installed" : [ {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Iris Orb",
       "rating" : 0,
       "quantity" : 1,
@@ -355,6 +380,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Analyse",
       "rating" : 2,
       "quantity" : 1,
@@ -366,6 +393,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Editieren",
       "rating" : 2,
       "quantity" : 1,
@@ -377,6 +406,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Schmöker",
       "rating" : 3,
       "quantity" : 1,
@@ -393,6 +424,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Monokel",
     "rating" : 1,
     "quantity" : 1,
@@ -404,6 +437,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "AR-Handschuhe",
     "rating" : 0,
     "quantity" : 1,
@@ -415,6 +450,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Tarnholster",
     "rating" : 0,
     "quantity" : 1,
@@ -426,6 +463,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Standardmunition",
     "rating" : 0,
     "quantity" : 300,
@@ -437,6 +476,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Gefälschte SIN",
     "rating" : 6,
     "quantity" : 10,
@@ -449,10 +490,13 @@
     "focusActive" : false
   } ],
   "vehicles" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Mercury Comet (Mittelklassewagen)",
     "riggerAdapter" : false,
     "mounts" : [ ],
     "includedGear" : [ {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Sensorpaket (Fahrzeug)",
       "rating" : 0,
       "quantity" : 1,
@@ -469,6 +513,7 @@
     "damage" : 0
   } ],
   "lifestyle" : {
+    "gmFreeNuyen" : 0,
     "level" : "HIGH",
     "months" : 1,
     "missedMonths" : 0,
@@ -485,6 +530,7 @@
     "lateAwakening" : false,
     "missedLifestylePayments" : false,
     "decoupleAtCreation" : false,
+    "removeIncludedParts" : false,
     "books" : [ ]
   }
 }

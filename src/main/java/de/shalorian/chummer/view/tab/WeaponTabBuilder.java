@@ -5,9 +5,8 @@ import static de.shalorian.chummer.view.grid.GridSupport.addRowCells;
 import static de.shalorian.chummer.view.grid.GridSupport.detailHint;
 import static de.shalorian.chummer.view.grid.GridSupport.detailKey;
 import static de.shalorian.chummer.view.grid.GridSupport.detailValue;
-import static de.shalorian.chummer.view.grid.GridSupport.gmFreeHint;
+import static de.shalorian.chummer.view.grid.GridSupport.iconTextButton;
 import static de.shalorian.chummer.view.grid.GridSupport.installButton;
-import static de.shalorian.chummer.view.grid.GridSupport.useIcon;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_GRID;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_ATTR_SCROLL;
 import static de.shalorian.chummer.view.grid.StyleClasses.STYLE_BP_LABEL;
@@ -165,7 +164,7 @@ final class WeaponTabBuilder {
       if (weapon == selectedWeapon) {
         selectedItem = item;
       }
-      for (IncludedAccessory included : weapon.getData().included()) {
+      for (IncludedAccessory included : weapon.getIncluded()) {
         item.getChildren().add(new TreeItem<>(WeaponTreeEntry.ofIncluded(weapon, included)));
       }
       for (WeaponAccessory accessory : weapon.getAccessories()) {
@@ -216,9 +215,7 @@ final class WeaponTabBuilder {
 
   private @NonNull HBox buildToolbar(@NonNull Character character,
       @NonNull TreeView<WeaponTreeEntry> tree) {
-    Button addBtn = new Button("Waffe hinzufügen");
-    addBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addBtn, FontAwesomeSolid.PLUS);
+    Button addBtn = iconTextButton("Hinzufügen", FontAwesomeSolid.PLUS, "Waffe hinzufügen");
     addBtn.setOnAction(_ -> onAddWeapon(character));
 
     Button addAccessoryBtn = installButton("Zubehör in die ausgewählte Waffe einbauen");
@@ -229,18 +226,14 @@ final class WeaponTabBuilder {
     }, tree.getSelectionModel().selectedItemProperty()));
     addAccessoryBtn.setOnAction(_ -> onAddAccessory(character, tree));
 
-    Button addArrowsBtn = new Button("Pfeile zum ausgewählten Bogen hinzufügen");
-    addArrowsBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(addArrowsBtn, FontAwesomeSolid.BULLSEYE);
+    Button addArrowsBtn = iconTextButton("Pfeile", FontAwesomeSolid.BULLSEYE, "Pfeile zum ausgewählten Bogen hinzufügen");
     addArrowsBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
       Weapon weapon = selectedWeapon(tree);
       return weapon == null || !weapon.takesArrows();
     }, tree.getSelectionModel().selectedItemProperty()));
     addArrowsBtn.setOnAction(_ -> onAddArrows(character, tree));
 
-    Button removeBtn = new Button("Ausgewählte Waffe, Zubehör bzw. Pfeile entfernen");
-    removeBtn.getStyleClass().add(STYLE_BTN_SECONDARY);
-    useIcon(removeBtn, FontAwesomeSolid.TRASH);
+    Button removeBtn = iconTextButton("Entfernen", FontAwesomeSolid.TRASH, "Ausgewählte Waffe, Zubehör bzw. Pfeile entfernen");
     // Kategorieknoten, mitgeliefertes und fest eingebautes Zubehör (Gasventil, GRW S. 367) lassen
     // sich nicht entfernen; den Grund zeigt der Detailbereich.
     removeBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {
@@ -296,7 +289,7 @@ final class WeaponTabBuilder {
     } else if (entry.accessory() != null) {
       showAccessoryDetails(details, weapon, entry.accessory());
     } else if (entry.included() != null) {
-      showIncludedDetails(details, weapon, entry.included());
+      showIncludedDetails(details, weapon, entry.included(), character);
     } else if (entry.arrows() != null) {
       showArrowDetails(details, weapon, entry.arrows(), character);
     } else {
@@ -310,9 +303,6 @@ final class WeaponTabBuilder {
     Label title = new Label(d.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
     details.getChildren().addAll(title, buildValueGrid(d));
-    if (weapon.getGmFreeNuyen() > 0) {
-      details.getChildren().add(gmFreeHint(Numbers.nuyen(weapon.getGmFreeNuyen())));
-    }
     if (weapon.getData().category().usesAmmunition() && !weapon.getData().builtIn()) {
       details.getChildren().add(ammoSelector(weapon, character));
     }
@@ -378,6 +368,9 @@ final class WeaponTabBuilder {
         detailKey("Preis"), detailValue(Numbers.nuyen(weapon.getAccessoryNuyenCost(data))),
         detailKey("Quelle"), detailValue(data.source() + " S. " + data.page()));
     details.getChildren().addAll(title, grid);
+    if (accessory.replaces() != null) {
+      details.getChildren().add(detailHint("Ersetzt das mitgelieferte " + accessory.replaces() + "."));
+    }
     if (data.isPermanent()) {
       details.getChildren().add(
           detailHint("Fest eingebaut, kann nicht mehr entfernt werden (GRW S. 367)."));
@@ -434,9 +427,12 @@ final class WeaponTabBuilder {
         detailHint("Schaden nach der niedrigeren Stufe von Pfeil und Bogen (GRW S. 361)"));
   }
 
-  /** Mitgeliefertes Zubehör hat keine eigenen Werte, nur die Regel aus GRW S. 357. */
-  private static void showIncludedDetails(@NonNull VBox details, @NonNull Weapon weapon,
-      @NonNull IncludedAccessory included) {
+  /**
+   * Mitgeliefertes Zubehör hat keine eigenen Werte, nur die Regel aus GRW S. 357. Mit der Regel-Option „Mitgelieferte
+   * Teile von Waffen ausbauen“ (ADR-071) gibt es einen Knopf zum Ausbauen, sonst den Hinweis darauf.
+   */
+  private void showIncludedDetails(@NonNull VBox details, @NonNull Weapon weapon,
+      @NonNull IncludedAccessory included, @NonNull Character character) {
     Label title = new Label(included.name());
     title.getStyleClass().add(STYLE_SECTION_TITLE);
     Label text = detailHint("Mit der Waffe " + weapon.getDisplayName()
@@ -444,6 +440,21 @@ final class WeaponTabBuilder {
         + "Waffe bereits enthalten (GRW S. 357).");
     text.setWrapText(true);
     details.getChildren().addAll(title, text);
+    String removalProblem = Weapon.includedRemovalProblem(character.getRuleOptions());
+    if (removalProblem != null) {
+      details.getChildren().add(detailHint(removalProblem));
+      return;
+    }
+    Button remove = iconTextButton("Ausbauen", FontAwesomeSolid.TRASH,
+        included.name() + " aus " + weapon.getDisplayName() + " ausbauen");
+    remove.setOnAction(_ -> {
+      if (host.services().confirmYesNo("Mitgeliefertes Teil ausbauen", included.name(),
+          "Das Teil wird ohne Erstattung ausgebaut. Fortfahren?")) {
+        weapon.removeIncluded(included.name());
+        onWeaponsChanged(character, weapon, null);
+      }
+    });
+    details.getChildren().add(remove);
   }
 
   /**
@@ -537,9 +548,10 @@ final class WeaponTabBuilder {
       dialog.stage().showAndWait();
 
       ctrl.getResult().ifPresent(accessory -> {
-        if (character.isCreated() && host.services().nuyenChargeFailed(character,
+        if (!confirmIncludedConflict(weapon, accessory.data())
+            || (character.isCreated() && host.services().nuyenChargeFailed(character,
             "Kauf: " + accessory.getName() + " für " + weapon.getDisplayName(),
-            weapon.getAccessoryNuyenCost(accessory.data()))) {
+            weapon.getAccessoryNuyenCost(accessory.data())))) {
           return;
         }
         weapon.addAccessory(accessory);
@@ -548,6 +560,20 @@ final class WeaponTabBuilder {
     } catch (IOException _) {
       host.services().showDialogLoadError();
     }
+  }
+
+  /**
+   * Rückfrage, wenn das neue Teil ein mitgeliefertes ersetzt oder ihm gleicht (ADR-071); {@code true} = fortfahren.
+   */
+  private boolean confirmIncludedConflict(@NonNull Weapon weapon, @NonNull AccessoryData accessory) {
+    IncludedAccessory replaced = weapon.replacementFor(accessory);
+    if (replaced != null) {
+      return host.services().confirmYesNo("Mitgeliefertes Teil ersetzen", accessory.name(),
+          "%s ersetzt das mitgelieferte %s. Fortfahren?".formatted(accessory.name(), replaced.name()));
+    }
+    IncludedAccessory duplicate = weapon.includedDuplicate(accessory);
+    return duplicate == null || host.services().confirmYesNo("Bereits mitgeliefert", accessory.name(),
+        "Die Waffe hat bereits %s (mitgeliefert). Trotzdem einbauen?".formatted(duplicate.name()));
   }
 
   /**

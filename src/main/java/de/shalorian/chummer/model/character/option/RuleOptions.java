@@ -19,6 +19,7 @@ public class RuleOptions {
   private boolean lateAwakening;
   private boolean missedLifestylePayments;
   private boolean decoupleAtCreation;
+  private boolean removeIncludedParts;
   /** Zugeschaltete Zusatzbände (Kürzel); das Grundregelwerk ist immer aktiv und steht nicht darin. */
   private final Set<String> extraBooks = new TreeSet<>();
 
@@ -69,6 +70,18 @@ public class RuleOptions {
   }
 
   /**
+   * Mitgelieferte Teile von Waffen ausbauen (Smartgun, Schalldämpfer, Gasventil …). Für Gasventile eine Hausregel
+   * gegen GRW S. 367, das sie nach dem Einbau für nicht mehr entfernbar erklärt (ADR-071).
+   */
+  public boolean isRemoveIncludedParts() {
+    return removeIncludedParts;
+  }
+
+  public void setRemoveIncludedParts(boolean removeIncludedParts) {
+    this.removeIncludedParts = removeIncludedParts;
+  }
+
+  /**
    * Ob das Regelwerk {@code code} aktiv ist. Das Grundregelwerk und ein leeres Kürzel sind es immer; Zusatzbände nur,
    * wenn zugeschaltet. Neue Charaktere haben nur das Grundregelwerk (Nutzerentscheidung 2026-11-18).
    */
@@ -97,6 +110,7 @@ public class RuleOptions {
     lateAwakening = other.lateAwakening;
     missedLifestylePayments = other.missedLifestylePayments;
     decoupleAtCreation = other.decoupleAtCreation;
+    removeIncludedParts = other.removeIncludedParts;
     extraBooks.clear();
     extraBooks.addAll(other.extraBooks);
   }

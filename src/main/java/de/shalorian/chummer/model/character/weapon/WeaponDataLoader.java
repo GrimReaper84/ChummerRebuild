@@ -90,15 +90,20 @@ public class WeaponDataLoader {
         firstChild(el, "builtin") != null);
   }
 
-  /** {@code <included rule="…">Name</included>}: eingebautes Zubehör, Regel optional. */
+  /**
+   * {@code <included rule="…" rc="…" replaceable="false">Name</included>}: eingebautes Zubehör, Regel, RK und
+   * Sperre optional.
+   */
   private static @NonNull List<IncludedAccessory> parseIncluded(@NonNull Element el) {
     List<IncludedAccessory> included = new ArrayList<>();
     NodeList nodes = el.getElementsByTagName("included");
     for (int i = 0; i < nodes.getLength(); i++) {
       Element node = (Element) nodes.item(i);
       String rule = node.getAttribute("rule");
+      String rc = node.getAttribute("rc");
       included.add(new IncludedAccessory(node.getTextContent().trim(),
-          rule.isEmpty() ? null : AccessoryRule.valueOf(rule)));
+          rule.isEmpty() ? null : AccessoryRule.valueOf(rule), rc.isEmpty() ? 0 : Integer.parseInt(rc),
+          !"false".equals(node.getAttribute("replaceable"))));
     }
     return included;
   }

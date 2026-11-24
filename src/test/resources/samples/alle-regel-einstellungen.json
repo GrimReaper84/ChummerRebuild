@@ -203,11 +203,13 @@
     "specialization" : null
   } ],
   "contacts" : [ {
+    "gmFreeBp" : 0,
     "name" : "Schieber",
     "description" : null,
     "connection" : 3,
     "loyalty" : 2
   }, {
+    "gmFreeBp" : 0,
     "name" : "Mr. Johnson",
     "description" : null,
     "connection" : 3,
@@ -243,13 +245,16 @@
     "techniques" : [ ]
   },
   "spirits" : [ ],
+  "gmFreeSpells" : [ ],
   "cyberware" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Cyberaugen-Basissystem",
     "grade" : "STANDARD",
     "rating" : 3,
     "choice" : "",
     "price" : null,
     "installed" : [ {
+      "gmFreeNuyen" : 0,
       "name" : "Blitzkompensation",
       "grade" : "STANDARD",
       "rating" : 0,
@@ -265,6 +270,7 @@
       "pairedCopy" : false,
       "pair" : 0
     }, {
+      "gmFreeNuyen" : 0,
       "name" : "Infrarotsicht",
       "grade" : "STANDARD",
       "rating" : 0,
@@ -280,6 +286,7 @@
       "pairedCopy" : false,
       "pair" : 0
     }, {
+      "gmFreeNuyen" : 0,
       "name" : "Restlichtverstärkung",
       "grade" : "STANDARD",
       "rating" : 0,
@@ -295,6 +302,7 @@
       "pairedCopy" : false,
       "pair" : 0
     }, {
+      "gmFreeNuyen" : 0,
       "name" : "Sichtvergrößerung",
       "grade" : "STANDARD",
       "rating" : 0,
@@ -310,6 +318,7 @@
       "pairedCopy" : false,
       "pair" : 0
     }, {
+      "gmFreeNuyen" : 0,
       "name" : "Smartlink",
       "grade" : "STANDARD",
       "rating" : 0,
@@ -334,6 +343,7 @@
     "pairedCopy" : false,
     "pair" : 0
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Reaktionsverbesserung",
     "grade" : "STANDARD",
     "rating" : 2,
@@ -349,6 +359,7 @@
     "pairedCopy" : false,
     "pair" : 0
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Sporn (einziehbar)",
     "grade" : "STANDARD",
     "rating" : 0,
@@ -365,36 +376,46 @@
     "pair" : 0
   } ],
   "armor" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Panzerjacke",
     "equipped" : true,
     "price" : null,
     "mods" : [ ]
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Chamäleonanzug",
     "equipped" : true,
     "price" : null,
     "mods" : [ ]
   } ],
   "weapons" : [ {
+    "gmFreeNuyen" : 0,
     "name" : "Monofilamentschwert",
     "rating" : 0,
     "accessories" : [ ],
     "arrows" : [ ],
-    "ammo" : ""
+    "ammo" : "",
+    "retiredIncluded" : [ ]
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Schockhandschuh",
     "rating" : 0,
     "accessories" : [ ],
     "arrows" : [ ],
-    "ammo" : ""
+    "ammo" : "",
+    "retiredIncluded" : [ ]
   }, {
+    "gmFreeNuyen" : 0,
     "name" : "Ingram Smartgun X",
     "rating" : 0,
     "accessories" : [ ],
     "arrows" : [ ],
-    "ammo" : ""
+    "ammo" : "",
+    "retiredIncluded" : [ ]
   } ],
   "gear" : [ {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Flash-Pack",
     "rating" : 0,
     "quantity" : 5,
@@ -406,6 +427,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Rauchgranate",
     "rating" : 0,
     "quantity" : 5,
@@ -417,6 +440,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Störsender, Bereich",
     "rating" : 4,
     "quantity" : 1,
@@ -428,6 +453,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "White-Noise-Generator",
     "rating" : 4,
     "quantity" : 1,
@@ -439,6 +466,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Nanitencreme-Verkleidung (kleiner Behälter)",
     "rating" : 0,
     "quantity" : 2,
@@ -450,6 +479,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Enterhakenkanone",
     "rating" : 0,
     "quantity" : 1,
@@ -461,6 +492,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Kletterausrüstung",
     "rating" : 0,
     "quantity" : 1,
@@ -472,6 +505,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Camouflageseil",
     "rating" : 0,
     "quantity" : 200,
@@ -483,6 +518,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Katalysatorstab",
     "rating" : 0,
     "quantity" : 1,
@@ -494,6 +531,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Kletterhandschuhe",
     "rating" : 0,
     "quantity" : 1,
@@ -505,6 +544,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Gecko-Tape-Handschuhe",
     "rating" : 0,
     "quantity" : 1,
@@ -516,6 +557,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Gasmaske",
     "rating" : 0,
     "quantity" : 1,
@@ -527,6 +570,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Drahtzange",
     "rating" : 0,
     "quantity" : 1,
@@ -538,6 +583,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Monofilament-Kettensäge",
     "rating" : 0,
     "quantity" : 1,
@@ -549,6 +596,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Automatischer Dietrich",
     "rating" : 4,
     "quantity" : 1,
@@ -560,6 +609,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Magschlossknacker",
     "rating" : 4,
     "quantity" : 1,
@@ -571,6 +622,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Magschlosskarten-Kopierer",
     "rating" : 4,
     "quantity" : 1,
@@ -582,6 +635,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Medkit",
     "rating" : 6,
     "quantity" : 1,
@@ -593,6 +648,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Gefälschte SIN",
     "rating" : 4,
     "quantity" : 2,
@@ -604,12 +661,16 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Hermes Ikon",
     "rating" : 0,
     "quantity" : 1,
     "extra" : "",
     "packPrice" : null,
     "installed" : [ {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Novatech Navi",
       "rating" : 0,
       "quantity" : 1,
@@ -621,6 +682,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Sim-Modul",
       "rating" : 0,
       "quantity" : 1,
@@ -632,6 +695,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Analyse",
       "rating" : 3,
       "quantity" : 1,
@@ -643,6 +708,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Befehl",
       "rating" : 1,
       "quantity" : 1,
@@ -654,6 +721,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Editieren",
       "rating" : 3,
       "quantity" : 1,
@@ -665,6 +734,8 @@
       "bound" : false,
       "focusActive" : false
     }, {
+      "gmFreeNuyen" : 0,
+      "gmFreeBindingBp" : 0,
       "name" : "Schmöker",
       "rating" : 3,
       "quantity" : 1,
@@ -681,6 +752,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Elektroden",
     "rating" : 0,
     "quantity" : 1,
@@ -692,6 +765,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "AR-Handschuhe",
     "rating" : 0,
     "quantity" : 1,
@@ -703,6 +778,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Linguasoft",
     "rating" : 2,
     "quantity" : 1,
@@ -714,6 +791,8 @@
     "bound" : false,
     "focusActive" : false
   }, {
+    "gmFreeNuyen" : 0,
+    "gmFreeBindingBp" : 0,
     "name" : "Standardmunition",
     "rating" : 0,
     "quantity" : 320,
@@ -727,6 +806,7 @@
   } ],
   "vehicles" : [ ],
   "lifestyle" : {
+    "gmFreeNuyen" : 0,
     "level" : "HIGH",
     "months" : 1,
     "missedMonths" : 0,
@@ -743,6 +823,7 @@
     "lateAwakening" : true,
     "missedLifestylePayments" : true,
     "decoupleAtCreation" : true,
+    "removeIncludedParts" : true,
     "books" : [ "SM" ]
   }
 }
