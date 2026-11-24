@@ -653,6 +653,7 @@ public class CharacterStore {
         if (entry.active && category == GearCategory.COMMLINKS) {
           chosen = added;
         }
+        addSplitFoci(gear, entry, character.getEquipment()::addGear);
       }
     }
     return chosen;
@@ -716,6 +717,7 @@ public class CharacterStore {
       Gear gear = toGear(gearEntry);
       if (gear != null && !gear.getData().category().isInstalledOnly()) {
         vehicle.addGear(gear);
+        addSplitFoci(gear, gearEntry, vehicle::addGear);
       }
     }
   }
@@ -744,6 +746,20 @@ public class CharacterStore {
   }
 
   /**
+   * Ergänzt zu einem geladenen Fokus die übrigen Stück, wenn der Eintrag eine Menge > 1 hat: Ältere Stände (bis
+   * Beta-Lauf 4) führten gleiche Foki als Menge, {@link #toGear} lädt davon nur das erste Stück. Die übrigen kommen
+   * als eigene, ungebundene Foki über {@code add} dazu.
+   */
+  private static void addSplitFoci(@NonNull Gear focus, @NonNull GearEntry entry, @NonNull Consumer<Gear> add) {
+    if (!focus.isFocus()) {
+      return;
+    }
+    for (int i = 1; i < entry.quantity; i++) {
+      add.accept(new Gear(focus.getData(), focus.getRating(), 1, focus.getExtra(), entry.packPrice));
+    }
+  }
+
+  /**
    * Baut einen Gegenstand samt Einbauten aus der Speicherdatei; {@code null} bei unbekanntem Namen
    * oder Werten, die nicht (mehr) zum Katalog passen. Unpassende Einbauten werden übersprungen.
    */
@@ -754,7 +770,9 @@ public class CharacterStore {
     }
     Gear gear;
     try {
-      gear = new Gear(gearData, entry.rating, entry.quantity, entry.extra, entry.packPrice);
+      // Foki sind Einzelstücke; die übrigen Stück älterer Stände ergänzt addSplitFoci
+      int quantity = gearData.focusType() != null ? 1 : entry.quantity;
+      gear = new Gear(gearData, entry.rating, quantity, entry.extra, entry.packPrice);
     } catch (IllegalArgumentException _) {
       return null;
     }

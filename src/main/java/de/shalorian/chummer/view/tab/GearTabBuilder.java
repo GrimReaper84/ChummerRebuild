@@ -252,7 +252,7 @@ final class GearTabBuilder {
         detailKey("Stufe"), detailValue(d.rating()));
     addRowCells(grid, 1, detailKey("Gerätestufe"), detailValue(d.deviceRating()),
         detailKey("Verf."), detailValue(d.availability()));
-    // Einzelstücke (Geräte mit Einbauten und Einbauten selbst) haben keine veränderliche Menge.
+    // Einzelstücke (Geräte mit Einbauten, Einbauten selbst, Foki) haben keine veränderliche Menge.
     addRowCells(grid, 2, detailKey("Menge"), gear.getData().isSingleItem()
             ? detailValue(d.quantity())
             : GearQuantityStepper.create(gear, character, host, onChanged),

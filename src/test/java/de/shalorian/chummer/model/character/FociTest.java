@@ -3,6 +3,7 @@ package de.shalorian.chummer.model.character;
 import static de.shalorian.chummer.model.character.AdeptTestSupport.withGift;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -119,5 +120,22 @@ class FociTest {
     assertEquals(List.of("Gesamtkraft gebundener Foki 6, erlaubt 5 (5 × Magie)"), foci.getProblems());
     foci.unbind(power);
     assertFalse(power.isFocusActive());
+  }
+
+  @Test
+  void sameFocusBoughtTwiceStaysSeparate() {
+    // Beta-Lauf 4: Ein zweiter gleicher Fokus darf nicht in den gebundenen einfließen, jeder wird einzeln gebunden
+    Character c = withGift("Zauberer", 4);
+    Gear first = buy(c, "Kraftfokus", 1, "");
+    c.getFoci().bind(first);
+
+    Gear second = buy(c, "Kraftfokus", 1, "");
+
+    assertNotSame(first, second);
+    assertEquals(1, first.getQuantity());
+    assertEquals(2, c.getFoci().getAll().size());
+    assertEquals(List.of(first), c.getFoci().getBound());
+    assertFalse(second.isBound());
+    assertNull(c.getFoci().getBindProblem(second));
   }
 }

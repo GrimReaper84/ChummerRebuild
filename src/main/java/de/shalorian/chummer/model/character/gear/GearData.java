@@ -143,10 +143,11 @@ public record GearData(
 
   /**
    * Ob der Gegenstand nur einzeln gekauft wird: Geräte, die Einbauten aufnehmen (jedes hat seine
-   * eigenen), und Einbauten selbst, weil sie in genau einem Gerät stecken.
+   * eigenen), Einbauten selbst, weil sie in genau einem Gerät stecken, und Foki, weil jeder einzeln
+   * gebunden wird (GRW S. 233/234).
    */
   public boolean isSingleItem() {
-    return !accepts.isEmpty() || category.isInstalledOnly();
+    return !accepts.isEmpty() || category.isInstalledOnly() || focusType != null;
   }
 
   /** Verfügbarkeit wie im GRW angezeigt, bei einem Zuschlag mit "+" (z.B. "+4E", "8", "–"). */
